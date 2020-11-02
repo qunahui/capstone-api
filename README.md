@@ -3,5 +3,5 @@ I dont know if it will works, I just do it
 
 
 -----
-Install: yarn
+Install: yarn \n
 Run: yarn dev
