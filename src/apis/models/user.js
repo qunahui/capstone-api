@@ -14,22 +14,37 @@ const schema = new Schema({
     type: Boolean,
     default: false,
   },
+  sendoCredentials: {
+    shop_key: {
+      type: String,
+    },
+    secret_key: {
+      type: String,
+    }
+  },
   tokens: [
     {
       token: {
-        type: String,
-        required: true,
-      },
+          type: String,
+        }
     },
   ],
 });
 
+schema.virtual("platformTokens", {
+  ref: "platformToken",
+  localField: "uid",
+  foreignField: "uid"
+})
+
 schema.methods.toJSON = function () {
   const user = this;
   const userObject = user.toObject();
+  const {token} = user.sendoCredentials;
+  user.sendoToken = token;
 
-  delete userObject.password;
   delete userObject.tokens;
+  delete userObject.sendoCredentials;
 
   return userObject;
 };

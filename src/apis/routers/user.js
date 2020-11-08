@@ -11,7 +11,7 @@ router.post("/sign-out", auth, controller.signOut);
 
 router.post("/logout-all", auth, controller.signOutAll);
 
-router.post("/sign-up", controller.signUp);
+// router.post("/sign-up", controller.signUp);
 
 router.patch("/update", auth, controller.editProfile);
 

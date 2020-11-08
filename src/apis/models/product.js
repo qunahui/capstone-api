@@ -44,4 +44,4 @@ schema.virtual("productDetails", {
   foreignField: "productID",
 });
 
-module.exports = mongoose.model("product", schema);
+module.exports = mongoose.model("Product", schema);

@@ -6,29 +6,29 @@ module.exports.getCurrentUser = async (req, res) => {
   res.status(200).send("User valid !");
 };
 
-module.exports.signUp = async (req, res) => {
-  try {
-    const user = new User({ ...req.body });
+// module.exports.signUp = async (req, res) => {
+//   try {
+//     const user = new User({ ...req.body });
 
-    await user.save();
+//     await user.save();
 
-    const token = await user.generateJWT();
+//     const token = await user.generateJWT();
 
-    res.status(201).send({user, token});
-  } catch (e) {
-    let status = 400;
-    let error = e;
+//     res.status(201).send({user, token});
+//   } catch (e) {
+//     let status = 400;
+//     let error = e;
 
-    if (e.name === "MongoError" && e.code === 11000) {
-      status = 409;
-      error = {
-        message: "User already exist!",
-      };
-    }
+//     if (e.name === "MongoError" && e.code === 11000) {
+//       status = 409;
+//       error = {
+//         message: "User already exist!",
+//       };
+//     }
 
-    res.status(status).send(Error(error));
-  }
-};
+//     res.status(status).send(Error(error));
+//   }
+// };
 
 module.exports.signIn = async (req, res) => {
   try {
@@ -78,13 +78,14 @@ module.exports.signOutAll = async (req, res) => {
 
 module.exports.editProfile = async (req, res) => {
   const properties = Object.keys(req.body);
+  console.log(properties)
 
   try {
     const user = req.user;
 
     properties.forEach((prop) => (user[prop] = req.body[prop]));
 
-    user.save();
+    await user.save();
     res.send(user);
   } catch (e) {
     res.status(404).send(Error(e));

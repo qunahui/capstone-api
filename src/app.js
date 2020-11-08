@@ -14,10 +14,10 @@ const port = process.env.PORT || 5000;
 app.use(express.json());
 app.use(cors());
 
-app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', '*');
-  next();
-});
+// app.use((req, res, next) => {
+//   res.header('Access-Control-Allow-Origin', '*');
+//   next();
+// });
 
 app.get("/*", (req, res, next) => {
   res.set({
@@ -27,23 +27,6 @@ app.get("/*", (req, res, next) => {
     "Access-Control-Allow-Methods": "DELETE, POST, GET, OPTIONS"
   });
   next();
-});
-
-app.post('/api/sendo', (req, res) => {
-  var options = {
-    url: req.body.targetUrl,
-    method: 'POST',
-    json: req.body.data
-  };
-
-  console.log(options); 
-
-  request(options, function (err, response, body) {
-    if (!err && response.statusCode == 200) {
-      return res.json(body);
-    }
-    return res.status(500).json({ type: 'error', message: err });
-  })
 });
 
 configRoute(app);
