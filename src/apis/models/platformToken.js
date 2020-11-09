@@ -13,11 +13,12 @@ const schema = new Schema({
   },
   token: {
     type: String,
+    default: null
   },
   createdAt: {
     type: Date,
     default: Date.now,
-    expires: '30s' // this is just for testing, default: 8h
+    expires: '20s' // this is just for testing, default: 8h
   },
   isDeleted: {
     type: Boolean,
