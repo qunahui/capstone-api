@@ -3,7 +3,7 @@ const auth = require("../../middlewares/auth");
 const Error = require("../utils/error");
 
 module.exports.getCurrentUser = async (req, res) => {
-  res.status(200).send("User valid !");
+  res.status(200).send({ user: req.user });
 };
 
 // module.exports.signUp = async (req, res) => {
@@ -35,9 +35,15 @@ module.exports.signIn = async (req, res) => {
     var user = await User.findByCredentials(
       req.body.uid
     );
+    
+    if(user.token) {
+      let { token } = user
+      delete user.token
+      return res.send({ user: { ...rest }, token })
+    }
 
     const token = await user.generateJWT();
-    res.send({ user, token });
+    return res.send({ user, token });
   } catch (e) {
     let status = 400;
     let error = e;

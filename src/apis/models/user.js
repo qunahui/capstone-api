@@ -40,8 +40,10 @@ schema.virtual("platformTokens", {
 schema.methods.toJSON = function () {
   const user = this;
   const userObject = user.toObject();
-  const {token} = user.sendoCredentials;
-  user.sendoToken = token;
+
+  if(userObject.sendoCredentials) {
+    userObject.isSendoRegistered = true
+  }
 
   delete userObject.tokens;
   delete userObject.sendoCredentials;
@@ -65,7 +67,7 @@ schema.methods.generateJWT = async function () {
 // check login
 schema.statics.findByCredentials = async (uid) => {
   var user = await User.findOne({ uid });
-
+  
   if (!user) {
     console.log("Create new user")
     user = new User({ uid })

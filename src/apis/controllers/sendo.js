@@ -1,5 +1,4 @@
 const User = require("../models/user");
-const auth = require("../../middlewares/auth");
 const Error = require("../utils/error");
 const request = require('request');
 const PlatformToken = require("../models/platformToken");
@@ -41,8 +40,10 @@ module.exports.getSendoToken = async (req, res) => {
           return res.status(statusCode).send(Error(error));
         }
       })
+    } else {
+      return res.status(404).send(Error({ message: 'Sendo credentials not found. You must register first !'}))
     }
   } catch(e){ 
-    return res.status(400).send(new Error(e))
+    return res.status(400).send(Error(e))
   }
 }
