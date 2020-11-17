@@ -1,3 +1,4 @@
+const { Timestamp } = require("mongodb");
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 const validator = require("validator");
@@ -8,23 +9,25 @@ const schema = new Schema({
     required: true,
     ref: "Product",
   },
-  size: {
+  description: {
     type: String,
     require: true,
   },
-  quantity: {
-    type: Number,
-    required: true,
-    default: 0,
-  },
-  price: {
-    type: Number,
-    required: true,
-  },
-  photoURL: {
+  tags: {
     type: String,
+    required: true
   },
-  isDeleted: {
+  created_date_timestamp:{
+    type: Date
+  },
+  seo: {
+    type: String,
+    required: true,
+  },
+  relateds: {
+    type: Array,
+  },
+  seo_keyword: {
     type: Boolean,
     default: false,
   },

@@ -4,7 +4,7 @@ const auth = require("../../middlewares/auth");
 const productController = require("../controllers/product");
 const Product = require("../models/product");
 
-router.get("/", productController.getAllProduct);
+router.get("/", productController.searchProduct);
 
 // test route
 router.get("/unpopulatedProducts", async (req, res) => {
@@ -17,7 +17,7 @@ router.get("/unpopulatedProducts", async (req, res) => {
   }
 });
 
-router.get("/:id", productController.getProductById);
+router.get("/", productController.getProductById);
 
 router.post("/create-product", productController.createProduct);
 
