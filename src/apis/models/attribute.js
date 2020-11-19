@@ -50,4 +50,4 @@ const attributeSchema = new Schema({
   },
 });
 
-module.exports = mongoose.model("attribute", attributeSchema);
+module.exports = mongoose.model("Attribute", attributeSchema);
