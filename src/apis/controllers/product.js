@@ -5,48 +5,24 @@ const ProductDetail = require("../models/productDetail");
 const sendo = require('./sendo')
 const request = require('request');
 
-module.exports.searchProduct = async (req, res) => {
-//const accessToken = await sendo.getSendoToken();
- try {
-  const options = {
-    method: 'POST',
-    url: 'https://open.sendo.vn/api/partner/product/search',
-    headers: {
-    Authorization: 'bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJTdG9yZUlkIjoiODM0NzMxIiwiVXNlck5hbWUiOiIiLCJTdG9yZVN0YXR1cyI6IjIiLCJTaG9wVHlwZSI6IjEiLCJTdG9yZUxldmVsIjoiMCIsImV4cCI6MTYwNTA4OTQ5MywiaXNzIjoiODM0NzMxIiwiYXVkIjoiODM0NzMxIn0.wmN3BfaFOjEaPniRYD1RefTbnbzHDhmo0_HyqkbMHxA',
-    'Content-Type': 'application/json',
-    'cache-control': 'no-cache'
-    },
-    body: JSON.stringify({"page_size":10,"product_name":"","date_from":"2020-05-01","date_to":"2020-12-28","token":""})
-  
-  };
-  request(options, (error, response) => {
-    //if (error) throw new Error(error);
-    //console.log(response.body);
-    const products = JSON.parse(response.body)
+module.exports.getAllProduct = async (req, res) => {
+  try {
+    
+    const products = await Product.find({})
+    
     res.send(products)
-  });
- } catch (e) {
-  res.status(500).send(Error(e));
- }
+  } catch (e) {
+    res.status(500).send(Error(e));
+  }
+
 };
 
 module.exports.getProductById = async function (req, res) {
   try {
-    const productId = req.query.id;
-    const options = {
-      method: 'GET',
-      url: "https://open.sendo.vn/api/partner/product?id=" + productId,
-      headers: {
-      Authorization: 'bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJTdG9yZUlkIjoiODM0NzMxIiwiVXNlck5hbWUiOiIiLCJTdG9yZVN0YXR1cyI6IjIiLCJTaG9wVHlwZSI6IjEiLCJTdG9yZUxldmVsIjoiMCIsImV4cCI6MTYwNTAwMDkxNiwiaXNzIjoiODM0NzMxIiwiYXVkIjoiODM0NzMxIn0.U_6WzhCsliMUVFApHqbjFF6EbDwaUxWgIDAHouZ4-j8',
-      },
-    };
-    request(options, function (error, response) {
-    // if (error) throw new Error(error);
-    //console.log(response.body);
-      const product = JSON.parse(response.body)
-      res.send(product)
-    });
-  
+    const productId = req.params.id;
+    const product = await Product.find({id: productId})
+    
+    res.send(product)
   } catch (e) {
     res.status(500).send(Error(e));
   }
@@ -58,52 +34,53 @@ module.exports.createProduct = async (req, res) => {
 
   const product = new Product({
     id: item.id,
-    category_4_name: item.category_4_name,
-    attributes: item.attributes,
-    certificate_file: item.certificate_file,
-    image: item.image,
-    link: item.link,
     name: item.name,
-    price: item.final_price_min,
-    rating: item.rating,
-    status: item.status,
-    status_name: item.status_name,
-    stock: item.stock,
-    promotion_price: item.promotion_price,
-    stock_quantity: item.stock_quantity,
-    can_delete: item.can_delete,
-    can_edit: item.can_edit,
-    can_share: item.can_share,
-    can_up: item.can_up,
     sku: item.sku,
-    cate_4_id: item.cate_4_id,
-    store_name: item.store_name,
-    is_promotion: item.is_promotion,
-    up_product_date_timestamp: item.up_product_date_timestamp,
+    price: item.price,
     weight: item.weight,
-    is_off: item.is_off,
-    reason_comment: item.reason_comment,
-    url_path: item.url_path,
-    review_date_timestamp: item.review_date_timestamp,
+    stock_availability: item.stock_availability,
+    stock_quantity: item.stock_quantity,
+    description: item.description,
+    cate_4_id: item.cate_4_id,
+    status: item.status,
+    tags: item.tags,
+    updated_date_timestamp: item.updated_date_timestamp,
+    created_date_timestamp: item.created_date_timestamp,
+    // seo: item.seo,
+    link: item.link,
+    relateds: item.relateds,
+    seo_keyword: item.seo_keyword,
+    seo_title: item.seo_title,
+    seo_description: item.seo_description,
+    seo_score: item.seo_score,
+    image: item.image,
+    category_4_name: item.category_4_name,
     updated_user: item.updated_user,
-    is_review: item.is_review,
-    file_attachments: item.file_attachments,
-    brand_name: item.brand_name,
-    reason_code: item.reason_code,
-    special_price: item.special_price,
-    promotion_from_date_timestamp: item.promotion_form_date_timestamp,
-    promotion_to_date_timestamp: item.promotion_to_date_timestamp,
-    unit_id: item.unit_id,
-    updated_at_timestamp: item.updated_at_timestamp,
+    url_path: item.url_path,
+    video_links: item.video_links,
     height: item.height,
     length: item.length,
     width: item.width,
-    shipping_images: item.shipping_images,
-    final_price_min: item.final_price_min,
-    final_price_max: item.final_price_max,
+    unit_id: item.unit_id,
+    avatar: item.avatar,
+    pictures: item.pictures,
+    attributes: item.attributes,
+    special_price: item.special_price,
+    promotion_from_date_timestamp: item.promotion_form_date_timestamp,
+    promotion_to_date_timestamp: item.promotion_to_date_timestamp,
+    is_promotion: item.is_promotion,
+    extend_shipping_package: item.extend_shipping_package,
+    variant: item.variant,
     is_config_variant: item.is_config_variant,
-    variants_length: item.variants_length,
-    voucher: item.voucher
+    is_invalid_variant:  item.is_invalid_variant,
+    voucher: item.voucher,
+    product_category_types: item.product_category_types,
+    is_flash_sales: item.is_flash_sales,
+    campain_status: item.campain_status,
+    can_edit: item.can_edit,
+    sendo_video: item.sendo_video,
+    installments: item.installments
+
   });
 
   try {

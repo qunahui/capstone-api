@@ -35,7 +35,7 @@ module.exports.getCategoryById = async (req,res) =>{
     {
       try {
         const categories = await lazadaCategory.find({idpath:{ $size: 1}}, {name: 1, category_id: 1, leaf: 1, idpath:1});
-    
+        //await lazadaCategory.updateMany({"idpath.0": 4304},{$set: {"idpath.0": 4303}})
         res.send(categories);
       } catch (e) {
         res.status(500).send(e.message);

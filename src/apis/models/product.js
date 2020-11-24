@@ -6,142 +6,109 @@ const { schema } = require("./productDetail");
 
 const productSchema = new Schema({
     id: {
-      type: Number,
-      required: true
-    },
-    category_4_name: {
-      type: String,
-      trim: true,
-      required: true
-    },
-    attributes: {
-      type: Array,
-      required: true
-    },
-    certificate_file: {
-      type: Array,
-      required: true
-    },
-    image: {
-      type: String,
-      required: true
-    },
-    link:{
-      type: String,
-      required: true
+      type: Number
+
     },
     name: {
       type: String,
-      trim: true,
-      required: true
-    },
-    price:{
-      type: Decimal128,
-      required: true
-    },
-    rating:{
-      type: Decimal128,
-      required: true
-    },
-    status:{
-      type: Number,
-      required: true
-    },
-    status_name:{
-      type: String,
-      required: true
-    },
-    stock:{
-      type: Boolean,
-      required: true
-    },
-    promotion_price:{
-      type: Decimal128,
-      required: true
-    },
-    stock_quantity:{
-      type: Number,
-      required: true
-    },
-    can_delete:{
-      type: Boolean,
-      required: true
-    },
-    can_edit:{
-      type: Boolean,
-      required: true
-    },
-    can_share:{
-      type: Boolean,
-      required: true
-    },
-    can_up:{
-      type: Boolean,
-      required: true
+      trim: true
     },
     sku: {
       type: String,
-      trim: true,
-      required: true
+      trim: true
     },
-    cate_4_id:{
-      type: Number,
-      required: true
-    },
-    store_name:{
-      type: String,
-      trim: true,
-      required: true
-    },
-    is_promotion:{
-      type: Boolean,
-      required: true
-    },
-    up_product_date_timestamp:{
-      type: Date
+    price:{
+      type: Decimal128
     },
     weight:{
-      type: Decimal128,
-      required: true
+      type: Decimal128
     },
-    is_off:{
-      type: Boolean,
-      required: true
+    stock_availability:{
+      type: Boolean
     },
-    reason_comment:{
+    stock_quantity:{
+      type: Number
+    },
+    description:{
+      type: String
+    },
+    cat_4_id:{
+      type: Number
+    },
+    status:{
+      type: Number
+    },
+    tags: {
+      type: String
+    },
+    updated_date_timestamp:{
+      type: Date
+    },
+    created_date_timestamp:{
+      type: Date
+    },
+    // seo:{
+    //   type: String
+    // },
+    link:{
+      type: String
+    },
+    relateds:{
+      type: Array
+    },
+    seo_keyword:{
+      type: String
+    },
+    seo_title:{
+      type: String
+    },
+    seo_description:{
+      type: String
+    },
+    seo_score:{
+      type: String
+    },
+    image: {
+      type: String
+    },
+    category_4_name: {
+      type: String,
+      trim: true
+    },
+    updated_user:{
       type: String,
       trim: true
     },
     url_path:{
       type: String,
-      trim: true,
-      required: true
-    },
-    review_date_timestamp:{
-      type: Date
-    },
-    updated_user:{
-      type: String,
-      trim: true,
-      required: true
-    },
-    is_review:{
-      type: Boolean,
-      required: true
-    },
-    file_attachments:{
-      type: Array,
-    },
-    brand_name:{
-      type: String,
       trim: true
     },
-    reason_code:{
+    video_links:{
+      type: Array
+    },
+    height:{
+      type: Decimal128
+    },
+    length:{
+      type: Decimal128
+    },
+    width:{
+      type: Decimal128
+    },
+    unit_id:{
       type: Number
     },
+    avatar:{
+      type: Object
+    },
+    pictures:{
+      type: Array
+    },
+    attributes: {
+      type: Array
+    },
     special_price:{
-      type: Decimal128,
-      required: true
+      type: Decimal128
     },
     promotion_from_date_timestamp:{
       type: Date
@@ -149,52 +116,49 @@ const productSchema = new Schema({
     promotion_to_date_timestamp:{
       type: Date
     },
-    unit_id:{
-      type: Number,
-      required: true
+    is_promotion:{
+      type: Boolean
     },
-    updated_at_timestamp:{
-      type: Date
+    extended_shipping_package:{
+      type: Object
     },
-    height:{
-      type: Decimal128,
-      required: true
-    },
-    length:{
-      type: Decimal128,
-      required: true
-    },
-    width:{
-      type: Decimal128,
-      required: true
-    },
-    final_price_min:{
-      type: Decimal128,
-      required: true
-    },
-    final_price_max:{
-      type: Decimal128,
-      required: true
+    variants:{
+      type: Array
     },
     is_config_variant:{
-      type: Boolean,
-      required: true
+      type: Boolean
     },
-    variants_length:{
-      type: Number,
-      required: true
+    is_invalid_variant:{
+      type: Boolean
     },
     voucher:{
-      type: Object,
-      required: true
+      type: Object
+    },
+    product_category_types:{
+      type: Array
+    },
+    is_flash_sales:{
+      type: Boolean
+    },
+    campaign_status:{
+      type: Number,
+    },
+    can_edit:{
+      type: Boolean
+    },
+    sendo_video:{
+      type: Array
+    },
+    installments:{
+      type: Array
     }
   }
 );
 
-schema.virtual("productDetails",{
-  ref:"productDetail",
-  localField: "_id",
-  foreignField: "productID"
-})
+// schema.virtual("productDetails",{
+//   ref:"productDetail",
+//   localField: "_id",
+//   foreignField: "productID"
+// })
 
 module.exports = mongoose.model("Product", productSchema);
