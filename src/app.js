@@ -20,7 +20,7 @@ app.use(cors());
 // });
 
 app.get("/*", (req, res, next) => {
-  console.log("Received request: ", req.body)
+  //console.log("Received request: ", req.body)
   res.set({
     "Access-Control-Expose-Headers": "Content-Range",
     "Content-Range": "1-2*",

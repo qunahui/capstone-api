@@ -5,9 +5,15 @@ const validator = require("validator");
 const { schema } = require("./productDetail");
 
 const productSchema = new Schema({
-    id: {
+    store_ids:{
+      type: Array
+    },
+    sendo_product_id: {
       type: Number
 
+    },
+    store_id:{
+      type: Number
     },
     name: {
       type: String,
@@ -32,10 +38,16 @@ const productSchema = new Schema({
     description:{
       type: String
     },
-    cat_4_id:{
+    cat2_id:{
       type: Number
     },
-    status:{
+    cat3_id:{
+      type: Number
+    },
+    sendo_cat4_id:{
+      type: Number
+    },
+    product_status:{
       type: Number
     },
     tags: {
@@ -50,13 +62,13 @@ const productSchema = new Schema({
     // seo:{
     //   type: String
     // },
-    link:{
+    sendo_product_link:{
       type: String
     },
-    relateds:{
+    product_relateds:{
       type: Array
     },
-    seo_keyword:{
+    seo_key_word:{
       type: String
     },
     seo_title:{
@@ -68,7 +80,7 @@ const productSchema = new Schema({
     seo_score:{
       type: String
     },
-    image: {
+    product_image: {
       type: String
     },
     category_4_name: {
@@ -86,13 +98,13 @@ const productSchema = new Schema({
     video_links:{
       type: Array
     },
-    height:{
+    height_product:{
       type: Decimal128
     },
-    length:{
+    length_product:{
       type: Decimal128
     },
-    width:{
+    width_product:{
       type: Decimal128
     },
     unit_id:{
@@ -101,7 +113,8 @@ const productSchema = new Schema({
     avatar:{
       type: Object
     },
-    pictures:{
+    
+    product_pictures:{
       type: Array
     },
     attributes: {
@@ -134,9 +147,9 @@ const productSchema = new Schema({
     voucher:{
       type: Object
     },
-    product_category_types:{
-      type: Array
-    },
+    // product_category_types:{
+    //   type: Array
+    // },
     is_flash_sales:{
       type: Boolean
     },
@@ -145,13 +158,13 @@ const productSchema = new Schema({
     },
     can_edit:{
       type: Boolean
-    },
-    sendo_video:{
-      type: Array
-    },
-    installments:{
-      type: Array
     }
+    // sendo_video:{
+    //   type: Array
+    // }
+    // installments:{
+    //   type: Array
+    // }
   }
 );
 
