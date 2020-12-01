@@ -4,7 +4,30 @@ const router = express.Router();
 const auth = require("../../middlewares/auth");
 const controller = require("../controllers/sendo");
 
+router.post('/ping', (req, res) => {
+  // received object
+  // switch case
+  
+  const data = req.body
+  console.log(data.type)
+  switch(data.type){
+    case 'PRODUCT.CREATE':{
+      request.post({ url: "http://localhost:5000/products/create-product", 
+      json: data })
 
+      break
+    }
+    case 'PRODUCT.UPDATE': {
+      request.post("http://localhost:5000/products/update-product",{ 
+        json: data
+      })
+
+      break
+    }
+    default:
+      break
+  }
+})
 
 router.post('/login', auth, controller.getSendoToken);
 

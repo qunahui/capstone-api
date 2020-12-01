@@ -1,5 +1,7 @@
+const e = require("express");
 const jwt = require("jsonwebtoken");
 const User = require("../apis/models/user");
+const Error = require("../apis/utils/error")
 
 const auth = async (req, res, next) => {
   try {
@@ -10,12 +12,16 @@ const auth = async (req, res, next) => {
     });
         
     if (!user) {
-      throw new Error();
+      return res.status(401).send(Error({
+        message: "Please authenticate."
+      }));
     }
 
     if(!user.tokens.some(e => e.token === token)){
       console.log("not included: ", token)
-      return res.status(401).send("Token expired");
+      return res.status(401).send(Error({
+        message: e.message
+      }));
     }
 
     req.token = token;
@@ -23,7 +29,9 @@ const auth = async (req, res, next) => {
     next();
 
   } catch (e) {
-    res.status(401).send({ error: "Please authenticate." });
+    res.status(401).send(Error({
+      message: "Please authenticate."
+    }));
   }
 };
 

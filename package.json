@@ -11,20 +11,24 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@google-cloud/translate": "^6.0.4",
     "@qhcommon/common": "^1.0.6",
     "bcrypt": "^5.0.0",
     "bcryptjs": "^2.4.3",
+    "bluebird": "^3.7.2",
     "cors": "^2.8.5",
+    "exceljs": "^4.2.0",
     "express": "^4.17.1",
     "jsonwebtoken": "^8.5.1",
     "mongodb": "^3.6.1",
     "mongoose": "^5.10.3",
+    "multer": "^1.4.2",
     "request": "^2.88.2",
     "swagger-jsdoc": "^4.0.0",
     "swagger-ui-express": "^4.1.4",
     "validator": "^13.1.1"
   },
   "devDependencies": {
-    "nodemon": "^2.0.4"
+    "nodemon": "^2.0.6"
   }
 }

@@ -10,6 +10,10 @@ const schema = new Schema({
     required: true,
     unique: true
   },
+  theme: {
+    type: Boolean,
+    default: true
+  },
   isDeleted: {
     type: Boolean,
     default: false,
@@ -21,6 +25,9 @@ const schema = new Schema({
     secret_key: {
       type: String,
     }
+  },
+  lazadaCredentials: {
+    
   },
   tokens: [
     {
@@ -42,7 +49,7 @@ schema.methods.toJSON = function () {
   const userObject = user.toObject();
 
   if(userObject.sendoCredentials) {
-    userObject.isSendoRegistered = true
+    userObject.isSendoAvailable = true
   }
 
   delete userObject.tokens;

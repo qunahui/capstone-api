@@ -2,117 +2,128 @@ const auth = require("../../middlewares/auth");
 const Product = require("../models/product");
 const Error = require("../utils/error");
 const ProductDetail = require("../models/productDetail");
+const sendo = require('./sendo')
+const request = require('request');
+const util = require('util')
 
-module.exports.getAllProduct = async function (req, res) {
+module.exports.getAllProduct = async (req, res) => {
   try {
-    let filter = {};
-
-    const query = req.query;
-
-    for (const property in query) {
-      if (
-        property !== "limit" &&
-        property !== "skip" &&
-        property !== "$lte" &&
-        property !== "$gte"
-      ) {
-        filter[property] = query[property];
-      }
-    }
-
-    if (filter.name) {
-      const regex = new RegExp(filter.name, "i");
-      filter.name = regex;
-    }
-
-    if (query.$lte || query.$gte) {
-      filter.averageRating = {};
-
-      if (query.$lte) {
-        filter.averageRating.$lte = query.$lte;
-      }
-
-      if (query.$gte) {
-        filter.averageRating.$gte = query.$gte;
-      }
-    }
-
-    console.log(filter);
-
-    const products = await Product.find(filter, "averageRating", {
-      limit: parseInt(query.limit),
-      skip: parseInt(query.skip),
-    })
-      .populate("productDetails")
-      .lean();
-
-    res.send(products);
+    
+    const products = await Product.find({})
+    
+    res.send(products)
   } catch (e) {
     res.status(500).send(Error(e));
   }
+
 };
 
 module.exports.getProductById = async function (req, res) {
   try {
-    const product = await Product.findById(req.params.id);
-    await product.populate("productDetails").execPopulate();
-
-    if (!product) {
-      return res.status(404).send();
-    }
-
-    res.send({ product, productDetails: product.productDetails });
+    const productId = req.params.id;
+    const product = await Product.find({id: productId})
+    
+    res.send(product)
   } catch (e) {
     res.status(500).send(Error(e));
   }
 };
 
 module.exports.createProduct = async (req, res) => {
-  const item = req.body;
-  const details = item.productDetails;
+  const item = req.body.data;
+  //util.inspect(item, false, null, true /* enable colors */)
+  //console.log(item)
+  // const array = item.attributes
+
+  // array.forEach(element => {
+  //   var arr = element.attribute_values.filter((child) => {
+  //     return child.is_selected === true
+  //   });
+  //   element.attribute_values = arr
+  // });
 
   const product = new Product({
+    store_ids: [req.body.store_id],
+    sendo_product_id: item.id,
     name: item.name,
-    searchName: item.searchName,
-    description: item.description,
-    details: item.details,
-    averageRating: item.averageRating,
-    categoryID: item.categoryID,
+    sku: item.store_sku,
+    price: item.price,
+    //weight: item.weight,
+    stock_availability: item.stock_availability,
+    stock_quantity: item.stock_quantity,
+    //description: item.description,
+    //cat2_id: item.cat2_id,
+    //cat3_id: item.cat3_id,
+    sendo_cat4_id: item.cat4_id,
+    product_status: item.product_status,
+    //product_tags: item.product_tags,
+    updated_date_timestamp: item.updated_date_timestamp,
+    created_date_timestamp: item.created_date_timestamp,
+    // seo: item.seo,
+    sendo_product_link: item.product_link,
+    //product_relateds: item.product_relateds,
+    //seo_key_word: item.seo_key_word,
+    //seo_title: item.seo_title,
+    //seo_description: item.seo_description,
+    //seo_score: item.seo_score,
+    product_image: item.product_image,
+    //category_4_name: item.category_4_name,
+    updated_user: item.updated_user,
+    //url_path: item.url_path,
+    //video_links: item.video_links,
+    //height_product: item.height_product,
+    //length_product: item.length_product,
+    //width_product: item.width_product,
+    unit_id: item.unit_id,
+    avatar: item.picture,
+    //product_pictures: item.product_pictures,
+    //attributes: array,
+    // special_price: item.special_price,
+    // promotion_from_date_timestamp: item.promotion_form_date_timestamp,
+    // promotion_to_date_timestamp: item.promotion_to_date_timestamp,
+    // is_promotion: item.is_promotion,
+    extend_shipping_package: item.extend_shipping_package,
+    variants: item.variants,
+    //is_config_variant: item.is_config_variant,
+    //is_invalid_variant:  item.is_invalid_variant,
+    voucher: item.voucher
+    // product_category_types: item.product_category_types,
+    //is_flash_sales: item.is_flash_sales,
+    //campain_status: item.campain_status,
+    //can_edit: item.can_edit,
+    //sendo_video: item.sendo_video,
+    //installments: item.installments
+
   });
 
   try {
     await product.save();
-
-    details.forEach(async (detail) => {
-      const productDetail = new ProductDetail({
-        ...detail,
-        productID: product._id,
-      });
-      await productDetail.save();
-    });
     res.send(product);
   } catch (e) {
     res.status(500).send(Error(e));
   }
 };
 
-module.exports.editProduct = async (req, res) => {
-  const properties = Object.keys(req.body);
+module.exports.updateProduct = async (req, res) => {
+  console.log("Received ping update: ", req.body)
+  //console.log(req.body)
+  // const properties = Object.keys(req.body);
 
-  try {
-    const product = await Product.findById(req.params.id);
 
-    if (!product) {
-      res.status(404).send(product);
-    }
+  // try {
+  //   const product = await Product.findById(req.body.data.id);
 
-    properties.forEach((prop) => (product[prop] = req.body[prop]));
-    product.save();
+  //   if (!product) {
+  //     res.status(404).send(product);
+  //   }
 
-    res.send(product);
-  } catch (e) {
-    res.status(404).send(Error(e));
-  }
+  //   properties.forEach((prop) => (product[prop] = req.body[prop]));
+  //   product.save();
+
+  //   res.send(product);
+  // } catch (e) {
+  //   res.status(404).send(Error(e));
+  // }
 };
 
 module.exports.deleteProduct = async (req, res) => {
