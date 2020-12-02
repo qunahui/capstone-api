@@ -47,3 +47,48 @@ module.exports.getSendoToken = async (req, res) => {
     return res.status(400).send(Error(e))
   }
 }
+
+module.exports.getSendoCategory = async (req, res) =>{
+  //get den cate lv4 se include attribute
+  const categoryId = req.params.id;
+  try {
+      const options = {
+          'method': 'GET',
+          'url': 'https://open.sendo.vn/api/partner/category/' + categoryId,
+          'headers': {
+            'Authorization': 'bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJTdG9yZUlkIjoiODU0MjE0IiwiVXNlck5hbWUiOiIiLCJTdG9yZVN0YXR1cyI6IjIiLCJTaG9wVHlwZSI6IjEiLCJTdG9yZUxldmVsIjoiMCIsImV4cCI6MTYwNjkzMDE5OSwiaXNzIjoiODU0MjE0IiwiYXVkIjoiODU0MjE0In0.jEWfCspUxX4j8PMPEXEVewNnyhtCwtI2KMkEHi_PSHc'
+          }
+        };
+        request(options, function (error, response) {
+          //if (error) throw new Error(error);
+          //console.log(response.body);
+          const categories = JSON.parse(response.body)
+          res.send(categories)
+        });
+  } catch (e) {
+      res.status(500).send(Error(e));
+  }
+}
+module.exports.createSendoProduct = async (req, res) =>{
+  
+  const item = req.body;
+  try {
+      const options = {
+          'method': 'POST',
+          'url': 'https://open.sendo.vn/api/partner/product',
+          'headers': {
+            'Authorization': 'bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJTdG9yZUlkIjoiODU0MjE0IiwiVXNlck5hbWUiOiIiLCJTdG9yZVN0YXR1cyI6IjIiLCJTaG9wVHlwZSI6IjEiLCJTdG9yZUxldmVsIjoiMCIsImV4cCI6MTYwNjkzMDE5OSwiaXNzIjoiODU0MjE0IiwiYXVkIjoiODU0MjE0In0.jEWfCspUxX4j8PMPEXEVewNnyhtCwtI2KMkEHi_PSHc',
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(item)
+        };
+      request(options, function (error, response) {
+          //if (error) throw new Error(error);
+          //console.log(response.body);
+          //const product = JSON.parse(re)
+          res.send(response.body)
+        });
+  } catch (e) {
+      res.status(500).send(Error(e));
+  }
+}

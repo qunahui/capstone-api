@@ -1,7 +1,6 @@
 const auth = require("../../middlewares/auth");
 const Product = require("../models/product");
 const Error = require("../utils/error");
-const ProductDetail = require("../models/productDetail");
 const sendo = require('./sendo')
 const request = require('request');
 const util = require('util')
@@ -55,7 +54,7 @@ module.exports.createProduct = async (req, res) => {
     //cat2_id: item.cat2_id,
     //cat3_id: item.cat3_id,
     sendo_cat4_id: item.cat4_id,
-    product_status: item.product_status,
+    sendo_product_status: item.product_status,
     //product_tags: item.product_tags,
     updated_date_timestamp: item.updated_date_timestamp,
     created_date_timestamp: item.created_date_timestamp,
@@ -68,7 +67,7 @@ module.exports.createProduct = async (req, res) => {
     //seo_score: item.seo_score,
     product_image: item.product_image,
     //category_4_name: item.category_4_name,
-    updated_user: item.updated_user,
+    sendo_updated_user: item.updated_user,
     //url_path: item.url_path,
     //video_links: item.video_links,
     //height_product: item.height_product,

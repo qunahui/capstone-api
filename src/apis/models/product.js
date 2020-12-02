@@ -2,15 +2,15 @@ const { Decimal128, Timestamp, ObjectId } = require("mongodb");
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 const validator = require("validator");
-const { schema } = require("./productDetail");
+
 
 const productSchema = new Schema({
     store_ids:{
       type: Array
     },
     sendo_product_id: {
-      type: Number
-
+      type: Number,
+      unique: true
     },
     store_id:{
       type: Number
@@ -38,16 +38,10 @@ const productSchema = new Schema({
     description:{
       type: String
     },
-    cat2_id:{
-      type: Number
-    },
-    cat3_id:{
-      type: Number
-    },
     sendo_cat4_id:{
       type: Number
     },
-    product_status:{
+    sendo_product_status:{
       type: Number
     },
     tags: {
@@ -59,25 +53,7 @@ const productSchema = new Schema({
     created_date_timestamp:{
       type: Date
     },
-    // seo:{
-    //   type: String
-    // },
     sendo_product_link:{
-      type: String
-    },
-    product_relateds:{
-      type: Array
-    },
-    seo_key_word:{
-      type: String
-    },
-    seo_title:{
-      type: String
-    },
-    seo_description:{
-      type: String
-    },
-    seo_score:{
       type: String
     },
     product_image: {
@@ -87,16 +63,13 @@ const productSchema = new Schema({
       type: String,
       trim: true
     },
-    updated_user:{
+    sendo_updated_user:{
       type: String,
       trim: true
     },
     url_path:{
       type: String,
       trim: true
-    },
-    video_links:{
-      type: Array
     },
     height_product:{
       type: Decimal128
@@ -114,12 +87,12 @@ const productSchema = new Schema({
       type: Object
     },
     
-    product_pictures:{
-      type: Array
-    },
-    attributes: {
-      type: Array
-    },
+    // product_pictures:{
+    //   type: Array
+    // },
+    // attributes: {
+    //   type: Array
+    // },
     special_price:{
       type: Decimal128
     },

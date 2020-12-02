@@ -9,7 +9,7 @@ router.post('/ping', (req, res) => {
   // switch case
   
   const data = req.body
-  console.log(data.type)
+  console.log(data)
   switch(data.type){
     case 'PRODUCT.CREATE':{
       request.post({ url: "http://localhost:5000/products/create-product", 
@@ -18,7 +18,21 @@ router.post('/ping', (req, res) => {
       break
     }
     case 'PRODUCT.UPDATE': {
-      request.post("http://localhost:5000/products/update-product",{ 
+      request.patch({ url:"http://localhost:5000/products/"+data.id,
+        json: data
+      })
+
+      break
+    }
+    case 'SALESORDER.CREATE': {
+      request.post({ url: "http://localhost:5000/orders/sendo/create-sendo-order",
+        json: data
+      })
+
+      break
+    }
+    case 'SALESORDER.UPDATE': {
+      request.patch({ url:"http://localhost:5000/orders/sendo/"+data.id,
         json: data
       })
 
@@ -30,6 +44,9 @@ router.post('/ping', (req, res) => {
 })
 
 router.post('/login', auth, controller.getSendoToken);
+router.get('/category/:id', controller.getSendoCategory)
+
+router.post('/create-product', controller.createSendoProduct)
 
 module.exports = router;
 
