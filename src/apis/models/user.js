@@ -4,6 +4,23 @@ const validator = require("validator");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
+const sendoCredentialSchema = new Schema({
+    shop_key: {
+      type: String,
+    },
+    secret_key: {
+      type: String,
+    }, 
+    store_name: {
+      type: String,
+      unique: true
+    }
+})
+
+const lazadaCredentialSchema = new Schema({
+  
+})
+
 const schema = new Schema({
   uid: {
     type: String,
@@ -19,15 +36,10 @@ const schema = new Schema({
     default: false,
   },
   sendoCredentials: {
-    shop_key: {
-      type: String,
-    },
-    secret_key: {
-      type: String,
-    }
+    type: [sendoCredentialSchema]
   },
   lazadaCredentials: {
-    
+    type: [lazadaCredentialSchema]
   },
   tokens: [
     {

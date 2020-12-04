@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 
 const uri =
-  "mongodb+srv://marverick:banhangauth@admindashboard.ibniu.gcp.mongodb.net/AdminDashboard?retryWrites=true&w=majority";
+  `mongodb+srv://${process.env.ATLAS_DATABASE_USER}:${process.env.ATLAS_DATABASE_PASSWORD}@admindashboard.ibniu.gcp.mongodb.net/${process.env.ATLAS_DATABASE_NAME}?retryWrites=true&w=majority`;
 
 mongoose
   .connect(uri, {
