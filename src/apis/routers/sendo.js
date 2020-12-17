@@ -3,13 +3,13 @@ const request = require("request")
 const router = express.Router();
 const auth = require("../../middlewares/auth");
 const controller = require("../controllers/sendo");
-
+const productController = require("../controllers/product")
 router.post('/ping', (req, res) => {
   // received object
   // switch case
   
-  const data = req.body
-  console.log(data.type)
+  const data = req.body.data
+  console.log(req.body)
   switch(data.type){
     case 'PRODUCT.CREATE':{
       request.post({ url: "http://localhost:5000/products/create-product", 
@@ -18,7 +18,22 @@ router.post('/ping', (req, res) => {
       break
     }
     case 'PRODUCT.UPDATE': {
-      request.post("http://localhost:5000/products/update-product",{ 
+      request.patch({ url:"http://localhost:5000/products/"+data.id,
+        json: data
+      })
+
+      break
+    }
+    case 'SALESORDER.CREATE': {
+      request.post({ url: "http://localhost:5000/orders/sendo/create-order",
+        json: data
+      })
+
+      break
+    }
+    //sendo chưa hoạt động 
+    case 'SALESORDER.UPDATE': {
+      request.patch({ url:"http://localhost:5000/orders/sendo/"+data.id,
         json: data
       })
 
@@ -28,8 +43,20 @@ router.post('/ping', (req, res) => {
       break
   }
 })
+router.post('/login', auth, controller.getSendoToken)
+router.post('/product', controller.sendoProduct)
 
-router.post('/login', auth, controller.getSendoToken);
+router.get('/category/:id', controller.getSendoCategory)
+router.get('/attribute/:id', controller.getSendoAttribute)
+router.get('/product/:id', controller.getSendoProductById)
+router.get('/product', controller.searchSendoProduct) //filter product, if none-> get all
+router.get('/sync-product', controller.syncAllProductSendo)
+router.get('/order', controller.searchSendoOrder) //filter order, if none -> get all
+router.get('/cancel-reason', controller.getCancelReason) //extra route, it will be useful, or not
+router.get('/order/:id', controller.getSendoOrderById)
+router.get('/sync-order', controller.syncAllOrderSendo)
+
+router.put('/update-order-status', controller.updateOrderStatus) 
 
 module.exports = router;
 
