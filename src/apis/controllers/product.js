@@ -1,10 +1,6 @@
 const auth = require("../../middlewares/auth");
 const Product = require("../models/product");
 const Error = require("../utils/error");
-<<<<<<< HEAD
-const ProductDetail = require("../models/productDetail");
-=======
->>>>>>> 077e60c95ca14a2c48e46f4050c35f6668ff40e2
 const sendo = require('./sendo')
 const request = require('request');
 const util = require('util')
