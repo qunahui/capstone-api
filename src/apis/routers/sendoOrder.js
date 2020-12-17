@@ -5,24 +5,12 @@ const sendoOrderController = require("../controllers/sendoOrder");
 const sendoOrder = require("../models/sendoOrder");
 
 router.get("/", sendoOrderController.getAllSendoOrder);
+router.get("/:orderNumber", sendoOrderController.getSendoOrderById);
 
-// test route
-// router.get("/unpopulatedProducts", async (req, res) => {
-//   try {
-//     const products = await Product.find({});
+router.post("/create-order", sendoOrderController.createSendoOrder);
 
-//     res.send(products);
-//   } catch (e) {
-//     res.status(500).send(e.message);
-//   }
-// });
+//router.patch("/:id", sendoOrderController.updateSendoOrder); update what? 
 
-//router.get("/:id", sendoOrderController.getSendoOrderById);
-
-router.post("/create-sendo-order", sendoOrderController.createSendoOrder);
-
-//router.patch("/:id", sendoOrderController.updateSendoOrder);
-
-//router.delete("/:id", sendoOrderController.deleteSendoOrder);
+//router.delete("/:id", sendoOrderController.deleteSendoOrder); isDelete=true?
 
 module.exports = router;

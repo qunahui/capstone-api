@@ -11,19 +11,21 @@ const schema = new Schema({
       type: Number
     },
     order_number:{
-      type: String
+      type: String,
+      unique: true
     },
-    //dia chi lay hang
-    ship_from_address:{
-      type: String
+    sales_order:{
+      type: Object
     },
-    ship_from_ward_id:{
-      type: Number
+    sku_details:{
+      type: Array
     },
-    ship_from_district_id:{
+    sales_order_details:{
+      type: Array
+    },
+    total_amount:{
       type: Number
     }
- 
 });
 
 module.exports = mongoose.model("sendoOrder", schema);

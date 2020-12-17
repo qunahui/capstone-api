@@ -18,7 +18,7 @@ const schema = new Schema({
   createdAt: {
     type: Date,
     default: Date.now,
-    expires: '20s' // this is just for testing, default: 8h
+    expires: '28800' // this is just for testing, default: 8h == 28800s
   },
   isDeleted: {
     type: Boolean,

@@ -15,6 +15,9 @@ const productSchema = new Schema({
     store_id:{
       type: Number
     },
+    store_name:{
+      type: String
+    },
     name: {
       type: String,
       trim: true

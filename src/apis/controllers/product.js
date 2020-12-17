@@ -29,7 +29,7 @@ module.exports.getProductById = async function (req, res) {
 };
 
 module.exports.createProduct = async (req, res) => {
-  const item = req.body.data;
+  const item = req.body;
   //util.inspect(item, false, null, true /* enable colors */)
   //console.log(item)
   // const array = item.attributes
@@ -40,19 +40,21 @@ module.exports.createProduct = async (req, res) => {
   //   });
   //   element.attribute_values = arr
   // });
-
+  console.log("received data")
   const product = new Product({
-    store_ids: [req.body.store_id],
+    store_ids: [req.shop_key],
+    store_name: item.store_name,
     sendo_product_id: item.id,
     name: item.name,
     sku: item.store_sku,
+    sku: item.sku,
     price: item.price,
-    //weight: item.weight,
+    //price: item.special_price,
+    weight: item.weight,
     stock_availability: item.stock_availability,
+    stock_availability: item.stock,
     stock_quantity: item.stock_quantity,
     //description: item.description,
-    //cat2_id: item.cat2_id,
-    //cat3_id: item.cat3_id,
     sendo_cat4_id: item.cat4_id,
     sendo_product_status: item.product_status,
     //product_tags: item.product_tags,
@@ -104,7 +106,7 @@ module.exports.createProduct = async (req, res) => {
 };
 
 module.exports.updateProduct = async (req, res) => {
-  console.log("Received ping update: ", req.body)
+  console.log("Received ping update: ")
   //console.log(req.body)
   // const properties = Object.keys(req.body);
 
