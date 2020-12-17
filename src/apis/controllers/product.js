@@ -29,11 +29,7 @@ module.exports.getProductById = async function (req, res) {
 };
 
 module.exports.createProduct = async (req, res) => {
-<<<<<<< HEAD
-  const item = req.body.data;
-=======
   const item = req.body;
->>>>>>> 077e60c95ca14a2c48e46f4050c35f6668ff40e2
   //util.inspect(item, false, null, true /* enable colors */)
   //console.log(item)
   // const array = item.attributes
@@ -44,23 +40,6 @@ module.exports.createProduct = async (req, res) => {
   //   });
   //   element.attribute_values = arr
   // });
-<<<<<<< HEAD
-
-  const product = new Product({
-    store_ids: [req.body.store_id],
-    sendo_product_id: item.id,
-    name: item.name,
-    sku: item.store_sku,
-    price: item.price,
-    //weight: item.weight,
-    stock_availability: item.stock_availability,
-    stock_quantity: item.stock_quantity,
-    //description: item.description,
-    //cat2_id: item.cat2_id,
-    //cat3_id: item.cat3_id,
-    sendo_cat4_id: item.cat4_id,
-    product_status: item.product_status,
-=======
   console.log("received data")
   const product = new Product({
     store_ids: [req.shop_key],
@@ -78,7 +57,6 @@ module.exports.createProduct = async (req, res) => {
     //description: item.description,
     sendo_cat4_id: item.cat4_id,
     sendo_product_status: item.product_status,
->>>>>>> 077e60c95ca14a2c48e46f4050c35f6668ff40e2
     //product_tags: item.product_tags,
     updated_date_timestamp: item.updated_date_timestamp,
     created_date_timestamp: item.created_date_timestamp,
@@ -91,11 +69,7 @@ module.exports.createProduct = async (req, res) => {
     //seo_score: item.seo_score,
     product_image: item.product_image,
     //category_4_name: item.category_4_name,
-<<<<<<< HEAD
-    updated_user: item.updated_user,
-=======
     sendo_updated_user: item.updated_user,
->>>>>>> 077e60c95ca14a2c48e46f4050c35f6668ff40e2
     //url_path: item.url_path,
     //video_links: item.video_links,
     //height_product: item.height_product,
@@ -132,11 +106,7 @@ module.exports.createProduct = async (req, res) => {
 };
 
 module.exports.updateProduct = async (req, res) => {
-<<<<<<< HEAD
-  console.log("Received ping update: ", req.body)
-=======
   console.log("Received ping update: ")
->>>>>>> 077e60c95ca14a2c48e46f4050c35f6668ff40e2
   //console.log(req.body)
   // const properties = Object.keys(req.body);
 
