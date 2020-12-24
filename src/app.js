@@ -24,16 +24,16 @@ app.use((req, res, next) => {
   next();
 });
 
-const now = Date.now()
-const lazSign = signRequest('JPqQSDANG14eZdPtMogRDjiNwGYGj8wz', '/auth/token/create', {
-  app_key: 122845,
-  timestamp: now,
-  sign_method: 'sha256',
-  code: '0_122845_R9u5c1WlGHXrUz5L2xg4f1re64769',
-  //....other params
-})
-console.log(now)
-console.log(lazSign)
+// const now = Date.now()
+// const lazSign = signRequest('JPqQSDANG14eZdPtMogRDjiNwGYGj8wz', '/auth/token/create', {
+//   app_key: 122845,
+//   timestamp: now,
+//   sign_method: 'sha256',
+//   code: '0_122845_R9u5c1WlGHXrUz5L2xg4f1re64769',
+//   //....other params
+// })
+// console.log(now)
+// console.log(lazSign)
 
 // app.get('/laz', (req, res) => {
 //   console.log(req)

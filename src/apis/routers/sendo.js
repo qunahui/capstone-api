@@ -43,7 +43,7 @@ router.post('/ping', (req, res) => {
       break
   }
 })
-router.post('/login', auth, controller.getSendoToken)
+router.post('/login', controller.getSendoToken)
 router.post('/product', controller.sendoProduct)
 
 router.get('/category/:id', controller.getSendoCategory)

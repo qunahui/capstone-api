@@ -3,7 +3,8 @@ const Product = require("../models/product");
 const Error = require("../utils/error");
 const sendo = require('./sendo')
 const request = require('request');
-const util = require('util')
+const util = require('util');
+const { time } = require("console");
 
 module.exports.getAllProduct = async (req, res) => {
   try {
@@ -45,55 +46,44 @@ module.exports.createProduct = async (req, res) => {
     store_ids: [req.shop_key],
     store_name: item.store_name,
     sendo_product_id: item.id,
+    lazada_product_id: item.item_id,
     name: item.name,
+    name: item.attributes.name,
     sku: item.store_sku,
     sku: item.sku,
+    sku: item.skus[0].SellerSku,
     price: item.price,
-    //price: item.special_price,
+    price:item.skus[0].price,
     weight: item.weight,
     stock_availability: item.stock_availability,
     stock_availability: item.stock,
+    
     stock_quantity: item.stock_quantity,
-    //description: item.description,
+    stock_quantity: item.skus[0].quantity,
+
     sendo_cat4_id: item.cat4_id,
+    lazada_primary_category: item.primary_category,
     sendo_product_status: item.product_status,
-    //product_tags: item.product_tags,
+    lazada_product_status: item.skus[0].Status,
+    
     updated_date_timestamp: item.updated_date_timestamp,
     created_date_timestamp: item.created_date_timestamp,
-    // seo: item.seo,
+    
     sendo_product_link: item.product_link,
-    //product_relateds: item.product_relateds,
-    //seo_key_word: item.seo_key_word,
-    //seo_title: item.seo_title,
-    //seo_description: item.seo_description,
-    //seo_score: item.seo_score,
+    
     product_image: item.product_image,
-    //category_4_name: item.category_4_name,
+    product_image: item.skus[0].Images[0],
+    
     sendo_updated_user: item.updated_user,
-    //url_path: item.url_path,
-    //video_links: item.video_links,
-    //height_product: item.height_product,
-    //length_product: item.length_product,
-    //width_product: item.width_product,
+   
     unit_id: item.unit_id,
     avatar: item.picture,
-    //product_pictures: item.product_pictures,
-    //attributes: array,
-    // special_price: item.special_price,
-    // promotion_from_date_timestamp: item.promotion_form_date_timestamp,
-    // promotion_to_date_timestamp: item.promotion_to_date_timestamp,
-    // is_promotion: item.is_promotion,
+   
     extend_shipping_package: item.extend_shipping_package,
     variants: item.variants,
-    //is_config_variant: item.is_config_variant,
-    //is_invalid_variant:  item.is_invalid_variant,
+   
     voucher: item.voucher
-    // product_category_types: item.product_category_types,
-    //is_flash_sales: item.is_flash_sales,
-    //campain_status: item.campain_status,
-    //can_edit: item.can_edit,
-    //sendo_video: item.sendo_video,
-    //installments: item.installments
+   
 
   });
 
