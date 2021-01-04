@@ -24,6 +24,7 @@ router.get('/ping', (req, res) => {
     console.log(code)
   })
 //router.post('/sign', controller.createSign)
+router.get('/refresh-token/:refresh_token', controller.refreshToken)
 router.get('/product', controller.searchProduct)
 router.get('/product/:id', controller.getProductById)
 
@@ -47,5 +48,6 @@ router.get('/order', controller.searchOrder)
 router.get('/order/:id', controller.getOrderById)
 router.post('/cancel-order', controller.cancelOrder)
 
+router.get('/order-item/:id', controller.getOrderItem)
 
 module.exports = router;

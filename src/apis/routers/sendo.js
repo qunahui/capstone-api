@@ -4,15 +4,18 @@ const router = express.Router();
 const auth = require("../../middlewares/auth");
 const controller = require("../controllers/sendo");
 const productController = require("../controllers/product")
+const util = require('util');
 router.post('/ping', (req, res) => {
   // received object
   // switch case
   
-  const data = req.body.data
+  const data = req.body
   console.log(req.body)
+  
+  //console.log(util.inspect(req.body, false, null, true /* enable colors */))
   switch(data.type){
     case 'PRODUCT.CREATE':{
-      request.post({ url: "http://localhost:5000/products/create-product", 
+      request.post({ url: "http://localhost:5000/products/create-product-ping", 
       json: data })
 
       break
@@ -25,7 +28,7 @@ router.post('/ping', (req, res) => {
       break
     }
     case 'SALESORDER.CREATE': {
-      request.post({ url: "http://localhost:5000/orders/sendo/create-order",
+      request.post({ url: "http://localhost:5000/orders/sendo/create-order-ping",
         json: data
       })
 
@@ -47,6 +50,9 @@ router.post('/login', controller.getSendoToken)
 router.post('/product', controller.sendoProduct)
 
 router.get('/category/:id', controller.getSendoCategory)
+router.get('/ward/:id', controller.getWardById)
+router.get('/district/:id', controller.getDistrictById)
+router.get('/region/:id', controller.getRegionById)
 router.get('/attribute/:id', controller.getSendoAttribute)
 router.get('/product/:id', controller.getSendoProductById)
 router.get('/product', controller.searchSendoProduct) //filter product, if none-> get all

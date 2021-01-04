@@ -29,7 +29,96 @@ module.exports.getProductById = async function (req, res) {
   }
 };
 
-module.exports.createProduct = async (req, res) => {
+module.exports.createProductByPing = async (req, res) => {
+  const item = req.body;
+  //util.inspect(item, false, null, true /* enable colors */)
+  //console.log(item)
+
+  const array = item.attributes
+  array.forEach(element => {
+    var arr = element.attribute_values.filter((child) => {
+      return child.is_selected === true
+    });
+    element.attribute_values = arr
+  }); 
+  console.log("received data")
+  const update_at = new Date(item.data.updated_date_timestamp*1000)
+  const create_at = new Date(item.data.created_date_timestamp*1000)
+  const product = new Product({
+    store_ids: [item.store_id],
+    sendo_product_id: item.data.id,
+    name: item.data.name,
+    sku: item.data.store_sku,
+    price: item.data.price,
+    weight: item.data.weight,
+    stock_quantity: item.data.stock_quantity,
+    sendo_product_status: item.data.product_status,    
+    updated_date_timestamp: update_at,
+    created_date_timestamp: create_at,
+    sendo_product_link: item.data.product_link,       
+    unit_id: item.data.unit_id,
+    avatar: item.data.product_image,
+    variants: item.data.variants,
+    attributes: array,
+    voucher: item.data.voucher
+  });
+
+  try {
+    await product.save();
+    res.send(product);
+  } catch (e) {
+    res.status(500).send(Error(e));
+  }
+};
+module.exports.createProductBySyncSendo = async (req, res) => {
+  const item = req.body;
+  //util.inspect(item, false, null, true /* enable colors */)
+  //console.log(item)
+  const array = item.attributes
+
+  array.forEach(element => {
+    var arr = element.attribute_values.filter((child) => {
+      return child.is_selected === true
+    });
+    element.attribute_values = arr
+  });
+  console.log("received data")
+  const update_at = new Date(item.updated_date_timestamp*1000)
+  const create_at = new Date(item.created_date_timestamp*1000)
+  const product = new Product({
+    store_ids: [req.shop_key],
+    store_name: item.store_name,
+    sendo_product_id: item.id,
+    lazada_product_id: "-1",
+    name: item.name,
+    sendo_sku: item.sku,
+    weight: item.weight,
+    stock_availability: item.stock_availability,
+    stock_quantity: item.stock_quantity,
+    sendo_product_status: item.status,
+    updated_date_timestamp: update_at,
+    created_date_timestamp: create_at,
+    
+    sendo_product_link: item.product_link,
+   
+    unit_id: item.unit_id,
+    avatar: item.picture,
+   
+    variants: item.variants,
+    attributes: array,
+    voucher: item.voucher
+   
+
+  });
+
+  try {
+    await product.save();
+    res.send(product);
+  } catch (e) {
+    res.status(500).send(Error(e));
+  }
+};
+module.exports.createProductBySyncLazada = async (req, res) => {
   const item = req.body;
   //util.inspect(item, false, null, true /* enable colors */)
   //console.log(item)
@@ -44,47 +133,15 @@ module.exports.createProduct = async (req, res) => {
   console.log("received data")
   const product = new Product({
     store_ids: [req.shop_key],
-    store_name: item.store_name,
-    sendo_product_id: item.id,
+    sendo_product_id: -1,
     lazada_product_id: item.item_id,
-    name: item.name,
     name: item.attributes.name,
-    sku: item.store_sku,
-    sku: item.sku,
     sku: item.skus[0].SellerSku,
-    price: item.price,
     price:item.skus[0].price,
-    weight: item.weight,
-    stock_availability: item.stock_availability,
-    stock_availability: item.stock,
-    
-    stock_quantity: item.stock_quantity,
+    weight: item.skus[0].package_weight,
     stock_quantity: item.skus[0].quantity,
-
-    sendo_cat4_id: item.cat4_id,
-    lazada_primary_category: item.primary_category,
-    sendo_product_status: item.product_status,
     lazada_product_status: item.skus[0].Status,
-    
-    updated_date_timestamp: item.updated_date_timestamp,
-    created_date_timestamp: item.created_date_timestamp,
-    
-    sendo_product_link: item.product_link,
-    
-    product_image: item.product_image,
     product_image: item.skus[0].Images[0],
-    
-    sendo_updated_user: item.updated_user,
-   
-    unit_id: item.unit_id,
-    avatar: item.picture,
-   
-    extend_shipping_package: item.extend_shipping_package,
-    variants: item.variants,
-   
-    voucher: item.voucher
-   
-
   });
 
   try {
@@ -94,7 +151,6 @@ module.exports.createProduct = async (req, res) => {
     res.status(500).send(Error(e));
   }
 };
-
 module.exports.updateProduct = async (req, res) => {
   console.log("Received ping update: ")
   //console.log(req.body)

@@ -100,9 +100,9 @@ const productSchema = new Schema({
     // product_pictures:{
     //   type: Array
     // },
-    // attributes: {
-    //   type: Array
-    // },
+    attributes: {
+      type: Array
+    },
     special_price:{
       type: Decimal128
     },
