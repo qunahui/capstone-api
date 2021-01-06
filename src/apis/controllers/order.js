@@ -7,6 +7,40 @@ const rp = require('request-promise');
 const util = require('util');
 const { response } = require("express");
 
+const payment_method ={
+  "1": "COD",
+  "2": "Senpay",
+  "4": "Compine",
+  "5": "PayLater"
+}
+const payment_status = {
+  "1": "NotPaid",
+  "2": "CODCarrier",
+  "3": "Paid",
+  "4": "Completed",
+  "5": "Refund",
+  "6": "Waiting",
+  "7": "Reject",
+  "14": "PartialPaid",
+  "15": "PartialRefund"
+}
+const order_status = {
+  "2": "New",
+  "3": "Proccessing",
+  "6": "Shipping",
+  "7": "POD",
+  "8": "Completed",
+  "10": "Closed",
+  "11": "Delaying",
+  "12": "Delay",
+  "13": "Cancelled",
+  "14": "Splitting",
+  "15": "Splitted",
+  "19": "Merging",
+  "21": "Returning",
+  "22": "Returned",
+  "23": "WaitingSendo",
+}
 module.exports.getAllOrder = async (req, res) => {
   try {
     
@@ -35,9 +69,9 @@ module.exports.createOrderByPing = async (req, res) => {
     order_status: item.order_status,
     //order infomation
     create_at: created_at,
-    payment_method: item.payment_method,
+    payment_method: payment_method[`${item.payment_method}`],
     discount: item.voucher_value,
-    payment_status: item.payment_status,
+    payment_status: payment_status[`${item.payment_status}`],
     seller_note: item.note,
     //shipping infomation
     delivery_service: item.carrier_name,
