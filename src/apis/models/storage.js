@@ -5,6 +5,10 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
 const platformCredentialSchema = new Schema({
+  id: {
+    type: mongoose.Schema.Types.ObjectId,
+    required: true,
+  },
   app_key: {
     type: String,
     required: true
@@ -17,28 +21,13 @@ const platformCredentialSchema = new Schema({
     type: String, 
     required: true
   },
+  store_id:{ 
+    type: String,
+    required: true,
+  },
   platform_name: {
     type: String,
     required: true,
-  }
-})
-
-const schema = new Schema({
-  uid: {
-    type: String,
-    required: true,
-    unique: true
-  },
-  theme: {
-    type: Boolean,
-    default: true
-  },
-  isDeleted: {
-    type: Boolean,
-    default: false,
-  },
-  platformCredentials: {
-    type: [platformCredentialSchema]
   },
   tokens: [
     {
@@ -47,6 +36,29 @@ const schema = new Schema({
         }
     },
   ],
+})
+
+const schema = new Schema({
+  id: {
+    type: String,
+    required: true,
+  },
+  displayName: {
+    type: String,
+    required: true,
+    default: 'SHOP_SYNC'
+  },
+  platformCredentials: {
+    type: [platformCredentialSchema]
+  },
+  totalMoney: {
+    type: Float32Array,
+    default: 0,
+  },
+  isActivated: {
+    type: Boolean,
+    default: true,
+  },
 });
 
 schema.virtual("platformTokens", {
@@ -89,16 +101,6 @@ schema.statics.findByCredentials = async (uid) => {
   return user;
 };
 
-// // hash the password before saving
-// schema.pre("save", async function (next) {
-//   const user = this;
-
-//   if (user.isModified("password")) {
-//     user.password = await bcrypt.hash(user.password, 8);
-//   }
-
-//   next();
-// });
 
 const User = mongoose.model("User", schema);
 

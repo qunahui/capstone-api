@@ -1,53 +1,27 @@
 const crypto = require('crypto')
+const { signRequest } = require('../utils/laz-sign-request')
 var request = require('request');
-var convert = require('xml-js');
 const fs = require('fs');
 var options = {compact: true, ignoreComment: true, spaces: 4};
 
+// module.exports.createSign = async (req, res) => {
+//     const appSecret = req.body.appSecret
+//     const apiPath = req.body.apiPath
+//     const params = req.body.params
+//     const keysortParams = keysort(params)
 
-const keysort = (unordered) => {
-    return Object.keys(unordered)
-        .sort()
-        .reduce((ordered, key) => {
-            ordered[key] = unordered[key]
-            return ordered
-        }, {})
-}
-const concatDictionaryKeyValue = (object) => {
-    return Object.keys(object).reduce(
-        (concatString, key) => concatString.concat(key + object[key]),
-        '',
-    )
-}
-module.exports.signRequest = (appSecret, apiPath, params) => {
-    const keysortParams = keysort(params)
-    const concatString = concatDictionaryKeyValue(keysortParams)
-    const preSignString = apiPath + concatString
-    const hash = crypto
-        .createHmac('sha256', appSecret)
-        .update(preSignString)
-        .digest('hex')
+//     const concatString = concatDictionaryKeyValue(keysortParams)
 
-    return hash.toUpperCase()
-}
-module.exports.createSign = async (req, res) => {
-    const appSecret = req.body.appSecret
-    const apiPath = req.body.apiPath
-    const params = req.body.params
-    const keysortParams = keysort(params)
+//     const preSignString = apiPath + concatString
 
-    const concatString = concatDictionaryKeyValue(keysortParams)
+//     const hash = crypto
+//         .createHmac('sha256', appSecret)
+//         .update(preSignString)
+//         .digest('hex')
 
-    const preSignString = apiPath + concatString
-
-    const hash = crypto
-        .createHmac('sha256', appSecret)
-        .update(preSignString)
-        .digest('hex')
-
-    res.send(hash.toUpperCase()) 
-    //res.send("hello")
-  }  
+//     res.send(hash.toUpperCase()) 
+//     //res.send("hello")
+//   }  
 
 module.exports.searchProduct = async (req, res) =>{
     const apiUrl = 'https://api.lazada.vn/rest' 
@@ -63,7 +37,7 @@ module.exports.searchProduct = async (req, res) =>{
         "access_token":accessToken,
     }
     const filter = req.query.filter
-    const sign = this.signRequest(appSecret, apiPath, {...commonRequestParams, filter})
+    const sign = signRequest(appSecret, apiPath, {...commonRequestParams, filter})
     try {
         var options = {
             'method': 'GET',
@@ -102,7 +76,7 @@ module.exports.getProductById = async (req, res) =>{
         "access_token":accessToken,
     }
     const item_id = req.params.id
-    const sign = this.signRequest(appSecret, apiPath, {...commonRequestParams, item_id})
+    const sign = signRequest(appSecret, apiPath, {...commonRequestParams, item_id})
     try {
         var options = {
             'method': 'GET',
@@ -141,7 +115,7 @@ module.exports.getCategoryTree = async (req, res) =>{
         "sign_method": "sha256",
         "access_token":accessToken
     }
-    const sign = this.signRequest(appSecret, apiPath, commonRequestParams)
+    const sign = signRequest(appSecret, apiPath, commonRequestParams)
     try {
         var options = {
             'method': 'GET',
@@ -181,7 +155,7 @@ module.exports.getAttributes = async (req, res) =>{
         "sign_method": "sha256",
         //"access_token":accessToken
     }
-    const sign = this.signRequest(appSecret, apiPath, {...commonRequestParams, primary_category_id})
+    const sign = signRequest(appSecret, apiPath, {...commonRequestParams, primary_category_id})
     try {
         var options = {
             'method': 'GET',
@@ -222,7 +196,7 @@ module.exports.getBrands = async (req, res) =>{
         "sign_method": "sha256",
         //"access_token":accessToken
     }
-    const sign = this.signRequest(appSecret, apiPath, {...commonRequestParams, offset, limit})
+    const sign = signRequest(appSecret, apiPath, {...commonRequestParams, offset, limit})
     try {
         var options = {
             'method': 'GET',
@@ -261,7 +235,7 @@ module.exports.getCategorySuggestion = async (req, res) =>{
         "sign_method": "sha256",
         "access_token":accessToken
     }
-    const sign = this.signRequest(appSecret, apiPath, {...commonRequestParams, product_name})
+    const sign = signRequest(appSecret, apiPath, {...commonRequestParams, product_name})
     const encodeProductName = encodeURI(product_name)
     try {
         var options = {
@@ -301,7 +275,7 @@ module.exports.getSellerInfo = async (req, res) =>{
         "sign_method": "sha256",
         "access_token":accessToken
     }
-    const sign = this.signRequest(appSecret, apiPath, commonRequestParams)
+    const sign = signRequest(appSecret, apiPath, commonRequestParams)
     try {
         var options = {
             'method': 'GET',
@@ -338,7 +312,7 @@ module.exports.getSellerMetrics = async (req, res) =>{
         "sign_method": "sha256",
         "access_token":accessToken
     }
-    const sign = this.signRequest(appSecret, apiPath, commonRequestParams)
+    const sign = signRequest(appSecret, apiPath, commonRequestParams)
     try {
         var options = {
             'method': 'GET',
@@ -378,7 +352,7 @@ module.exports.updateSellerEmail = async (req, res) =>{
         "sign_method": "sha256",
         "access_token":accessToken
     }
-    const sign = this.signRequest(appSecret, apiPath, {...commonRequestParams, payload})
+    const sign = signRequest(appSecret, apiPath, {...commonRequestParams, payload})
     const encodePayload = encodeURI(payload)
     try {
         var options = {
@@ -422,7 +396,7 @@ module.exports.uploadImage = async (req, res) =>{
         "access_token":accessToken
     }
 
-    const sign = this.signRequest(appSecret, apiPath, commonRequestParams)
+    const sign = signRequest(appSecret, apiPath, commonRequestParams)
     //console.log(req.file)
     try {
         
