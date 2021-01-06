@@ -5,7 +5,7 @@ const productRoutes = require("./routers/product");
 const sendoRoutes = require("./routers/sendo");
 const lazadaRoutes = require("./routers/lazada")
 const lazadaCategoryRoutes =  require("./routers/lazadaCategory");
-const sendoOrderRoutes = require("./routers/sendoOrder");
+const orderRoutes = require("./routers/order");
 module.exports = (app) => {
   app.use("/products", productRoutes);
   //app.use("/product-categories", productCategoryRoutes);
@@ -14,6 +14,6 @@ module.exports = (app) => {
   app.use("/api/sendo", sendoRoutes);
   
   app.use("/lazada-category", lazadaCategoryRoutes);
-  app.use("/orders/sendo", sendoOrderRoutes);
+  app.use("/orders/", orderRoutes);
   app.use("/api/lazada", lazadaRoutes);
 };

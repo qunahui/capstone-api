@@ -94,6 +94,69 @@ module.exports.sendoProduct = async (req, res) =>{
       res.status(500).send(Error(e));
   }
 }
+module.exports.getWardById = async (req, res) =>{
+  
+  const wardId = req.params.id;
+  try {
+      const options = {
+          'method': 'GET',
+          'url': 'https://open.sendo.vn/api/address/ward/' + wardId,
+          'headers': {
+            'Authorization': 'bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJTdG9yZUlkIjoiODU0MjE0IiwiVXNlck5hbWUiOiIiLCJTdG9yZVN0YXR1cyI6IjIiLCJTaG9wVHlwZSI6IjEiLCJTdG9yZUxldmVsIjoiMCIsImV4cCI6MTYwOTc1MDMzOCwiaXNzIjoiODU0MjE0IiwiYXVkIjoiODU0MjE0In0.cGxBv-Bq3u4725YuwH6rySKPM6vgFjRBB4DXoeb8ha0'
+          }
+        };
+        request(options, function (error, response) {
+          //if (error) throw new Error(error);
+          //console.log(response.body);
+          const ward = JSON.parse(response.body).result.name
+          res.send(ward)
+        });
+  } catch (e) {
+      res.status(500).send(Error(e));
+  }
+}
+module.exports.getDistrictById = async (req, res) =>{
+  
+  const districtId = req.params.id;
+  try {
+      const options = {
+          'method': 'GET',
+          'url': 'https://open.sendo.vn/api/address/district/' + districtId,
+          'headers': {
+            'Authorization': 'bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJTdG9yZUlkIjoiODU0MjE0IiwiVXNlck5hbWUiOiIiLCJTdG9yZVN0YXR1cyI6IjIiLCJTaG9wVHlwZSI6IjEiLCJTdG9yZUxldmVsIjoiMCIsImV4cCI6MTYwOTc1MDMzOCwiaXNzIjoiODU0MjE0IiwiYXVkIjoiODU0MjE0In0.cGxBv-Bq3u4725YuwH6rySKPM6vgFjRBB4DXoeb8ha0'
+          }
+        };
+        request(options, function (error, response) {
+          //if (error) throw new Error(error);
+          //console.log(response.body);
+          const district = JSON.parse(response.body).result.name
+          res.send(district)
+        });
+  } catch (e) {
+      res.status(500).send(Error(e));
+  }
+}
+module.exports.getRegionById = async (req, res) =>{
+  
+  const districtId = req.params.id;
+  try {
+      const options = {
+          'method': 'GET',
+          'url': 'https://open.sendo.vn/api/address/region/' + districtId,
+          'headers': {
+            'Authorization': 'bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJTdG9yZUlkIjoiODU0MjE0IiwiVXNlck5hbWUiOiIiLCJTdG9yZVN0YXR1cyI6IjIiLCJTaG9wVHlwZSI6IjEiLCJTdG9yZUxldmVsIjoiMCIsImV4cCI6MTYwOTc1MDMzOCwiaXNzIjoiODU0MjE0IiwiYXVkIjoiODU0MjE0In0.cGxBv-Bq3u4725YuwH6rySKPM6vgFjRBB4DXoeb8ha0'
+          }
+        };
+        request(options, function (error, response) {
+          //if (error) throw new Error(error);
+          //console.log(response.body);
+          const region = JSON.parse(response.body).result.name
+          res.send(region)
+        });
+  } catch (e) {
+      res.status(500).send(Error(e));
+  }
+}
 module.exports.getSendoAttribute = async (req, res) =>{
   
   const attributeId = req.params.id;
@@ -170,7 +233,7 @@ module.exports.syncAllProductSendo = async (req, res) => {
         const product = JSON.parse(response.body)
         product["store_name"] = storeName
         //product["shop_key"] = shopKey
-        request.post({ url: "http://localhost:5000/products/create-product", 
+        request.post({ url: "http://localhost:5000/products/create-product-sync-sendo", 
         json: product })
         //console.log(response.body)
       })
@@ -281,7 +344,7 @@ module.exports.syncAllOrderSendo = async (req, res) =>{
   request.get({url: 'http://localhost:5000/api/sendo/order'}, function(error, response){
     const orders = JSON.parse(response.body)
     orders.forEach(e => {
-      request.post({url: "http://localhost:5000/orders/sendo/create-order",
+      request.post({url: "http://localhost:5000/orders/sendo/create-order-sync",
                     json: e})
     });
     //console.log(storeName)
