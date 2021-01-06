@@ -12,6 +12,10 @@ const productSchema = new Schema({
       type: Number,
       unique: true
     },
+    lazada_product_id:{
+      type: Number,
+      unique: true
+    },
     store_id:{
       type: Number
     },
@@ -46,6 +50,9 @@ const productSchema = new Schema({
     },
     sendo_product_status:{
       type: Number
+    },
+    lazada_product_status:{
+      type: String
     },
     tags: {
       type: String
@@ -93,9 +100,9 @@ const productSchema = new Schema({
     // product_pictures:{
     //   type: Array
     // },
-    // attributes: {
-    //   type: Array
-    // },
+    attributes: {
+      type: Array
+    },
     special_price:{
       type: Decimal128
     },

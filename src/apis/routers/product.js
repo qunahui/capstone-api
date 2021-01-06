@@ -19,8 +19,9 @@ router.get("/unpopulatedProducts", async (req, res) => {
 
 router.get("/:id", productController.getProductById);
 
-router.post("/create-product", productController.createProduct);
-
+router.post("/create-product-ping", productController.createProductByPing);
+router.post("/create-product-sync-sendo", productController.createProductBySyncSendo);
+router.post("/create-product-sync-lazada", productController.createProductBySyncLazada);
 router.patch("/:id", productController.updateProduct);
 
 router.delete("/:id", productController.deleteProduct);
