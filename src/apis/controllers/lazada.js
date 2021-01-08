@@ -208,7 +208,7 @@ module.exports.getAttributes = async (req, res) =>{
         request(options, function (error, response) {
             //if (error) throw new Error(error);
             //console.log(response.body);
-            const attribute = JSON.parse(response.body)
+            const attribute = JSON.parse(response.body).data
             res.send(attribute)
         });
     } catch (e) {

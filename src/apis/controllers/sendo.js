@@ -102,7 +102,7 @@ module.exports.getWardById = async (req, res) =>{
           'method': 'GET',
           'url': 'https://open.sendo.vn/api/address/ward/' + wardId,
           'headers': {
-            'Authorization': 'bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJTdG9yZUlkIjoiODU0MjE0IiwiVXNlck5hbWUiOiIiLCJTdG9yZVN0YXR1cyI6IjIiLCJTaG9wVHlwZSI6IjEiLCJTdG9yZUxldmVsIjoiMCIsImV4cCI6MTYwOTc1MDMzOCwiaXNzIjoiODU0MjE0IiwiYXVkIjoiODU0MjE0In0.cGxBv-Bq3u4725YuwH6rySKPM6vgFjRBB4DXoeb8ha0'
+            'Authorization': 'bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJTdG9yZUlkIjoiODU0MjE0IiwiVXNlck5hbWUiOiIiLCJTdG9yZVN0YXR1cyI6IjIiLCJTaG9wVHlwZSI6IjEiLCJTdG9yZUxldmVsIjoiMCIsImV4cCI6MTYwOTg0MTc0NCwiaXNzIjoiODU0MjE0IiwiYXVkIjoiODU0MjE0In0.TuSYGKaXtsi9LtcB1FnplZlvk1zQFmPiByFhoVlHMRc'
           }
         };
         request(options, function (error, response) {
@@ -123,7 +123,7 @@ module.exports.getDistrictById = async (req, res) =>{
           'method': 'GET',
           'url': 'https://open.sendo.vn/api/address/district/' + districtId,
           'headers': {
-            'Authorization': 'bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJTdG9yZUlkIjoiODU0MjE0IiwiVXNlck5hbWUiOiIiLCJTdG9yZVN0YXR1cyI6IjIiLCJTaG9wVHlwZSI6IjEiLCJTdG9yZUxldmVsIjoiMCIsImV4cCI6MTYwOTc1MDMzOCwiaXNzIjoiODU0MjE0IiwiYXVkIjoiODU0MjE0In0.cGxBv-Bq3u4725YuwH6rySKPM6vgFjRBB4DXoeb8ha0'
+            'Authorization': 'bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJTdG9yZUlkIjoiODU0MjE0IiwiVXNlck5hbWUiOiIiLCJTdG9yZVN0YXR1cyI6IjIiLCJTaG9wVHlwZSI6IjEiLCJTdG9yZUxldmVsIjoiMCIsImV4cCI6MTYwOTg0MTc0NCwiaXNzIjoiODU0MjE0IiwiYXVkIjoiODU0MjE0In0.TuSYGKaXtsi9LtcB1FnplZlvk1zQFmPiByFhoVlHMRc'
           }
         };
         request(options, function (error, response) {
@@ -144,7 +144,7 @@ module.exports.getRegionById = async (req, res) =>{
           'method': 'GET',
           'url': 'https://open.sendo.vn/api/address/region/' + districtId,
           'headers': {
-            'Authorization': 'bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJTdG9yZUlkIjoiODU0MjE0IiwiVXNlck5hbWUiOiIiLCJTdG9yZVN0YXR1cyI6IjIiLCJTaG9wVHlwZSI6IjEiLCJTdG9yZUxldmVsIjoiMCIsImV4cCI6MTYwOTc1MDMzOCwiaXNzIjoiODU0MjE0IiwiYXVkIjoiODU0MjE0In0.cGxBv-Bq3u4725YuwH6rySKPM6vgFjRBB4DXoeb8ha0'
+            'Authorization': 'bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJTdG9yZUlkIjoiODU0MjE0IiwiVXNlck5hbWUiOiIiLCJTdG9yZVN0YXR1cyI6IjIiLCJTaG9wVHlwZSI6IjEiLCJTdG9yZUxldmVsIjoiMCIsImV4cCI6MTYwOTg0MTc0NCwiaXNzIjoiODU0MjE0IiwiYXVkIjoiODU0MjE0In0.TuSYGKaXtsi9LtcB1FnplZlvk1zQFmPiByFhoVlHMRc'
           }
         };
         request(options, function (error, response) {

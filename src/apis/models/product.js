@@ -33,13 +33,13 @@ const productSchema = new Schema({
     price:{
       type: Decimal128
     },
-    weight:{
+    sendo_product_weight:{
       type: Decimal128
     },
-    stock_availability:{
+    sendo_stock_availability:{
       type: Boolean
     },
-    stock_quantity:{
+    sendo_stock_quantity:{
       type: Number
     },
     description:{
@@ -100,9 +100,9 @@ const productSchema = new Schema({
     // product_pictures:{
     //   type: Array
     // },
-    attributes: {
-      type: Array
-    },
+    // attributes: {
+    //   type: Array
+    // },
     special_price:{
       type: Decimal128
     },
@@ -119,6 +119,9 @@ const productSchema = new Schema({
       type: Object
     },
     variants:{
+      type: Array
+    },
+    skus:{
       type: Array
     },
     is_config_variant:{
