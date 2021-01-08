@@ -17,7 +17,6 @@ router.post("/logout-all", auth, controller.signOutAll);
 
 router.patch("/update", auth, controller.editProfile);
 
-router.patch("/add-sendo-credentials", auth, controller.addSendoCredentials);
 
 router.delete("/delete", auth, controller.deleteProfile);
 

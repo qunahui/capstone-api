@@ -19,11 +19,11 @@ var upload = multer({
   storage: storage
 })
 
-router.get('/ping', (req, res) => {
-    const code = req.query.code
-    console.log(code)
+router.get('/call_back', (req, res) => {
+    console.log(req.query.code)
   })
 //router.post('/sign', controller.createSign)
+
 router.get('/refresh-token/:refresh_token', controller.refreshToken)
 router.get('/product', controller.searchProduct)
 router.get('/product/:id', controller.getProductById)

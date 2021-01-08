@@ -29,17 +29,22 @@ const schema = new Schema({
     required: true,
     unique: true
   },
-  theme: {
-    type: Boolean,
-    default: true
-  },
   isDeleted: {
     type: Boolean,
     default: false,
   },
-  platformCredentials: {
-    type: [platformCredentialSchema]
-  },
+  storages: [
+    {
+      storage: {
+        storageId: {
+          type: String,
+        },
+        storageName: {
+          type: String
+        }
+      }
+    },
+  ],
   tokens: [
     {
       token: {
@@ -49,11 +54,11 @@ const schema = new Schema({
   ],
 });
 
-schema.virtual("platformTokens", {
-  ref: "platformToken",
-  localField: "uid",
-  foreignField: "uid"
-})
+// schema.virtual("platformTokens", {
+//   ref: "platformToken",
+//   localField: "uid",
+//   foreignField: "uid"
+// })
 
 schema.methods.toJSON = function () {
   const user = this;

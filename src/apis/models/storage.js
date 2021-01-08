@@ -23,7 +23,6 @@ const platformCredentialSchema = new Schema({
   },
   store_id:{ 
     type: String,
-    required: true,
   },
   platform_name: {
     type: String,
@@ -38,7 +37,7 @@ const platformCredentialSchema = new Schema({
   ],
 })
 
-const schema = new Schema({
+const storageSchema = new Schema({
   id: {
     type: String,
     required: true,
@@ -46,13 +45,12 @@ const schema = new Schema({
   displayName: {
     type: String,
     required: true,
-    default: 'SHOP_SYNC'
   },
   platformCredentials: {
     type: [platformCredentialSchema]
   },
   totalMoney: {
-    type: Float32Array,
+    type: Number,
     default: 0,
   },
   isActivated: {
@@ -61,47 +59,50 @@ const schema = new Schema({
   },
 });
 
-schema.virtual("platformTokens", {
-  ref: "platformToken",
-  localField: "uid",
-  foreignField: "uid"
-})
-
-schema.methods.toJSON = function () {
-  const user = this;
-  const userObject = user.toObject();
-  delete userObject.tokens;
-  delete userObject._id;
-  delete userObject.isDeleted;
+// schema.methods.toJSON = function () {
+//   const user = this;
+//   const userObject = user.toObject()
   
-  return userObject;
-};
+//   return userObject;
+// };
 
 // generate jwt
-schema.methods.generateJWT = async function () {
-  const user = this;
-  const token = jwt.sign({ uid: user.uid.toString() }, "thuongthuong", {
-    expiresIn: '30d'
-  });
+// schema.methods.generateJWT = async function () {
+//   const user = this;
+//   const token = jwt.sign({ uid: user.uid.toString() }, "thuongthuong", {
+//     expiresIn: '30d'
+//   });
 
-  user.tokens = user.tokens.concat({ token });
-  await user.save();
+//   user.tokens = user.tokens.concat({ token });
+//   await user.save();
 
-  return token;
-};
+//   return token;
+// };
 
-// check login
-schema.statics.findByCredentials = async (uid) => {
-  var user = await User.findOne({ uid });
-  
-  if (!user) {
-    throw new Error("Unable to login!");
+// 
+storageSchema.pre("validate",async function (next) {
+  const storage = this;
+
+  try {
+    storage.id = storage._id 
+    next();
+  } catch(e) {
+    console.log(e)
   }
-  
-  return user;
-};
+});
+
+platformCredentialSchema.pre("validate",async function (next) {
+  const platform = this;
+
+  try {
+    platform.id = platform._id 
+    next();
+  } catch(e) {
+    console.log(e)
+  }
+});
 
 
-const User = mongoose.model("User", schema);
+const Storage = mongoose.model("Storage", storageSchema);
 
-module.exports = User;
+module.exports = Storage;

@@ -1,4 +1,5 @@
 const User = require("../models/user");
+const Storage = require("../models/storage")
 const auth = require("../../middlewares/auth");
 const Error = require("../utils/error");
 
@@ -9,11 +10,15 @@ module.exports.getCurrentUser = async (req, res) => {
 module.exports.signUp = async (req, res) => {
   try {
     const user = new User({ ...req.body });
-
+    console.log(user)
+    const storageName = 'STORAGE_' + user.uid.toUpperCase()
+    const linkedStorage = new Storage({ displayName: storageName })
+    await linkedStorage.save();
+    
+    user.storages = user.storages.concat({ storage: { storageId: linkedStorage.id, storageName: linkedStorage.displayName } });
     await user.save();
-
+    
     const token = await user.generateJWT();
-
     res.status(201).send({user, token});
   } catch (e) {
     let status = 400;
@@ -45,7 +50,6 @@ module.exports.signIn = async (req, res) => {
     }
 
     const token = await user.generateJWT();
-    console.log({user, token})
     return res.send({ user, token });
   } catch (e) {
     let status = 400;
@@ -96,26 +100,6 @@ module.exports.editProfile = async (req, res) => {
 
     await user.save();
     res.send(user);
-  } catch (e) {
-    res.status(404).send(Error(e));
-  }
-};
-
-module.exports.addSendoCredentials = async (req, res) => {
-  try {
-    const user = req.user;
-
-    const chosenPlatform = user.platformCredentials.filter(item => item.platform_name === req.body.platform_name)
-    const insertCredentials = {
-      ...req.body,
-      store_name: req.body.platform_name.toUpperCase()+ '-' + (chosenPlatform.length + 1)
-    }
-    user.platformCredentials.push(insertCredentials)
-
-    await user.save()
-
-    res.status(200).send(insertCredentials)
-
   } catch (e) {
     res.status(404).send(Error(e));
   }
