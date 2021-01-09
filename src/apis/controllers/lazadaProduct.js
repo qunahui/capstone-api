@@ -34,7 +34,7 @@ module.exports.createLazadaProduct = async (req, res) => {
     });
    
     const product = new lazadaProduct({
-      skus: variants,
+      variants: variants,
       product_id: item.product_id,
       primary_category: item.primary_category,
       attributes: item.attributes

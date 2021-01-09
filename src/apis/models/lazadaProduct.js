@@ -8,7 +8,7 @@ const schema = new Schema({
     store_id:{
         type: Number
     },
-    skus:{
+    variants:{
         type: Array
     },
     product_id:{

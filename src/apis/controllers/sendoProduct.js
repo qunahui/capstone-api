@@ -56,6 +56,8 @@ console.log("received data")
         e1.attribute_name = attribute.name
         e1.option_value = attribute_value.value
       })
+      e.variant_attributes = e.attributes
+      delete e.attributes
     });
 
   const product = new sendoProduct({

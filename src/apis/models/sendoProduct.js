@@ -46,9 +46,9 @@ const schema = new Schema({
     variants:{
         type: Array
     },
-    attributes:{
-        type: Array
-    },
+    // attributes:{
+    //     type: Array
+    // },
     voucher:{
         type: Object
     }
