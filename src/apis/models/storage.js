@@ -4,7 +4,7 @@ const validator = require("validator");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
-const platformCredentialSchema = new Schema({
+const sendoCredentialSchema = new Schema({
   id: {
     type: mongoose.Schema.Types.ObjectId,
     required: true,
@@ -28,13 +28,37 @@ const platformCredentialSchema = new Schema({
     type: String,
     required: true,
   },
-  tokens: [
-    {
-      token: {
-          type: String,
-        }
-    },
-  ],
+  access_token: {
+    type: String,
+    expires: '28800'
+  },
+})
+
+const lazadaCredentialSchema = new Schema({
+  id: {
+    type: mongoose.Schema.Types.ObjectId,
+    required: true,
+  },
+  store_name: {
+    type: String,
+  },
+  uid: {
+    type: String,
+    required: true,
+  },
+  platform_name: {
+    type: String,
+    required: true,
+  },
+  refresh_token: {
+    type: String,
+    required: true,
+    expires: '2592000'
+  },
+  access_token: {
+    type: String,
+    expires: '604800'
+  }
 })
 
 const storageSchema = new Schema({
@@ -46,8 +70,11 @@ const storageSchema = new Schema({
     type: String,
     required: true,
   },
-  platformCredentials: {
-    type: [platformCredentialSchema]
+  sendoCredentials: {
+    type: [sendoCredentialSchema]
+  },
+  lazadaCredentials: {
+    type: [lazadaCredentialSchema]
   },
   totalMoney: {
     type: Number,
@@ -91,7 +118,18 @@ storageSchema.pre("validate",async function (next) {
   }
 });
 
-platformCredentialSchema.pre("validate",async function (next) {
+sendoCredentialSchema.pre("validate",async function (next) {
+  const platform = this;
+
+  try {
+    platform.id = platform._id 
+    next();
+  } catch(e) {
+    console.log(e)
+  }
+});
+
+lazadaCredentialSchema.pre("validate",async function (next) {
   const platform = this;
 
   try {

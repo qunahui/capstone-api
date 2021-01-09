@@ -1,27 +1,62 @@
 const crypto = require('crypto')
 const { signRequest } = require('../utils/laz-sign-request')
 var request = require('request');
+const rp = require('request-promise');
 const fs = require('fs');
+const server = require('../../app')
+const Storage = require('../models/storage')
 var options = {compact: true, ignoreComment: true, spaces: 4};
 
-// module.exports.createSign = async (req, res) => {
-//     const appSecret = req.body.appSecret
-//     const apiPath = req.body.apiPath
-//     const params = req.body.params
-//     const keysortParams = keysort(params)
+module.exports.getAccessToken = async (req, res) => {
+    const apiUrl = 'https://auth.lazada.com/rest' 
+    const apiPath=  '/auth/token/create'
+    const appSecret = "JPqQSDANG14eZdPtMogRDjiNwGYGj8wz" // goi db
+    const appKey = 122845 // goi db
+    const {code, state} =  req.query // goi db
+    const timestamp = Date.now()
+    const commonRequestParams = {
+        "app_key": appKey,
+        "timestamp": timestamp,
+        "sign_method": "sha256",
+        "code":code,
+        "state": state
+    }
+    const sign = signRequest(appSecret, apiPath, commonRequestParams)
+    try {
+        let options = {
+            'method': 'GET',
+            'url': apiUrl+apiPath+
+            '?app_key='+appKey+
+            '&code='+code+
+            '&state='+state+
+            '&sign_method=sha256&timestamp='+timestamp+
+            '&sign='+sign,
+            'headers': {
+                'Content-Type': 'application/json'
+            }
+        };
+        const response = await rp(options).then(res => JSON.parse(res));
+        const [uid, storageId] = state.split('_')
+        const storage = await Storage.findById(storageId)
+        const insertCredentials = {
+            store_name: response.name,
+            platform_name: 'lazada',
+            refresh_token: response.refresh_token,
+            uid,
+            access_token: response.access_token
+        }
+        console.log("Inserted: ", insertCredentials)
+        storage.lazadaCredentials.push(insertCredentials)
 
-//     const concatString = concatDictionaryKeyValue(keysortParams)
+        await storage.save()
 
-//     const preSignString = apiPath + concatString
+        let io = server.getIO()
+        io.sockets.emit('laz auth success', {access_token})
+    } catch (e) {
+        res.status(500).send(Error(e));
+    }
+}
 
-//     const hash = crypto
-//         .createHmac('sha256', appSecret)
-//         .update(preSignString)
-//         .digest('hex')
-
-//     res.send(hash.toUpperCase()) 
-//     //res.send("hello")
-//   }  
 module.exports.refreshToken = async (req, res) =>{
     const apiUrl = 'https://api.lazada.vn/rest' 
     const apiPath=  '/auth/token/refresh'

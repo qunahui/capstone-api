@@ -38,7 +38,7 @@ module.exports.createProductByPing = async (req, res) => {
   const update_at = new Date(item.data.updated_date_timestamp*1000)
   const create_at = new Date(item.data.created_date_timestamp*1000)
   const attributes = item.attributes
-  array.forEach(element => {
+  attributes.forEach(element => {
     var arr = element.attribute_values.filter((child) => {
       return child.is_selected === true
     });

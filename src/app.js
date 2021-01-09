@@ -1,5 +1,5 @@
 const express = require("express");
-const request = require("request");
+const request = require("request-promise");
 const cors = require("cors");
 const path = require('path');
 const Inventory = require('./apis/models/inventory')
@@ -14,6 +14,7 @@ require("./connections/mongodb-atlas");
 const configRoute = require("./apis/index");
 
 const app = express();
+const server = require('http').createServer();
 const port = process.env.PORT || 5000;
 
 app.use(express.json());
@@ -40,6 +41,29 @@ app.get("/*", (req, res, next) => {
 });
 
 configRoute(app);
+
+const io = require('socket.io')(server, {
+  path: '/test',
+  serveClient: false,
+  // below are engine.IO options
+  pingInterval: 10000,
+  pingTimeout: 5000,
+  cookie: false,
+  cors: {
+    origin: "https://localhost:3000",
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE"]
+  }
+});
+
+io.on('connection', socket => {
+  console.log("Connection created")
+})
+
+module.exports.getIO = function(){
+  return io;
+}
+
+server.listen(5050);
 
 app.use("/", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 

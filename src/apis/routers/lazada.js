@@ -4,6 +4,7 @@ const router = express.Router();
 const controller = require("../controllers/lazada");
 var multer  = require('multer')
 const path = require('path')
+
 //const upload = multer ({ dest: path.join(__dirname, '../../temp/')})
 
 var storage = multer.diskStorage({
@@ -19,9 +20,7 @@ var upload = multer({
   storage: storage
 })
 
-router.get('/call_back', (req, res) => {
-    console.log(req.query.code)
-  })
+router.get('/call_back', controller.getAccessToken)
 //router.post('/sign', controller.createSign)
 
 router.get('/refresh-token/:refresh_token', controller.refreshToken)

@@ -10,15 +10,15 @@ router.post('/ping', (req, res) => {
   // switch case
   
   const data = req.body
-  console.log(req.body)
+  console.log(req.body) 
   
   //console.log(util.inspect(req.body, false, null, true /* enable colors */))
   switch(data.type){
     case 'PRODUCT.CREATE':{
-      request.post({ url: "http://localhost:5000/products/create-product-ping", 
+      request.post({ url: "http://localhost:5000/products/sendo/create-ping", 
       json: data })
 
-      break
+      break 
     }
     case 'PRODUCT.UPDATE': {
       request.patch({ url:"http://localhost:5000/products/"+data.id,

@@ -14,16 +14,15 @@ module.exports.fetchShops = async (req, res) => {
 };
 
 
-module.exports.addPlatformCredentials = async (req, res) => {
+module.exports.addSendoCredentials = async (req, res) => {
   try {
     const storage = await Storage.findById(req.body.storageId)
     console.log("Found storage: ", storage)
-    const chosenPlatform = storage.platformCredentials.filter(item => item.platform_name === req.body.platform_name)
     const insertCredentials = {
       ...req.body,
-      store_name: req.body.platform_name.toUpperCase()+ '-' + (chosenPlatform.length + 1)
+      store_name: req.body.platform_name.toUpperCase()+ '-' + (storage.sendoCredentials.length + 1)
     }
-    storage.platformCredentials.push(insertCredentials)
+    storage.sendoCredentials.push(insertCredentials)
 
     await storage.save()
 
