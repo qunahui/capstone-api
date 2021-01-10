@@ -12,7 +12,7 @@ const lazadaProductSchema = new Schema({
         type: String,
         require: true,
     },
-    skus:{
+    variants:{
         type: Array
     },
     primary_category:{
