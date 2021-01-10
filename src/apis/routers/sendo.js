@@ -47,20 +47,21 @@ router.post('/ping', (req, res) => {
   }
 })
 router.post('/login', controller.getSendoToken)
-router.post('/product', controller.sendoProduct)
+router.post('/products', controller.sendoProduct)
+router.post('/fetch-products', controller.fetchProducts)
 
 router.get('/category/:id', controller.getSendoCategory)
 router.get('/ward/:id', controller.getWardById)
 router.get('/district/:id', controller.getDistrictById)
 router.get('/region/:id', controller.getRegionById)
 router.get('/attribute/:id', controller.getSendoAttribute)
-router.get('/product/:id', controller.getSendoProductById)
-router.get('/product', controller.searchSendoProduct) //filter product, if none-> get all
-router.get('/sync-product', controller.syncAllProductSendo)
-router.get('/order', controller.searchSendoOrder) //filter order, if none -> get all
+router.get('/products/:id', controller.getSendoProductById)
+router.post('/products', controller.searchSendoProduct) //filter product, if none-> get all
+router.get('/sync-products', controller.syncAllProductSendo)
+router.get('/orders', controller.searchSendoOrder) //filter order, if none -> get all
 router.get('/cancel-reason', controller.getCancelReason) //extra route, it will be useful, or not
-router.get('/order/:id', controller.getSendoOrderById)
-router.get('/sync-order', controller.syncAllOrderSendo)
+router.get('/orders/:id', controller.getSendoOrderById)
+router.get('/sync-orders', controller.syncAllOrderSendo)
 
 router.put('/update-order-status', controller.updateOrderStatus) 
 

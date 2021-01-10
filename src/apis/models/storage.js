@@ -28,10 +28,18 @@ const sendoCredentialSchema = new Schema({
     type: String,
     required: true,
   },
+  isActivated: {
+    type: Boolean
+  },
   access_token: {
     type: String,
     expires: '28800'
   },
+  status: {
+    type: String,
+    required: true,
+    default: 'not connected yet'
+  }
 })
 
 const lazadaCredentialSchema = new Schema({
@@ -54,6 +62,9 @@ const lazadaCredentialSchema = new Schema({
     type: String,
     required: true,
     expires: '2592000'
+  },
+  isActivated: {
+    type: Boolean
   },
   access_token: {
     type: String,

@@ -3,8 +3,11 @@ const { signRequest } = require('../utils/laz-sign-request')
 var request = require('request');
 const rp = require('request-promise');
 const fs = require('fs');
+const path = require('path')
 const server = require('../../app')
-const Storage = require('../models/storage')
+const Storage = require('../models/storage');
+const { createLazadaProduct } = require('./lazadaProduct');
+const LazadaProduct = require('../models/lazadaProduct')
 var options = {compact: true, ignoreComment: true, spaces: 4};
 
 module.exports.getAccessToken = async (req, res) => {
@@ -45,16 +48,29 @@ module.exports.getAccessToken = async (req, res) => {
             uid,
             access_token: response.access_token
         }
+        const { name } = await rp.post({
+            method: 'POST',
+            uri: 'http://localhost:5000/api/lazada/seller',
+            body: { access_token: response.access_token },
+            json: true
+        }).then(res => res.data)
+
+        insertCredentials.store_name = name
         console.log("Inserted: ", insertCredentials)
+        
         storage.lazadaCredentials.push(insertCredentials)
 
         await storage.save()
 
+
         let io = server.getIO()
-        io.sockets.emit('laz auth success', {access_token})
+
+        io.sockets.emit('laz auth success', { name })
+
     } catch (e) {
         res.status(500).send(Error(e));
     }
+    res.sendFile(path.join(__dirname, '../../close.html'))
 }
 
 module.exports.refreshToken = async (req, res) =>{
@@ -94,12 +110,13 @@ module.exports.refreshToken = async (req, res) =>{
     }
 }
 
-module.exports.searchProduct = async (req, res) =>{
+module.exports.fetchProducts = async (req, res) =>{
+    console.log(req.body)
     const apiUrl = 'https://api.lazada.vn/rest' 
     const apiPath=  '/products/get'
     const appSecret = "JPqQSDANG14eZdPtMogRDjiNwGYGj8wz" // goi db
     const appKey = 122845 // goi db
-    const accessToken =  "500005000282pCawUSfbySlxELBNZvxde1hVjqrd1c60dd3csukWdjU9syzPtBwi" // goi db
+    const accessToken =  req.body.access_token
     const timestamp = Date.now()
     const commonRequestParams = {
         "app_key": appKey,
@@ -107,7 +124,7 @@ module.exports.searchProduct = async (req, res) =>{
         "sign_method": "sha256",
         "access_token":accessToken,
     }
-    const filter = req.query.filter
+    const filter = req.body.filter
     const sign = signRequest(appSecret, apiPath, {...commonRequestParams, filter})
     try {
         var options = {
@@ -123,14 +140,15 @@ module.exports.searchProduct = async (req, res) =>{
         };
         //console.log(options)
         request(options, function (error, response) {
-            //if (error) throw new Error(error);
-            //console.log(response.body);
-            const products = JSON.parse(response.body)
-            res.send(products)
+            const { data } = JSON.parse(response.body)
+            const { products } = data
+            products.map(product => createLazadaProduct(product, { storageId: req.body.storageId }))
         });
     } catch (e) {
         res.status(500).send(Error(e));
     }
+    const lazadaProducts = await LazadaProduct.find({ storageId: req.body.storageId })
+    res.status(200).send(lazadaProducts)
 }
 
 module.exports.getProductById = async (req, res) =>{
@@ -377,11 +395,12 @@ module.exports.getQcStatus = async (req, res) =>{
     
 }
 module.exports.getSellerInfo = async (req, res) =>{
+    console.log("Access token: ", req.body)
     const apiUrl = 'https://api.lazada.vn/rest' 
     const apiPath=  '/seller/get'
     const appSecret = "JPqQSDANG14eZdPtMogRDjiNwGYGj8wz" // goi db
     const appKey = 122845 // goi db
-    const accessToken =  "500005000282pCawUSfbySlxELBNZvxde1hVjqrd1c60dd3csukWdjU9syzPtBwi" // goi db
+    const accessToken =  req.body.access_token // goi db
     const timestamp = Date.now()
     const commonRequestParams = {
         "app_key": appKey,
@@ -401,12 +420,10 @@ module.exports.getSellerInfo = async (req, res) =>{
             'headers': {
             }
         };
-        //console.log(options)
         request(options, function (error, response) {
-            //if (error) throw new Error(error);
-            //console.log(response.body);
-            const sellerInfo = JSON.parse(response.body)
-            res.send(sellerInfo)
+            const r = JSON.parse(response.body)
+            console.log(r)
+            res.send(r)
         });
     } catch (e) {
         res.status(500).send(Error(e));

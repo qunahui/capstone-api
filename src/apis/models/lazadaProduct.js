@@ -3,20 +3,20 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 const validator = require("validator");
 
-
-const schema = new Schema({
-    store_id:{
-        type: Number
+const lazadaProductSchema = new Schema({
+    id: {
+        type: String,
+        required: true,
+    },
+    storageId:{
+        type: String,
+        require: true,
     },
     skus:{
         type: Array
     },
-    product_id:{
-        type: Number,
-        unique: true
-    },
     primary_category:{
-        type: Number
+        type: String
     },
     attributes:{
         type: Object
@@ -30,4 +30,4 @@ const schema = new Schema({
 //   foreignField: "productID"
 // })
 
-module.exports = mongoose.model("lazadaProduct", schema);
+module.exports = mongoose.model("lazadaProduct", lazadaProductSchema);

@@ -84,60 +84,58 @@ console.log("received data")
   }
 };
 
-module.exports.createSendoProductBySync = async (req, res) => {
-  console.log("received data")
-      const item = req.body;
-      //util.inspect(item, false, null, true /* enable colors */)
-      //console.log(item)
-      const update_at = new Date(item.updated_date_timestamp*1000)
-      const create_at = new Date(item.created_date_timestamp*1000)
-      const attributes = item.attributes
-      const variants = item.variants
-  
-      attributes.forEach(element => {
-          var arr = element.attribute_values.filter((child) => {
-              return child.is_selected === true
-          });
-          element.attribute_values = arr
-      }); 
-      variants.forEach( e => {
-        e.variant_attributes.forEach(e1 => {
-          const attribute = attributes.find((attribute)=>{
-            return attribute.attribute_id === e1.attribute_id
-          });
-          const attribute_value = attribute.attribute_values.find((value)=>{
-            return value.id === e1.option_id
-          })
-          e1.attribute_name = attribute.attribute_name
-          e1.option_value = attribute_value.value
+module.exports.createSendoProductBySync = async (item) => {
+    //util.inspect(item, false, null, true /* enable colors */)
+    //console.log(item)
+    const update_at = new Date(item.updated_date_timestamp*1000)
+    const create_at = new Date(item.created_date_timestamp*1000)
+    const attributes = item.attributes
+    const variants = item.variants
+
+    attributes.forEach(element => {
+        var arr = element.attribute_values.filter((child) => {
+            return child.is_selected === true
+        });
+        element.attribute_values = arr
+    }); 
+    variants.forEach( e => {
+      e.variant_attributes.forEach(e1 => {
+        const attribute = attributes.find((attribute)=>{
+          return attribute.attribute_id === e1.attribute_id
+        });
+        const attribute_value = attribute.attribute_values.find((value)=>{
+          return value.id === e1.option_id
         })
-      });
-    
-  
-  
-  
-    const product = new sendoProduct({
-      //store_ids: item.store_id,
-      product_id: item.id,
-      product_name: item.name,
-      store_sku: item.sku,
-      product_weight: item.weight,
-      stock_quantity: item.stock_quantity, // total variants quantity
-      product_status: item.status,    
-      updated_date_timestamp: update_at,
-      created_date_timestamp: create_at,
-      product_link: item.product_link,       
-      unit: item.unit_id,
-      avatar: item.avatar.picture_url,
-      variants: variants,
-      //attributes: attributes,
-      voucher: item.voucher
+        e1.attribute_name = attribute.attribute_name
+        e1.option_value = attribute_value.value
+      })
     });
   
-    try {
-      await product.save();
-      res.send(product);
-    } catch (e) {
-      res.status(500).send(Error(e));
-    }
-  };
+
+
+
+  const product = new sendoProduct({
+    //store_ids: item.store_id,
+    product_id: item.id,
+    product_name: item.name,
+    store_sku: item.sku,
+    product_weight: item.weight,
+    stock_quantity: item.stock_quantity, // total variants quantity
+    product_status: item.status,    
+    updated_date_timestamp: update_at,
+    created_date_timestamp: create_at,
+    product_link: item.product_link,       
+    unit: item.unit_id,
+    avatar: item.avatar.picture_url,
+    variants: variants,
+    //attributes: attributes,
+    voucher: item.voucher
+  });
+
+  try {
+    await product.save();
+    res.send(product);
+  } catch (e) {
+    res.status(500).send(Error(e));
+  }
+};

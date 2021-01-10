@@ -1,51 +1,81 @@
-const User = require("../models/user");
 const Error = require("../utils/error");
 const request = require('request');
-const PlatformToken = require("../models/platformToken");
+const rp = require('request-promise');
 
-module.exports.getSendoToken = async (req, res) => {
-  const platformToken = await PlatformToken.findOne({ uid: req.user.uid, platform: 'sendo'});
-  if(platformToken) {
-    console.log("Getting old token")
-    return res.status(200).send({
-      sendoToken: platformToken.token
-    })
-  }
-  
-  try {
-    const { sendoCredentials: { shop_key, secret_key } } = await User.findByCredentials(req.user.uid);
-    if(shop_key && secret_key) {
-      request({
-        url: 'https://open.sendo.vn/login',
+module.exports.getSendoToken = async (credential) => {
+    try {
+      if(credential.access_token) {
+        return credential
+      }
+      const { app_key, app_secret } = credential
+      await rp({
         method: 'POST',
-        json: {
-          shop_key,
-          secret_key,
+        url: 'https://open.sendo.vn/login',
+        header: {
+          'Content-Type' : 'application/json'
+        },
+        json: true,
+        body: {
+          shop_key: app_key,
+          secret_key: app_secret
         }
-      }, async function (err, response, body) {
-        if (!body.error && response.statusCode === 200) {
-          const { token, expires } = body.result;
-          // update user's sendo token
-          await new PlatformToken({
-            uid: req.user.uid,
-            platform: 'sendo',
-            token: token,
-          }).save();
-          console.log("New token created");
-          return res.status(201).send({ sendoToken: token });
+      }, async function(err, response) {
+        let status = credential.status;
+        const { success, error, statusCode } = response.body;
+        if(success) {
+          status = "connected"
+          credential.access_token = response.body.result.token;
+        } else {
+          status = "failed"
         }
-        else if (body.error) {
-          const { statusCode, error } = body;
-          console.log("Error: ", body.error);
-          return res.status(statusCode).send(Error(error));
-        }
+        credential.status = status;
       })
-    } else {
-      return res.status(404).send(Error({ message: 'Sendo credentials not found. You must register first !'}))
+      console.log("Finish")
+      return credential
+    } catch(e) {
+      console.log("Error: ", e)
     }
-  } catch(e){ 
-    return res.status(400).send(Error(e))
+}
+
+module.exports.fetchProducts = async (req, res) => {
+  try {
+    const options = {
+        'method': 'POST',
+        'url': 'https://open.sendo.vn/api/partner/product/search',
+        'headers': {
+          'Authorization': 'bearer ' + req.body.access_token,
+          'Content-Type': 'application/json',
+          'cache-control': 'no-cache'
+        },
+        body: JSON.stringify({"page_size":10,"product_name":"","date_from":"2020-05-01","date_to":"9999-10-28","token":""})
+    };
+    console.log("Options: ", options)
+    request(options, function (error, response) {
+      const products = JSON.parse(response.body).result.data
+      console.log(products)
+      res.send(products)
+    });
+  } catch(e) {
+    console.log(e)
   }
+  // request({ 
+  //   method: 'POST',
+  //   url: 'http://localhost:5000/api/sendo/products',
+  //   body: JSON.stringify(req.body),
+  // }, function(error, response){
+    // const products = JSON.parse(response.body)
+    // const storeName = products[0].store_name
+    // products.forEach(e => {
+    //   request.get({ url: "http://localhost:5000/api/sendo/product/"+e.id}, function(error, response){
+    //     const product = JSON.parse(response.body)
+    //     product["store_name"] = storeName
+    //     request.post({ url: "http://localhost:5000/products/create-product-sync-sendo", 
+    //     json: product })
+    //   })
+    // });
+  // })
+
+  // res.send("done")
 }
 
 module.exports.getSendoCategory = async (req, res) =>{
@@ -200,28 +230,28 @@ module.exports.getSendoProductById = async (req, res) =>{
   }
 }
 module.exports.searchSendoProduct = async (req, res) =>{
+  // console.log("Body: ",req)
   //filter product, search by name, date_from, date_to
   //if nothing-> get all
-  try {
-      const options = {
-          'method': 'POST',
-          'url': 'https://open.sendo.vn/api/partner/product/search',
-          'headers': {
-            'Authorization': 'bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJTdG9yZUlkIjoiODU0MjE0IiwiVXNlck5hbWUiOiIiLCJTdG9yZVN0YXR1cyI6IjIiLCJTaG9wVHlwZSI6IjEiLCJTdG9yZUxldmVsIjoiMCIsImV4cCI6MTYwNjk4ODMzOSwiaXNzIjoiODU0MjE0IiwiYXVkIjoiODU0MjE0In0.CZ7ntni8XqlilhdHxhf7b7w3gU72uDohnevGe-RZPIY',
-            'Content-Type': 'application/json',
-            'cache-control': 'no-cache'
-          },
-          body: JSON.stringify({"page_size":10,"product_name":"","date_from":"2020-05-01","date_to":"9999-10-28","token":""})
-        };
-        request(options, function (error, response) {
-          //if (error) throw new Error(error);
-          //console.log(response.body);
-          const products = JSON.parse(response.body).result.data
-          res.send(products)
-        });
-  } catch (e) {
-      res.status(500).send(Error(e));
-  }
+  // try {
+  //     const options = {
+  //         'method': 'POST',
+  //         'url': 'https://open.sendo.vn/api/partner/product/search',
+  //         'headers': {
+  //           'Authorization': 'bearer ' + req.body.access_token,
+  //           'Content-Type': 'application/json',
+  //           'cache-control': 'no-cache'
+  //         },
+  //         body: JSON.stringify({"page_size":10,"product_name":"","date_from":"2020-05-01","date_to":"9999-10-28","token":""})
+  //       };
+  //       console.log("Options: ", options)
+  //       request(options, function (error, response) {
+  //         const products = JSON.parse(response.body).result.data
+  //         res.send(products)
+  //       });
+  // } catch (e) {
+  //     res.status(500).send(Error(e));
+  // }
 }
 //req.body.filter : { sync-range}
 module.exports.syncAllProductSendo = async (req, res) => {
