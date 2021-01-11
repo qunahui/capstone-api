@@ -20,7 +20,10 @@ var upload = multer({
   storage: storage
 })
 
-router.get('/call_back', controller.getAccessToken)
+// router.get('/first-connect', controller.authorizeCredential)
+router.get('/authorize', controller.authorizeCredential)
+router.get('/token', controller.getAccessToken)
+router.get('/products', controller.getAllProducts)
 //router.post('/sign', controller.createSign)
 
 router.get('/refresh-token/:refresh_token', controller.refreshToken)

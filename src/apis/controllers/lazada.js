@@ -10,6 +10,22 @@ const { createLazadaProduct } = require('./lazadaProduct');
 const LazadaProduct = require('../models/lazadaProduct')
 var options = {compact: true, ignoreComment: true, spaces: 4};
 
+module.exports.authorizeCredential = async (req, res) => {
+    const { code, state } = req.query
+    const result = await rp({
+        method: 'GET',
+        uri: 'http://localhost:5000/api/lazada/token?code='+ code + '&state=' + state,
+    })
+    console.log("REsult: ", JSON.parse(result))
+    const { access_token, name, store_id, storageId } = JSON.parse(result)
+
+    let io = server.getIO()
+
+    io.sockets.emit('laz auth success', { name, storageId, store_id, access_token })
+
+    res.sendFile(path.join(__dirname, '../../close.html'))
+}
+
 module.exports.getAccessToken = async (req, res) => {
     const apiUrl = 'https://auth.lazada.com/rest' 
     const apiPath=  '/auth/token/create'
@@ -45,32 +61,34 @@ module.exports.getAccessToken = async (req, res) => {
             store_name: response.name,
             platform_name: 'lazada',
             refresh_token: response.refresh_token,
-            uid,
-            access_token: response.access_token
+            access_token: response.access_token,
+            isActivated: true,
         }
-        const { name } = await rp.post({
+        const result = await rp.post({
             method: 'POST',
             uri: 'http://localhost:5000/api/lazada/seller',
             body: { access_token: response.access_token },
             json: true
         }).then(res => res.data)
-
+        const { name, seller_id } = result 
         insertCredentials.store_name = name
-        console.log("Inserted: ", insertCredentials)
-        
-        storage.lazadaCredentials.push(insertCredentials)
-
-        await storage.save()
-
-
-        let io = server.getIO()
-
-        io.sockets.emit('laz auth success', { name })
-
+        insertCredentials.store_id = seller_id
+        if(storage.lazadaCredentials.length === 0) {
+            storage.lazadaCredentials = [insertCredentials]
+        } else {
+            storage.lazadaCredentials = storage.lazadaCredentials.map(i => {
+                if(i.store_name === name) {
+                    return insertCredentials
+                }
+                return i
+            })
+        }
+        const updateRes = await Storage.findOneAndUpdate({ id: storageId }, storage, {}, (err, doc) => {
+            res.status(200).send({ access_token: insertCredentials.access_token, name, store_id: insertCredentials.store_id, storageId })
+        })
     } catch (e) {
         res.status(500).send(Error(e));
     }
-    res.sendFile(path.join(__dirname, '../../close.html'))
 }
 
 module.exports.refreshToken = async (req, res) =>{
@@ -110,6 +128,20 @@ module.exports.refreshToken = async (req, res) =>{
     }
 }
 
+module.exports.getAllProducts = async (req, res) => {
+    console.log(req.query)
+    try {
+        const { store_id } = req.query;
+        const lazadaProducts = await LazadaProduct.find({ store_id })
+    
+        console.log(lazadaProducts)
+
+        res.status(200).send(lazadaProducts)
+      } catch(e) {
+        res.status(500).send(Error({ message: 'Something went wrong !'}))
+    }
+}
+
 module.exports.fetchProducts = async (req, res) =>{
     console.log(req.body)
     const apiUrl = 'https://api.lazada.vn/rest' 
@@ -139,15 +171,14 @@ module.exports.fetchProducts = async (req, res) =>{
             }
         };
         //console.log(options)
-        request(options, function (error, response) {
-            const { data } = JSON.parse(response.body)
-            const { products } = data
-            products.map(product => createLazadaProduct(product, { storageId: req.body.storageId }))
-        });
+        const { data } = await rp(options).then(res => JSON.parse(res))
+        console.log("data: ", data)
+        const { products } = data
+        await Promise.all(products.map(async product => await createLazadaProduct(product, { store_id: req.body.store_id })))
     } catch (e) {
         res.status(500).send(Error(e));
     }
-    const lazadaProducts = await LazadaProduct.find({ storageId: req.body.storageId })
+    const lazadaProducts = await LazadaProduct.find({ storageId: req.body.storageId, store_id: req.body.store_id })
     res.status(200).send(lazadaProducts)
 }
 
@@ -395,7 +426,6 @@ module.exports.getQcStatus = async (req, res) =>{
     
 }
 module.exports.getSellerInfo = async (req, res) =>{
-    console.log("Access token: ", req.body)
     const apiUrl = 'https://api.lazada.vn/rest' 
     const apiPath=  '/seller/get'
     const appSecret = "JPqQSDANG14eZdPtMogRDjiNwGYGj8wz" // goi db
@@ -422,7 +452,6 @@ module.exports.getSellerInfo = async (req, res) =>{
         };
         request(options, function (error, response) {
             const r = JSON.parse(response.body)
-            console.log(r)
             res.send(r)
         });
     } catch (e) {

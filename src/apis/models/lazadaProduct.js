@@ -7,8 +7,9 @@ const lazadaProductSchema = new Schema({
     id: {
         type: String,
         required: true,
+        unique: true,
     },
-    storageId:{
+    store_id:{
         type: String,
         require: true,
     },

@@ -1,6 +1,68 @@
 const Error = require("../utils/error");
 const request = require('request');
 const rp = require('request-promise');
+const { createSendoProduct } = require("./sendoProduct");
+const SendoProduct = require('../models/sendoProduct')
+const Storage = require('../models/storage')
+
+module.exports.getAllProducts = async (req, res) => {
+  try {
+    const { store_id } = req.query;
+    const sendoProducts = await SendoProduct.find({ store_id })
+
+    res.status(200).send(sendoProducts)
+  } catch(e) {
+    res.status(500).send(Error({ message: 'Something went wrong !'}))
+  }
+}
+
+module.exports.authorizeCredential = async (req, res) => {
+  try {
+    const { app_key, app_secret } = req.body
+    const options = {
+      method: 'POST',
+      url: 'https://open.sendo.vn/login',
+      header: {
+        'Content-Type' : 'application/json'
+      },
+      json: true,
+      body: {
+        shop_key: app_key,
+        secret_key: app_secret
+      }
+    }
+    await rp(options).then(async response => {
+      console.log("Begin find storage")
+      const storage = await Storage.findById({ _id: req.body.storageId })
+      const { token } = response.result
+      const matchedCredential = storage.sendoCredentials.find(credential => credential.app_key === app_key)
+      if(matchedCredential) {
+        return res.status(409).send(Error({ message: 'Bạn đã kết nối với gian hàng này' }))
+      }
+      const insertCredential = {
+        app_key,
+        app_secret,
+        store_id: app_key,
+        store_name: 'SENDO-' + (storage.sendoCredentials.length + 1),
+        platform_name: 'sendo',
+        access_token: token,
+        status: 'connected',
+      }
+      storage.sendoCredentials.push(insertCredential)
+      await Storage.findOneAndUpdate({ _id: req.body.storageId }, storage, { upsert: true}, (err, doc) => {
+        res.status(200).send(insertCredential)
+      })
+    }).catch(e => {
+      console.log("Response: ", e.response)
+      const { body } = e.response
+      console.log("Error found.....", e.response.body)
+      res.status(body.statusCode).send(Error({ message: body.error.message }))
+    })
+  } catch(e) {
+    console.log(e)
+    res.status(500).send({ message: 'Something went wrong'})
+  }
+}
 
 module.exports.getSendoToken = async (credential) => {
     try {
@@ -38,6 +100,7 @@ module.exports.getSendoToken = async (credential) => {
 }
 
 module.exports.fetchProducts = async (req, res) => {
+  console.log(req.body)
   try {
     const options = {
         'method': 'POST',
@@ -49,33 +112,25 @@ module.exports.fetchProducts = async (req, res) => {
         },
         body: JSON.stringify({"page_size":10,"product_name":"","date_from":"2020-05-01","date_to":"9999-10-28","token":""})
     };
-    console.log("Options: ", options)
-    request(options, function (error, response) {
-      const products = JSON.parse(response.body).result.data
-      console.log(products)
-      res.send(products)
-    });
+    const response = await rp(options)
+    const products = JSON.parse(response).result.data
+    await Promise.all(products.map(async product => {
+      const fullProduct = await rp({
+        method: 'GET',
+        url: 'http://localhost:5000/api/sendo/products/' + product.id + '?access_token=' + req.body.access_token
+      })
+      const actuallyFullProduct = JSON.parse(fullProduct)
+      await createSendoProduct(actuallyFullProduct, { store_id: req.body.store_id })
+    }))
+
+    console.log("Run this")
+
+    const sendoProduct = await SendoProduct.find({ storageId: req.body.storageId})
+
+    res.status(200).send(sendoProduct)
   } catch(e) {
     console.log(e)
   }
-  // request({ 
-  //   method: 'POST',
-  //   url: 'http://localhost:5000/api/sendo/products',
-  //   body: JSON.stringify(req.body),
-  // }, function(error, response){
-    // const products = JSON.parse(response.body)
-    // const storeName = products[0].store_name
-    // products.forEach(e => {
-    //   request.get({ url: "http://localhost:5000/api/sendo/product/"+e.id}, function(error, response){
-    //     const product = JSON.parse(response.body)
-    //     product["store_name"] = storeName
-    //     request.post({ url: "http://localhost:5000/products/create-product-sync-sendo", 
-    //     json: product })
-    //   })
-    // });
-  // })
-
-  // res.send("done")
 }
 
 module.exports.getSendoCategory = async (req, res) =>{
@@ -100,7 +155,7 @@ module.exports.getSendoCategory = async (req, res) =>{
   }
 }
 //create or update product
-module.exports.sendoProduct = async (req, res) =>{
+module.exports.createSendoProduct = async (req, res) =>{
   //id = 0 -> create
   //id != 0 -> update
   const item = req.body;
@@ -216,7 +271,7 @@ module.exports.getSendoProductById = async (req, res) =>{
           'method': 'GET',
           'url': 'https://open.sendo.vn/api/partner/product?id=' + productId,
           'headers': {
-            'Authorization': 'bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJTdG9yZUlkIjoiODU0MjE0IiwiVXNlck5hbWUiOiIiLCJTdG9yZVN0YXR1cyI6IjIiLCJTaG9wVHlwZSI6IjEiLCJTdG9yZUxldmVsIjoiMCIsImV4cCI6MTYwNjk4ODMzOSwiaXNzIjoiODU0MjE0IiwiYXVkIjoiODU0MjE0In0.CZ7ntni8XqlilhdHxhf7b7w3gU72uDohnevGe-RZPIY'
+            'Authorization': 'bearer ' + req.query.access_token
           }
         };
         request(options, function (error, response) {

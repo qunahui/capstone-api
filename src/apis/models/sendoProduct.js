@@ -3,29 +3,27 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 const validator = require("validator");
 
-
 const schema = new Schema({
     store_id:{
-        type: Number
+        type: String
     },
-    
-    product_id:{
-        type: Number,
+    id:{
+        type: String,
         unique: true
     },
-    product_name:{
+    name:{
         type: String
     },
     store_sku:{
         type: String
     },
-    product_weight:{
+    weight:{
         type: Number
     },
     stock_quantity:{
         type: Number
     },
-    product_status:{
+    status:{
         type: String
     },
     updated_date_timestamp:{
@@ -34,7 +32,7 @@ const schema = new Schema({
     created_date_timestamp:{
         type: Date
     },
-    product_link:{
+    link:{
         type: String
     },
     unit:{

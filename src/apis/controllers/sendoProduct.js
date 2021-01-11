@@ -1,5 +1,5 @@
 const auth = require("../../middlewares/auth");
-const sendoProduct = require("../models/sendoProduct");
+const SendoProduct = require("../models/sendoProduct");
 const Error = require("../utils/error");
 const request = require('request');
 const util = require('util');
@@ -56,21 +56,19 @@ console.log("received data")
         e1.attribute_name = attribute.name
         e1.option_value = attribute_value.value
       })
-      e.variant_attributes = e.attributes
-      delete e.attributes
     });
 
-  const product = new sendoProduct({
+  const product = new SendoProduct({
     store_ids: item.store_id,
-    product_id: item.data.id,
-    product_name: item.data.name,
+    id: item.data.id,
+    name: item.data.name,
     store_sku: item.data.store_sku,
-    product_weight: item.data.weight,
+    weight: item.data.weight,
     stock_quantity: item.data.stock_quantity, // total variants quantity
-    product_status: item.data.product_status,    
+    status: item.data.product_status,    
     updated_date_timestamp: update_at,
     created_date_timestamp: create_at,
-    product_link: item.data.product_link,       
+    link: item.data.product_link,       
     unit: item.data.unit_id,
     avatar: item.data.product_image,
     variants: variants,
@@ -86,58 +84,64 @@ console.log("received data")
   }
 };
 
-module.exports.createSendoProductBySync = async (item) => {
-    //util.inspect(item, false, null, true /* enable colors */)
-    //console.log(item)
-    const update_at = new Date(item.updated_date_timestamp*1000)
-    const create_at = new Date(item.created_date_timestamp*1000)
-    const attributes = item.attributes
-    const variants = item.variants
+module.exports.createSendoProduct = async (item, { store_id }) => {
+    try {
+      const update_at = new Date(item.updated_date_timestamp*1000)
+      const create_at = new Date(item.created_date_timestamp*1000)
+      const attributes = item.attributes
+      const variants = item.variants
 
-    attributes.forEach(element => {
-        var arr = element.attribute_values.filter((child) => {
-            return child.is_selected === true
-        });
-        element.attribute_values = arr
-    }); 
-    variants.forEach( e => {
-      e.variant_attributes.forEach(e1 => {
-        const attribute = attributes.find((attribute)=>{
-          return attribute.attribute_id === e1.attribute_id
-        });
-        const attribute_value = attribute.attribute_values.find((value)=>{
-          return value.id === e1.option_id
+      attributes.forEach(element => {
+          var arr = element.attribute_values.filter((child) => {
+              return child.is_selected === true
+          });
+          element.attribute_values = arr
+      }); 
+      variants.forEach( e => {
+        e.variant_attributes.forEach(e1 => {
+          const attribute = attributes.find((attribute)=>{
+            return attribute.attribute_id === e1.attribute_id
+          });
+          const attribute_value = attribute.attribute_values.find((value)=>{
+            return value.id === e1.option_id
+          })
+          e1.attribute_name = attribute.attribute_name
+          e1.option_value = attribute_value.value
         })
-        e1.attribute_name = attribute.attribute_name
-        e1.option_value = attribute_value.value
-      })
-    });
-  
+      });
 
-
-
-  const product = new sendoProduct({
-    //store_ids: item.store_id,
-    product_id: item.id,
-    product_name: item.name,
-    store_sku: item.sku,
-    product_weight: item.weight,
-    stock_quantity: item.stock_quantity, // total variants quantity
-    product_status: item.status,    
-    updated_date_timestamp: update_at,
-    created_date_timestamp: create_at,
-    product_link: item.product_link,       
-    unit: item.unit_id,
-    avatar: item.avatar.picture_url,
-    variants: variants,
-    //attributes: attributes,
-    voucher: item.voucher
-  });
-
-  try {
-    await product.save();
-    res.send(product);
-  } catch (e) {
-    res.status(500).send(Error(e));
-  }
+      let query = { store_id: store_id, id: item.id },
+          update = {
+            store_id: store_id,
+            id: item.id,
+            name: item.name,
+            store_sku: item.sku,
+            weight: item.weight,
+            stock_quantity: item.stock_quantity, // total variants quantity
+            status: item.status,    
+            updated_date_timestamp: update_at,
+            created_date_timestamp: create_at,
+            link: item.link,       
+            unit: item.unit_id,
+            avatar: item.avatar.picture_url,
+            variants: variants,
+            //attributes: attributes,
+            voucher: item.voucher
+          },
+          options = { upsert: true, new: true, setDefaultsOnInsert: true };
+    
+      console.log("Begin insert: ", update.id)
+      await SendoProduct.findOneAndUpdate(query, update, options, function(error, result) {
+        if (!error) {
+          if (!result) {
+            result = new SendoProduct(update);
+          }
+          result.save().then((res) => {
+            console.log("save: ", res.id)
+          });
+        }
+      });
+    } catch(e) { 
+      console.log("Error: ", e)
+    }
 };

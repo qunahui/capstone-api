@@ -46,17 +46,20 @@ router.post('/ping', (req, res) => {
       break
   }
 })
+// local's routes
+router.get('/products', controller.getAllProducts)
+//api's routes
+router.post('/authorize', controller.authorizeCredential)
 router.post('/login', controller.getSendoToken)
-router.post('/products', controller.sendoProduct)
+router.post('/create-product', controller.createSendoProduct)
+router.post('/search-products', controller.searchSendoProduct) //filter product, if none-> get all
 router.post('/fetch-products', controller.fetchProducts)
-
 router.get('/category/:id', controller.getSendoCategory)
 router.get('/ward/:id', controller.getWardById)
 router.get('/district/:id', controller.getDistrictById)
 router.get('/region/:id', controller.getRegionById)
 router.get('/attribute/:id', controller.getSendoAttribute)
 router.get('/products/:id', controller.getSendoProductById)
-router.post('/products', controller.searchSendoProduct) //filter product, if none-> get all
 router.get('/sync-products', controller.syncAllProductSendo)
 router.get('/orders', controller.searchSendoOrder) //filter order, if none -> get all
 router.get('/cancel-reason', controller.getCancelReason) //extra route, it will be useful, or not

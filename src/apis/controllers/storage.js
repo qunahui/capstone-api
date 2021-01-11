@@ -4,7 +4,6 @@ const { getSendoToken } = require("./sendo");
 
 module.exports.getStorages = async (req, res) => {
   let storage = await Storage.findById({ _id: req.body.storageId })
-  console.log(storage)
   let sendoCredentials = storage.sendoCredentials && storage.sendoCredentials   
   sendoCredentials = await Promise.all(sendoCredentials.map(async sendoCredential => await getSendoToken(sendoCredential)))
   storage.sendoCredentials = sendoCredentials
@@ -14,10 +13,6 @@ module.exports.getStorages = async (req, res) => {
 };
 
 module.exports.fetchShops = async (req, res) => {
-  setTimeout(() => {
-  res.status(200).send("Done!");
-
-  }, 3000)
 };
 
 

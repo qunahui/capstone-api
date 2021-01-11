@@ -4,11 +4,7 @@ const validator = require("validator");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
-const sendoCredentialSchema = new Schema({
-  id: {
-    type: mongoose.Schema.Types.ObjectId,
-    required: true,
-  },
+const sendoCredentialSchema = {
   app_key: {
     type: String,
     required: true
@@ -29,7 +25,9 @@ const sendoCredentialSchema = new Schema({
     required: true,
   },
   isActivated: {
-    type: Boolean
+    type: Boolean,
+    required: true,
+    default: true,
   },
   access_token: {
     type: String,
@@ -40,19 +38,14 @@ const sendoCredentialSchema = new Schema({
     required: true,
     default: 'not connected yet'
   }
-})
+}
 
-const lazadaCredentialSchema = new Schema({
-  id: {
-    type: mongoose.Schema.Types.ObjectId,
-    required: true,
-  },
+const lazadaCredentialSchema = {
   store_name: {
     type: String,
   },
-  uid: {
+  store_id:{ 
     type: String,
-    required: true,
   },
   platform_name: {
     type: String,
@@ -64,13 +57,15 @@ const lazadaCredentialSchema = new Schema({
     expires: '2592000'
   },
   isActivated: {
-    type: Boolean
+    type: Boolean,
+    required: true,
+    default: true,
   },
   access_token: {
     type: String,
     expires: '604800'
   }
-})
+}
 
 const storageSchema = new Schema({
   id: {
@@ -97,27 +92,6 @@ const storageSchema = new Schema({
   },
 });
 
-// schema.methods.toJSON = function () {
-//   const user = this;
-//   const userObject = user.toObject()
-  
-//   return userObject;
-// };
-
-// generate jwt
-// schema.methods.generateJWT = async function () {
-//   const user = this;
-//   const token = jwt.sign({ uid: user.uid.toString() }, "thuongthuong", {
-//     expiresIn: '30d'
-//   });
-
-//   user.tokens = user.tokens.concat({ token });
-//   await user.save();
-
-//   return token;
-// };
-
-// 
 storageSchema.pre("validate",async function (next) {
   const storage = this;
 
@@ -128,29 +102,6 @@ storageSchema.pre("validate",async function (next) {
     console.log(e)
   }
 });
-
-sendoCredentialSchema.pre("validate",async function (next) {
-  const platform = this;
-
-  try {
-    platform.id = platform._id 
-    next();
-  } catch(e) {
-    console.log(e)
-  }
-});
-
-lazadaCredentialSchema.pre("validate",async function (next) {
-  const platform = this;
-
-  try {
-    platform.id = platform._id 
-    next();
-  } catch(e) {
-    console.log(e)
-  }
-});
-
 
 const Storage = mongoose.model("Storage", storageSchema);
 
