@@ -29,9 +29,9 @@ module.exports.authorizeCredential = async (req, res) => {
 module.exports.getAccessToken = async (req, res) => {
     const apiUrl = 'https://auth.lazada.com/rest' 
     const apiPath=  '/auth/token/create'
-    const appSecret = "JPqQSDANG14eZdPtMogRDjiNwGYGj8wz" // goi db
-    const appKey = 122845 // goi db
-    const {code, state} =  req.query // goi db
+    const appSecret = process.env.LAZADA_APP_SECRET
+    const appKey = process.env.LAZADA_APP_KEY 
+    const {code, state} =  req.query 
     const timestamp = Date.now()
     const commonRequestParams = {
         "app_key": appKey,
@@ -94,9 +94,9 @@ module.exports.getAccessToken = async (req, res) => {
 module.exports.refreshToken = async (req, res) =>{
     const apiUrl = 'https://api.lazada.vn/rest' 
     const apiPath=  '/auth/token/refresh'
-    const appSecret = "JPqQSDANG14eZdPtMogRDjiNwGYGj8wz" // goi db
-    const appKey = 122845 // goi db
-    const refresh_token =  req.params.refresh_token // goi db
+    const appSecret = process.env.LAZADA_APP_SECRET 
+    const appKey = process.env.LAZADA_APP_KEY 
+    const refresh_token =  req.params.refresh_token 
     const timestamp = Date.now()
     const commonRequestParams = {
         "app_key": appKey,
@@ -127,7 +127,7 @@ module.exports.refreshToken = async (req, res) =>{
         res.status(500).send(Error(e));
     }
 }
-
+//1: lazada product api
 module.exports.getAllProducts = async (req, res) => {
     console.log(req.query)
     try {
@@ -146,8 +146,8 @@ module.exports.fetchProducts = async (req, res) =>{
     console.log(req.body)
     const apiUrl = 'https://api.lazada.vn/rest' 
     const apiPath=  '/products/get'
-    const appSecret = "JPqQSDANG14eZdPtMogRDjiNwGYGj8wz" // goi db
-    const appKey = 122845 // goi db
+    const appSecret = process.env.LAZADA_APP_SECRET 
+    const appKey = process.env.LAZADA_APP_KEY 
     const accessToken =  req.body.access_token
     const timestamp = Date.now()
     const commonRequestParams = {
@@ -181,12 +181,12 @@ module.exports.fetchProducts = async (req, res) =>{
     const lazadaProducts = await LazadaProduct.find({ storageId: req.body.storageId, store_id: req.body.store_id })
     res.status(200).send(lazadaProducts)
 }
-
+//not use yet
 module.exports.getProductById = async (req, res) =>{
     const apiUrl = 'https://api.lazada.vn/rest' 
     const apiPath=  '/product/item/get'
-    const appSecret = "JPqQSDANG14eZdPtMogRDjiNwGYGj8wz" // goi db
-    const appKey = 122845 // goi db
+    const appSecret = process.env.LAZADA_APP_SECRET
+    const appKey = process.env.LAZADA_APP_KEY 
     const accessToken =  "500005000282pCawUSfbySlxELBNZvxde1hVjqrd1c60dd3csukWdjU9syzPtBwi" // goi db
     const timestamp = Date.now()
     const commonRequestParams = {
@@ -220,13 +220,13 @@ module.exports.getProductById = async (req, res) =>{
         res.status(500).send(Error(e));
     }
 }
-
+//not use yet
 module.exports.getCategoryTree = async (req, res) =>{
     // no need access_token
     const apiUrl = 'https://api.lazada.vn/rest' 
     const apiPath=  '/category/tree/get'
-    const appSecret = "JPqQSDANG14eZdPtMogRDjiNwGYGj8wz" // goi db
-    const appKey = 122845 // goi db
+    const appSecret = process.env.LAZADA_APP_KEY 
+    const appKey = process.env.LAZADA_APP_KEY 
     const accessToken =  "500005000282pCawUSfbySlxELBNZvxde1hVjqrd1c60dd3csukWdjU9syzPtBwi" // goi db
     const timestamp = Date.now()
     const commonRequestParams = {
@@ -264,8 +264,8 @@ module.exports.getAttributes = async (req, res) =>{
     // use primary_category_id( final category ex: 10100183)
     const apiUrl = 'https://api.lazada.vn/rest' 
     const apiPath=  '/category/attributes/get'
-    const appSecret = "JPqQSDANG14eZdPtMogRDjiNwGYGj8wz" // goi db
-    const appKey = 122845 // goi db
+    const appSecret = process.env.LAZADA_APP_SECRET 
+    const appKey = process.env.LAZADA_APP_KEY 
     //const accessToken =  "500005000282pCawUSfbySlxELBNZvxde1hVjqrd1c60dd3csukWdjU9syzPtBwi" // goi db
     const primary_category_id = req.params.id
     const timestamp = Date.now()
@@ -299,13 +299,13 @@ module.exports.getAttributes = async (req, res) =>{
         res.status(500).send(Error(e));
     }
 }
-
+//not use yet
 module.exports.getBrands = async (req, res) =>{
     // no need access_token
     const apiUrl = 'https://api.lazada.vn/rest' 
     const apiPath=  '/brands/get'
-    const appSecret = "JPqQSDANG14eZdPtMogRDjiNwGYGj8wz" // goi db
-    const appKey = 122845 // goi db
+    const appSecret = process.env.LAZADA_APP_SECRET
+    const appKey = process.env.LAZADA_APP_KEY
     //const accessToken =  "500005000282pCawUSfbySlxELBNZvxde1hVjqrd1c60dd3csukWdjU9syzPtBwi" // goi db
     const offset = req.query.offset
     const limit = req.query.limit
@@ -341,11 +341,12 @@ module.exports.getBrands = async (req, res) =>{
         res.status(500).send(Error(e));
     }
 }
+// not working
 module.exports.getCategorySuggestion = async (req, res) =>{
     const apiUrl = 'https://api.lazada.vn/rest' 
     const apiPath=  '/product/category/suggestion/get'
-    const appSecret = "JPqQSDANG14eZdPtMogRDjiNwGYGj8wz" // goi db
-    const appKey = 122845 // goi db
+    const appSecret = process.env.LAZADA_APP_SECRET
+    const appKey = process.env.LAZADA_APP_KEY
     const accessToken =  "500005000282pCawUSfbySlxELBNZvxde1hVjqrd1c60dd3csukWdjU9syzPtBwi" // goi db
     const timestamp = Date.now()
     const product_name = req.query.name
@@ -381,11 +382,12 @@ module.exports.getCategorySuggestion = async (req, res) =>{
     }
     
 }
+// req: seller_sku -> res: QCstatus (approved or rejected)
 module.exports.getQcStatus = async (req, res) =>{
     const apiUrl = 'https://api.lazada.vn/rest' 
     const apiPath=  '/product/qc/status/get'
-    const appSecret = "JPqQSDANG14eZdPtMogRDjiNwGYGj8wz" // goi db
-    const appKey = 122845 // goi db
+    const appSecret = process.env.LAZADA_APP_SECRET
+    const appKey = process.env.LAZADA_APP_KEY
     const accessToken =  "500005000282pCawUSfbySlxELBNZvxde1hVjqrd1c60dd3csukWdjU9syzPtBwi" // goi db
     const timestamp = Date.now()
     const offset = req.query.offset
@@ -425,125 +427,11 @@ module.exports.getQcStatus = async (req, res) =>{
     }
     
 }
-module.exports.getSellerInfo = async (req, res) =>{
-    const apiUrl = 'https://api.lazada.vn/rest' 
-    const apiPath=  '/seller/get'
-    const appSecret = "JPqQSDANG14eZdPtMogRDjiNwGYGj8wz" // goi db
-    const appKey = 122845 // goi db
-    const accessToken =  req.body.access_token // goi db
-    const timestamp = Date.now()
-    const commonRequestParams = {
-        "app_key": appKey,
-        "timestamp": timestamp,
-        "sign_method": "sha256",
-        "access_token":accessToken
-    }
-    const sign = signRequest(appSecret, apiPath, commonRequestParams)
-    try {
-        var options = {
-            'method': 'GET',
-            'url': apiUrl+apiPath+
-            '?app_key='+appKey+
-            '&sign_method=sha256&timestamp='+timestamp+
-            '&access_token='+accessToken+
-            '&sign='+sign,
-            'headers': {
-            }
-        };
-        request(options, function (error, response) {
-            const r = JSON.parse(response.body)
-            res.send(r)
-        });
-    } catch (e) {
-        res.status(500).send(Error(e));
-    }
-}
-
-module.exports.getSellerMetrics = async (req, res) =>{
-    const apiUrl = 'https://api.lazada.vn/rest' 
-    const apiPath=  '/seller/metrics/get'
-    const appSecret = "JPqQSDANG14eZdPtMogRDjiNwGYGj8wz" // goi db
-    const appKey = 122845 // goi db
-    const accessToken =  "500005000282pCawUSfbySlxELBNZvxde1hVjqrd1c60dd3csukWdjU9syzPtBwi" // goi db
-    const timestamp = Date.now()
-    const commonRequestParams = {
-        "app_key": appKey,
-        "timestamp": timestamp,
-        "sign_method": "sha256",
-        "access_token":accessToken
-    }
-    const sign = signRequest(appSecret, apiPath, commonRequestParams)
-    try {
-        var options = {
-            'method': 'GET',
-            'url': apiUrl+apiPath+
-            '?app_key='+appKey+
-            '&sign_method=sha256&timestamp='+timestamp+
-            '&access_token='+accessToken+
-            '&sign='+sign,
-            'headers': {
-            }
-        };
-        //console.log(options)
-        request(options, function (error, response) {
-            //if (error) throw new Error(error);
-            //console.log(response.body);
-            const sellerMetrics = JSON.parse(response.body)
-            res.send(sellerMetrics)
-        });
-    } catch (e) {
-        res.status(500).send(Error(e));
-    }
-}
-
-module.exports.updateSellerEmail = async (req, res) =>{
-    const apiUrl = 'https://api.lazada.vn/rest' 
-    const apiPath=  '/seller/update'
-    const appSecret = "JPqQSDANG14eZdPtMogRDjiNwGYGj8wz" // goi db
-    const appKey = 122845 // goi db
-    const accessToken =  "500005000282pCawUSfbySlxELBNZvxde1hVjqrd1c60dd3csukWdjU9syzPtBwi" // goi db
-    const timestamp = Date.now()
-    const data = req.body
-    const payload = '<?xml version="1.0" encoding="UTF-8" ?>'+ convert.js2xml(data, {compact: true, ignoreComment: true, spaces: 4})
-    console.log(payload)
-    const commonRequestParams = {
-        "app_key": appKey,
-        "timestamp": timestamp,
-        "sign_method": "sha256",
-        "access_token":accessToken
-    }
-    const sign = signRequest(appSecret, apiPath, {...commonRequestParams, payload})
-    const encodePayload = encodeURI(payload)
-    try {
-        var options = {
-            'method': 'POST',
-            'url': apiUrl+apiPath+
-            '?payload='+encodePayload+
-            '&app_key='+appKey+
-            '&sign_method=sha256&timestamp='+timestamp+
-            '&access_token='+accessToken+
-            '&sign='+sign,
-            'headers': {
-            }
-        };
-        console.log(options)
-        request(options, function (error, response) {
-            if (error) throw new Error(error);
-            //console.log(response.body);
-            //const res = JSON.parse(response.body)
-            res.send(JSON.parse(response.body))
-        });
-    } catch (e) {
-        res.status(500).send(Error(e));
-    }
-    
-}
-
 module.exports.uploadImage = async (req, res) =>{
     const apiUrl = 'https://api.lazada.vn/rest' 
     const apiPath=  '/image/upload'
-    const appSecret = "JPqQSDANG14eZdPtMogRDjiNwGYGj8wz" // goi db
-    const appKey = 122845 // goi db
+    const appSecret = process.env.LAZADA_APP_SECRET
+    const appKey = process.env.LAZADA_APP_KEY
     const accessToken =  "500005000282pCawUSfbySlxELBNZvxde1hVjqrd1c60dd3csukWdjU9syzPtBwi" // goi db
     const timestamp = Date.now()
 
@@ -592,8 +480,8 @@ module.exports.uploadImage = async (req, res) =>{
 module.exports.updateProduct = async (req, res) =>{
     const apiUrl = 'https://api.lazada.vn/rest' 
     const apiPath=  '/product/update'
-    const appSecret = "JPqQSDANG14eZdPtMogRDjiNwGYGj8wz" // goi db
-    const appKey = 122845 // goi db
+    const appSecret = process.env.LAZADA_APP_SECRET
+    const appKey = process.env.LAZADA_APP_KEY
     const accessToken =  "500005000282pCawUSfbySlxELBNZvxde1hVjqrd1c60dd3csukWdjU9syzPtBwi" // goi db
     const timestamp = Date.now()
     const data = req.body
@@ -635,8 +523,8 @@ module.exports.updateProduct = async (req, res) =>{
 module.exports.createProduct = async (req, res) =>{
     const apiUrl = 'https://api.lazada.vn/rest' 
     const apiPath=  '/product/create'
-    const appSecret = "JPqQSDANG14eZdPtMogRDjiNwGYGj8wz" // goi db
-    const appKey = 122845 // goi db
+    const appSecret = process.env.LAZADA_APP_SECRET
+    const appKey = process.env.LAZADA_APP_KEY
     const accessToken =  "500005000282pCawUSfbySlxELBNZvxde1hVjqrd1c60dd3csukWdjU9syzPtBwi" // goi db
     const timestamp = Date.now()
     const data = req.body
@@ -674,11 +562,12 @@ module.exports.createProduct = async (req, res) =>{
     }
     
 }
+
 module.exports.removeProduct = async (req, res) =>{
     const apiUrl = 'https://api.lazada.vn/rest' 
     const apiPath=  '/product/remove'
-    const appSecret = "JPqQSDANG14eZdPtMogRDjiNwGYGj8wz" // goi db
-    const appKey = 122845 // goi db
+    const appSecret = process.env.LAZADA_APP_SECRET
+    const appKey = process.env.LAZADA_APP_KEY
     const accessToken =  "500005000282pCawUSfbySlxELBNZvxde1hVjqrd1c60dd3csukWdjU9syzPtBwi" // goi db
     const timestamp = Date.now()
     const seller_sku_list= JSON.stringify(req.body.seller_sku_list)
@@ -716,12 +605,127 @@ module.exports.removeProduct = async (req, res) =>{
     }
     
 }
+//2: lazada seller API
+module.exports.getSellerInfo = async (req, res) =>{
+    const apiUrl = 'https://api.lazada.vn/rest' 
+    const apiPath=  '/seller/get'
+    const appSecret = process.env.LAZADA_APP_SECRET
+    const appKey = process.env.LAZADA_APP_KEY
+    const accessToken =  req.body.access_token 
+    const timestamp = Date.now()
+    const commonRequestParams = {
+        "app_key": appKey,
+        "timestamp": timestamp,
+        "sign_method": "sha256",
+        "access_token":accessToken
+    }
+    const sign = signRequest(appSecret, apiPath, commonRequestParams)
+    try {
+        var options = {
+            'method': 'GET',
+            'url': apiUrl+apiPath+
+            '?app_key='+appKey+
+            '&sign_method=sha256&timestamp='+timestamp+
+            '&access_token='+accessToken+
+            '&sign='+sign,
+            'headers': {
+            }
+        };
+        request(options, function (error, response) {
+            const r = JSON.parse(response.body)
+            res.send(r)
+        });
+    } catch (e) {
+        res.status(500).send(Error(e));
+    }
+}
+//Provide seller metrics data of the specific seller, like positive seller rating, ship on time rate and etc.
+module.exports.getSellerMetrics = async (req, res) =>{
+    const apiUrl = 'https://api.lazada.vn/rest' 
+    const apiPath=  '/seller/metrics/get'
+    const appSecret = process.env.LAZADA_APP_SECRET
+    const appKey = process.env.LAZADA_APP_KEY
+    const accessToken =  "500005000282pCawUSfbySlxELBNZvxde1hVjqrd1c60dd3csukWdjU9syzPtBwi" // goi db
+    const timestamp = Date.now()
+    const commonRequestParams = {
+        "app_key": appKey,
+        "timestamp": timestamp,
+        "sign_method": "sha256",
+        "access_token":accessToken
+    }
+    const sign = signRequest(appSecret, apiPath, commonRequestParams)
+    try {
+        var options = {
+            'method': 'GET',
+            'url': apiUrl+apiPath+
+            '?app_key='+appKey+
+            '&sign_method=sha256&timestamp='+timestamp+
+            '&access_token='+accessToken+
+            '&sign='+sign,
+            'headers': {
+            }
+        };
+        //console.log(options)
+        request(options, function (error, response) {
+            //if (error) throw new Error(error);
+            //console.log(response.body);
+            const sellerMetrics = JSON.parse(response.body)
+            res.send(sellerMetrics)
+        });
+    } catch (e) {
+        res.status(500).send(Error(e));
+    }
+}
+// not working
+module.exports.updateSellerEmail = async (req, res) =>{
+    const apiUrl = 'https://api.lazada.vn/rest' 
+    const apiPath=  '/seller/update'
+    const appSecret = process.env.LAZADA_APP_SECRET
+    const appKey = process.env.LAZADA_APP_KEY
+    const accessToken =  "500005000282pCawUSfbySlxELBNZvxde1hVjqrd1c60dd3csukWdjU9syzPtBwi" // goi db
+    const timestamp = Date.now()
+    const data = req.body
+    const payload = '<?xml version="1.0" encoding="UTF-8" ?>'+ convert.js2xml(data, {compact: true, ignoreComment: true, spaces: 4})
+    console.log(payload)
+    const commonRequestParams = {
+        "app_key": appKey,
+        "timestamp": timestamp,
+        "sign_method": "sha256",
+        "access_token":accessToken
+    }
+    const sign = signRequest(appSecret, apiPath, {...commonRequestParams, payload})
+    const encodePayload = encodeURI(payload)
+    try {
+        var options = {
+            'method': 'POST',
+            'url': apiUrl+apiPath+
+            '?payload='+encodePayload+
+            '&app_key='+appKey+
+            '&sign_method=sha256&timestamp='+timestamp+
+            '&access_token='+accessToken+
+            '&sign='+sign,
+            'headers': {
+            }
+        };
+        console.log(options)
+        request(options, function (error, response) {
+            if (error) throw new Error(error);
+            //console.log(response.body);
+            //const res = JSON.parse(response.body)
+            res.send(JSON.parse(response.body))
+        });
+    } catch (e) {
+        res.status(500).send(Error(e));
+    }
+    
+}
 
+//3: lazada order API
 module.exports.getCancelReason = async (req, res) =>{
     const apiUrl = 'https://api.lazada.vn/rest' 
     const apiPath=  '/order/failure_reason/get'
-    const appSecret = "JPqQSDANG14eZdPtMogRDjiNwGYGj8wz" // goi db
-    const appKey = 122845 // goi db
+    const appSecret = process.env.LAZADA_APP_SECRET
+    const appKey = process.env.LAZADA_APP_KEY
     const accessToken =  "500005000282pCawUSfbySlxELBNZvxde1hVjqrd1c60dd3csukWdjU9syzPtBwi" // goi db
     const timestamp = Date.now()
     const commonRequestParams = {
@@ -758,8 +762,8 @@ module.exports.searchOrder = async (req, res) =>{
     //must have created_before or created_after
     const apiUrl = 'https://api.lazada.vn/rest' 
     const apiPath=  '/orders/get'
-    const appSecret = "JPqQSDANG14eZdPtMogRDjiNwGYGj8wz" // goi db
-    const appKey = 122845 // goi db
+    const appSecret = process.env.LAZADA_APP_SECRET
+    const appKey = process.env.LAZADA_APP_KEY
     const accessToken =  "500005000282pCawUSfbySlxELBNZvxde1hVjqrd1c60dd3csukWdjU9syzPtBwi" // goi db
     const timestamp = Date.now()
     const commonRequestParams = {
@@ -799,8 +803,8 @@ module.exports.searchOrder = async (req, res) =>{
 module.exports.getOrderById = async (req, res) =>{
     const apiUrl = 'https://api.lazada.vn/rest' 
     const apiPath=  '/order/get'
-    const appSecret = "JPqQSDANG14eZdPtMogRDjiNwGYGj8wz" // goi db
-    const appKey = 122845 // goi db
+    const appSecret = process.env.LAZADA_APP_SECRET
+    const appKey = process.env.LAZADA_APP_KEY
     const accessToken =  "50000500616qprrLfVCiIv3txDaY1de855c0J2klvctQjfdeq9srvlKjRn1Q4Qme" // goi db
     const timestamp = Date.now()
     const commonRequestParams = {
@@ -837,8 +841,8 @@ module.exports.getOrderById = async (req, res) =>{
 module.exports.getOrderItem = async (req, res) =>{
     const apiUrl = 'https://api.lazada.vn/rest' 
     const apiPath=  '/order/items/get/new'
-    const appSecret = "JPqQSDANG14eZdPtMogRDjiNwGYGj8wz" // goi db
-    const appKey = 122845 // goi db
+    const appSecret = process.env.LAZADA_APP_SECRET
+    const appKey = process.env.LAZADA_APP_KEY
     const accessToken =  "50000500616qprrLfVCiIv3txDaY1de855c0J2klvctQjfdeq9srvlKjRn1Q4Qme" // goi db
     const timestamp = Date.now()
     const commonRequestParams = {
@@ -893,8 +897,8 @@ module.exports.getOrderItem = async (req, res) =>{
 module.exports.cancelOrder = async (req, res) =>{
     const apiUrl = 'https://api.lazada.vn/rest' 
     const apiPath=  '/order/cancel'
-    const appSecret = "JPqQSDANG14eZdPtMogRDjiNwGYGj8wz" // goi db
-    const appKey = 122845 // goi db
+    const appSecret = process.env.LAZADA_APP_SECRET
+    const appKey = process.env.LAZADA_APP_KEY
     const accessToken =  "50000500616qprrLfVCiIv3txDaY1de855c0J2klvctQjfdeq9srvlKjRn1Q4Qme" // goi db
     const timestamp = Date.now()
     const reason_detail = req.body.reason_detail // not required
