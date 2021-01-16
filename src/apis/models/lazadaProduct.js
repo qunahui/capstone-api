@@ -21,9 +21,8 @@ const lazadaProductSchema = new Schema({
     },
     attributes:{
         type: Object
-    }
-  }
-);
+    },
+});
 
 // schema.virtual("productDetails",{
 //   ref:"productDetail",

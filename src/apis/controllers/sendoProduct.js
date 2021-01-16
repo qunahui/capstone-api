@@ -124,7 +124,15 @@ module.exports.createSendoProduct = async (item, { store_id }) => {
             link: item.link,       
             unit: item.unit_id,
             avatar: item.avatar.picture_url,
-            variants: variants,
+            variants: variants.map(variant => ({
+              ...variant,
+              linkedProduct: {
+                id: '---',
+                name: '---',
+                sku: '---',
+                status: 'not connected yet',
+              }
+            })),
             //attributes: attributes,
             voucher: item.voucher
           },

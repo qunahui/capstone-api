@@ -32,7 +32,15 @@ module.exports.createLazadaProduct = async (item, additionalData) => {
     let query = { store_id: additionalData.store_id, id: item.item_id },
         update = {
           store_id: additionalData.store_id,
-          variants: variants,
+          variants: variants.map(variant => ({
+            ...variant,
+            linkedProduct: {
+              id: '---',
+              name: '---',
+              sku: '---',
+              status: 'not connected yet',
+            }
+          })),
           id: item.item_id,
           primary_category: item.primary_category,
           attributes: item.attributes
