@@ -64,7 +64,7 @@ server.listen(5050);
 app.use("/", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 app.listen(port, () => {
-  console.log(`Server is up in port + ${port} 🐳`);
+  console.log(`Server is up in port + ${port}`);
 });
 
 /*
