@@ -16,17 +16,17 @@ module.exports.createLazadaProduct = async (item, additionalData) => {
       return attribute.is_sale_prop === 1
     })
     variants.forEach(variant => {
-      const variant_attribute = []
+      const variant_attributes = []
       attribute_sale_props.forEach(prop => {
         const attribute_name = prop.name
-        const attribute_value = variant[`${attribute_name}`]
-        variant_attribute.push({
+        const option_value = variant[`${attribute_name}`]
+        variant_attributes.push({
           "attribute_name": attribute_name,
-          "attribute_value": attribute_value
+          "option_value": attribute_value
         })
         delete variant[`${attribute_name}`]
       });
-      variant.variant_attribute = variant_attribute
+      variant.variant_attribute = variant_attributes
 
     });
     let query = { store_id: additionalData.store_id, id: item.item_id },
