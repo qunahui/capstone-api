@@ -28,6 +28,9 @@ const variantSchema = new Schema({
 })
 
 const productSchema = new Schema({
+  id:{
+    type: Number
+  },
    name:{
      type: String
    },

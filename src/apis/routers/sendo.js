@@ -51,23 +51,25 @@ router.get('/products', controller.getAllProducts)
 //api's routes
 router.post('/authorize', controller.authorizeCredential)
 router.post('/login', controller.getSendoToken)
-router.post('/create-product', controller.createSendoProduct)
-router.post('/search-products', controller.searchSendoProduct) //filter product, if none-> get all
+router.post('/products/', controller.createProductOnSendo)
+//router.post('/search-products', controller.searchSendoProduct) //filter product, if none-> get all
 router.post('/fetch-products', controller.fetchProducts)
+
 router.get('/category/:id', controller.getSendoCategory)
 router.get('/ward/:id', controller.getWardById)
 router.get('/district/:id', controller.getDistrictById)
 router.get('/region/:id', controller.getRegionById)
 router.get('/attribute/:id', controller.getSendoAttribute)
 router.get('/products/:id', controller.getSendoProductById)
-router.get('/sync-products', controller.syncAllProductSendo)
+//router.get('/sync-products', controller.syncAllProductSendo)
 router.get('/orders', controller.searchSendoOrder) //filter order, if none -> get all
 router.get('/cancel-reason', controller.getCancelReason) //extra route, it will be useful, or not
 router.get('/orders/:id', controller.getSendoOrderById)
-router.get('/sync-orders', controller.syncAllOrderSendo)
+//router.get('/sync-orders', controller.syncAllOrderSendo)
 
-router.put('/update-order-status', controller.updateOrderStatus) 
-
+router.put('/update-order-status', controller.updateOrderStatus)
+router.patch('/products/:id', controller.updateProductOnSendo) 
+router.delete("/products/:id", controller.deleteProductOnSendo);
 module.exports = router;
 
 /*

@@ -19,7 +19,7 @@ module.exports.getAllProduct = async (req, res) => {
 
 };
 
-module.exports.getProductById = async function (req, res) {
+module.exports.getMMSProductById = async function (req, res) {
   try {
     const productId = req.params.id;
     const product = await Product.find({id: productId})
@@ -58,6 +58,7 @@ module.exports.createMMSProduct = async (req, res) => {
 
     
   const product = new Product({
+    id: item.id,
     name: item.name,
     description: item.description,
     avatar: item.avatar,
@@ -73,25 +74,24 @@ module.exports.createMMSProduct = async (req, res) => {
 };
 
 module.exports.updateProduct = async (req, res) => {
-  console.log("Received ping update: ")
-  //console.log(req.body)
-  // const properties = Object.keys(req.body);
+  
+  const properties = Object.keys(req.body);
 
+  
+  try {
+    const product = await Product.findOne({id: req.body.id});
+    if (!product) {
+      res.status(404).send(product);
+    }
 
-  // try {
-  //   const product = await Product.findById(req.body.data.id);
+    properties.forEach((prop) => (product[prop] = req.body[prop]));
+    
+    product.save();
 
-  //   if (!product) {
-  //     res.status(404).send(product);
-  //   }
-
-  //   properties.forEach((prop) => (product[prop] = req.body[prop]));
-  //   product.save();
-
-  //   res.send(product);
-  // } catch (e) {
-  //   res.status(404).send(Error(e));
-  // }
+    res.send(product);
+  } catch (e) {
+    res.status(404).send(Error(e));
+  }
 };
 
 module.exports.deleteProduct = async (req, res) => {

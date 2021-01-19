@@ -141,13 +141,13 @@ module.exports.getSendoCategory = async (req, res) =>{
           'method': 'GET',
           'url': 'https://open.sendo.vn/api/partner/category/' + categoryId,
           'headers': {
-            'Authorization': 'bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJTdG9yZUlkIjoiODU0MjE0IiwiVXNlck5hbWUiOiIiLCJTdG9yZVN0YXR1cyI6IjIiLCJTaG9wVHlwZSI6IjEiLCJTdG9yZUxldmVsIjoiMCIsImV4cCI6MTYwNjk4ODMzOSwiaXNzIjoiODU0MjE0IiwiYXVkIjoiODU0MjE0In0.CZ7ntni8XqlilhdHxhf7b7w3gU72uDohnevGe-RZPIY'
+            'Authorization': 'bearer '+ req.query.access_token
           }
         };
         request(options, function (error, response) {
-          //if (error) throw new Error(error);
+          if (error) throw new Error(error);
           //console.log(response.body);
-          const categories = JSON.parse(response.body)
+          const categories = JSON.parse(response.body).result
           res.send(categories)
         });
   } catch (e) {
@@ -155,22 +155,24 @@ module.exports.getSendoCategory = async (req, res) =>{
   }
 }
 //create or update product
-module.exports.createSendoProduct = async (req, res) =>{
+module.exports.createProductOnSendo = async (req, res) =>{
   //id = 0 -> create
   //id != 0 -> update
-  const item = req.body;
+  const item = {id: 0, ...req.body};
+  //res.send(item)
   try {
       const options = {
           'method': 'POST',
           'url': 'https://open.sendo.vn/api/partner/product',
           'headers': {
-            'Authorization': 'bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJTdG9yZUlkIjoiODU0MjE0IiwiVXNlck5hbWUiOiIiLCJTdG9yZVN0YXR1cyI6IjIiLCJTaG9wVHlwZSI6IjEiLCJTdG9yZUxldmVsIjoiMCIsImV4cCI6MTYwNjkzMDE5OSwiaXNzIjoiODU0MjE0IiwiYXVkIjoiODU0MjE0In0.jEWfCspUxX4j8PMPEXEVewNnyhtCwtI2KMkEHi_PSHc',
+            'Authorization': 'bearer '+ req.query.access_token,
             'Content-Type': 'application/json'
           },
           body: JSON.stringify(item)
         };
+        
       request(options, function (error, response) {
-          //if (error) throw new Error(error);
+          if (error) throw new Error(error);
           //console.log(response.body);
           //const product = JSON.parse(re)
           res.send(response.body)
@@ -187,11 +189,11 @@ module.exports.getWardById = async (req, res) =>{
           'method': 'GET',
           'url': 'https://open.sendo.vn/api/address/ward/' + wardId,
           'headers': {
-            'Authorization': 'bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJTdG9yZUlkIjoiODU0MjE0IiwiVXNlck5hbWUiOiIiLCJTdG9yZVN0YXR1cyI6IjIiLCJTaG9wVHlwZSI6IjEiLCJTdG9yZUxldmVsIjoiMCIsImV4cCI6MTYwOTg0MTc0NCwiaXNzIjoiODU0MjE0IiwiYXVkIjoiODU0MjE0In0.TuSYGKaXtsi9LtcB1FnplZlvk1zQFmPiByFhoVlHMRc'
+            'Authorization': 'bearer '+ req.query.access_token
           }
         };
         request(options, function (error, response) {
-          //if (error) throw new Error(error);
+          if (error) throw new Error(error);
           //console.log(response.body);
           const ward = JSON.parse(response.body).result.name
           res.send(ward)
@@ -208,11 +210,11 @@ module.exports.getDistrictById = async (req, res) =>{
           'method': 'GET',
           'url': 'https://open.sendo.vn/api/address/district/' + districtId,
           'headers': {
-            'Authorization': 'bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJTdG9yZUlkIjoiODU0MjE0IiwiVXNlck5hbWUiOiIiLCJTdG9yZVN0YXR1cyI6IjIiLCJTaG9wVHlwZSI6IjEiLCJTdG9yZUxldmVsIjoiMCIsImV4cCI6MTYwOTg0MTc0NCwiaXNzIjoiODU0MjE0IiwiYXVkIjoiODU0MjE0In0.TuSYGKaXtsi9LtcB1FnplZlvk1zQFmPiByFhoVlHMRc'
+            'Authorization': 'bearer '+ req.query.access_token
           }
         };
         request(options, function (error, response) {
-          //if (error) throw new Error(error);
+          if (error) throw new Error(error);
           //console.log(response.body);
           const district = JSON.parse(response.body).result.name
           res.send(district)
@@ -223,17 +225,17 @@ module.exports.getDistrictById = async (req, res) =>{
 }
 module.exports.getRegionById = async (req, res) =>{
   
-  const districtId = req.params.id;
+  const regionId = req.params.id;
   try {
       const options = {
           'method': 'GET',
-          'url': 'https://open.sendo.vn/api/address/region/' + districtId,
+          'url': 'https://open.sendo.vn/api/address/region/' + regionId,
           'headers': {
-            'Authorization': 'bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJTdG9yZUlkIjoiODU0MjE0IiwiVXNlck5hbWUiOiIiLCJTdG9yZVN0YXR1cyI6IjIiLCJTaG9wVHlwZSI6IjEiLCJTdG9yZUxldmVsIjoiMCIsImV4cCI6MTYwOTg0MTc0NCwiaXNzIjoiODU0MjE0IiwiYXVkIjoiODU0MjE0In0.TuSYGKaXtsi9LtcB1FnplZlvk1zQFmPiByFhoVlHMRc'
+            'Authorization': 'bearer '+ req.query.access_token
           }
         };
         request(options, function (error, response) {
-          //if (error) throw new Error(error);
+          if (error) throw new Error(error);
           //console.log(response.body);
           const region = JSON.parse(response.body).result.name
           res.send(region)
@@ -250,13 +252,13 @@ module.exports.getSendoAttribute = async (req, res) =>{
           'method': 'GET',
           'url': 'https://open.sendo.vn/api/partner/category/attribute/' + attributeId,
           'headers': {
-            'Authorization': 'bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJTdG9yZUlkIjoiODU0MjE0IiwiVXNlck5hbWUiOiIiLCJTdG9yZVN0YXR1cyI6IjIiLCJTaG9wVHlwZSI6IjEiLCJTdG9yZUxldmVsIjoiMCIsImV4cCI6MTYwNjk4ODMzOSwiaXNzIjoiODU0MjE0IiwiYXVkIjoiODU0MjE0In0.CZ7ntni8XqlilhdHxhf7b7w3gU72uDohnevGe-RZPIY'
+            'Authorization': 'bearer ' + req.query.access_token
           }
         };
         request(options, function (error, response) {
-          //if (error) throw new Error(error);
+          if (error) throw new Error(error);
           //console.log(response.body);
-          const attributes = JSON.parse(response.body)
+          const attributes = JSON.parse(response.body).result
           res.send(attributes)
         });
   } catch (e) {
@@ -361,11 +363,11 @@ module.exports.getCancelReason =  async (req, res) =>{
         'method': 'GET',
         'url': 'https://open.sendo.vn/api/partner/salesorder/reason-collection',
         'headers': {
-          'Authorization': 'bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJTdG9yZUlkIjoiODU0MjE0IiwiVXNlck5hbWUiOiIiLCJTdG9yZVN0YXR1cyI6IjIiLCJTaG9wVHlwZSI6IjEiLCJTdG9yZUxldmVsIjoiMCIsImV4cCI6MTYwNzUzNjk4OSwiaXNzIjoiODU0MjE0IiwiYXVkIjoiODU0MjE0In0.v6K1qLSQd9UYTlPYyWTmpy4ygFh1JC76yb2A_Wugnwo'
+          'Authorization': 'bearer '+req.query.access_token
         }
       };
       request(options, function (error, response) {
-        //if (error) throw new Error(error);
+        if (error) throw new Error(error);
         //console.log(response.body);
         const cancelReasons = JSON.parse(response.body).result
         res.send(cancelReasons)
@@ -387,14 +389,14 @@ module.exports.updateOrderStatus = async (req, res) => {
         'method': 'PUT',
         'url': 'https://open.sendo.vn/api/partner/salesorder',
         'headers': {
-          'Authorization': 'bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJTdG9yZUlkIjoiODU0MjE0IiwiVXNlck5hbWUiOiIiLCJTdG9yZVN0YXR1cyI6IjIiLCJTaG9wVHlwZSI6IjEiLCJTdG9yZUxldmVsIjoiMCIsImV4cCI6MTYwNzUzNjk4OSwiaXNzIjoiODU0MjE0IiwiYXVkIjoiODU0MjE0In0.v6K1qLSQd9UYTlPYyWTmpy4ygFh1JC76yb2A_Wugnwo',
+          'Authorization': 'bearer '+ req.query.access_token,
           'Content-Type': 'application/json',
           'cache-control': 'no-cache'
         },
         body: JSON.stringify({"order_number":orderNumber,"order_status":orderStatus,"cancel_order_reason": cancelReason})
       };
       request(options, function (error, response) {
-        //if (error) throw new Error(error);
+        if (error) throw new Error(error);
         //console.log(response.body);
         const orderStatus = JSON.parse(response.body)
         res.send(orderStatus)
@@ -411,11 +413,15 @@ module.exports.getSendoOrderById = async (req, res) => {
           'method': 'GET',
           'url': 'https://open.sendo.vn/api/partner/salesorder/' + orderId,
           'headers': {
-            'Authorization': 'bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJTdG9yZUlkIjoiODU0MjE0IiwiVXNlck5hbWUiOiIiLCJTdG9yZVN0YXR1cyI6IjIiLCJTaG9wVHlwZSI6IjEiLCJTdG9yZUxldmVsIjoiMCIsImV4cCI6MTYwNzU0MDU0MiwiaXNzIjoiODU0MjE0IiwiYXVkIjoiODU0MjE0In0.hia137ETvU6VaII3lLs85OhBen7SdQRXm3uVn9zpTMQ'
+            'Authorization': 'bearer '+ req.query.access_token
           }
         };
         request(options, function (error, response) {
-          //if (error) throw new Error(error);
+          if (error){
+            
+            throw new Error(error);
+            
+          } 
           //console.log(response.body);
           const order = JSON.parse(response.body).result
           res.send(order)
@@ -436,4 +442,77 @@ module.exports.syncAllOrderSendo = async (req, res) =>{
   })
 
   res.send("done")
+}
+module.exports.updateProductOnSendo = async (req, res) => {
+  const productId = req.params.id;
+  const item = req.body
+  console.log()
+  try {
+      const options = {
+          'method': 'POST',
+          'url': 'https://open.sendo.vn/api/partner/product/update-by-field-mask',
+          'headers': {
+            'Authorization': 'bearer '+ req.query.access_token,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(
+            [
+              {
+                "id": productId,
+                "field_mask": Object.keys(item),
+                ...item
+              }
+            ]
+        )
+      };
+      //res.send(options)
+        request(options, function (error, response) {
+          if (error){
+            
+            throw new Error(error);
+            
+          } 
+          //console.log(response.body);
+          const product = JSON.parse(response.body).result
+          res.send(product)
+        });
+  } catch (e) {
+      res.status(500).send(Error(e));
+  }
+}
+module.exports.deleteProductOnSendo = async (req, res) => {
+  const productId = req.params.id;
+  try {
+      const options = {
+          'method': 'POST',
+          'url': 'https://open.sendo.vn/api/partner/product/update-by-field-mask',
+          'headers': {
+            'Authorization': 'bearer '+ req.query.access_token,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(
+            [
+              {
+              "id": productId,
+              "field_mask": [
+                "product_status"
+              ],
+              "product_status": 5
+              }
+            ]
+        )
+      };
+        request(options, function (error, response) {
+          if (error){
+            
+            throw new Error(error);
+            
+          } 
+          //console.log(response.body);
+          const product = JSON.parse(response.body).result
+          res.send(product)
+        });
+  } catch (e) {
+      res.status(500).send(Error(e));
+  }
 }
