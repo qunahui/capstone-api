@@ -220,27 +220,38 @@
             "description": "Numeric ID of ward to get",
             "schema":{
               "type": "integer",
-              "enum":[26734]
+              "example":26734
             }
           },
           {
             "in":"query",
-            "name": "access_token",
+            "name": "store_id",
             "required": true,
             "schema":{
-              "type": "string"
+              "type": "string",
+              "example":"d63aecd314b4463abc2204aa6a340c6b"
             }
           }
         ],
         "responses": {
           "200": {
-            "description": "Successful"
+            "description": "Successful",
+            "content":{
+              "application/json":{
+                "example":"Phường Tân Định"
+              }
+            }
           },
           "400": {
             "description": "Invalid ID supplied"
           },
-          "404": {
-            "description": "Pet not found"
+          "401": {
+            "description": "Pet not found",
+            "content":{
+              "application/json":{
+                "example":{"message":"Bad token; invalid JSON"}
+              }
+            }
           },
           "405": {
             "description": "Validation exception"
@@ -263,27 +274,43 @@
             "description": "Numeric ID of district to get",
             "schema":{
               "type": "integer",
-              "enum":[2]
+              "example":"2"
             }
           },
           {
             "in":"query",
-            "name": "access_token",
+            "name": "store_id",
             "required": true,
             "schema":{
-              "type": "string"
+              "type": "string",
+              "example":"d63aecd314b4463abc2204aa6a340c6b"
             }
           }
         ],
         "responses": {
           "200": {
-            "description": "Successful"
+            "description": "Successful",
+            "content":{
+              "application/json":{
+                "example":"Quận 2"
+              }
+            }
           },
           "400": {
-            "description": "Invalid ID supplied"
+            "description": "Invalid ID supplied",
+            "content":{
+              "application/json":{
+                "example":"Invalid id"
+              }
+            }
           },
-          "404": {
-            "description": "Pet not found"
+          "401": {
+            "description": "Pet not found",
+            "content":{
+              "application/json":{
+                "example":{"message":"Bad token; invalid JSON"}
+              }
+            }
           },
           "405": {
             "description": "Validation exception"
@@ -306,27 +333,43 @@
             "description": "Numeric ID of region to get",
             "schema":{
               "type": "integer",
-              "enum":[2]
+              "example":"2"
             }
           },
           {
             "in":"query",
-            "name": "access_token",
+            "name": "store_id",
             "required": true,
             "schema":{
-              "type": "string"
+              "type": "string",
+              "example": "d63aecd314b4463abc2204aa6a340c6b"
             }
           }
         ],
         "responses": {
           "200": {
-            "description": "Successful"
+            "description": "Successful",
+            "content":{
+              "application/json":{
+                "example":"Hà nội"
+              }
+            }
           },
           "400": {
-            "description": "Invalid ID supplied"
+            "description": "Invalid ID supplied",
+            "content":{
+              "application/json":{
+                "example":"Invalid id"
+              }
+            }
           },
-          "404": {
-            "description": "Pet not found"
+          "401": {
+            "description": "",
+            "content":{
+              "application/json":{
+                "example":{"message":"Bad token; invalid JSON"}
+              }
+            }
           },
           "405": {
             "description": "Validation exception"
@@ -376,10 +419,11 @@
         "parameters":[
           {
             "in":"query",
-            "name": "access_token",
+            "name": "store_id",
             "required": true,
             "schema":{
-              "type": "string"
+              "type": "string",
+              "example": "d63aecd314b4463abc2204aa6a340c6b"
             }
           }
         ],
@@ -620,10 +664,28 @@
             
           },
           "400": {
-            "description": "Invalid ID supplied"
+            "description": "Invalid ID supplied",
+            "content":{
+              "application/json":{
+                "example":{
+                  "result":null,
+                  "success":false,
+                  "error":{
+                    "message":"Mã sản phẩm đã tồn tại",
+                    "details":null,
+                    "error_details":null
+                  },
+                    "status_code":400}
+              }
+            }
           },
-          "404": {
-            "description": "Pet not found"
+          "401": {
+            "description": "Pet not found",
+            "content":{
+              "application/json":{
+                "example":{"message":"Bad token; invalid JSON"}
+              }
+            }
           },
           "405": {
             "description": "Validation exception"
@@ -646,15 +708,16 @@
             "description": "Numeric ID of product to get",
             "schema":{
               "type": "integer",
-              "enum":[39107134, 40182940]
+              "example": 39107134
             }
           },
           {
             "in":"query",
-            "name": "access_token",
+            "name": "store_id",
             "required": true,
             "schema":{
-              "type": "string"
+              "type": "string",
+              "example":"d63aecd314b4463abc2204aa6a340c6b"
             }
           }
         ],
@@ -686,15 +749,17 @@
             "required": true,
             "description": "Numeric ID of product to update",
             "schema":{
-              "type": "integer"
+              "type": "integer",
+              "example": 39508091
             }
           },
           {
             "in":"query",
-            "name": "access_token",
+            "name": "store_id",
             "required": true,
             "schema":{
-              "type": "string"
+              "type": "string",
+              "example": "d63aecd314b4463abc2204aa6a340c6b"
             }
           }
         ],
@@ -757,15 +822,17 @@
             "required": true,
             "description": "Numeric ID of product to get",
             "schema":{
-              "type": "integer"
+              "type": "integer",
+              "example": 40205805
             }
           },
           {
             "in":"query",
-            "name": "access_token",
+            "name": "store_id",
             "required": true,
             "schema":{
-              "type": "string"
+              "type": "string",
+              "example": "d63aecd314b4463abc2204aa6a340c6b"
             }
           }
         ],
@@ -819,15 +886,16 @@
             "description": "Numeric ID of category to get",
             "schema":{
               "type": "integer",
-              "enum":[0,8]
+              "example": 1485
             }
           },
           {
             "in":"query",
-            "name": "access_token",
+            "name": "store_id",
             "required": true,
             "schema":{
-              "type": "string"
+              "type": "string",
+              "example":"d63aecd314b4463abc2204aa6a340c6b"
             }
           }
         ],
@@ -862,15 +930,16 @@
             "description": "Numeric ID of attribute to get",
             "schema":{
               "type": "integer",
-              "enum":[1485]
+              "example":1485
             }
           },
           {
             "in":"query",
-            "name": "access_token",
+            "name": "store_id",
             "required": true,
             "schema":{
-              "type": "string"
+              "type": "string",
+              "example":"d63aecd314b4463abc2204aa6a340c6b"
             }
           }
         ],
@@ -900,13 +969,67 @@
         "parameters":[
           {
             "in":"query",
-            "name": "access_token",
+            "name": "store_id",
             "required": true,
             "schema":{
-              "type": "string"
+              "type": "string",
+              "example":"d63aecd314b4463abc2204aa6a340c6b"
             }
           }
         ],
+        "responses": {
+          "200": {
+            "description": "Successful"
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "404": {
+            "description": "Pet not found"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        }
+      }
+    },
+    "/api/sendo/orders/":{
+      "post": {
+        "tags": [
+          "sendo"
+        ],
+        "summary": "search order",
+        "operationId": "searchOrder",
+        "parameters":[
+          {
+            "in":"query",
+            "name": "store_id",
+            "required": true,
+            "schema":{
+              "type": "string",
+              "example":"d63aecd314b4463abc2204aa6a340c6b"
+            }
+          }
+        ],
+        "requestBody":{
+          "description":"page_size: min 10, max 50, date: yyyy/MM/dd",
+          "content":{
+            "application/json":{
+              "schema":{
+                
+              },
+              "example":{
+                "page_size": 10,
+                "order_status": 2,
+                "order_date_from": "2020-05-01",
+                "order_date_to": "2020-05-07",
+                "order_status_date_from": null,
+                "order_status_date_to": null,
+                "token": null
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
             "description": "Successful"
@@ -928,7 +1051,7 @@
         "tags": [
           "sendo"
         ],
-        "summary": "Get order by orderNumber",
+        "summary": "Get order by orderNumber on Sendo",
         "operationId": "getOrder",
         "parameters":[
           {
@@ -938,18 +1061,74 @@
             "description": "Numeric of order to get",
             "schema":{
               "type": "integer",
-              "enum":[14674394696]
+              "example": 14674394696
             }
           },
           {
             "in":"query",
-            "name": "access_token",
+            "name": "store_id",
             "required": true,
             "schema":{
-              "type": "string"
+              "type": "string",
+              "example": "d63aecd314b4463abc2204aa6a340c6b"
             }
           }
         ],
+        "responses": {
+          "200": {
+            "description": "Successful"
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "404": {
+            "description": "Pet not found"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "sendo"
+        ],
+        "summary": "Update order status by orderNumber on Sendo",
+        "operationId": "updateOrder",
+        "parameters":[
+          {
+            "in":"path",
+            "name": "orderNumber",
+            "required": true,
+            "description": "Numeric of order to update",
+            "schema":{
+              "type": "integer",
+              "example": 14674394696
+            }
+          },
+          {
+            "in":"query",
+            "name": "store_id",
+            "required": true,
+            "schema":{
+              "type": "string",
+              "example": "d63aecd314b4463abc2204aa6a340c6b"
+            }
+          }
+        ],
+        "requestBody":{
+          "content":{
+            "application/json":{
+              "schema":{
+
+              },
+              "example":{
+                "orđerStatus" :"13",
+                "cancelReason": "CBS100"
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
             "description": "Successful"
@@ -1048,20 +1227,63 @@
         }
       }
     },
-    "/api/sendo/update-order-status":{
-      "put": {
+    "/api/lazada/products/{productId}":{
+      "get": {
         "tags": [
-          "sendo"
+          "lazada"
         ],
-        "summary": "Update order status",
-        "operationId": "updateOrder",
+        "summary": "get product by Id on lazada",
+        "operationId": "getProduct",
         "parameters":[
           {
-            "in":"query",
-            "name": "access_token",
+            "in":"path",
+            "name": "productId",
             "required": true,
             "schema":{
               "type": "string"
+            }
+          },
+          {
+            "in":"query",
+            "name": "store_id",
+            "required": true,
+            "schema":{
+              "type": "string",
+              "example": "200163939035"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful"
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "404": {
+            "description": "Pet not found"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        }
+      }
+    },
+    "/api/lazada/products/":{
+      "post": {
+        "tags": [
+          "lazada"
+        ],
+        "summary": "create product on lazada",
+        "operationId": "createProduct",
+        "parameters":[
+          {
+            "in":"query",
+            "name": "store_id",
+            "required": true,
+            "schema":{
+              "type": "string",
+              "example": "200163939035"
             }
           }
         ],
@@ -1072,9 +1294,467 @@
                 
               },
               "example":{
-                "orderNumber":"14699829511",
-                "orderStatus": 13,
-                "cancelReason": "CBS100"
+                "Request": {
+                  "Product": {
+                    "PrimaryCategory": "13010",
+                    "Attributes": {
+                      "name": "api create product test sample",
+                      "short_description": "This is a nice product",
+                      "brand": "Remark",
+                      "model": "asdf",
+                      "kid_years": "Kids (6-10yrs)",
+                      "delivery_option_sof": "No"
+                    },
+                    "Skus": {
+                      "Sku": {
+                        "SellerSku": "api-create-test-1",
+                        "color_family": "Green",
+                        "size": "40",
+                        "quantity": "1",
+                        "price": "600000.0",
+                        "package_length": "11",
+                        "package_height": "22",
+                        "package_weight": "33",
+                        "package_width": "44",
+                        "package_content": "this is what's in the box",
+                        "Images": {
+                          "Image": [
+                            "http://sg.s.alibaba.lzd.co/original/59046bec4d53e74f8ad38d19399205e6.jpg",
+                            "http://sg.s.alibaba.lzd.co/original/179715d3de39a1918b19eec3279dd482.jpg"
+                          ]
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful",
+            "content":{
+              "application/json":{
+                "data":{
+                  "item_id":1136164711,
+                  "sku_list":[
+                    {
+                      "shop_sku":"1136164711_VNAMZ-4026616019","seller_sku":"api-create-test-1",
+                      "sku_id":4026616019
+                      }
+                  ]
+                },
+                "code":"0",
+                "request_id":"0be6f7a716117479900025246"
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "404": {
+            "description": "Pet not found"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "lazada"
+        ],
+        "summary": "update product by SellerSku on lazada",
+        "operationId": "updateProduct",
+        "parameters":[
+          {
+            "in":"query",
+            "name": "store_id",
+            "required": true,
+            "schema":{
+              "type": "string",
+              "example": "200163939035"
+            }
+          }
+        ],
+        "requestBody":{
+          "content":{
+            "application/json":{
+              "schema":{
+                
+              },
+              "example":{
+                "Request": {
+                  "Product": {
+                    "Skus": {
+                      "Sku": [
+                        {
+                          "SellerSku": "12432456",
+                          "quantity": "125",
+                          "price": "400000"
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful",
+            "content":{
+              "application/json":{
+                "example":{
+                  "code":"0",
+                  "request_id":"0b0e02a716117470077826212"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "404": {
+            "description": "Pet not found"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "lazada"
+        ],
+        "summary": "delete product by SellerSku on lazada",
+        "operationId": "deleteProduct",
+        "parameters":[
+          {
+            "in":"query",
+            "name": "store_id",
+            "required": true,
+            "schema":{
+              "type": "string",
+              "example": "200163939035"
+            }
+          }
+        ],
+        "requestBody":{
+          "content":{
+            "application/json":{
+              "schema":{
+                
+              },
+              "example":{
+                "seller_sku_list": [
+                  "1243245"
+                ]
+            }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful",
+            "content":{
+              "application/json":{
+                "example":{
+                  "code":"0",
+                  "request_id":"0b0e02a716117470077826212"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "404": {
+            "description": "Pet not found"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        }
+      }
+    },
+    "/api/lazada/attribute/{categoryId}":{
+      "get": {
+        "tags": [
+          "lazada"
+        ],
+        "summary": "get Attributes by categoryId on lazada",
+        "operationId": "getAttributes",
+        "parameters":[
+          {
+            "in":"path",
+            "name": "categoryId",
+            "required": true,
+            "schema":{
+              "type": "number"
+            },
+            "description":"categoryId must be primary category"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful"
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "404": {
+            "description": "Attributes not found",
+            "content":{
+              "application/json":{
+                "example": {
+                  "code":"601",
+                  "type":"ISP",
+                  "message":"E601: Requested category not exists","request_id":"0b1195dd16111364977805848"
+                }
+              }
+            }
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        }
+      }
+    },
+    "/api/lazada/qc-status":{
+      "post": {
+        "tags": [
+          "lazada"
+        ],
+        "summary": "get QcStatus by seller_sku on lazada",
+        "operationId": "getQcStatus",
+        "parameters":[
+          {
+            "in":"query",
+            "name": "limit",
+            "required": true,
+            "schema":{
+              "type": "number",
+              "enum":[100]
+            },
+            "description":""
+          },
+          {
+            "in":"query",
+            "name": "offset",
+            "required": true,
+            "schema":{
+              "type": "number",
+              "enum":[0]
+            },
+            "description":""
+          },
+          {
+            "in":"query",
+            "name": "store_id",
+            "required": true,
+            "schema":{
+              "type": "string",
+              "example":"200163939035"
+            },
+            "description":""
+          }
+        ],
+        "requestBody":{
+          "content":{
+            "application/json":{
+              "schema":{
+
+              },
+              "example":{
+                "seller_skus": ["12432456","124324"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful",
+            "content":{
+              "application/json":{
+                "example":{
+                  "data": [
+                    {
+                      "seller_sku": "124324",
+                      "status": "rejected"
+                    },
+                    {
+                      "data_changed": "1",
+                      "seller_sku": "12432456",
+                      "status": "approved"
+                    }
+                  ],
+                  "code": "0",
+                  "request_id": "0b1195dd16111401783978066"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "404": {
+            "description": "Attributes not found",
+            "content":{
+              "application/json":{
+                "example":{
+                  "code": "1006",
+                  "type": "ISP",
+                  "message": "E1006: SellerSku Not Exist",
+                  "request_id": "0b1187a316111405293796914"
+                }
+              }
+            }
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        }
+      }
+    },
+    "/api/lazada/cancel-reason":{
+      "get": {
+        "tags": [
+          "lazada"
+        ],
+        "summary": "get Cancel Reason on lazada",
+        "operationId": "getCancelReason",
+        "parameters":[
+          {
+            "in":"query",
+            "name": "store_id",
+            "required": true,
+            "schema":{
+              "type": "string",
+              "example":"200163939035"
+            },
+            "description":""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful",
+            "content":{
+              "application/json":{
+                "example":{
+                  "data":[
+                    {
+                      "name":"Out of Stock",
+                      "type":"canceled",
+                      "reason_id":15
+                    },
+                    {
+                      "name":"Wrong Price or Pricing Error",
+                      "type":"canceled",
+                      "reason_id":21
+                    }
+                  ],
+                  "code":"0",
+                  "request_id":"0b0e02a716117568792665768"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "404": {
+            "description": "Attributes not found",
+            "content":{
+              "application/json":{
+                "example":{
+                  "code": "1006",
+                  "type": "ISP",
+                  "message": "E1006: SellerSku Not Exist",
+                  "request_id": "0b1187a316111405293796914"
+                }
+              }
+            }
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        }
+      }
+    },
+    "/api/lazada/seller-metrics":{
+      "get": {
+        "tags": [
+          "lazada"
+        ],
+        "summary": "get Seller Metrics by seller_sku on lazada",
+        "operationId": "getSellerMetrics",
+        "parameters":[
+          {
+            "in":"query",
+            "name": "store_id",
+            "required": true,
+            "schema":{
+              "type": "string",
+              "example": "200163939035"
+            },
+            "description":""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful",
+            "content":{
+              "application/json":{
+                "example":{
+                  "data": {
+                    "ship_on_time": "0.0",
+                    "response_time": "null",
+                    "seller_id": 200163939035,
+                    "response_rate": "null"
+                  },
+                  "code": "0",
+                  "request_id": "0b1195ad16111533718203524"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "404": {
+            "description": "Attributes not found",
+            "content":{
+              "application/json":{
+                "example":{
+                  
+                }
+              }
+            }
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        }
+      }
+    },
+    "/lazada-category/":{
+      "post": {
+        "tags": [
+          "lazada"
+        ],
+        "summary": "get list categories in database",
+        "operationId": "getListCategories",
+        "requestBody":{
+          "content":{
+            "application/json":{
+              "schema":{
+
+              },
+              "example":{
+                "idpath": []
               }
             }
           }
@@ -1086,8 +1766,246 @@
           "400": {
             "description": "Invalid ID supplied"
           },
-          "404": {
-            "description": "Pet not found"
+          "405": {
+            "description": "Validation exception"
+          }
+        }
+      }
+    },
+    "/api/lazada/refresh-token":{
+      "get": {
+        "tags": [
+          "lazada"
+        ],
+        "summary": "refresh token and save into database",
+        "operationId": "refreshToken",
+        "parameters":[
+          {
+            "in":"query",
+            "name": "store_id",
+            "required": true,
+            "schema":{
+              "type": "string",
+              "example": "200163939035"
+            },
+            "description":""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful"
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        }
+      }
+    },
+    "/api/lazada/orders/cancel/{order_item_id}":{
+      "post": {
+        "tags": [
+          "lazada"
+        ],
+        "summary": "cacel order item on lazada",
+        "operationId": "cancelOrderItem",
+        "parameters":[
+          {
+            "in":"query",
+            "name": "store_id",
+            "required": true,
+            "schema":{
+              "type": "string",
+              "example": "200163939035"
+            },
+            "description":""
+          },
+          {
+            "in":"path",
+            "name": "order_item_id",
+            "required": true,
+            "schema":{
+              "type": "number",
+              "example": 267078668413259
+            },
+            "description":""
+          }
+        ],
+        "requestBody":{
+          "content":{
+            "application/json":{
+              "schema":{
+
+              },
+              "example":{
+                "reason_id":21,
+                "reason_detail": ""
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful",
+            "content":{
+              "application/json":{
+                "example":{
+                  "success":true,
+                  "code":"0",
+                  "request_id":"0b1187a316117593884048180"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        }
+      }
+    },
+    "/api/lazada/orders/{order_id}":{
+      "get": {
+        "tags": [
+          "lazada"
+        ],
+        "summary": "Get order by id on lazada",
+        "operationId": "getOrder",
+        "parameters":[
+          {
+            "in":"query",
+            "name": "store_id",
+            "required": true,
+            "schema":{
+              "type": "string",
+              "example": "200163939035"
+            },
+            "description":""
+          },
+          {
+            "in":"path",
+            "name": "order_id",
+            "required": true,
+            "schema":{
+              "type": "string",
+              "example": "267078668313259"
+            },
+            "description":""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful"
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        }
+      }
+    },
+    "/api/lazada/orders/items/{order_id}":{
+      "get": {
+        "tags": [
+          "lazada"
+        ],
+        "summary": "Get order items by id on lazada",
+        "operationId": "getOrderItems",
+        "parameters":[
+          {
+            "in":"query",
+            "name": "store_id",
+            "required": true,
+            "schema":{
+              "type": "string",
+              "example": "200163939035"
+            },
+            "description":""
+          },
+          {
+            "in":"path",
+            "name": "order_id",
+            "required": true,
+            "schema":{
+              "type": "string",
+              "example": "267078668313259"
+            },
+            "description":""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful"
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        }
+      }
+    },
+    "/api/lazada/upload-image":{
+      "post": {
+        "tags": [
+          "lazada"
+        ],
+        "summary": "upload image on lazada",
+        "operationId": "uploadImage",
+        "parameters":[
+          {
+            "in":"query",
+            "name": "store_id",
+            "required": true,
+            "schema":{
+              "type": "string",
+              "example": "200163939035"
+            },
+            "description":""
+          }
+        ],
+        "requestBody":{
+          "content":{
+            "multipart/form-data":{
+              "schema":{
+                "type":"object",
+                "properties":{
+                  "image":{
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful",
+            "content":{
+              "application/json":{
+                "example":{
+                  "data":{
+                    "image":{
+                      "hash_code":"eeaca3c5adf96292ee5c5087787140a1",
+                      "url":"https://vn-live-02.slatic.net/p/eeaca3c5adf96292ee5c5087787140a1.jpg"
+                    }
+                  },
+                  "code":"0",
+                  "request_id":"0be6f7a716116562977934279"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid ID supplied"
           },
           "405": {
             "description": "Validation exception"

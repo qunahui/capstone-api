@@ -135,20 +135,21 @@ module.exports.fetchProducts = async (req, res) => {
 
 module.exports.getSendoCategory = async (req, res) =>{
   //category lv4 have attributes but useless
+ 
   const categoryId = req.params.id;
+  
   try {
       const options = {
           'method': 'GET',
           'url': 'https://open.sendo.vn/api/partner/category/' + categoryId,
           'headers': {
-            'Authorization': 'bearer '+ req.query.access_token
+            'Authorization': 'bearer '+ req.accessToken
           }
         };
         request(options, function (error, response) {
           if (error) throw new Error(error);
           //console.log(response.body);
-          const categories = JSON.parse(response.body).result
-          res.send(categories)
+          res.status(response.statusCode).send(response.body)
         });
   } catch (e) {
       res.status(500).send(Error(e));
@@ -158,24 +159,27 @@ module.exports.getSendoCategory = async (req, res) =>{
 module.exports.createProductOnSendo = async (req, res) =>{
   //id = 0 -> create
   //id != 0 -> update
+  
   const item = {id: 0, ...req.body};
-  //res.send(item)
+  
   try {
       const options = {
           'method': 'POST',
           'url': 'https://open.sendo.vn/api/partner/product',
           'headers': {
-            'Authorization': 'bearer '+ req.query.access_token,
+            'Authorization': 'bearer '+ req.accessToken,
             'Content-Type': 'application/json'
           },
           body: JSON.stringify(item)
         };
         
       request(options, function (error, response) {
-          if (error) throw new Error(error);
-          //console.log(response.body);
-          //const product = JSON.parse(re)
-          res.send(response.body)
+        if (error) throw new Error(error);
+
+        console.log(response.body)
+        res.status(response.statusCode).send(response.body)
+          
+        
         });
   } catch (e) {
       res.status(500).send(Error(e));
@@ -183,20 +187,20 @@ module.exports.createProductOnSendo = async (req, res) =>{
 }
 module.exports.getWardById = async (req, res) =>{
   
+ 
   const wardId = req.params.id;
   try {
       const options = {
           'method': 'GET',
           'url': 'https://open.sendo.vn/api/address/ward/' + wardId,
           'headers': {
-            'Authorization': 'bearer '+ req.query.access_token
+            'Authorization': 'bearer '+ req.accessToken
           }
         };
         request(options, function (error, response) {
           if (error) throw new Error(error);
-          //console.log(response.body);
-          const ward = JSON.parse(response.body).result.name
-          res.send(ward)
+
+          res.status(response.statusCode).send(response.body)
         });
   } catch (e) {
       res.status(500).send(Error(e));
@@ -205,40 +209,40 @@ module.exports.getWardById = async (req, res) =>{
 module.exports.getDistrictById = async (req, res) =>{
   
   const districtId = req.params.id;
+ 
   try {
       const options = {
           'method': 'GET',
           'url': 'https://open.sendo.vn/api/address/district/' + districtId,
           'headers': {
-            'Authorization': 'bearer '+ req.query.access_token
+            'Authorization': 'bearer '+ req.accessToken
           }
         };
         request(options, function (error, response) {
-          if (error) throw new Error(error);
-          //console.log(response.body);
-          const district = JSON.parse(response.body).result.name
-          res.send(district)
+          if(error) throw  new Error(error)
+          res.status(response.statusCode).send(response.body)
         });
   } catch (e) {
       res.status(500).send(Error(e));
   }
 }
 module.exports.getRegionById = async (req, res) =>{
-  
+ 
   const regionId = req.params.id;
+ 
   try {
       const options = {
           'method': 'GET',
           'url': 'https://open.sendo.vn/api/address/region/' + regionId,
           'headers': {
-            'Authorization': 'bearer '+ req.query.access_token
+            'Authorization': 'bearer '+ req.accessToken
           }
         };
         request(options, function (error, response) {
           if (error) throw new Error(error);
-          //console.log(response.body);
-          const region = JSON.parse(response.body).result.name
-          res.send(region)
+
+          
+          res.status(response.statusCode).send(response.body)
         });
   } catch (e) {
       res.status(500).send(Error(e));
@@ -247,19 +251,20 @@ module.exports.getRegionById = async (req, res) =>{
 module.exports.getSendoAttribute = async (req, res) =>{
   
   const attributeId = req.params.id;
+ 
   try {
       const options = {
           'method': 'GET',
           'url': 'https://open.sendo.vn/api/partner/category/attribute/' + attributeId,
           'headers': {
-            'Authorization': 'bearer ' + req.query.access_token
+            'Authorization': 'bearer ' + req.accessToken
           }
         };
         request(options, function (error, response) {
           if (error) throw new Error(error);
           //console.log(response.body);
-          const attributes = JSON.parse(response.body).result
-          res.send(attributes)
+          
+          res.status(response.statusCode).send(response.body)
         });
   } catch (e) {
       res.status(500).send(Error(e));
@@ -273,14 +278,13 @@ module.exports.getSendoProductById = async (req, res) =>{
           'method': 'GET',
           'url': 'https://open.sendo.vn/api/partner/product?id=' + productId,
           'headers': {
-            'Authorization': 'bearer ' + req.query.access_token
+            'Authorization': 'bearer ' + req.access_token
           }
         };
         request(options, function (error, response) {
-          //if (error) throw new Error(error);
+          if (error) throw new Error(error);
           //console.log(response.body);
-          const product = JSON.parse(response.body).result
-          res.send(product)
+          res.status(response.statusCode).send(response.body)
         });
   } catch (e) {
       res.status(500).send(Error(e));
@@ -332,7 +336,7 @@ module.exports.syncAllProductSendo = async (req, res) => {
 }
 
 
-module.exports.searchSendoOrder =  async (req, res) =>{
+module.exports.searchOrderOnSendo =  async (req, res) =>{
   //filter order, search by name, date_from, date_to
   //if nothing-> get all
   try {
@@ -340,17 +344,23 @@ module.exports.searchSendoOrder =  async (req, res) =>{
         'method': 'POST',
         'url': 'https://open.sendo.vn/api/partner/salesorder/search',
         'headers': {
-          'Authorization': 'bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJTdG9yZUlkIjoiODU0MjE0IiwiVXNlck5hbWUiOiIiLCJTdG9yZVN0YXR1cyI6IjIiLCJTaG9wVHlwZSI6IjEiLCJTdG9yZUxldmVsIjoiMCIsImV4cCI6MTYwNzU5MzAzMywiaXNzIjoiODU0MjE0IiwiYXVkIjoiODU0MjE0In0.oz4feqo6aAl35m1dPWUyljzrQTh_lymbCBXyRIPbNpI',
+          'Authorization': 'bearer '+ req.accessToken,
           'Content-Type': 'application/json',
           'cache-control': 'no-cache'
         },
-        body: JSON.stringify({"page_size":10,"order_status":2,"order_date_from":"2020-05-01","order_date_to":"2021-05-07","order_status_date_from":null,"order_status_date_to":null,"token":null})
+        body: JSON.stringify({
+          "page_size":req.body.page_size,
+          "order_status":req.body.order_status,
+          "order_date_from":req.body.order_date_from,
+          "order_date_to":req.body.order_date_to,
+          "order_status_date_from":req.body.order_status_date_from,
+          "order_status_date_to":req.body.order_status_date_to,
+          "token":req.body.token})
       };
       request(options, function (error, response) {
-        //if (error) throw new Error(error);
+        if (error) throw new Error(error);
         //console.log(response.body);
-        const orders = JSON.parse(response.body).result.data
-        res.send(orders)
+        res.status(response.statusCode).send(response.body)
       });
 } catch (e) {
     res.status(500).send(Error(e));
@@ -358,19 +368,19 @@ module.exports.searchSendoOrder =  async (req, res) =>{
 }
 
 module.exports.getCancelReason =  async (req, res) =>{
+  
   try {
     const options = {
         'method': 'GET',
         'url': 'https://open.sendo.vn/api/partner/salesorder/reason-collection',
         'headers': {
-          'Authorization': 'bearer '+req.query.access_token
+          'Authorization': 'bearer '+ req.accessToken
         }
       };
       request(options, function (error, response) {
         if (error) throw new Error(error);
         //console.log(response.body);
-        const cancelReasons = JSON.parse(response.body).result
-        res.send(cancelReasons)
+        res.status(response.statusCode).send(response.body)
       });
   } catch (e) {
     res.status(500).send(Error(e));
@@ -381,39 +391,41 @@ module.exports.updateOrderStatus = async (req, res) => {
   // order status
   // 3: confirm order (be careful, dont use)
   //13: cancel order (include reason)
-  const orderNumber = req.body.orderNumber
-  const cancelReason = req.body.cancelReason
-  const orderStatus = req.body.orderStatus
+  
   try {
     const options = {
         'method': 'PUT',
         'url': 'https://open.sendo.vn/api/partner/salesorder',
         'headers': {
-          'Authorization': 'bearer '+ req.query.access_token,
+          'Authorization': 'bearer '+ req.accessToken,
           'Content-Type': 'application/json',
           'cache-control': 'no-cache'
         },
-        body: JSON.stringify({"order_number":orderNumber,"order_status":orderStatus,"cancel_order_reason": cancelReason})
+        body: JSON.stringify({
+          "order_number":req.params.id,
+          "order_status":req.body.orderStatus,
+          "cancel_order_reason": req.body.cancelReason})
       };
       request(options, function (error, response) {
         if (error) throw new Error(error);
         //console.log(response.body);
-        const orderStatus = JSON.parse(response.body)
-        res.send(orderStatus)
+        res.status(response.statusCode).send(response.body)
       });
   } catch (e) {
     res.status(500).send(Error(e));
   }
 }
 
-module.exports.getSendoOrderById = async (req, res) => {
+module.exports.getOrderByIdOnSendo = async (req, res) => {
+
   const orderId = req.params.id;
+  
   try {
       const options = {
           'method': 'GET',
           'url': 'https://open.sendo.vn/api/partner/salesorder/' + orderId,
           'headers': {
-            'Authorization': 'bearer '+ req.query.access_token
+            'Authorization': 'bearer '+ req.accessToken
           }
         };
         request(options, function (error, response) {
@@ -423,8 +435,7 @@ module.exports.getSendoOrderById = async (req, res) => {
             
           } 
           //console.log(response.body);
-          const order = JSON.parse(response.body).result
-          res.send(order)
+          res.status(response.statusCode).send(response.body)
         });
   } catch (e) {
       res.status(500).send(Error(e));
@@ -444,15 +455,16 @@ module.exports.syncAllOrderSendo = async (req, res) =>{
   res.send("done")
 }
 module.exports.updateProductOnSendo = async (req, res) => {
+  
   const productId = req.params.id;
   const item = req.body
-  console.log()
+ 
   try {
       const options = {
           'method': 'POST',
           'url': 'https://open.sendo.vn/api/partner/product/update-by-field-mask',
           'headers': {
-            'Authorization': 'bearer '+ req.query.access_token,
+            'Authorization': 'bearer '+ req.accessToken,
             'Content-Type': 'application/json'
           },
           body: JSON.stringify(
@@ -473,21 +485,22 @@ module.exports.updateProductOnSendo = async (req, res) => {
             
           } 
           //console.log(response.body);
-          const product = JSON.parse(response.body).result
-          res.send(product)
+          res.status(response.statusCode).send(response.body)
         });
   } catch (e) {
       res.status(500).send(Error(e));
   }
 }
 module.exports.deleteProductOnSendo = async (req, res) => {
+ 
   const productId = req.params.id;
+ 
   try {
       const options = {
           'method': 'POST',
           'url': 'https://open.sendo.vn/api/partner/product/update-by-field-mask',
           'headers': {
-            'Authorization': 'bearer '+ req.query.access_token,
+            'Authorization': 'bearer '+ req.accessToken,
             'Content-Type': 'application/json'
           },
           body: JSON.stringify(
@@ -509,8 +522,7 @@ module.exports.deleteProductOnSendo = async (req, res) => {
             
           } 
           //console.log(response.body);
-          const product = JSON.parse(response.body).result
-          res.send(product)
+          res.status(response.statusCode).send(response.body)
         });
   } catch (e) {
       res.status(500).send(Error(e));

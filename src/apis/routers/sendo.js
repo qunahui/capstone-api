@@ -4,6 +4,7 @@ const router = express.Router();
 const auth = require("../../middlewares/auth");
 const controller = require("../controllers/sendo");
 const productController = require("../controllers/product")
+const checkController = require("../../middlewares/check")
 const util = require('util');
 router.post('/ping', (req, res) => {
   // received object
@@ -51,25 +52,25 @@ router.get('/products', controller.getAllProducts)
 //api's routes
 router.post('/authorize', controller.authorizeCredential)
 router.post('/login', controller.getSendoToken)
-router.post('/products/', controller.createProductOnSendo)
+router.post('/products/', checkController.check, controller.createProductOnSendo)
 //router.post('/search-products', controller.searchSendoProduct) //filter product, if none-> get all
 router.post('/fetch-products', controller.fetchProducts)
 
-router.get('/category/:id', controller.getSendoCategory)
-router.get('/ward/:id', controller.getWardById)
-router.get('/district/:id', controller.getDistrictById)
-router.get('/region/:id', controller.getRegionById)
-router.get('/attribute/:id', controller.getSendoAttribute)
-router.get('/products/:id', controller.getSendoProductById)
+router.get('/category/:id', checkController.check, controller.getSendoCategory)
+router.get('/ward/:id', checkController.check, controller.getWardById)
+router.get('/district/:id', checkController.check, controller.getDistrictById)
+router.get('/region/:id', checkController.check, controller.getRegionById)
+router.get('/attribute/:id',checkController.check, controller.getSendoAttribute)
+router.get('/products/:id', checkController.check, controller.getSendoProductById)
 //router.get('/sync-products', controller.syncAllProductSendo)
-router.get('/orders', controller.searchSendoOrder) //filter order, if none -> get all
-router.get('/cancel-reason', controller.getCancelReason) //extra route, it will be useful, or not
-router.get('/orders/:id', controller.getSendoOrderById)
+router.post('/orders', checkController.check, controller.searchOrderOnSendo) //filter order, if none -> get all
+router.get('/cancel-reason', checkController.check, controller.getCancelReason) //extra route, it will be useful, or not
+router.get('/orders/:id', checkController.check, controller.getOrderByIdOnSendo)
 //router.get('/sync-orders', controller.syncAllOrderSendo)
 
-router.put('/update-order-status', controller.updateOrderStatus)
-router.patch('/products/:id', controller.updateProductOnSendo) 
-router.delete("/products/:id", controller.deleteProductOnSendo);
+router.put('/orders/:id', checkController.check, controller.updateOrderStatus)
+router.patch('/products/:id', checkController.check, controller.updateProductOnSendo) 
+router.delete("/products/:id", checkController.check, controller.deleteProductOnSendo);
 module.exports = router;
 
 /*

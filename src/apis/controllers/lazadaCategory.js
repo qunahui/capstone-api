@@ -26,16 +26,13 @@ const saveAllCategory  = async (Category, idpath) =>{
   });
   
 } 
-module.exports.getCategoryById = async (req,res) =>{
-    //const categoryId = req.query.id;
-    const optType = req.query.optType;
+module.exports.getListCategory = async (req,res) =>{
+    
     const idpath = req.body.idpath;
-    //const size = idpath.length +1 ;
-    if(optType == "queryCategoryCascade" && idpath.length == 0)
+    if(idpath.length == 0)
     {
       try {
         const categories = await lazadaCategory.find({idpath:{ $size: 1}}, {name: 1, category_id: 1, leaf: 1, idpath:1});
-        //await lazadaCategory.updateMany({"idpath.0": 4304},{$set: {"idpath.0": 4303}})
         res.send(categories);
       } catch (e) {
         res.status(500).send(e.message);
@@ -52,27 +49,6 @@ module.exports.getCategoryById = async (req,res) =>{
     
     
 };
-
-module.exports.getAttributeByCategoryId =  async (req,res)=>{
-    const categoryId = req.params.id;
-    try {
-        const options = {
-            'method': 'GET',
-            'url': 'https://open.sendo.vn/api/partner/category/attribute/' + categoryId,
-            'headers': {
-              'Authorization': 'bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJTdG9yZUlkIjoiODM0NzMxIiwiVXNlck5hbWUiOiIiLCJTdG9yZVN0YXR1cyI6IjIiLCJTaG9wVHlwZSI6IjEiLCJTdG9yZUxldmVsIjoiMCIsImV4cCI6MTYwNTAzMzM4NCwiaXNzIjoiODM0NzMxIiwiYXVkIjoiODM0NzMxIn0.c6b8hm-BNaKfh9raMtZJaTMrmzLp8MJGOoqXnxO8Igs'
-            }
-          };
-          request(options, function (error, response) {
-            //if (error) throw new Error(error);
-            //console.log(response.body);
-            const attributes = JSON.parse(response.body)
-            res.send(attributes)
-          });
-    } catch (e) {
-        res.status(500).send(Error(e));
-    }
-}
 
 module.exports.createLazadaCategory = async (req, res) => {
   const Category = req.body.data;
