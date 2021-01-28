@@ -2,12 +2,14 @@ const crypto = require('crypto')
 const { signRequest } = require('../utils/laz-sign-request')
 var request = require('request');
 const rp = require('request-promise');
+var convert = require('xml-js');
 const fs = require('fs');
 const path = require('path')
 const server = require('../../app')
 const Storage = require('../models/storage');
 const { createLazadaProduct } = require('./lazadaProduct');
 const LazadaProduct = require('../models/lazadaProduct')
+
 var options = {compact: true, ignoreComment: true, spaces: 4};
 
 module.exports.authorizeCredential = async (req, res) => {
@@ -92,11 +94,12 @@ module.exports.getAccessToken = async (req, res) => {
 }
 
 module.exports.refreshToken = async (req, res) =>{
+    const store_id = req.query.store_id
     const apiUrl = 'https://api.lazada.vn/rest' 
     const apiPath=  '/auth/token/refresh'
     const appSecret = process.env.LAZADA_APP_SECRET 
     const appKey = process.env.LAZADA_APP_KEY 
-    const refresh_token =  req.params.refresh_token 
+    const refresh_token =  req.refreshToken
     const timestamp = Date.now()
     const commonRequestParams = {
         "app_key": appKey,
@@ -104,7 +107,7 @@ module.exports.refreshToken = async (req, res) =>{
         "sign_method": "sha256",
         "refresh_token":refresh_token
     }
-    const sign = this.signRequest(appSecret, apiPath, commonRequestParams)
+    const sign = signRequest(appSecret, apiPath, commonRequestParams)
     try {
         var options = {
             'method': 'GET',
@@ -116,12 +119,26 @@ module.exports.refreshToken = async (req, res) =>{
             'headers': {
             }
         };
-        //console.log(options)
-        request(options, function (error, response) {
-            //if (error) throw new Error(error);
-            //console.log(response.body);
-            const r = JSON.parse(response.body)
-            res.send(r)
+        //res.send(options)
+        request(options, async function (error, response) {
+            if (error) throw new Error(error);
+            
+            const {access_token, refresh_token} = JSON.parse(response.body)
+            const storages =  await Storage.find({"lazadaCredentials.store_id": store_id})
+            
+            storages.forEach( async (storage)=>{
+                storage.lazadaCredentials.forEach( (store) => {
+                    if(store.store_id == store_id)
+                    {
+                        
+                        store.access_token = access_token
+                        store.refresh_token = refresh_token
+                    }
+                });
+                await Storage.update({_id: storage._id}, storage, { upsert: true})
+            })
+            
+            res.status(response.statusCode).send(response.body)
         });
     } catch (e) {
         res.status(500).send(Error(e));
@@ -183,11 +200,21 @@ module.exports.fetchProducts = async (req, res) =>{
 }
 //not use yet
 module.exports.getProductById = async (req, res) =>{
+    const store_id=  req.query.store_id
     const apiUrl = 'https://api.lazada.vn/rest' 
     const apiPath=  '/product/item/get'
     const appSecret = process.env.LAZADA_APP_SECRET
     const appKey = process.env.LAZADA_APP_KEY 
-    const accessToken =  "500005000282pCawUSfbySlxELBNZvxde1hVjqrd1c60dd3csukWdjU9syzPtBwi" // goi db
+    let accessToken =  "" // goi db
+    const storage =  await Storage.findOne({"lazadaCredentials.store_id": store_id}, {lazadaCredentials: 1})
+    
+    
+    storage.lazadaCredentials.forEach(store => {
+        if(store.store_id == store_id)
+        {
+            accessToken = store.access_token
+        }
+    });
     const timestamp = Date.now()
     const commonRequestParams = {
         "app_key": appKey,
@@ -290,10 +317,16 @@ module.exports.getAttributes = async (req, res) =>{
         };
         //console.log(options)
         request(options, function (error, response) {
-            //if (error) throw new Error(error);
+            if (error) throw new Error(error);
             //console.log(response.body);
             const attribute = JSON.parse(response.body).data
-            res.send(attribute)
+            if(attribute)
+            {
+                res.status(200).send(attribute)
+            }else
+            {
+                res.status(404).send(response.body)
+            }
         });
     } catch (e) {
         res.status(500).send(Error(e));
@@ -384,23 +417,35 @@ module.exports.getCategorySuggestion = async (req, res) =>{
 }
 // req: seller_sku -> res: QCstatus (approved or rejected)
 module.exports.getQcStatus = async (req, res) =>{
+    const store_id = req.query.store_id 
     const apiUrl = 'https://api.lazada.vn/rest' 
     const apiPath=  '/product/qc/status/get'
     const appSecret = process.env.LAZADA_APP_SECRET
     const appKey = process.env.LAZADA_APP_KEY
-    const accessToken =  "500005000282pCawUSfbySlxELBNZvxde1hVjqrd1c60dd3csukWdjU9syzPtBwi" // goi db
+    let accessToken =  "" // goi db
     const timestamp = Date.now()
     const offset = req.query.offset
     const limit = req.query.limit
-    const seller_skus = req.query.seller_skus
+    const seller_skus = JSON.stringify(req.body.seller_skus)
+    const storage =  await Storage.findOne({"lazadaCredentials.store_id": store_id}, {lazadaCredentials: 1})
+    
+    
+    storage.lazadaCredentials.forEach(store => {
+        if(store.store_id == store_id)
+        {
+            accessToken = store.access_token
+        }
+    });
     const commonRequestParams = {
         "app_key": appKey,
         "timestamp": timestamp,
         "sign_method": "sha256",
         "access_token":accessToken
     }
-    const sign = this.signRequest(appSecret, apiPath, {...commonRequestParams, offset, limit, seller_skus})
+    const sign = signRequest(appSecret, apiPath, {...commonRequestParams, offset, limit, seller_skus})
     const encodeSellerSkus = encodeURI(seller_skus)
+
+   
     try {
         var options = {
             'method': 'GET',
@@ -415,12 +460,14 @@ module.exports.getQcStatus = async (req, res) =>{
             'headers': {
             }
         };
-        //console.log(options)
+        //res.send(options)
         request(options, function (error, response) {
             if (error) throw new Error(error);
             //console.log(response.body);
             const QcStatus = JSON.parse(response.body)
-            res.send(QcStatus)
+            if(QcStatus.code == "1006")
+                res.status(404).send(QcStatus)
+            res.status(200).send(QcStatus)
         });
     } catch (e) {
         res.status(500).send(Error(e));
@@ -432,7 +479,7 @@ module.exports.uploadImage = async (req, res) =>{
     const apiPath=  '/image/upload'
     const appSecret = process.env.LAZADA_APP_SECRET
     const appKey = process.env.LAZADA_APP_KEY
-    const accessToken =  "500005000282pCawUSfbySlxELBNZvxde1hVjqrd1c60dd3csukWdjU9syzPtBwi" // goi db
+    const accessToken =  req.accessToken // goi db
     const timestamp = Date.now()
 
     const commonRequestParams = {
@@ -469,20 +516,20 @@ module.exports.uploadImage = async (req, res) =>{
         request(options, function (error, response) {
             if (error) throw new Error(error);
             //console.log(response.body);
-            const image = JSON.parse(response.body)
-            res.send(image)
+            
+            res.status(response.statusCode).send(response.body)
         });
     } catch (e) {
         res.status(500).send(Error(e));
     }
 }
 
-module.exports.updateProduct = async (req, res) =>{
+module.exports.updateProductOnLazada = async (req, res) =>{
     const apiUrl = 'https://api.lazada.vn/rest' 
     const apiPath=  '/product/update'
     const appSecret = process.env.LAZADA_APP_SECRET
     const appKey = process.env.LAZADA_APP_KEY
-    const accessToken =  "500005000282pCawUSfbySlxELBNZvxde1hVjqrd1c60dd3csukWdjU9syzPtBwi" // goi db
+    const accessToken =  req.accessToken // goi db
     const timestamp = Date.now()
     const data = req.body
     const payload = '<?xml version="1.0" encoding="UTF-8" ?>'+ convert.js2xml(data, {compact: true, ignoreComment: true, spaces: 4})
@@ -493,7 +540,7 @@ module.exports.updateProduct = async (req, res) =>{
         "sign_method": "sha256",
         "access_token":accessToken
     }
-    const sign = this.signRequest(appSecret, apiPath, {...commonRequestParams, payload})
+    const sign = signRequest(appSecret, apiPath, {...commonRequestParams, payload})
     const encodePayload = encodeURI(payload)
     try {
         var options = {
@@ -510,9 +557,8 @@ module.exports.updateProduct = async (req, res) =>{
         //console.log(options)
         request(options, function (error, response) {
             if (error) throw new Error(error);
-            //console.log(response.body);
-            //const res = JSON.parse(response.body)
-            res.send(JSON.parse(response.body))
+            
+            res.status(response.statusCode).send(response.body)
         });
     } catch (e) {
         res.status(500).send(Error(e));
@@ -520,12 +566,12 @@ module.exports.updateProduct = async (req, res) =>{
     
 }
 
-module.exports.createProduct = async (req, res) =>{
+module.exports.createProductOnLazada = async (req, res) =>{
     const apiUrl = 'https://api.lazada.vn/rest' 
     const apiPath=  '/product/create'
     const appSecret = process.env.LAZADA_APP_SECRET
     const appKey = process.env.LAZADA_APP_KEY
-    const accessToken =  "500005000282pCawUSfbySlxELBNZvxde1hVjqrd1c60dd3csukWdjU9syzPtBwi" // goi db
+    const accessToken =  req.accessToken // goi db
     const timestamp = Date.now()
     const data = req.body
     const payload = '<?xml version="1.0" encoding="UTF-8" ?>'+ convert.js2xml(data, {compact: true, ignoreComment: true, spaces: 4})
@@ -536,7 +582,7 @@ module.exports.createProduct = async (req, res) =>{
         "sign_method": "sha256",
         "access_token":accessToken
     }
-    const sign = this.signRequest(appSecret, apiPath, {...commonRequestParams, payload})
+    const sign = signRequest(appSecret, apiPath, {...commonRequestParams, payload})
     const encodePayload = encodeURI(payload)
     try {
         var options = {
@@ -553,9 +599,8 @@ module.exports.createProduct = async (req, res) =>{
         //console.log(options)
         request(options, function (error, response) {
             if (error) throw new Error(error);
-            //console.log(response.body);
-            //const res = JSON.parse(response.body)
-            res.send(JSON.parse(response.body))
+            
+            res.status(response.statusCode).send(response.body)
         });
     } catch (e) {
         res.status(500).send(Error(e));
@@ -563,12 +608,12 @@ module.exports.createProduct = async (req, res) =>{
     
 }
 
-module.exports.removeProduct = async (req, res) =>{
+module.exports.deleteProductOnLazada = async (req, res) =>{
     const apiUrl = 'https://api.lazada.vn/rest' 
     const apiPath=  '/product/remove'
     const appSecret = process.env.LAZADA_APP_SECRET
     const appKey = process.env.LAZADA_APP_KEY
-    const accessToken =  "500005000282pCawUSfbySlxELBNZvxde1hVjqrd1c60dd3csukWdjU9syzPtBwi" // goi db
+    const accessToken =  req.accessToken // goi db
     const timestamp = Date.now()
     const seller_sku_list= JSON.stringify(req.body.seller_sku_list)
     //console.log(seller_sku_list)
@@ -578,7 +623,7 @@ module.exports.removeProduct = async (req, res) =>{
         "sign_method": "sha256",
         "access_token":accessToken
     }
-    const sign = this.signRequest(appSecret, apiPath, {...commonRequestParams, seller_sku_list})
+    const sign = signRequest(appSecret, apiPath, {...commonRequestParams, seller_sku_list})
 
     const encodeSkuList = encodeURI(seller_sku_list)
     try {
@@ -596,9 +641,8 @@ module.exports.removeProduct = async (req, res) =>{
         //console.log(options)
         request(options, function (error, response) {
             if (error) throw new Error(error);
-            //console.log(response.body);
-            //const res = JSON.parse(response.body)
-            res.send(JSON.parse(response.body))
+            
+            res.status(response.statusCode).send(response.body)
         });
     } catch (e) {
         res.status(500).send(Error(e));
@@ -641,11 +685,21 @@ module.exports.getSellerInfo = async (req, res) =>{
 }
 //Provide seller metrics data of the specific seller, like positive seller rating, ship on time rate and etc.
 module.exports.getSellerMetrics = async (req, res) =>{
+    const store_id = req.query.store_id
     const apiUrl = 'https://api.lazada.vn/rest' 
     const apiPath=  '/seller/metrics/get'
     const appSecret = process.env.LAZADA_APP_SECRET
     const appKey = process.env.LAZADA_APP_KEY
-    const accessToken =  "500005000282pCawUSfbySlxELBNZvxde1hVjqrd1c60dd3csukWdjU9syzPtBwi" // goi db
+    let accessToken = ""
+    const storage =  await Storage.findOne({"lazadaCredentials.store_id": store_id}, {lazadaCredentials: 1})
+    
+    
+    storage.lazadaCredentials.forEach(store => {
+        if(store.store_id == store_id)
+        {
+            accessToken = store.access_token
+        }
+    });
     const timestamp = Date.now()
     const commonRequestParams = {
         "app_key": appKey,
@@ -726,7 +780,7 @@ module.exports.getCancelReason = async (req, res) =>{
     const apiPath=  '/order/failure_reason/get'
     const appSecret = process.env.LAZADA_APP_SECRET
     const appKey = process.env.LAZADA_APP_KEY
-    const accessToken =  "500005000282pCawUSfbySlxELBNZvxde1hVjqrd1c60dd3csukWdjU9syzPtBwi" // goi db
+    const accessToken =  req.accessToken // goi db
     const timestamp = Date.now()
     const commonRequestParams = {
         "app_key": appKey,
@@ -734,7 +788,7 @@ module.exports.getCancelReason = async (req, res) =>{
         "sign_method": "sha256",
         "access_token":accessToken
     }
-    const sign = this.signRequest(appSecret, apiPath, commonRequestParams)
+    const sign = signRequest(appSecret, apiPath, commonRequestParams)
     try {
         var options = {
             'method': 'GET',
@@ -748,10 +802,9 @@ module.exports.getCancelReason = async (req, res) =>{
         };
         //console.log(options)
         request(options, function (error, response) {
-            //if (error) throw new Error(error);
-            //console.log(response.body);
-            const CancelReason = JSON.parse(response.body)
-            res.send(CancelReason)
+            if (error) throw new Error(error);
+            
+            res.status(response.statusCode).send(response.body)
         });
     } catch (e) {
         res.status(500).send(Error(e));
@@ -800,12 +853,12 @@ module.exports.searchOrder = async (req, res) =>{
         res.status(500).send(Error(e));
     }
 }
-module.exports.getOrderById = async (req, res) =>{
+module.exports.getOrderByIdOnLazada = async (req, res) =>{
     const apiUrl = 'https://api.lazada.vn/rest' 
     const apiPath=  '/order/get'
     const appSecret = process.env.LAZADA_APP_SECRET
     const appKey = process.env.LAZADA_APP_KEY
-    const accessToken =  "50000500616qprrLfVCiIv3txDaY1de855c0J2klvctQjfdeq9srvlKjRn1Q4Qme" // goi db
+    const accessToken =  req.accessToken // goi db
     const timestamp = Date.now()
     const commonRequestParams = {
         "app_key": appKey,
@@ -814,7 +867,7 @@ module.exports.getOrderById = async (req, res) =>{
         "access_token":accessToken,
     }
     const order_id = req.params.id
-    const sign = this.signRequest(appSecret, apiPath, {...commonRequestParams, order_id})
+    const sign = signRequest(appSecret, apiPath, {...commonRequestParams, order_id})
     try {
         var options = {
             'method': 'GET',
@@ -829,21 +882,20 @@ module.exports.getOrderById = async (req, res) =>{
         };
         //console.log(options)
         request(options, function (error, response) {
-            //if (error) throw new Error(error);
-            //console.log(response.body);
-            const order = JSON.parse(response.body)
-            res.send(order)
+            if (error) throw new Error(error);
+            
+            res.status(response.statusCode).send(response.body)
         });
     } catch (e) {
         res.status(500).send(Error(e));
     }
 }
-module.exports.getOrderItem = async (req, res) =>{
+module.exports.getOrderItems = async (req, res) =>{
     const apiUrl = 'https://api.lazada.vn/rest' 
-    const apiPath=  '/order/items/get/new'
+    const apiPath=  '/order/items/get'
     const appSecret = process.env.LAZADA_APP_SECRET
     const appKey = process.env.LAZADA_APP_KEY
-    const accessToken =  "50000500616qprrLfVCiIv3txDaY1de855c0J2klvctQjfdeq9srvlKjRn1Q4Qme" // goi db
+    const accessToken =  req.accessToken // goi db
     const timestamp = Date.now()
     const commonRequestParams = {
         "app_key": appKey,
@@ -852,7 +904,7 @@ module.exports.getOrderItem = async (req, res) =>{
         "access_token":accessToken,
     }
     const order_id = req.params.id
-    const sign = this.signRequest(appSecret, apiPath, {...commonRequestParams, order_id})
+    const sign = signRequest(appSecret, apiPath, {...commonRequestParams, order_id})
     try {
         var options = {
             'method': 'GET',
@@ -867,8 +919,8 @@ module.exports.getOrderItem = async (req, res) =>{
         };
         //console.log(options)
         request(options, function (error, response) {
-            //if (error) throw new Error(error);
-            //console.log(response.body);
+            if (error) throw new Error(error);
+            //res.send(response.body)
             const listItem = JSON.parse(response.body).data
             listItem.forEach(item => {
                 item.quantity = 1
@@ -887,33 +939,33 @@ module.exports.getOrderItem = async (req, res) =>{
                     m = i
                 }
             }
-            res.send(listItem)
+            res.status(200).send(listItem)
         });
     } catch (e) {
         res.status(500).send(Error(e));
     }
 }
 //setStatusToCancel
-module.exports.cancelOrder = async (req, res) =>{
+module.exports.cancelOrderOnLazada = async (req, res) =>{
     const apiUrl = 'https://api.lazada.vn/rest' 
     const apiPath=  '/order/cancel'
     const appSecret = process.env.LAZADA_APP_SECRET
     const appKey = process.env.LAZADA_APP_KEY
-    const accessToken =  "50000500616qprrLfVCiIv3txDaY1de855c0J2klvctQjfdeq9srvlKjRn1Q4Qme" // goi db
+    const accessToken =  req.accessToken // goi db
     const timestamp = Date.now()
     const reason_detail = req.body.reason_detail // not required
-    const reason_id = req.body.id
-    const order_item_id = req.body.order_id
+    const reason_id = req.body.reason_id
+    const order_item_id = req.params.id
     const commonRequestParams = {
         "app_key": appKey,
         "timestamp": timestamp,
         "sign_method": "sha256",
         "access_token":accessToken
     }
-    const sign = this.signRequest(appSecret, apiPath, {...commonRequestParams, reason_id, order_item_id})
+    const sign = signRequest(appSecret, apiPath, {...commonRequestParams, reason_id, order_item_id})
     try {
         var options = {
-            'method': 'GET',
+            'method': 'POST',
             'url': apiUrl+apiPath+
             '?reason_id='+reason_id+
             '&order_item_id='+ order_item_id+
@@ -926,10 +978,9 @@ module.exports.cancelOrder = async (req, res) =>{
         };
         //console.log(options)
         request(options, function (error, response) {
-            //if (error) throw new Error(error);
-            //console.log(response.body);
-            const cancelOrder = JSON.parse(response.body)
-            res.send(cancelOrder)
+            if (error) throw new Error(error);
+            
+            res.status(response.statusCode).send(response.body)
         });
     } catch (e) {
         res.status(500).send(Error(e));
