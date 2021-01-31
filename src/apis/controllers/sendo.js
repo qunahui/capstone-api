@@ -4,17 +4,8 @@ const rp = require('request-promise');
 const { createSendoProduct } = require("./sendoProduct");
 const SendoProduct = require('../models/sendoProduct')
 const Storage = require('../models/storage')
+const Cookie = require('cookie')
 
-module.exports.getAllProducts = async (req, res) => {
-  try {
-    const { store_id } = req.query;
-    const sendoProducts = await SendoProduct.find({ store_id })
-
-    res.status(200).send(sendoProducts)
-  } catch(e) {
-    res.status(500).send(Error({ message: 'Something went wrong !'}))
-  }
-}
 
 module.exports.authorizeCredential = async (req, res) => {
   try {
@@ -125,9 +116,9 @@ module.exports.fetchProducts = async (req, res) => {
 
     console.log("Run this")
 
-    const sendoProduct = await SendoProduct.find({ storageId: req.body.storageId})
+    const sendoProducts = await SendoProduct.find({ storageId: req.body.storageId})
 
-    res.status(200).send(sendoProduct)
+    res.status(200).send(sendoProducts)
   } catch(e) {
     console.log(e)
   }
@@ -189,12 +180,14 @@ module.exports.getWardById = async (req, res) =>{
   
  
   const wardId = req.params.id;
+  const cookie = Cookie.parse(req.headers.cookie)
+  
   try {
       const options = {
           'method': 'GET',
           'url': 'https://open.sendo.vn/api/address/ward/' + wardId,
           'headers': {
-            'Authorization': 'bearer '+ req.accessToken
+            'Authorization': 'bearer '+ cookie.sendo_access_token
           }
         };
         request(options, function (error, response) {
@@ -454,7 +447,7 @@ module.exports.syncAllOrderSendo = async (req, res) =>{
 
   res.send("done")
 }
-module.exports.updateProductOnSendo = async (req, res) => {
+module.exports.updateProduct = async (req, res) => {
   
   const productId = req.params.id;
   const item = req.body

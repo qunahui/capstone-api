@@ -33,12 +33,36 @@
       }
     },
     {
-      "name": "sendo",
+      "name": "sendoAPI",
       "description": "Access to Sendo API"
     },
     {
-      "name": "lazada",
+      "name": "lazadaAPI",
       "description": "Access to Lazada API"
+    },
+    {
+      "name": "sendoProducts",
+      "description": "Access to Sendo products in Database"
+    },
+    {
+      "name": "lazadaProducts",
+      "description": "Access to Lazada products in Database"
+    },
+    {
+      "name": "categories",
+      "description": "Access to Categories in Database"
+    },
+    {
+      "name": "provinces",
+      "description": "Access to province in Database"
+    },
+    {
+      "name": "districts",
+      "description": "Access to district in Database"
+    },
+    {
+      "name": "wards",
+      "description": "Access to ward in Database"
     }
   ],
   "paths": {
@@ -208,7 +232,12 @@
     "/api/sendo/ward/{wardId}":{
       "get": {
         "tags": [
-          "sendo"
+          "sendoAPI"
+        ],
+        "security":[
+          {
+            "cookieAuth":[]
+          }
         ],
         "summary": "Get ward by wardId",
         "operationId": "getWard",
@@ -262,7 +291,7 @@
     "/api/sendo/district/{districtId}":{
       "get": {
         "tags": [
-          "sendo"
+          "sendoAPI"
         ],
         "summary": "Get district by districtId",
         "operationId": "getDistrict",
@@ -321,7 +350,7 @@
     "/api/sendo/region/{regionId}":{
       "get": {
         "tags": [
-          "sendo"
+          "sendoAPI"
         ],
         "summary": "Get region by regionId",
         "operationId": "getRegion",
@@ -378,41 +407,9 @@
       }
     },
     "/api/sendo/products":{
-      "get": {
-        "tags": [
-          "sendo"
-        ],
-        "summary": "Get all product in database",
-        "operationId": "getAllProduct",
-        "parameters":[
-          {
-            "in":"query",
-            "name": "store_id",
-            "required": true,
-            "schema":{
-              "type": "string",
-              "example":"d63aecd314b4463abc2204aa6a340c6b"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful"
-          },
-          "400": {
-            "description": "Invalid ID supplied"
-          },
-          "404": {
-            "description": "Pet not found"
-          },
-          "405": {
-            "description": "Validation exception"
-          }
-        }
-      },
       "post": {
         "tags": [
-          "sendo"
+          "sendoAPI"
         ],
         "summary": "create product on Sendo",
         "operationId": "createProduct",
@@ -693,10 +690,44 @@
         }
       }
     },
+    "/sendo/products":{
+      "get": {
+        "tags": [
+          "sendoProducts"
+        ],
+        "summary": "Get all product in database",
+        "operationId": "getAllProduct",
+        "parameters":[
+          {
+            "in":"query",
+            "name": "store_id",
+            "required": true,
+            "schema":{
+              "type": "string",
+              "example":"d63aecd314b4463abc2204aa6a340c6b"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful"
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "404": {
+            "description": "Pet not found"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        }
+      }
+    },
     "/api/sendo/products/{productId}":{
       "get": {
         "tags": [
-          "sendo"
+          "sendoAPI"
         ],
         "summary": "Get product by productId on sendo",
         "operationId": "getProduct",
@@ -738,7 +769,7 @@
       },
       "patch": {
         "tags": [
-          "sendo"
+          "sendoAPI"
         ],
         "summary": "update product on sendo",
         "operationId": "updateProduct",
@@ -811,7 +842,7 @@
       },
       "delete": {
         "tags": [
-          "sendo"
+          "sendoAPI"
         ],
         "summary": "Delete product by Id on sendo",
         "operationId": "deleteProduct",
@@ -874,7 +905,7 @@
     "/api/sendo/category/{categoryId}":{
       "get": {
         "tags": [
-          "sendo"
+          "sendoAPI"
         ],
         "summary": "Get category by categoryId",
         "operationId": "getCategory",
@@ -918,7 +949,7 @@
     "/api/sendo/attribute/{attributeId}":{
       "get": {
         "tags": [
-          "sendo"
+          "sendoAPI"
         ],
         "summary": "Get attribute by attributeId",
         "operationId": "getAttribute",
@@ -962,7 +993,7 @@
     "/api/sendo/cancel-reason/":{
       "get": {
         "tags": [
-          "sendo"
+          "sendoAPI"
         ],
         "summary": "Get cancel reason",
         "operationId": "getCancelReason",
@@ -996,7 +1027,7 @@
     "/api/sendo/orders/":{
       "post": {
         "tags": [
-          "sendo"
+          "sendoAPI"
         ],
         "summary": "search order",
         "operationId": "searchOrder",
@@ -1049,7 +1080,7 @@
     "/api/sendo/orders/{orderNumber}":{
       "get": {
         "tags": [
-          "sendo"
+          "sendoAPI"
         ],
         "summary": "Get order by orderNumber on Sendo",
         "operationId": "getOrder",
@@ -1091,7 +1122,7 @@
       },
       "put": {
         "tags": [
-          "sendo"
+          "sendoAPI"
         ],
         "summary": "Update order status by orderNumber on Sendo",
         "operationId": "updateOrder",
@@ -1148,7 +1179,7 @@
     "/api/sendo/authorize":{
       "post": {
         "tags": [
-          "sendo"
+          "sendoAPI"
         ],
         "summary": "authorize",
         "operationId": "authorize",
@@ -1186,13 +1217,13 @@
         }
       }
     },
-    "/api/sendo/fetch-product":{
+    "/sendo/products/fetch":{
       "post": {
         "tags": [
-          "sendo"
+          "sendoProducts"
         ],
-        "summary": "fetch product",
-        "operationId": "fetchProduct",
+        "summary": "fetch products",
+        "operationId": "fetchProducts",
         "parameters":[
 
         ],
@@ -1227,10 +1258,125 @@
         }
       }
     },
+    "/api/lazada/products/{sellerSku}":{
+      "patch": {
+        "tags": [
+          "lazadaAPI"
+        ],
+        "summary": "update product by sellerSku on lazada",
+        "operationId": "updateProduct",
+        "parameters":[
+          {
+            "in":"query",
+            "name": "store_id",
+            "required": true,
+            "schema":{
+              "type": "string",
+              "example": "200163939035"
+            }
+          },
+          {
+            "in":"path",
+            "name": "sellerSku",
+            "required": true,
+            "schema":{
+              "type": "string",
+              "example": "12432456"
+            }
+          }
+        ],
+        "requestBody":{
+          "content":{
+            "application/json":{
+              "schema":{
+                
+              },
+              "example":{
+                
+                  "quantity": "125",
+                  "price": "500000"
+                
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful",
+            "content":{
+              "application/json":{
+                "example":{
+                  "code":"0",
+                  "request_id":"0b0e02a716117470077826212"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "404": {
+            "description": "Pet not found"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "lazadaAPI"
+        ],
+        "summary": "delete product by sellerSku on lazada",
+        "operationId": "deleteProduct",
+        "parameters":[
+          {
+            "in":"query",
+            "name": "store_id",
+            "required": true,
+            "schema":{
+              "type": "string",
+              "example": "200163939035"
+            }
+          },
+          {
+            "in":"path",
+            "name": "sellerSku",
+            "required": true,
+            "schema":{
+              "type": "string",
+              "example": "124324"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful",
+            "content":{
+              "application/json":{
+                "example":{
+                  "code":"0",
+                  "request_id":"0b0e02a716117470077826212"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "404": {
+            "description": "Pet not found"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        }
+      }
+    },
     "/api/lazada/products/{productId}":{
       "get": {
         "tags": [
-          "lazada"
+          "lazadaAPI"
         ],
         "summary": "get product by Id on lazada",
         "operationId": "getProduct",
@@ -1272,7 +1418,7 @@
     "/api/lazada/products/":{
       "post": {
         "tags": [
-          "lazada"
+          "lazadaAPI"
         ],
         "summary": "create product on lazada",
         "operationId": "createProduct",
@@ -1360,130 +1506,12 @@
             "description": "Validation exception"
           }
         }
-      },
-      "patch": {
-        "tags": [
-          "lazada"
-        ],
-        "summary": "update product by SellerSku on lazada",
-        "operationId": "updateProduct",
-        "parameters":[
-          {
-            "in":"query",
-            "name": "store_id",
-            "required": true,
-            "schema":{
-              "type": "string",
-              "example": "200163939035"
-            }
-          }
-        ],
-        "requestBody":{
-          "content":{
-            "application/json":{
-              "schema":{
-                
-              },
-              "example":{
-                "Request": {
-                  "Product": {
-                    "Skus": {
-                      "Sku": [
-                        {
-                          "SellerSku": "12432456",
-                          "quantity": "125",
-                          "price": "400000"
-                        }
-                      ]
-                    }
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Successful",
-            "content":{
-              "application/json":{
-                "example":{
-                  "code":"0",
-                  "request_id":"0b0e02a716117470077826212"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Invalid ID supplied"
-          },
-          "404": {
-            "description": "Pet not found"
-          },
-          "405": {
-            "description": "Validation exception"
-          }
-        }
-      },
-      "delete": {
-        "tags": [
-          "lazada"
-        ],
-        "summary": "delete product by SellerSku on lazada",
-        "operationId": "deleteProduct",
-        "parameters":[
-          {
-            "in":"query",
-            "name": "store_id",
-            "required": true,
-            "schema":{
-              "type": "string",
-              "example": "200163939035"
-            }
-          }
-        ],
-        "requestBody":{
-          "content":{
-            "application/json":{
-              "schema":{
-                
-              },
-              "example":{
-                "seller_sku_list": [
-                  "1243245"
-                ]
-            }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Successful",
-            "content":{
-              "application/json":{
-                "example":{
-                  "code":"0",
-                  "request_id":"0b0e02a716117470077826212"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Invalid ID supplied"
-          },
-          "404": {
-            "description": "Pet not found"
-          },
-          "405": {
-            "description": "Validation exception"
-          }
-        }
       }
     },
     "/api/lazada/attribute/{categoryId}":{
       "get": {
         "tags": [
-          "lazada"
+          "lazadaAPI"
         ],
         "summary": "get Attributes by categoryId on lazada",
         "operationId": "getAttributes",
@@ -1526,7 +1554,7 @@
     "/api/lazada/qc-status":{
       "post": {
         "tags": [
-          "lazada"
+          "lazadaAPI"
         ],
         "summary": "get QcStatus by seller_sku on lazada",
         "operationId": "getQcStatus",
@@ -1622,7 +1650,7 @@
     "/api/lazada/cancel-reason":{
       "get": {
         "tags": [
-          "lazada"
+          "lazadaAPI"
         ],
         "summary": "get Cancel Reason on lazada",
         "operationId": "getCancelReason",
@@ -1687,7 +1715,7 @@
     "/api/lazada/seller-metrics":{
       "get": {
         "tags": [
-          "lazada"
+          "lazadaAPI"
         ],
         "summary": "get Seller Metrics by seller_sku on lazada",
         "operationId": "getSellerMetrics",
@@ -1740,10 +1768,10 @@
         }
       }
     },
-    "/lazada-category/":{
+    "/categories":{
       "post": {
         "tags": [
-          "lazada"
+          "categories"
         ],
         "summary": "get list categories in database",
         "operationId": "getListCategories",
@@ -1775,7 +1803,7 @@
     "/api/lazada/refresh-token":{
       "get": {
         "tags": [
-          "lazada"
+          "lazadaAPI"
         ],
         "summary": "refresh token and save into database",
         "operationId": "refreshToken",
@@ -1807,7 +1835,7 @@
     "/api/lazada/orders/cancel/{order_item_id}":{
       "post": {
         "tags": [
-          "lazada"
+          "lazadaAPI"
         ],
         "summary": "cacel order item on lazada",
         "operationId": "cancelOrderItem",
@@ -1871,7 +1899,7 @@
     "/api/lazada/orders/{order_id}":{
       "get": {
         "tags": [
-          "lazada"
+          "lazadaAPI"
         ],
         "summary": "Get order by id on lazada",
         "operationId": "getOrder",
@@ -1913,7 +1941,7 @@
     "/api/lazada/orders/items/{order_id}":{
       "get": {
         "tags": [
-          "lazada"
+          "lazadaAPI"
         ],
         "summary": "Get order items by id on lazada",
         "operationId": "getOrderItems",
@@ -1955,7 +1983,7 @@
     "/api/lazada/upload-image":{
       "post": {
         "tags": [
-          "lazada"
+          "lazadaAPI"
         ],
         "summary": "upload image on lazada",
         "operationId": "uploadImage",
@@ -2003,6 +2031,86 @@
                 }
               }
             }
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        }
+      }
+    },
+    "/address/provinces":{
+      "get": {
+        "tags": [
+          "provinces"
+        ],
+        "summary": "get all provinces in database",
+        "operationId": "getAllProvinces",
+        
+        "responses": {
+          "200": {
+            "description": "Successful"
+           
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        }
+      }
+    },
+    "/address/districts/{provinceId}":{
+      "get": {
+        "tags": [
+          "districts"
+        ],
+        "summary": "get all districts by provinceId in database",
+        "operationId": "getAllDistricts",
+        "parameters":[
+          {
+            "in":"path",
+            "name":"provinceId",
+            "type":"string",
+            "example":"79"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful"
+           
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        }
+      }
+    },
+    "/address/wards/{districtId}":{
+      "get": {
+        "tags": [
+          "wards"
+        ],
+        "summary": "get all wards by districtId in database",
+        "operationId": "getAllWards",
+        "parameters":[
+          {
+            "in":"path",
+            "name":"districtId",
+            "type":"string",
+            "example":"761"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful"
+           
           },
           "400": {
             "description": "Invalid ID supplied"
@@ -2212,7 +2320,17 @@
         "type": "apiKey",
         "name": "api_key",
         "in": "header"
+      },
+      "cookieAuth":{
+        "type":"apiKey",
+        "in":"cookie",
+        "name":"sendo_access_token"
       }
     }
-  }
+  },
+  "security":[
+    {
+      "cookieAuth":[]
+    }
+  ]
 }

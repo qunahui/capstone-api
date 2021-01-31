@@ -524,14 +524,27 @@ module.exports.uploadImage = async (req, res) =>{
     }
 }
 
-module.exports.updateProductOnLazada = async (req, res) =>{
+module.exports.updateProduct = async (req, res) =>{
     const apiUrl = 'https://api.lazada.vn/rest' 
     const apiPath=  '/product/update'
     const appSecret = process.env.LAZADA_APP_SECRET
     const appKey = process.env.LAZADA_APP_KEY
     const accessToken =  req.accessToken // goi db
     const timestamp = Date.now()
-    const data = req.body
+    const data = {
+        "Request": {
+            "Product": {
+                "Skus": {
+                    "Sku": [
+                        {
+                            "SellerSku": req.params.sellerSku,
+                            ...req.body
+                        }
+                    ]   
+                }
+            }
+        }
+    }
     const payload = '<?xml version="1.0" encoding="UTF-8" ?>'+ convert.js2xml(data, {compact: true, ignoreComment: true, spaces: 4})
     
     const commonRequestParams = {
@@ -608,15 +621,16 @@ module.exports.createProductOnLazada = async (req, res) =>{
     
 }
 
-module.exports.deleteProductOnLazada = async (req, res) =>{
+module.exports.deleteProduct = async (req, res) =>{
     const apiUrl = 'https://api.lazada.vn/rest' 
     const apiPath=  '/product/remove'
     const appSecret = process.env.LAZADA_APP_SECRET
     const appKey = process.env.LAZADA_APP_KEY
     const accessToken =  req.accessToken // goi db
     const timestamp = Date.now()
-    const seller_sku_list= JSON.stringify(req.body.seller_sku_list)
+    const seller_sku_list= JSON.stringify([req.params.sellerSku])
     //console.log(seller_sku_list)
+    
     const commonRequestParams = {
         "app_key": appKey,
         "timestamp": timestamp,
