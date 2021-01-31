@@ -7,7 +7,7 @@ const auth = async (req, res, next) => {
   try {
     const mongoToken = req.header("Authorization").replace("Bearer ", "");
     const platformToken = req.header("Platform-Token");
-    const decoded = jwt.verify(token, "thuongthuong");
+    const decoded = jwt.verify(mongoToken, "thuongthuong");
     const user = await User.findOne({
       uid: decoded.uid,
     });
@@ -26,7 +26,7 @@ const auth = async (req, res, next) => {
     }
 
     req.user = user;
-    req.accessToken = mongoToken
+    req.accessToken = platformToken
     next();
 
   } catch (e) {
