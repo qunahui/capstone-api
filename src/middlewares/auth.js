@@ -5,7 +5,8 @@ const Error = require("../apis/utils/error")
 
 const auth = async (req, res, next) => {
   try {
-    const token = req.header("Authorization").replace("Bearer ", "");
+    const mongoToken = req.header("Authorization").replace("Bearer ", "");
+    const platformToken = req.header("Platform-Token");
     const decoded = jwt.verify(token, "thuongthuong");
     const user = await User.findOne({
       uid: decoded.uid,
@@ -25,6 +26,7 @@ const auth = async (req, res, next) => {
     }
 
     req.user = user;
+    req.accessToken = mongoToken
     next();
 
   } catch (e) {

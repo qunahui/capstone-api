@@ -41,9 +41,9 @@ router.post('/seller', controller.getSellerInfo)
 router.get('/seller-metrics', controller.getSellerMetrics)
 router.post('/update-seller-email', controller.updateSellerEmail)
 router.post('/upload-image', upload.single('image') ,check1, controller.uploadImage)
-router.patch('/products',check1, controller.updateProductOnLazada)
+router.patch('/products/:sellerSku',check1, controller.updateProduct)
 router.post('/products', check1, controller.createProductOnLazada)
-router.delete('/products', check1, controller.deleteProductOnLazada)
+router.delete('/products/:sellerSku', check1, controller.deleteProduct)
 
 router.get('/cancel-reason', check1, controller.getCancelReason)
 

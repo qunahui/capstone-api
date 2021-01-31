@@ -153,3 +153,47 @@ module.exports.createSendoProduct = async (item, { store_id }) => {
       console.log("Error: ", e)
     }
 };
+module.exports.getAllProducts = async (req, res) => {
+  try {
+    const { store_id } = req.query;
+    const sendoProducts = await SendoProduct.find({ store_id })
+
+    res.status(200).send(sendoProducts)
+  } catch(e) {
+    res.status(500).send(Error({ message: 'Something went wrong !'}))
+  }
+}
+
+module.exports.fetchProducts = async (req, res) => {
+  console.log(req.body)
+  try {
+    const options = {
+        'method': 'POST',
+        'url': 'https://open.sendo.vn/api/partner/product/search',
+        'headers': {
+          'Authorization': 'bearer ' + req.body.access_token,
+          'Content-Type': 'application/json',
+          'cache-control': 'no-cache'
+        },
+        body: JSON.stringify({"page_size":10,"product_name":"","date_from":"2020-05-01","date_to":"9999-10-28","token":""})
+    };
+    const response = await rp(options)
+    const products = JSON.parse(response).result.data
+    await Promise.all(products.map(async product => {
+      const fullProduct = await rp({
+        method: 'GET',
+        url: 'http://localhost:5000/api/sendo/products/' + product.id + '?access_token=' + req.body.access_token
+      })
+      const actuallyFullProduct = JSON.parse(fullProduct)
+      await createSendoProduct(actuallyFullProduct, { store_id: req.body.store_id })
+    }))
+
+    console.log("Run this")
+
+    const sendoProducts = await SendoProduct.find({ storageId: req.body.storageId})
+
+    res.status(200).send(sendoProducts)
+  } catch(e) {
+    console.log(e)
+  }
+}

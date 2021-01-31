@@ -2,6 +2,7 @@ const express = require("express");
 const request = require("request-promise");
 const cors = require("cors");
 const path = require('path');
+const cookie = require('cookie')
 require('dotenv').config()
 
 // const swaggerJsDoc = require("swagger-jsdoc");

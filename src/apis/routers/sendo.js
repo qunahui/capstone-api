@@ -48,13 +48,13 @@ router.post('/ping', (req, res) => {
   }
 })
 // local's routes
-router.get('/products', controller.getAllProducts)
+
 //api's routes
 router.post('/authorize', controller.authorizeCredential)
 router.post('/login', controller.getSendoToken)
 router.post('/products/', checkController.check, controller.createProductOnSendo)
 //router.post('/search-products', controller.searchSendoProduct) //filter product, if none-> get all
-router.post('/fetch-products', controller.fetchProducts)
+
 
 router.get('/category/:id', checkController.check, controller.getSendoCategory)
 router.get('/ward/:id', checkController.check, controller.getWardById)
@@ -69,7 +69,7 @@ router.get('/orders/:id', checkController.check, controller.getOrderByIdOnSendo)
 //router.get('/sync-orders', controller.syncAllOrderSendo)
 
 router.put('/orders/:id', checkController.check, controller.updateOrderStatus)
-router.patch('/products/:id', checkController.check, controller.updateProductOnSendo) 
+router.patch('/products/:id', checkController.check, controller.updateProduct) 
 router.delete("/products/:id", checkController.check, controller.deleteProductOnSendo);
 module.exports = router;
 
