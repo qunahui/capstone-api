@@ -38,10 +38,12 @@ module.exports.signUp = async (req, res) => {
 };
 
 module.exports.signIn = async (req, res) => {
+  console.log(req.body)
   try {
     var user = await User.findByCredentials(
       req.body.uid
     );
+
     
     if(user.token) {
       let { token } = user

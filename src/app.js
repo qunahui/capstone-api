@@ -2,8 +2,6 @@ const express = require("express");
 const request = require("request-promise");
 const cors = require("cors");
 const path = require('path');
-const Inventory = require('./apis/models/inventory')
-const ImportOrderInfoID = require('./apis/models/importOrderInfoID')
 require('dotenv').config()
 
 // const swaggerJsDoc = require("swagger-jsdoc");
