@@ -11,15 +11,15 @@ const auth = async (req, res, next) => {
     const user = await User.findOne({
       uid: decoded.uid,
     });
-        
+    
     if (!user) {
       return res.status(401).send(Error({
         message: "Please authenticate."
       }));
     }
 
-    if(!user.tokens.some(e => e.token === token)){
-      console.log("not included: ", token)
+    if(!user.tokens.some(e => e.token === mongoToken)){
+      console.log("not included: ", mongoToken)
       return res.status(401).send(Error({
         message: e.message
       }));

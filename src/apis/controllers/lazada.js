@@ -8,24 +8,28 @@ const path = require('path')
 const server = require('../../app')
 const Storage = require('../models/storage');
 const { createLazadaProduct } = require('./lazadaProduct');
-const LazadaProduct = require('../models/lazadaProduct')
+const LazadaProduct = require('../models/lazadaProduct');
+const Error = require('../utils/error')
 
 var options = {compact: true, ignoreComment: true, spaces: 4};
 
 module.exports.authorizeCredential = async (req, res) => {
+  try {
     const { code, state } = req.query
-    const result = await rp({
+    if(req.query) {
+      const result = await rp({
         method: 'GET',
         uri: 'http://localhost:5000/api/lazada/token?code='+ code + '&state=' + state,
-    })
-    console.log("REsult: ", JSON.parse(result))
-    const { access_token, name, store_id, storageId } = JSON.parse(result)
+      })
+      console.log(result)
+      console.log("Result: ", JSON.parse(result))
+      const { access_token, name, store_id, storageId } = JSON.parse(result)
 
-    let io = server.getIO()
-
-    io.sockets.emit('laz auth success', { name, storageId, store_id, access_token })
-
-    res.sendFile(path.join(__dirname, '../../close.html'))
+      res.status(200).send({ name, storageId, store_id, access_token })
+    }
+  } catch(e) {
+    res.status(500).send(Error({ message: 'Something went wrong' }))
+  }
 }
 
 module.exports.getAccessToken = async (req, res) => {
@@ -57,37 +61,43 @@ module.exports.getAccessToken = async (req, res) => {
             }
         };
         const response = await rp(options).then(res => JSON.parse(res));
-        const [uid, storageId] = state.split('_')
-        const storage = await Storage.findById(storageId)
-        const insertCredentials = {
-            store_name: response.name,
-            platform_name: 'lazada',
-            refresh_token: response.refresh_token,
-            access_token: response.access_token,
-            isActivated: true,
-        }
-        const result = await rp.post({
-            method: 'POST',
-            uri: 'http://localhost:5000/api/lazada/seller',
-            body: { access_token: response.access_token },
-            json: true
-        }).then(res => res.data)
-        const { name, seller_id } = result 
-        insertCredentials.store_name = name
-        insertCredentials.store_id = seller_id
-        if(storage.lazadaCredentials.length === 0) {
-            storage.lazadaCredentials = [insertCredentials]
+        if(response.code === '0') {
+          //if no error return
+          const [uid, storageId] = state.split('_')
+          const storage = await Storage.findById(storageId)
+          const insertCredentials = {
+              store_name: response.name,
+              platform_name: 'lazada',
+              refresh_token: response.refresh_token,
+              access_token: response.access_token,
+              isActivated: true,
+          }
+          const result = await rp.post({
+              method: 'POST',
+              uri: 'http://localhost:5000/api/lazada/seller',
+              body: { access_token: response.access_token },
+              json: true
+          }).then(res => res.data)
+          const { name, seller_id } = result 
+          insertCredentials.store_name = name
+          insertCredentials.store_id = seller_id
+          if(storage.lazadaCredentials.length === 0) {
+              storage.lazadaCredentials = [insertCredentials]
+          } else {
+              storage.lazadaCredentials = storage.lazadaCredentials.map(i => {
+                  if(i.store_name === name) {
+                      return insertCredentials
+                  }
+                  return i
+              })
+          }
+          await Storage.findOneAndUpdate({ id: storageId }, storage, {}, (err, doc) => {
+              res.status(200).send({ access_token: insertCredentials.access_token, name, store_id: insertCredentials.store_id, storageId })
+          })
         } else {
-            storage.lazadaCredentials = storage.lazadaCredentials.map(i => {
-                if(i.store_name === name) {
-                    return insertCredentials
-                }
-                return i
-            })
+          // error return from lazada
+          res.status(500).send(Error({ message: 'Something went wrong' }))
         }
-        const updateRes = await Storage.findOneAndUpdate({ id: storageId }, storage, {}, (err, doc) => {
-            res.status(200).send({ access_token: insertCredentials.access_token, name, store_id: insertCredentials.store_id, storageId })
-        })
     } catch (e) {
         res.status(500).send(Error(e));
     }

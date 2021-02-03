@@ -3,27 +3,38 @@ const request = require("request-promise");
 const cors = require("cors");
 const path = require('path');
 const cookie = require('cookie')
+const configSocket = require('./socket')
+const expsession = require('express-session')
 require('dotenv').config()
+require("./connections/mongodb-atlas");
 
 // const swaggerJsDoc = require("swagger-jsdoc");
 const swaggerUi = require("swagger-ui-express");
 const swaggerDocument = require("./swagger.json");
+
 // require("./connections/mongodb-local");
-require("./connections/mongodb-atlas");
+const app = express();
+const port = process.env.PORT || 5000;
 const configRoute = require("./apis/index");
 
-const app = express();
-const server = require('http').createServer();
-const port = process.env.PORT || 5000;
+// initialize session middleware
+const sessionMiddleware = expsession({
+  secret: 'random secret',
+  saveUninitialized: true,
+  resave: true
+});
 
 app.use(express.json());
 app.use(cors());
-
+// hook up session for express routes
+app.use(sessionMiddleware);
+// hook up the session for socket.io connections
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+  res.header('Access-Control-Allow-Headers', 'Content-Type');
   next();
 });
-
 
 app.get("/*", (req, res, next) => {
   res.set({
@@ -36,29 +47,13 @@ app.get("/*", (req, res, next) => {
 });
 
 configRoute(app);
+configSocket();
 
-const io = require('socket.io')(server, {
-  path: '/test',
-  serveClient: false,
-  // below are engine.IO options
-  pingInterval: 10000,
-  pingTimeout: 5000,
-  cookie: false,
-  cors: {
-    origin: "https://localhost:3000",
-    methods: ["GET", "POST", "PUT", "PATCH", "DELETE"]
-  }
-});
-
-io.on('connection', socket => {
-  console.log("Connection created")
+app.get('/socket/test', function(req, res) {
+  const session = req.session;
+  io.sockets.connected[session.socketio].emit('show', 'hello');
+  res.json({greeting: "hello"});
 })
-
-module.exports.getIO = function(){
-  return io;
-}
-
-server.listen(5050);
 
 app.use("/", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 

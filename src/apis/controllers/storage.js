@@ -3,7 +3,7 @@ const auth = require("../../middlewares/auth");
 const { getSendoToken } = require("./sendo");
 
 module.exports.getStorages = async (req, res) => {
-  let storage = await Storage.findById({ _id: req.body.storageId })
+  let storage = await Storage.findById({ _id: req.user.storage[0]._id })
   let sendoCredentials = storage.sendoCredentials && storage.sendoCredentials   
   sendoCredentials = await Promise.all(sendoCredentials.map(async sendoCredential => await getSendoToken(sendoCredential)))
   storage.sendoCredentials = sendoCredentials
