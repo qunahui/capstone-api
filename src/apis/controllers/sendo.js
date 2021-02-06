@@ -23,8 +23,7 @@ module.exports.authorizeCredential = async (req, res) => {
       }
     }
     await rp(options).then(async response => {
-      console.log("Begin find storage")
-      const storage = await Storage.findById({ _id: req.body.storageId })
+      const storage = await Storage.findById({ _id: req.user.currentStorage.storageId })
       const { token } = response.result
       const matchedCredential = storage.sendoCredentials.find(credential => credential.app_key === app_key)
       if(matchedCredential) {
@@ -40,7 +39,7 @@ module.exports.authorizeCredential = async (req, res) => {
         status: 'connected',
       }
       storage.sendoCredentials.push(insertCredential)
-      await Storage.findOneAndUpdate({ _id: req.body.storageId }, storage, { upsert: true}, (err, doc) => {
+      await Storage.findOneAndUpdate({ _id: req.user.currentStorage.storageId }, storage, { upsert: true}, (err, doc) => {
         res.status(200).send(insertCredential)
       })
     }).catch(e => {

@@ -10,16 +10,14 @@ module.exports.getCurrentUser = async (req, res) => {
 module.exports.signUp = async (req, res) => {
   try {
     const user = new User({ ...req.body });
-    console.log(user)
-    const storageName = 'STORAGE_' + user.uid.toUpperCase()
+    const storageName = 'STORAGE_' + user._id.toString().toUpperCase()
     const linkedStorage = new Storage({ displayName: storageName })
     await linkedStorage.save();
-    
-    user.storages = user.storages.concat({ storage: { storageId: linkedStorage.id, storageName: linkedStorage.displayName } });
+    user.storages = user.storages.concat({ storage: {storageId: linkedStorage.id, storageName: linkedStorage.displayName} });
     await user.save();
     
     const token = await user.generateJWT();
-    res.status(201).send({user, token});
+    res.status(201).send({ user, token});
   } catch (e) {
     let status = 400;
     let error = e;
@@ -40,37 +38,21 @@ module.exports.signUp = async (req, res) => {
 module.exports.signIn = async (req, res) => {
   try {
     var user = await User.findByCredentials(
-      req.body.uid
+      req.body.email,
+      req.body.password
     );
-
-    
-    if(user.token) {
-      let { token } = user
-      delete user.token
-      return res.send({ user: { ...rest }, token })
-    }
 
     const token = await user.generateJWT();
     return res.send({ user, token });
   } catch (e) {
-    let status = 400;
-    let error = e;
-
-    if (e.name === "MongoError" && e.code === 11000) {
-      status = 409;
-      error = {
-        message: "User already exist!",
-      };
-    }
-
-    res.status(status).send(Error(error));
+    res.status(401).send(Error(e));
   }
 };
 
 module.exports.signOut = async (req, res) => {
   try {
     req.user.tokens = req.user.tokens.filter((item) => {
-      return item.token !== req.token;
+      return item.token !== req.mongoToken;
     });
 
     await req.user.save();

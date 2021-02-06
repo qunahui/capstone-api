@@ -9,7 +9,8 @@ const auth = async (req, res, next) => {
     const platformToken = req.header("Platform-Token");
     const decoded = jwt.verify(mongoToken, "thuongthuong");
     const user = await User.findOne({
-      uid: decoded.uid,
+      _id: decoded._id,
+      "tokens.token": mongoToken,
     });
     
     if (!user) {
@@ -25,8 +26,12 @@ const auth = async (req, res, next) => {
       }));
     }
 
-    req.user = user;
+    user.currentStorage = user.storages[0].storage
+    delete user.storages
+ 
+    req.user = user
     req.accessToken = platformToken
+    req.mongoToken = mongoToken
     next();
 
   } catch (e) {

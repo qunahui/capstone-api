@@ -21,8 +21,6 @@ module.exports.authorizeCredential = async (req, res) => {
         method: 'GET',
         uri: 'http://localhost:5000/api/lazada/token?code='+ code + '&state=' + state,
       })
-      console.log(result)
-      console.log("Result: ", JSON.parse(result))
       const { access_token, name, store_id, storageId } = JSON.parse(result)
 
       res.status(200).send({ name, storageId, store_id, access_token })
@@ -63,7 +61,7 @@ module.exports.getAccessToken = async (req, res) => {
         const response = await rp(options).then(res => JSON.parse(res));
         if(response.code === '0') {
           //if no error return
-          const [uid, storageId] = state.split('_')
+          const [_id, storageId] = state.split('_')
           const storage = await Storage.findById(storageId)
           const insertCredentials = {
               store_name: response.name,
