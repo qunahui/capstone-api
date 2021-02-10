@@ -1,10 +1,10 @@
 const express = require("express");
-const request = require("request-promise");
+// const request = require("request-promise");
 const cors = require("cors");
-const path = require('path');
-const cookie = require('cookie')
-const configSocket = require('./socket')
-const expsession = require('express-session')
+// const path = require('path');
+// const cookie = require('cookie')
+// const configSocket = require('./socket')
+// const expsession = require('express-session')
 require('dotenv').config()
 require("./connections/mongodb-atlas");
 
@@ -18,16 +18,16 @@ const port = process.env.PORT || 5000;
 const configRoute = require("./apis/index");
 
 // initialize session middleware
-const sessionMiddleware = expsession({
-  secret: 'random secret',
-  saveUninitialized: true,
-  resave: true
-});
+// const sessionMiddleware = expsession({
+//   secret: 'random secret',
+//   saveUninitialized: true,
+//   resave: true
+// });
 
 app.use(express.json());
 app.use(cors());
 // hook up session for express routes
-app.use(sessionMiddleware);
+// app.use(sessionMiddleware);
 // hook up the session for socket.io connections
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*');
@@ -47,13 +47,13 @@ app.get("/*", (req, res, next) => {
 });
 
 configRoute(app);
-configSocket();
+// configSocket();
 
-app.get('/socket/test', function(req, res) {
-  const session = req.session;
-  io.sockets.connected[session.socketio].emit('show', 'hello');
-  res.json({greeting: "hello"});
-})
+// app.get('/socket/test', function(req, res) {
+//   const session = req.session;
+//   io.sockets.connected[session.socketio].emit('show', 'hello');
+//   res.json({greeting: "hello"});
+// })
 
 app.use("/", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
