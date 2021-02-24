@@ -1798,6 +1798,36 @@
             "description": "Validation exception"
           }
         }
+      },
+      "get": {
+        "tags": [
+          "categories"
+        ],
+        "summary": "searching primary categories in database",
+        "operationId": "getCategories",
+        "parameters":[
+          {
+            "in":"query",
+            "name": "search",
+            "required": true,
+            "schema":{
+              "type": "string",
+              "example": "áo th"
+            },
+            "description":""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful"
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        }
       }
     },
     "/api/lazada/refresh-token":{
