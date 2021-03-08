@@ -152,20 +152,6 @@ module.exports.refreshToken = async (req, res) =>{
         res.status(500).send(Error(e));
     }
 }
-//1: lazada product api
-module.exports.getAllProducts = async (req, res) => {
-    console.log(req.query)
-    try {
-        const { store_id } = req.query;
-        const lazadaProducts = await LazadaProduct.find({ store_id })
-    
-        console.log(lazadaProducts)
-
-        res.status(200).send(lazadaProducts)
-      } catch(e) {
-        res.status(500).send(Error({ message: 'Something went wrong !'}))
-    }
-}
 
 module.exports.fetchProducts = async (req, res) =>{
     console.log(req.body)

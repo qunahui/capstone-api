@@ -4,7 +4,7 @@ const auth = require("../../middlewares/auth");
 const controller = require("../controllers/lazadaProduct");
 const lazadaProduct = require("../models/lazadaProduct");
 
-
+router.get('/products', controller.getAllProducts);
 router.post("/create", controller.createLazadaProduct);
 
 

@@ -6,18 +6,21 @@ const CategorySchema = new Schema({
     category_id:{
         type: Number
     },
-   var:{
-       type: Boolean
-   },
-   name:{
-       type: String
-   },
-   leaf:{
+    var:{
         type: Boolean
-   },
-   idpath:{
-       type: Array
-   }
+    },
+    name:{
+        type: String
+    },
+    leaf:{
+          type: Boolean
+    },
+    idpath:{
+        type: Array
+    },
+    namepath: {
+      type: Array
+    }
 })
 
 module.exports = mongoose.model("Category", CategorySchema);

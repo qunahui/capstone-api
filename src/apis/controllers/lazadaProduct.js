@@ -7,6 +7,17 @@ const { time } = require("console");
 const rp = require('request-promise');
 
 
+module.exports.getAllProducts = async (req, res) => {
+  try {
+      const { store_id } = req.query;
+      const lazadaProducts = await LazadaProduct.find({ store_id })
+  
+      res.status(200).send(lazadaProducts)
+    } catch(e) {
+      res.status(500).send(Error({ message: 'Something went wrong !'}))
+  }
+}
+
 module.exports.createLazadaProduct = async (item, additionalData) => {
   try {
     const stringAttributes = await rp("http://localhost:5000/api/lazada/attribute/"+ item.primary_category)
