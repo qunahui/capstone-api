@@ -155,8 +155,12 @@ module.exports.createSendoProduct = async (item, { store_id }) => {
 };
 module.exports.getAllProducts = async (req, res) => {
   try {
-    const { store_id } = req.query;
-    const sendoProducts = await SendoProduct.find({ store_id })
+    const { storeIds } = req.query;
+    let sendoProducts = []
+    await Promise.all([...storeIds.map(async storeId => {
+      const products = await SendoProduct.find({ store_id: storeId })
+      sendoProducts = [...sendoProducts, ...products]
+    })])
 
     res.status(200).send(sendoProducts)
   } catch(e) {

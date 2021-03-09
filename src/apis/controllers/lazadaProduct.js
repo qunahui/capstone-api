@@ -9,8 +9,12 @@ const rp = require('request-promise');
 
 module.exports.getAllProducts = async (req, res) => {
   try {
-      const { store_id } = req.query;
-      const lazadaProducts = await LazadaProduct.find({ store_id })
+      const { storeIds } = req.query;
+      let lazadaProducts = [];
+      await Promise.all([...storeIds].map(async storeId => {
+        const products = await LazadaProduct.find({ store_id: storeId })
+        lazadaProducts = [...lazadaProducts, ...products]
+      }))
   
       res.status(200).send(lazadaProducts)
     } catch(e) {
