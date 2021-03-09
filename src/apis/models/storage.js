@@ -64,6 +64,11 @@ const lazadaCredentialSchema = {
   access_token: {
     type: String,
     expires: '604800'
+  },
+  status: {
+    type: String,
+    required: true,
+    default: 'not connected yet'
   }
 }
 

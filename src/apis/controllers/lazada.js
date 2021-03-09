@@ -21,9 +21,9 @@ module.exports.authorizeCredential = async (req, res) => {
         method: 'GET',
         uri: 'http://localhost:5000/api/lazada/token?code='+ code + '&state=' + state,
       })
-      const { access_token, name, store_id, storageId } = JSON.parse(result)
+      // const { access_token, name, store_id, storageId } = JSON.parse(result)
 
-      res.status(200).send({ name, storageId, store_id, access_token })
+      res.status(200).send(result)
     }
   } catch(e) {
     res.status(500).send(Error({ message: 'Something went wrong' }))
@@ -69,6 +69,7 @@ module.exports.getAccessToken = async (req, res) => {
               refresh_token: response.refresh_token,
               access_token: response.access_token,
               isActivated: true,
+              status: 'connected',
           }
           const result = await rp.post({
               method: 'POST',
@@ -90,7 +91,7 @@ module.exports.getAccessToken = async (req, res) => {
               })
           }
           await Storage.findOneAndUpdate({ id: storageId }, storage, {}, (err, doc) => {
-              res.status(200).send({ access_token: insertCredentials.access_token, name, store_id: insertCredentials.store_id, storageId })
+              res.status(200).send(insertCredentials)
           })
         } else {
           // error return from lazada

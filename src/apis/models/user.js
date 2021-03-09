@@ -104,12 +104,12 @@ schema.methods.generateJWT = async function () {
 
 // check login
 schema.statics.findByCredentials = async (email, password) => {
+  console.log(email)
   const user = await User.findOne({ email });
-  
   if (!user) {
     throw new Error("Unable to login!");
   }
-  
+
   const isMatch = await bcrypt.compare(password, user.password);
 
 
