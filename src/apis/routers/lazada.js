@@ -23,14 +23,8 @@ var upload = multer({
 })
 
 // router.get('/first-connect', controller.authorizeCredential)
-<<<<<<< Updated upstream
-router.get('/authorize', controller.authorizeCredential)
-router.get('/token', controller.getAccessToken)
-router.get('/products', controller.getAllProducts)
-=======
 router.get('/authorize', auth, controller.authorizeCredential)
 router.get('/token', auth, controller.getAccessToken)  // t4 fix cùng hui
->>>>>>> Stashed changes
 //router.post('/sign', controller.createSign)
 
 router.get('/refresh-token/',auth, controller.refreshToken)

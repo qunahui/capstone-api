@@ -180,12 +180,8 @@ module.exports.getWardById = async (req, res) =>{
   
  
   const wardId = req.params.id;
-<<<<<<< Updated upstream
-  const cookie = Cookie.parse(req.headers.cookie)
-=======
   
  
->>>>>>> Stashed changes
   
   try {
       const options = {

@@ -863,12 +863,29 @@
         "tags": [
           "sendoProducts"
         ],
-        "summary": "Get all product in database",
-        "operationId": "getAllProduct",
+        "summary": "Get all sendoProduct in database",
+        "operationId": "getAllSendoProduct",
         "security":[
           {
             "bearerAuth":[],
             "ApiKeyAuth":[]
+          }
+        ],
+        "parameters":[
+          {
+            "in":"query",
+            "name": "storeIds",
+            "required": true,
+            "description": "array of storeIds",
+            "schema":{
+              "type": "array",
+              "items":[
+                {
+                  "type": "string",
+                  "example": "d63aecd314b4463abc2204aa6a340c6b"
+                }
+              ]
+            }
           }
         ],
         "responses": {
@@ -1419,6 +1436,52 @@
             }
           }
         },
+        "responses": {
+          "200": {
+            "description": "Successful"
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "404": {
+            "description": "Pet not found"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        }
+      }
+    },
+    "/lazada/products":{
+      "get": {
+        "tags": [
+          "lazadaProducts"
+        ],
+        "summary": "Get all lazadaProduct in database",
+        "operationId": "getAllLazadaProduct",
+        "security":[
+          {
+            "bearerAuth":[],
+            "ApiKeyAuth":[]
+          }
+        ],
+        "parameters":[
+          {
+            "in":"query",
+            "name": "storeIds",
+            "required": true,
+            "description": "array of storeIds",
+            "schema":{
+              "type": "array",
+              "items":[
+                {
+                  "type": "string",
+                  "example": "200163939035"
+                }
+              ]
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "Successful"

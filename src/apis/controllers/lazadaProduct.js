@@ -52,6 +52,22 @@ module.exports.createLazadaProduct = async (item, additionalData) => {
   }
 };
 
+module.exports.getAllProducts = async (req, res) => {
+  try {
+      const { storeIds } = req.query;
+      let lazadaProducts = [];
+      await Promise.all([...storeIds].map(async storeId => {
+        const products = await LazadaProduct.find({store_id: storeId})
+        lazadaProducts = [...lazadaProducts, ... products]
+      }))
+      
+  
+      res.status(200).send(lazadaProducts)
+    } catch(e) {
+      res.status(500).send(Error({ message: 'Something went wrong !'}))
+  }
+}
+
 module.exports.fetchProducts = async (req, res) =>{
   console.log(req.body)
   const apiUrl = 'https://api.lazada.vn/rest' 

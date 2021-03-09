@@ -50,15 +50,9 @@ router.post('/ping', (req, res) => {
 // local's routes
 
 //api's routes
-<<<<<<< Updated upstream
-router.post('/authorize', controller.authorizeCredential)
-router.post('/login', controller.getSendoToken)
-router.post('/products/', checkController.check, controller.createProductOnSendo)
-=======
 router.post('/authorize', auth, controller.authorizeCredential)
 router.post('/login', auth, controller.getSendoToken)
 router.post('/products/', auth, controller.createProductOnSendo)
->>>>>>> Stashed changes
 //router.post('/search-products', controller.searchSendoProduct) //filter product, if none-> get all
 
 

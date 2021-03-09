@@ -57,28 +57,6 @@ module.exports.getAccessToken = async (req, res) => {
             }
         };
         const response = await rp(options).then(res => JSON.parse(res));
-<<<<<<< Updated upstream
-        const [uid, storageId] = state.split('_')
-        const storage = await Storage.findById(storageId)
-        const insertCredentials = {
-            store_name: response.name,
-            platform_name: 'lazada',
-            refresh_token: response.refresh_token,
-            access_token: response.access_token,
-            isActivated: true,
-        }
-        const result = await rp.post({
-            method: 'POST',
-            uri: 'http://localhost:5000/api/lazada/seller',
-            body: { access_token: response.access_token },
-            json: true
-        }).then(res => res.data)
-        const { name, seller_id } = result 
-        insertCredentials.store_name = name
-        insertCredentials.store_id = seller_id
-        if(storage.lazadaCredentials.length === 0) {
-            storage.lazadaCredentials = [insertCredentials]
-=======
         if(response.code === '0') {
           //if no error return
           const [_id, storageId] = state.split('_')
@@ -115,7 +93,6 @@ module.exports.getAccessToken = async (req, res) => {
           await Storage.findOneAndUpdate({ id: storageId }, storage, {}, (err, doc) => {
               res.status(200).send({ access_token: insertCredentials.access_token, name, store_id: insertCredentials.store_id, storageId })
           })
->>>>>>> Stashed changes
         } else {
             storage.lazadaCredentials = storage.lazadaCredentials.map(i => {
                 if(i.store_name === name) {
