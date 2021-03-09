@@ -5,7 +5,7 @@ const request = require('request');
 const util = require('util');
 const { time } = require("console");
 const rp = require('request-promise');
-
+const { signRequest } = require('../utils/laz-sign-request')
 
 module.exports.createLazadaProduct = async (item, additionalData) => {
   try {
@@ -51,3 +51,44 @@ module.exports.createLazadaProduct = async (item, additionalData) => {
     console.log("Something went wrong", e)
   }
 };
+
+module.exports.fetchProducts = async (req, res) =>{
+  console.log(req.body)
+  const apiUrl = 'https://api.lazada.vn/rest' 
+  const apiPath=  '/products/get'
+  const appSecret = process.env.LAZADA_APP_SECRET 
+  const appKey = process.env.LAZADA_APP_KEY 
+  const accessToken =  req.accessToken
+  const timestamp = Date.now()
+  const commonRequestParams = {
+      "app_key": appKey,
+      "timestamp": timestamp,
+      "sign_method": "sha256",
+      "access_token":accessToken,
+  }
+  const filter = req.body.filter
+  const sign = signRequest(appSecret, apiPath, {...commonRequestParams, filter})
+  try {
+      var options = {
+          'method': 'GET',
+          'url': apiUrl+apiPath+
+          '?filter='+filter+
+          '&app_key='+appKey+
+          '&sign_method=sha256&timestamp='+timestamp+
+          '&access_token='+accessToken+
+          '&sign='+sign,
+          'headers': {
+          }
+      };
+      //console.log(options)
+      const { data } = await rp(options).then(res => JSON.parse(res))
+      console.log("data: ", data)
+      const { products } = data
+      await Promise.all(products.map(async product => await createLazadaProduct(product, { store_id: req.body.store_id })))
+  } catch (e) {
+      res.status(500).send(Error(e));
+  }
+  const lazadaProducts = await LazadaProduct.find({ storageId: req.body.storageId, store_id: req.body.store_id })
+  
+  res.status(200).send(lazadaProducts)
+}

@@ -9,4 +9,5 @@ router.patch("/add-sendo-credentials", auth, controller.addSendoCredentials);
 
 router.get("/fetch-shops", auth, controller.fetchShops);
 
+
 module.exports = router;

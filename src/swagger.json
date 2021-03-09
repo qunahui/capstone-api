@@ -25,6 +25,14 @@
   ],
   "tags": [
     {
+      "name": "users",
+      "description": "Everything about your Users",
+      "externalDocs": {
+        "description": "Find out more",
+        "url": ""
+      }
+    },
+    {
       "name": "products",
       "description": "Everything about your Products",
       "externalDocs": {
@@ -66,6 +74,185 @@
     }
   ],
   "paths": {
+    "/users/sign-up": {
+      "post": {
+        "tags": [
+          "users"
+        ],
+        "summary": "Sign up the app",
+        "operationId": "signUp",
+        "requestBody": {
+          "content":{
+            "application/json":{
+              "schema":{
+
+              },
+              "example":{
+                "email": "mrlocpro@gmail.com",
+                "password":"locpro",
+                "displayName": "locpro"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200":{
+            "description": "Successful",
+            "content":{
+              "application/json":{
+                "example":{
+                  "user": {
+                    "_id": "603e3eb9486b9112e0183ecf",
+                    "displayName": "huyhuy",
+                    "email": "hui1@gmail.com",
+                    "__v": 16,
+                    "currentStorage": {
+                      "storageId": "603e3eb9486b9112e0183ed0",
+                      "storageName": "STORAGE_603E3EB9486B9112E0183ECF"
+                    }
+                  },
+                  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MDNlM2ViOTQ4NmI5MTEyZTAxODNlY2YiLCJjdXJyZW50U3RvcmFnZSI6eyJzdG9yYWdlSWQiOiI2MDNlM2ViOTQ4NmI5MTEyZTAxODNlZDAiLCJzdG9yYWdlTmFtZSI6IlNUT1JBR0VfNjAzRTNFQjk0ODZCOTExMkUwMTgzRUNGIn0sImlhdCI6MTYxNTE4NzgyNCwiZXhwIjoxNjE3Nzc5ODI0fQ.mbqF8C5CI4oLRUA53MNRI7EjAAViWSSbjjCx0oQrMK4"
+                }
+              }
+            }
+          },
+          "405": {
+            "description": "Invalid input"
+          },
+          "500":{
+            "description": "Error: Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "petstore_auth": [
+              "write:pets",
+              "read:pets"
+            ]
+          }
+        ]
+      }
+    },
+    "/users/sign-in": {
+      "post": {
+        "tags": [
+          "users"
+        ],
+        "summary": "Sign in the app",
+        "operationId": "signIn",
+        "requestBody": {
+          "content":{
+            "application/json":{
+              "schema":{
+
+              },
+              "example":{
+                "email": "hui1@gmail.com",
+                "password":"huyhuy"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200":{
+            "description": "Successful",
+            "content":{
+              "application/json":{
+                "example":{
+                  "user": {
+                    "_id": "603e3eb9486b9112e0183ecf",
+                    "displayName": "huyhuy",
+                    "email": "hui1@gmail.com",
+                    "__v": 16,
+                    "currentStorage": {
+                      "storageId": "603e3eb9486b9112e0183ed0",
+                      "storageName": "STORAGE_603E3EB9486B9112E0183ECF"
+                    }
+                  },
+                  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MDNlM2ViOTQ4NmI5MTEyZTAxODNlY2YiLCJjdXJyZW50U3RvcmFnZSI6eyJzdG9yYWdlSWQiOiI2MDNlM2ViOTQ4NmI5MTEyZTAxODNlZDAiLCJzdG9yYWdlTmFtZSI6IlNUT1JBR0VfNjAzRTNFQjk0ODZCOTExMkUwMTgzRUNGIn0sImlhdCI6MTYxNTE4NzgyNCwiZXhwIjoxNjE3Nzc5ODI0fQ.mbqF8C5CI4oLRUA53MNRI7EjAAViWSSbjjCx0oQrMK4"
+                }
+              }
+            }
+          },
+          "405": {
+            "description": "Invalid input"
+          },
+          "500":{
+            "description": "Error: Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "petstore_auth": [
+              "write:pets",
+              "read:pets"
+            ]
+          }
+        ]
+      }
+    },
+    "/users/sign-out": {
+      "get": {
+        "tags": [
+          "users"
+        ],
+        "summary": "Sign out the current user",
+        "operationId": "signOut",
+        "responses": {
+          "200":{
+            "description": "Successful",
+            "content":{
+              "application/json":{
+                "example": " "
+              }
+            }
+          },
+          "405": {
+            "description": "Invalid input"
+          },
+          "500":{
+            "description": "Error: Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth":[],
+            "ApiKeyAuth":[]
+          }
+        ]
+      }
+    },
+    "/users/me": {
+      "get": {
+        "tags": [
+          "users"
+        ],
+        "summary": "Get the current user",
+        "operationId": "getCurrentUser",
+        "responses": {
+          "200":{
+            "description": "Successful",
+            "content":{
+              "application/json":{
+                "example": " "
+              }
+            }
+          },
+          "405": {
+            "description": "Invalid input"
+          },
+          "500":{
+            "description": "Error: Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth":[],
+            "ApiKeyAuth":[]
+          }
+        ]
+      }
+    },
     "/products": {
       "post": {
         "tags": [
@@ -236,7 +423,8 @@
         ],
         "security":[
           {
-            "cookieAuth":[]
+            "bearerAuth":[],
+            "ApiKeyAuth":[]
           }
         ],
         "summary": "Get ward by wardId",
@@ -250,15 +438,6 @@
             "schema":{
               "type": "integer",
               "example":26734
-            }
-          },
-          {
-            "in":"query",
-            "name": "store_id",
-            "required": true,
-            "schema":{
-              "type": "string",
-              "example":"d63aecd314b4463abc2204aa6a340c6b"
             }
           }
         ],
@@ -295,6 +474,12 @@
         ],
         "summary": "Get district by districtId",
         "operationId": "getDistrict",
+        "security":[
+          {
+            "bearerAuth":[],
+            "ApiKeyAuth":[]
+          }
+        ],
         "parameters":[
           {
             "in":"path",
@@ -304,15 +489,6 @@
             "schema":{
               "type": "integer",
               "example":"2"
-            }
-          },
-          {
-            "in":"query",
-            "name": "store_id",
-            "required": true,
-            "schema":{
-              "type": "string",
-              "example":"d63aecd314b4463abc2204aa6a340c6b"
             }
           }
         ],
@@ -354,6 +530,12 @@
         ],
         "summary": "Get region by regionId",
         "operationId": "getRegion",
+        "security":[
+          {
+            "bearerAuth":[],
+            "ApiKeyAuth":[]
+          }
+        ],
         "parameters":[
           {
             "in":"path",
@@ -363,15 +545,6 @@
             "schema":{
               "type": "integer",
               "example":"2"
-            }
-          },
-          {
-            "in":"query",
-            "name": "store_id",
-            "required": true,
-            "schema":{
-              "type": "string",
-              "example": "d63aecd314b4463abc2204aa6a340c6b"
             }
           }
         ],
@@ -413,15 +586,10 @@
         ],
         "summary": "create product on Sendo",
         "operationId": "createProduct",
-        "parameters":[
+        "security":[
           {
-            "in":"query",
-            "name": "store_id",
-            "required": true,
-            "schema":{
-              "type": "string",
-              "example": "d63aecd314b4463abc2204aa6a340c6b"
-            }
+            "bearerAuth":[],
+            "ApiKeyAuth":[]
           }
         ],
         "requestBody":{
@@ -697,15 +865,10 @@
         ],
         "summary": "Get all product in database",
         "operationId": "getAllProduct",
-        "parameters":[
+        "security":[
           {
-            "in":"query",
-            "name": "store_id",
-            "required": true,
-            "schema":{
-              "type": "string",
-              "example":"d63aecd314b4463abc2204aa6a340c6b"
-            }
+            "bearerAuth":[],
+            "ApiKeyAuth":[]
           }
         ],
         "responses": {
@@ -731,6 +894,12 @@
         ],
         "summary": "Get product by productId on sendo",
         "operationId": "getProduct",
+        "security":[
+          {
+            "bearerAuth":[],
+            "ApiKeyAuth":[]
+          }
+        ],
         "parameters":[
           {
             "in":"path",
@@ -740,15 +909,6 @@
             "schema":{
               "type": "integer",
               "example": 39107134
-            }
-          },
-          {
-            "in":"query",
-            "name": "store_id",
-            "required": true,
-            "schema":{
-              "type": "string",
-              "example":"d63aecd314b4463abc2204aa6a340c6b"
             }
           }
         ],
@@ -773,6 +933,12 @@
         ],
         "summary": "update product on sendo",
         "operationId": "updateProduct",
+        "security":[
+          {
+            "bearerAuth":[],
+            "ApiKeyAuth":[]
+          }
+        ],
         "parameters":[
           {
             "in":"path",
@@ -782,15 +948,6 @@
             "schema":{
               "type": "integer",
               "example": 39508091
-            }
-          },
-          {
-            "in":"query",
-            "name": "store_id",
-            "required": true,
-            "schema":{
-              "type": "string",
-              "example": "d63aecd314b4463abc2204aa6a340c6b"
             }
           }
         ],
@@ -846,6 +1003,12 @@
         ],
         "summary": "Delete product by Id on sendo",
         "operationId": "deleteProduct",
+        "security":[
+          {
+            "bearerAuth":[],
+            "ApiKeyAuth":[]
+          }
+        ],
         "parameters":[
           {
             "in":"path",
@@ -855,15 +1018,6 @@
             "schema":{
               "type": "integer",
               "example": 40205805
-            }
-          },
-          {
-            "in":"query",
-            "name": "store_id",
-            "required": true,
-            "schema":{
-              "type": "string",
-              "example": "d63aecd314b4463abc2204aa6a340c6b"
             }
           }
         ],
@@ -909,6 +1063,12 @@
         ],
         "summary": "Get category by categoryId",
         "operationId": "getCategory",
+        "security":[
+          {
+            "bearerAuth":[],
+            "ApiKeyAuth":[]
+          }
+        ],
         "parameters":[
           {
             "in":"path",
@@ -918,15 +1078,6 @@
             "schema":{
               "type": "integer",
               "example": 1485
-            }
-          },
-          {
-            "in":"query",
-            "name": "store_id",
-            "required": true,
-            "schema":{
-              "type": "string",
-              "example":"d63aecd314b4463abc2204aa6a340c6b"
             }
           }
         ],
@@ -953,6 +1104,12 @@
         ],
         "summary": "Get attribute by attributeId",
         "operationId": "getAttribute",
+        "security":[
+          {
+            "bearerAuth":[],
+            "ApiKeyAuth":[]
+          }
+        ],
         "parameters":[
           {
             "in":"path",
@@ -962,15 +1119,6 @@
             "schema":{
               "type": "integer",
               "example":1485
-            }
-          },
-          {
-            "in":"query",
-            "name": "store_id",
-            "required": true,
-            "schema":{
-              "type": "string",
-              "example":"d63aecd314b4463abc2204aa6a340c6b"
             }
           }
         ],
@@ -997,15 +1145,10 @@
         ],
         "summary": "Get cancel reason",
         "operationId": "getCancelReason",
-        "parameters":[
+        "security":[
           {
-            "in":"query",
-            "name": "store_id",
-            "required": true,
-            "schema":{
-              "type": "string",
-              "example":"d63aecd314b4463abc2204aa6a340c6b"
-            }
+            "bearerAuth":[],
+            "ApiKeyAuth":[]
           }
         ],
         "responses": {
@@ -1031,15 +1174,10 @@
         ],
         "summary": "search order",
         "operationId": "searchOrder",
-        "parameters":[
+        "security":[
           {
-            "in":"query",
-            "name": "store_id",
-            "required": true,
-            "schema":{
-              "type": "string",
-              "example":"d63aecd314b4463abc2204aa6a340c6b"
-            }
+            "bearerAuth":[],
+            "ApiKeyAuth":[]
           }
         ],
         "requestBody":{
@@ -1084,6 +1222,12 @@
         ],
         "summary": "Get order by orderNumber on Sendo",
         "operationId": "getOrder",
+        "security":[
+          {
+            "bearerAuth":[],
+            "ApiKeyAuth":[]
+          }
+        ],
         "parameters":[
           {
             "in":"path",
@@ -1093,15 +1237,6 @@
             "schema":{
               "type": "integer",
               "example": 14674394696
-            }
-          },
-          {
-            "in":"query",
-            "name": "store_id",
-            "required": true,
-            "schema":{
-              "type": "string",
-              "example": "d63aecd314b4463abc2204aa6a340c6b"
             }
           }
         ],
@@ -1126,6 +1261,12 @@
         ],
         "summary": "Update order status by orderNumber on Sendo",
         "operationId": "updateOrder",
+        "security":[
+          {
+            "bearerAuth":[],
+            "ApiKeyAuth":[]
+          }
+        ],
         "parameters":[
           {
             "in":"path",
@@ -1135,15 +1276,6 @@
             "schema":{
               "type": "integer",
               "example": 14674394696
-            }
-          },
-          {
-            "in":"query",
-            "name": "store_id",
-            "required": true,
-            "schema":{
-              "type": "string",
-              "example": "d63aecd314b4463abc2204aa6a340c6b"
             }
           }
         ],
@@ -1222,10 +1354,13 @@
         "tags": [
           "sendoProducts"
         ],
-        "summary": "fetch products",
-        "operationId": "fetchProducts",
-        "parameters":[
-
+        "summary": "fetch sendo products",
+        "operationId": "fetchSendoProducts",
+        "security":[
+          {
+            "bearerAuth":[],
+            "ApiKeyAuth":[]
+          }
         ],
         "requestBody":{
           "content":{
@@ -1234,7 +1369,6 @@
 
               },
               "example":{
-                "access_token": "...",
                 "store_id":"d63aecd314b4463abc2204aa6a340c6b",
                 "storageId":"5ffac838ba04401744309345"
                 
@@ -1258,6 +1392,108 @@
         }
       }
     },
+    "/lazada/products/fetch":{
+      "post": {
+        "tags": [
+          "lazadaProducts"
+        ],
+        "summary": "fetch lazada products",
+        "operationId": "fetchLazadaProducts",
+        "security":[
+          {
+            "bearerAuth":[],
+            "ApiKeyAuth":[]
+          }
+        ],
+        "requestBody":{
+          "content":{
+            "application/json":{
+              "schema":{
+
+              },
+              "example":{
+                "store_id":"d63aecd314b4463abc2204aa6a340c6b",
+                "storageId":"5ffac838ba04401744309345"
+                
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful"
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "404": {
+            "description": "Pet not found"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        }
+      }
+    },
+    "/api/lazada/token":{
+      "get": {
+        "tags": [
+          "lazadaAPI"
+        ],
+        "summary": "get accessToken on lazada",
+        "operationId": "getAccessToken",
+        "security":[
+          {
+            "bearerAuth":[],
+            "ApiKeyAuth":[]
+          }
+        ],
+        "parameters":[
+          {
+            "in":"query",
+            "name": "code",
+            "required": true,
+            "description": "code receive from lazada",
+            "schema":{
+              "type": "string",
+              "example": ""
+            }
+          },
+          {
+            "in":"query",
+            "name": "state",
+            "required": true,
+            "description": "state ",
+            "schema":{
+              "type": "string",
+              "example": ""
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful",
+            "content":{
+              "application/json":{
+                "example":{
+                  "code":"0",
+                  "request_id":"0b0e02a716117470077826212"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "404": {
+            "description": "Pet not found"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        }
+      }
+    },
     "/api/lazada/products/{sellerSku}":{
       "patch": {
         "tags": [
@@ -1265,16 +1501,13 @@
         ],
         "summary": "update product by sellerSku on lazada",
         "operationId": "updateProduct",
-        "parameters":[
+        "security":[
           {
-            "in":"query",
-            "name": "store_id",
-            "required": true,
-            "schema":{
-              "type": "string",
-              "example": "200163939035"
-            }
-          },
+            "bearerAuth":[],
+            "ApiKeyAuth":[]
+          }
+        ],
+        "parameters":[
           {
             "in":"path",
             "name": "sellerSku",
@@ -1329,16 +1562,13 @@
         ],
         "summary": "delete product by sellerSku on lazada",
         "operationId": "deleteProduct",
-        "parameters":[
+        "security":[
           {
-            "in":"query",
-            "name": "store_id",
-            "required": true,
-            "schema":{
-              "type": "string",
-              "example": "200163939035"
-            }
-          },
+            "bearerAuth":[],
+            "ApiKeyAuth":[]
+          }
+        ],
+        "parameters":[
           {
             "in":"path",
             "name": "sellerSku",
@@ -1380,22 +1610,20 @@
         ],
         "summary": "get product by Id on lazada",
         "operationId": "getProduct",
+        "security":[
+          {
+            "bearerAuth":[],
+            "ApiKeyAuth":[]
+          }
+        ],
         "parameters":[
           {
             "in":"path",
             "name": "productId",
             "required": true,
             "schema":{
-              "type": "string"
-            }
-          },
-          {
-            "in":"query",
-            "name": "store_id",
-            "required": true,
-            "schema":{
               "type": "string",
-              "example": "200163939035"
+              "example": "1201180724"
             }
           }
         ],
@@ -1422,15 +1650,10 @@
         ],
         "summary": "create product on lazada",
         "operationId": "createProduct",
-        "parameters":[
+        "security":[
           {
-            "in":"query",
-            "name": "store_id",
-            "required": true,
-            "schema":{
-              "type": "string",
-              "example": "200163939035"
-            }
+            "bearerAuth":[],
+            "ApiKeyAuth":[]
           }
         ],
         "requestBody":{
@@ -1515,13 +1738,20 @@
         ],
         "summary": "get Attributes by categoryId on lazada",
         "operationId": "getAttributes",
+        "security":[
+          {
+            "bearerAuth":[],
+            "ApiKeyAuth":[]
+          }
+        ],
         "parameters":[
           {
             "in":"path",
             "name": "categoryId",
             "required": true,
             "schema":{
-              "type": "number"
+              "type": "number",
+              "example": 10100183
             },
             "description":"categoryId must be primary category"
           }
@@ -1558,6 +1788,12 @@
         ],
         "summary": "get QcStatus by seller_sku on lazada",
         "operationId": "getQcStatus",
+        "security":[
+          {
+            "bearerAuth":[],
+            "ApiKeyAuth":[]
+          }
+        ],
         "parameters":[
           {
             "in":"query",
@@ -1576,16 +1812,6 @@
             "schema":{
               "type": "number",
               "enum":[0]
-            },
-            "description":""
-          },
-          {
-            "in":"query",
-            "name": "store_id",
-            "required": true,
-            "schema":{
-              "type": "string",
-              "example":"200163939035"
             },
             "description":""
           }
@@ -1654,16 +1880,10 @@
         ],
         "summary": "get Cancel Reason on lazada",
         "operationId": "getCancelReason",
-        "parameters":[
+        "security":[
           {
-            "in":"query",
-            "name": "store_id",
-            "required": true,
-            "schema":{
-              "type": "string",
-              "example":"200163939035"
-            },
-            "description":""
+            "bearerAuth":[],
+            "ApiKeyAuth":[]
           }
         ],
         "responses": {
@@ -1719,16 +1939,10 @@
         ],
         "summary": "get Seller Metrics by seller_sku on lazada",
         "operationId": "getSellerMetrics",
-        "parameters":[
+        "security":[
           {
-            "in":"query",
-            "name": "store_id",
-            "required": true,
-            "schema":{
-              "type": "string",
-              "example": "200163939035"
-            },
-            "description":""
+            "bearerAuth":[],
+            "ApiKeyAuth":[]
           }
         ],
         "responses": {
@@ -1775,6 +1989,12 @@
         ],
         "summary": "get list categories in database",
         "operationId": "getListCategories",
+        "security":[
+          {
+            "bearerAuth":[],
+            "ApiKeyAuth":[]
+          }
+        ],
         "requestBody":{
           "content":{
             "application/json":{
@@ -1837,16 +2057,10 @@
         ],
         "summary": "refresh token and save into database",
         "operationId": "refreshToken",
-        "parameters":[
+        "security":[
           {
-            "in":"query",
-            "name": "store_id",
-            "required": true,
-            "schema":{
-              "type": "string",
-              "example": "200163939035"
-            },
-            "description":""
+            "bearerAuth":[],
+            "ApiKeyAuth":[]
           }
         ],
         "responses": {
@@ -1869,17 +2083,13 @@
         ],
         "summary": "cacel order item on lazada",
         "operationId": "cancelOrderItem",
-        "parameters":[
+        "security":[
           {
-            "in":"query",
-            "name": "store_id",
-            "required": true,
-            "schema":{
-              "type": "string",
-              "example": "200163939035"
-            },
-            "description":""
-          },
+            "bearerAuth":[],
+            "ApiKeyAuth":[]
+          }
+        ],
+        "parameters":[
           {
             "in":"path",
             "name": "order_item_id",
@@ -1933,17 +2143,13 @@
         ],
         "summary": "Get order by id on lazada",
         "operationId": "getOrder",
-        "parameters":[
+        "security":[
           {
-            "in":"query",
-            "name": "store_id",
-            "required": true,
-            "schema":{
-              "type": "string",
-              "example": "200163939035"
-            },
-            "description":""
-          },
+            "bearerAuth":[],
+            "ApiKeyAuth":[]
+          }
+        ],
+        "parameters":[
           {
             "in":"path",
             "name": "order_id",
@@ -1975,17 +2181,13 @@
         ],
         "summary": "Get order items by id on lazada",
         "operationId": "getOrderItems",
-        "parameters":[
+        "security":[
           {
-            "in":"query",
-            "name": "store_id",
-            "required": true,
-            "schema":{
-              "type": "string",
-              "example": "200163939035"
-            },
-            "description":""
-          },
+            "bearerAuth":[],
+            "ApiKeyAuth":[]
+          }
+        ],
+        "parameters":[
           {
             "in":"path",
             "name": "order_id",
@@ -2017,16 +2219,10 @@
         ],
         "summary": "upload image on lazada",
         "operationId": "uploadImage",
-        "parameters":[
+        "security":[
           {
-            "in":"query",
-            "name": "store_id",
-            "required": true,
-            "schema":{
-              "type": "string",
-              "example": "200163939035"
-            },
-            "description":""
+            "bearerAuth":[],
+            "ApiKeyAuth":[]
           }
         ],
         "requestBody":{
@@ -2071,6 +2267,46 @@
         }
       }
     },
+    "/api/lazada/seller":{
+      "get": {
+        "tags": [
+          "lazadaAPI"
+        ],
+        "summary": "get seller info on lazada",
+        "operationId": "getSellerInfo",
+        "security":[
+          {
+            "bearerAuth":[],
+            "ApiKeyAuth":[]
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful",
+            "content":{
+              "application/json":{
+                "example":{
+                  "data":{
+                    "image":{
+                      "hash_code":"eeaca3c5adf96292ee5c5087787140a1",
+                      "url":"https://vn-live-02.slatic.net/p/eeaca3c5adf96292ee5c5087787140a1.jpg"
+                    }
+                  },
+                  "code":"0",
+                  "request_id":"0be6f7a716116562977934279"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        }
+      }
+    },
     "/address/provinces":{
       "get": {
         "tags": [
@@ -2078,7 +2314,12 @@
         ],
         "summary": "get all provinces in database",
         "operationId": "getAllProvinces",
-        
+        "security":[
+          {
+            "bearerAuth":[],
+            "ApiKeyAuth":[]
+          }
+        ],
         "responses": {
           "200": {
             "description": "Successful"
@@ -2100,6 +2341,12 @@
         ],
         "summary": "get all districts by provinceId in database",
         "operationId": "getAllDistricts",
+        "security":[
+          {
+            "bearerAuth":[],
+            "ApiKeyAuth":[]
+          }
+        ],
         "parameters":[
           {
             "in":"path",
@@ -2129,6 +2376,12 @@
         ],
         "summary": "get all wards by districtId in database",
         "operationId": "getAllWards",
+        "security":[
+          {
+            "bearerAuth":[],
+            "ApiKeyAuth":[]
+          }
+        ],
         "parameters":[
           {
             "in":"path",
@@ -2334,33 +2587,25 @@
       }
     },
     "securitySchemes": {
-      "petstore_auth": {
-        "type": "oauth2",
-        "flows": {
-          "implicit": {
-            "authorizationUrl": "http://petstore.swagger.io/oauth/dialog",
-            "scopes": {
-              "write:pets": "modify pets in your account",
-              "read:pets": "read your pets"
-            }
-          }
-        }
+     
+      "bearerAuth":{
+        "type":"http",
+        "in":"header",
+        "name":"Authorization",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"  
       },
-      "api_key": {
-        "type": "apiKey",
-        "name": "api_key",
-        "in": "header"
-      },
-      "cookieAuth":{
+      "ApiKeyAuth":{
         "type":"apiKey",
-        "in":"cookie",
-        "name":"sendo_access_token"
+        "in":"header",
+        "name":"Platform-Token"
+
       }
     }
   },
   "security":[
     {
-      "cookieAuth":[]
+      "bearerAuth": []  
     }
   ]
 }

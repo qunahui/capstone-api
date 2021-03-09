@@ -2,6 +2,7 @@ const express = require("express");
 const request = require("request")
 const router = express.Router();
 const controller = require("../controllers/lazada");
+const auth = require("../../middlewares/auth");
 var multer  = require('multer')
 const path = require('path');
 const { check2, check1 } = require("../../middlewares/check");
@@ -22,35 +23,40 @@ var upload = multer({
 })
 
 // router.get('/first-connect', controller.authorizeCredential)
+<<<<<<< Updated upstream
 router.get('/authorize', controller.authorizeCredential)
 router.get('/token', controller.getAccessToken)
 router.get('/products', controller.getAllProducts)
+=======
+router.get('/authorize', auth, controller.authorizeCredential)
+router.get('/token', auth, controller.getAccessToken)  // t4 fix cùng hui
+>>>>>>> Stashed changes
 //router.post('/sign', controller.createSign)
 
-router.get('/refresh-token/',check2, controller.refreshToken)
-router.post('/fetch-products', controller.fetchProducts)
-router.get('/products/:id', controller.getProductById)
+router.get('/refresh-token/',auth, controller.refreshToken)
 
-router.get('/category-tree', controller.getCategoryTree) // dont use :)
-router.get('/attribute/:id', controller.getAttributes)
-router.get('/brands', controller.getBrands) //dont know what it use for
-router.get('/suggestion', controller.getCategorySuggestion) // it can be useful
-router.post('/qc-status', controller.getQcStatus)
+router.get('/products/:id', auth, controller.getProductById)
 
-router.post('/seller', controller.getSellerInfo)
-router.get('/seller-metrics', controller.getSellerMetrics)
-router.post('/update-seller-email', controller.updateSellerEmail)
-router.post('/upload-image', upload.single('image') ,check1, controller.uploadImage)
-router.patch('/products/:sellerSku',check1, controller.updateProduct)
-router.post('/products', check1, controller.createProductOnLazada)
-router.delete('/products/:sellerSku', check1, controller.deleteProduct)
+router.get('/category-tree', auth, controller.getCategoryTree) // dont use :)
+router.get('/attribute/:id', auth, controller.getAttributes)
+router.get('/brands', auth, controller.getBrands) //dont know what it use for
+router.get('/suggestion', auth, controller.getCategorySuggestion) // it can be useful // stop working
+router.post('/qc-status', auth, controller.getQcStatus)
 
-router.get('/cancel-reason', check1, controller.getCancelReason)
+router.get('/seller', auth, controller.getSellerInfo)
+router.get('/seller-metrics', auth, controller.getSellerMetrics)
+router.post('/update-seller-email', auth, controller.updateSellerEmail) //not working
+router.post('/upload-image', upload.single('image') ,auth , controller.uploadImage)
+router.patch('/products/:sellerSku',auth, controller.updateProduct)
+router.post('/products', auth, controller.createProductOnLazada)
+router.delete('/products/:sellerSku', auth, controller.deleteProduct)
 
-router.get('/order', controller.searchOrder)
-router.get('/orders/:id', check1, controller.getOrderByIdOnLazada)
-router.post('/orders/cancel/:id', check1, controller.cancelOrderOnLazada)
+router.get('/cancel-reason', auth, controller.getCancelReason)
 
-router.get('/orders/items/:id', check1, controller.getOrderItems)
+router.get('/order', auth, controller.searchOrder)
+router.get('/orders/:id', auth, controller.getOrderByIdOnLazada)
+router.post('/orders/cancel/:id', auth, controller.cancelOrderOnLazada)
+
+router.get('/orders/items/:id', auth, controller.getOrderItems)
 
 module.exports = router;

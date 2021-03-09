@@ -180,14 +180,19 @@ module.exports.getWardById = async (req, res) =>{
   
  
   const wardId = req.params.id;
+<<<<<<< Updated upstream
   const cookie = Cookie.parse(req.headers.cookie)
+=======
+  
+ 
+>>>>>>> Stashed changes
   
   try {
       const options = {
           'method': 'GET',
           'url': 'https://open.sendo.vn/api/address/ward/' + wardId,
           'headers': {
-            'Authorization': 'bearer '+ cookie.sendo_access_token
+            'Authorization': 'bearer '+ req.accessToken
           }
         };
         request(options, function (error, response) {
@@ -271,7 +276,7 @@ module.exports.getSendoProductById = async (req, res) =>{
           'method': 'GET',
           'url': 'https://open.sendo.vn/api/partner/product?id=' + productId,
           'headers': {
-            'Authorization': 'bearer ' + req.access_token
+            'Authorization': 'bearer ' + req.accessToken
           }
         };
         request(options, function (error, response) {
