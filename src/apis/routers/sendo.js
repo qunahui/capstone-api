@@ -51,26 +51,26 @@ router.post('/ping', (req, res) => {
 
 //api's routes
 router.post('/authorize', auth, controller.authorizeCredential)
-router.post('/login', controller.getSendoToken)
-router.post('/products/', checkController.check, controller.createProductOnSendo)
+router.post('/login', auth, controller.getSendoToken)
+router.post('/products/', auth, controller.createProductOnSendo)
 //router.post('/search-products', controller.searchSendoProduct) //filter product, if none-> get all
 
 
-router.get('/category/:id', checkController.check, controller.getSendoCategory)
-router.get('/ward/:id', checkController.check, controller.getWardById)
-router.get('/district/:id', checkController.check, controller.getDistrictById)
-router.get('/region/:id', checkController.check, controller.getRegionById)
-router.get('/attribute/:id',checkController.check, controller.getSendoAttribute)
-router.get('/products/:id', checkController.check, controller.getSendoProductById)
+router.get('/category/:id', auth, controller.getSendoCategory)
+router.get('/ward/:id', auth, controller.getWardById)
+router.get('/district/:id', auth, controller.getDistrictById)
+router.get('/region/:id', auth, controller.getRegionById)
+router.get('/attribute/:id',auth, controller.getSendoAttribute)
+router.get('/products/:id', auth, controller.getSendoProductById)
 //router.get('/sync-products', controller.syncAllProductSendo)
-router.post('/orders', checkController.check, controller.searchOrderOnSendo) //filter order, if none -> get all
-router.get('/cancel-reason', checkController.check, controller.getCancelReason) //extra route, it will be useful, or not
-router.get('/orders/:id', checkController.check, controller.getOrderByIdOnSendo)
+router.post('/orders', auth, controller.searchOrderOnSendo) //filter order, if none -> get all
+router.get('/cancel-reason', auth, controller.getCancelReason) //extra route, it will be useful, or not
+router.get('/orders/:id', auth, controller.getOrderByIdOnSendo)
 //router.get('/sync-orders', controller.syncAllOrderSendo)
 
-router.put('/orders/:id', checkController.check, controller.updateOrderStatus)
-router.patch('/products/:id', checkController.check, controller.updateProduct) 
-router.delete("/products/:id", checkController.check, controller.deleteProductOnSendo);
+router.put('/orders/:id', auth, controller.updateOrderStatus)
+router.patch('/products/:id', auth, controller.updateProduct) 
+router.delete("/products/:id", auth, controller.deleteProductOnSendo);
 module.exports = router;
 
 /*

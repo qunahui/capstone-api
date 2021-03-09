@@ -2,25 +2,27 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 const validator = require("validator");
 
-const CategorySchema = new Schema({
+
+
+
+const schema = new Schema({
     category_id:{
         type: Number
     },
-    var:{
+   var:{
+       type: Boolean
+   },
+   name:{
+       type: String
+   },
+   leaf:{
         type: Boolean
-    },
-    name:{
-        type: String
-    },
-    leaf:{
-          type: Boolean
-    },
-    idpath:{
-        type: Array
-    },
-    namepath: {
-      type: Array
-    }
+   },
+   idpath:{
+       type: Array
+   },
+   namepath:{
+       type: Array
+   }
 })
-
-module.exports = mongoose.model("Category", CategorySchema);
+module.exports = mongoose.model("Category", schema);

@@ -5,7 +5,7 @@ const validator = require("validator");
 
 
 
-const lazadaCategorySchema = new Schema({
+const schema = new Schema({
     category_id:{
         type: Number
     },
@@ -20,6 +20,9 @@ const lazadaCategorySchema = new Schema({
    },
    idpath:{
        type: Array
+   },
+   namepath:{
+       type: Array
    }
 })
-module.exports = mongoose.model("lazadaCategory", lazadaCategorySchema);
+module.exports = mongoose.model("Category", schema);

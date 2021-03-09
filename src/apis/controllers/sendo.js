@@ -145,15 +145,20 @@ module.exports.getWardById = async (req, res) =>{
   // console.log(req.headers)
   
   const wardId = req.params.id;
+<<<<<<< HEAD
   const cookie = Cookie.parse(req.headers.cookie)
   console.log(cookie)
+=======
+  
+ 
+>>>>>>> 644014bcfbab861712bf5f969f1f11d8affe365c
   
   try {
       const options = {
           'method': 'GET',
           'url': 'https://open.sendo.vn/api/address/ward/' + wardId,
           'headers': {
-            'Authorization': 'bearer '+ cookie.sendo_access_token
+            'Authorization': 'bearer '+ req.accessToken
           }
         };
         request(options, function (error, response) {
@@ -237,7 +242,7 @@ module.exports.getSendoProductById = async (req, res) =>{
           'method': 'GET',
           'url': 'https://open.sendo.vn/api/partner/product?id=' + productId,
           'headers': {
-            'Authorization': 'bearer ' + req.access_token
+            'Authorization': 'bearer ' + req.accessToken
           }
         };
         request(options, function (error, response) {

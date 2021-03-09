@@ -5,6 +5,7 @@ const request = require('request');
 const util = require('util');
 const { time } = require("console");
 const rp = require('request-promise');
+const sendoProduct = require("../models/sendoProduct");
 
 const product_status ={
   "0": "Nháp",
@@ -169,13 +170,13 @@ module.exports.getAllProducts = async (req, res) => {
 }
 
 module.exports.fetchProducts = async (req, res) => {
-  console.log(req.body)
+  
   try {
     const options = {
         'method': 'POST',
         'url': 'https://open.sendo.vn/api/partner/product/search',
         'headers': {
-          'Authorization': 'bearer ' + req.body.access_token,
+          'Authorization': 'bearer ' + req.accessToken,
           'Content-Type': 'application/json',
           'cache-control': 'no-cache'
         },
@@ -186,7 +187,7 @@ module.exports.fetchProducts = async (req, res) => {
     await Promise.all(products.map(async product => {
       const fullProduct = await rp({
         method: 'GET',
-        url: 'http://localhost:5000/api/sendo/products/' + product.id + '?access_token=' + req.body.access_token
+        url: 'http://localhost:5000/api/sendo/products/' + product.id + '?access_token=' + req.accessToken
       })
       const actuallyFullProduct = JSON.parse(fullProduct)
       await createSendoProduct(actuallyFullProduct, { store_id: req.body.store_id })

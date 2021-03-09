@@ -69,12 +69,14 @@ module.exports.getAccessToken = async (req, res) => {
               refresh_token: response.refresh_token,
               access_token: response.access_token,
               isActivated: true,
-              status: 'connected',
           }
           const result = await rp.post({
-              method: 'POST',
+              method: 'GET',
               uri: 'http://localhost:5000/api/lazada/seller',
-              body: { access_token: response.access_token },
+              headers:{ 
+                    "Authorization": req.header("Authorization"),
+                    "Platform-Token": req.header("Platform-Token")
+              },
               json: true
           }).then(res => res.data)
           const { name, seller_id } = result 
@@ -103,18 +105,25 @@ module.exports.getAccessToken = async (req, res) => {
 }
 
 module.exports.refreshToken = async (req, res) =>{
-    const store_id = req.query.store_id
     const apiUrl = 'https://api.lazada.vn/rest' 
     const apiPath=  '/auth/token/refresh'
     const appSecret = process.env.LAZADA_APP_SECRET 
     const appKey = process.env.LAZADA_APP_KEY 
-    const refresh_token =  req.refreshToken
+    let refreshToken = ""
+    const storage = await Storage.findOne({_id: req.user.currentStorage.storageId}, {lazadaCredentials: 1})
+    storage.lazadaCredentials.forEach(credential => {
+        if(credential.access_token == req.accessToken)
+        {
+            refreshToken = credential.refresh_token
+        }
+    });
+   
     const timestamp = Date.now()
     const commonRequestParams = {
         "app_key": appKey,
         "timestamp": timestamp,
         "sign_method": "sha256",
-        "refresh_token":refresh_token
+        "refresh_token": refreshToken
     }
     const sign = signRequest(appSecret, apiPath, commonRequestParams)
     try {
@@ -123,7 +132,7 @@ module.exports.refreshToken = async (req, res) =>{
             'url': apiUrl+apiPath+
             '?app_key='+appKey+
             '&sign_method=sha256&timestamp='+timestamp+
-            '&refresh_token='+refresh_token+
+            '&refresh_token='+refreshToken+
             '&sign='+sign,
             'headers': {
             }
@@ -133,19 +142,18 @@ module.exports.refreshToken = async (req, res) =>{
             if (error) throw new Error(error);
             
             const {access_token, refresh_token} = JSON.parse(response.body)
-            const storages =  await Storage.find({"lazadaCredentials.store_id": store_id})
+            const storage =  await Storage.findOne({_id: req.user.currentStorage.storageId})
             
-            storages.forEach( async (storage)=>{
-                storage.lazadaCredentials.forEach( (store) => {
-                    if(store.store_id == store_id)
-                    {
+            storage.lazadaCredentials.forEach( (credential) => {
+                if(credential.access_token == req.accessToken)
+                {
                         
-                        store.access_token = access_token
-                        store.refresh_token = refresh_token
-                    }
-                });
-                await Storage.update({_id: storage._id}, storage, { upsert: true})
-            })
+                        credential.access_token = access_token
+                        credential.refresh_token = refresh_token
+                }
+            });
+            await Storage.update({_id: storage._id}, storage, { upsert: true})
+           
             
             res.status(response.statusCode).send(response.body)
         });
@@ -160,7 +168,7 @@ module.exports.fetchProducts = async (req, res) =>{
     const apiPath=  '/products/get'
     const appSecret = process.env.LAZADA_APP_SECRET 
     const appKey = process.env.LAZADA_APP_KEY 
-    const accessToken =  req.body.access_token
+    const accessToken =  req.accessToken
     const timestamp = Date.now()
     const commonRequestParams = {
         "app_key": appKey,
@@ -195,21 +203,13 @@ module.exports.fetchProducts = async (req, res) =>{
 }
 //not use yet
 module.exports.getProductById = async (req, res) =>{
-    const store_id=  req.query.store_id
+    
     const apiUrl = 'https://api.lazada.vn/rest' 
     const apiPath=  '/product/item/get'
     const appSecret = process.env.LAZADA_APP_SECRET
     const appKey = process.env.LAZADA_APP_KEY 
-    let accessToken =  "" // goi db
-    const storage =  await Storage.findOne({"lazadaCredentials.store_id": store_id}, {lazadaCredentials: 1})
+    let accessToken =  req.accessToken
     
-    
-    storage.lazadaCredentials.forEach(store => {
-        if(store.store_id == store_id)
-        {
-            accessToken = store.access_token
-        }
-    });
     const timestamp = Date.now()
     const commonRequestParams = {
         "app_key": appKey,
@@ -474,7 +474,7 @@ module.exports.uploadImage = async (req, res) =>{
     const apiPath=  '/image/upload'
     const appSecret = process.env.LAZADA_APP_SECRET
     const appKey = process.env.LAZADA_APP_KEY
-    const accessToken =  req.accessToken // goi db
+    const accessToken =  req.accessToken 
     const timestamp = Date.now()
 
     const commonRequestParams = {
@@ -524,7 +524,7 @@ module.exports.updateProduct = async (req, res) =>{
     const apiPath=  '/product/update'
     const appSecret = process.env.LAZADA_APP_SECRET
     const appKey = process.env.LAZADA_APP_KEY
-    const accessToken =  req.accessToken // goi db
+    const accessToken =  req.accessToken 
     const timestamp = Date.now()
     const data = {
         "Request": {
@@ -664,7 +664,7 @@ module.exports.getSellerInfo = async (req, res) =>{
     const apiPath=  '/seller/get'
     const appSecret = process.env.LAZADA_APP_SECRET
     const appKey = process.env.LAZADA_APP_KEY
-    const accessToken =  req.body.access_token 
+    const accessToken =  req.accessToken 
     const timestamp = Date.now()
     const commonRequestParams = {
         "app_key": appKey,
@@ -685,8 +685,7 @@ module.exports.getSellerInfo = async (req, res) =>{
             }
         };
         request(options, function (error, response) {
-            const r = JSON.parse(response.body)
-            res.send(r)
+            res.status(response.statusCode).send(response.body)
         });
     } catch (e) {
         res.status(500).send(Error(e));
@@ -694,21 +693,12 @@ module.exports.getSellerInfo = async (req, res) =>{
 }
 //Provide seller metrics data of the specific seller, like positive seller rating, ship on time rate and etc.
 module.exports.getSellerMetrics = async (req, res) =>{
-    const store_id = req.query.store_id
+   
     const apiUrl = 'https://api.lazada.vn/rest' 
     const apiPath=  '/seller/metrics/get'
     const appSecret = process.env.LAZADA_APP_SECRET
     const appKey = process.env.LAZADA_APP_KEY
-    let accessToken = ""
-    const storage =  await Storage.findOne({"lazadaCredentials.store_id": store_id}, {lazadaCredentials: 1})
-    
-    
-    storage.lazadaCredentials.forEach(store => {
-        if(store.store_id == store_id)
-        {
-            accessToken = store.access_token
-        }
-    });
+    let accessToken = req.accessToken
     const timestamp = Date.now()
     const commonRequestParams = {
         "app_key": appKey,
@@ -732,8 +722,7 @@ module.exports.getSellerMetrics = async (req, res) =>{
         request(options, function (error, response) {
             //if (error) throw new Error(error);
             //console.log(response.body);
-            const sellerMetrics = JSON.parse(response.body)
-            res.send(sellerMetrics)
+            res.status(response.statusCode).send(response.body)
         });
     } catch (e) {
         res.status(500).send(Error(e));
@@ -745,7 +734,7 @@ module.exports.updateSellerEmail = async (req, res) =>{
     const apiPath=  '/seller/update'
     const appSecret = process.env.LAZADA_APP_SECRET
     const appKey = process.env.LAZADA_APP_KEY
-    const accessToken =  "500005000282pCawUSfbySlxELBNZvxde1hVjqrd1c60dd3csukWdjU9syzPtBwi" // goi db
+    const accessToken =  req.accessToken
     const timestamp = Date.now()
     const data = req.body
     const payload = '<?xml version="1.0" encoding="UTF-8" ?>'+ convert.js2xml(data, {compact: true, ignoreComment: true, spaces: 4})
@@ -775,7 +764,7 @@ module.exports.updateSellerEmail = async (req, res) =>{
             if (error) throw new Error(error);
             //console.log(response.body);
             //const res = JSON.parse(response.body)
-            res.send(JSON.parse(response.body))
+            res.status(response.statusCode).send(response.body)
         });
     } catch (e) {
         res.status(500).send(Error(e));

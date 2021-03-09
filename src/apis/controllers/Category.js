@@ -2,7 +2,7 @@ const auth = require("../../middlewares/auth");
 const Error = require("../utils/error");
 const sendo = require('./sendo')
 const request = require('request');
-const lazadaCategory = require('../models/lazadaCategory')
+const Category = require('../models/Category')
 
 const saveAllCategory  = async (Category, idpath) =>{
   
@@ -26,20 +26,21 @@ const saveAllCategory  = async (Category, idpath) =>{
   });
   
 } 
+
 module.exports.getListCategory = async (req,res) =>{
     
     const idpath = req.body.idpath;
     if(idpath.length == 0)
     {
       try {
-        const categories = await lazadaCategory.find({idpath:{ $size: 1}}, {name: 1, category_id: 1, leaf: 1, idpath:1});
+        const categories = await Category.find({idpath:{ $size: 1}}, {name: 1, category_id: 1, leaf: 1, idpath:1});
         res.send(categories);
       } catch (e) {
         res.status(500).send(e.message);
       }
     }else if( idpath.length != 0){
       try {
-        const categories = await lazadaCategory.find({idpath:{$all:idpath ,$size: idpath.length+1}}, {name: 1, category_id: 1, leaf: 1, idpath:1});
+        const categories = await Category.find({idpath:{$all:idpath ,$size: idpath.length+1}}, {name: 1, category_id: 1, leaf: 1, idpath:1});
     
         res.send(categories);
       } catch (e) {
@@ -50,7 +51,7 @@ module.exports.getListCategory = async (req,res) =>{
     
 };
 
-module.exports.createLazadaCategory = async (req, res) => {
+module.exports.createCategoryTree = async (req, res) => {
   const Category = req.body.data;
   try {
     
@@ -60,4 +61,16 @@ module.exports.createLazadaCategory = async (req, res) => {
       res.status(500).send(Error(e));
   }
   res.send("done");
+};
+module.exports.searchCategory = async (req, res) => {
+  
+  try {
+    const search = req.query.search
+    const result = await Category.find({'leaf': true, 'name': new RegExp(""+search+"", 'i')})
+    
+    res.send(result)
+  } catch (e) {
+      res.status(500).send(Error(e));
+  }
+  
 };
