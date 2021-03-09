@@ -5,7 +5,6 @@ const categoryRoutes =  require("./routers/category");
 //const productCategoryRoutes = require("./routers/productcategory");
 const sendoRoutes = require("./routers/sendo");
 const lazadaRoutes = require("./routers/lazada")
-const categoryRoutes =  require("./routers/Category");
 const orderRoutes = require("./routers/order");
 const storageRoutes = require("./routers/storage")
 const lazadaProductRoutes = require('./routers/lazadaProduct')

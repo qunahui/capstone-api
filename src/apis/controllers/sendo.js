@@ -145,13 +145,8 @@ module.exports.getWardById = async (req, res) =>{
   // console.log(req.headers)
   
   const wardId = req.params.id;
-<<<<<<< HEAD
-  const cookie = Cookie.parse(req.headers.cookie)
-  console.log(cookie)
-=======
   
  
->>>>>>> 644014bcfbab861712bf5f969f1f11d8affe365c
   
   try {
       const options = {
