@@ -8,24 +8,26 @@ const path = require('path')
 const server = require('../../app')
 const Storage = require('../models/storage');
 const { createLazadaProduct } = require('./lazadaProduct');
-const LazadaProduct = require('../models/lazadaProduct')
+const LazadaProduct = require('../models/lazadaProduct');
+const Error = require('../utils/error')
 
 var options = {compact: true, ignoreComment: true, spaces: 4};
 
 module.exports.authorizeCredential = async (req, res) => {
+  try {
     const { code, state } = req.query
-    const result = await rp({
+    if(req.query) {
+      const result = await rp({
         method: 'GET',
         uri: 'http://localhost:5000/api/lazada/token?code='+ code + '&state=' + state,
-    })
-    console.log("REsult: ", JSON.parse(result))
-    const { access_token, name, store_id, storageId } = JSON.parse(result)
+      })
+      // const { access_token, name, store_id, storageId } = JSON.parse(result)
 
-    let io = server.getIO()
-
-    io.sockets.emit('laz auth success', { name, storageId, store_id, access_token })
-
-    res.sendFile(path.join(__dirname, '../../close.html'))
+      res.status(200).send(result)
+    }
+  } catch(e) {
+    res.status(500).send(Error({ message: 'Something went wrong' }))
+  }
 }
 
 module.exports.getAccessToken = async (req, res) => {
@@ -91,19 +93,12 @@ module.exports.getAccessToken = async (req, res) => {
               })
           }
           await Storage.findOneAndUpdate({ id: storageId }, storage, {}, (err, doc) => {
-              res.status(200).send({ access_token: insertCredentials.access_token, name, store_id: insertCredentials.store_id, storageId })
+              res.status(200).send(insertCredentials)
           })
         } else {
-            storage.lazadaCredentials = storage.lazadaCredentials.map(i => {
-                if(i.store_name === name) {
-                    return insertCredentials
-                }
-                return i
-            })
+          // error return from lazada
+          res.status(500).send(Error({ message: 'Something went wrong' }))
         }
-        const updateRes = await Storage.findOneAndUpdate({ id: storageId }, storage, {}, (err, doc) => {
-            res.status(200).send({ access_token: insertCredentials.access_token, name, store_id: insertCredentials.store_id, storageId })
-        })
     } catch (e) {
         res.status(500).send(Error(e));
     }
@@ -164,20 +159,6 @@ module.exports.refreshToken = async (req, res) =>{
         });
     } catch (e) {
         res.status(500).send(Error(e));
-    }
-}
-//1: lazada product api
-module.exports.getAllProducts = async (req, res) => {
-    console.log(req.query)
-    try {
-        const { store_id } = req.query;
-        const lazadaProducts = await LazadaProduct.find({ store_id })
-    
-        console.log(lazadaProducts)
-
-        res.status(200).send(lazadaProducts)
-      } catch(e) {
-        res.status(500).send(Error({ message: 'Something went wrong !'}))
     }
 }
 

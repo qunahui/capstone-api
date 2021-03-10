@@ -23,8 +23,7 @@ module.exports.authorizeCredential = async (req, res) => {
       }
     }
     await rp(options).then(async response => {
-      console.log("Begin find storage")
-      const storage = await Storage.findById({ _id: req.body.storageId })
+      const storage = await Storage.findById({ _id: req.user.currentStorage.storageId })
       const { token } = response.result
       const matchedCredential = storage.sendoCredentials.find(credential => credential.app_key === app_key)
       if(matchedCredential) {
@@ -40,7 +39,7 @@ module.exports.authorizeCredential = async (req, res) => {
         status: 'connected',
       }
       storage.sendoCredentials.push(insertCredential)
-      await Storage.findOneAndUpdate({ _id: req.body.storageId }, storage, { upsert: true}, (err, doc) => {
+      await Storage.findOneAndUpdate({ _id: req.user.currentStorage.storageId }, storage, { upsert: true}, (err, doc) => {
         res.status(200).send(insertCredential)
       })
     }).catch(e => {
@@ -88,40 +87,6 @@ module.exports.getSendoToken = async (credential) => {
     } catch(e) {
       console.log("Error: ", e)
     }
-}
-
-module.exports.fetchProducts = async (req, res) => {
-  console.log(req.body)
-  try {
-    const options = {
-        'method': 'POST',
-        'url': 'https://open.sendo.vn/api/partner/product/search',
-        'headers': {
-          'Authorization': 'bearer ' + req.body.access_token,
-          'Content-Type': 'application/json',
-          'cache-control': 'no-cache'
-        },
-        body: JSON.stringify({"page_size":10,"product_name":"","date_from":"2020-05-01","date_to":"9999-10-28","token":""})
-    };
-    const response = await rp(options)
-    const products = JSON.parse(response).result.data
-    await Promise.all(products.map(async product => {
-      const fullProduct = await rp({
-        method: 'GET',
-        url: 'http://localhost:5000/api/sendo/products/' + product.id + '?access_token=' + req.body.access_token
-      })
-      const actuallyFullProduct = JSON.parse(fullProduct)
-      await createSendoProduct(actuallyFullProduct, { store_id: req.body.store_id })
-    }))
-
-    console.log("Run this")
-
-    const sendoProducts = await SendoProduct.find({ storageId: req.body.storageId})
-
-    res.status(200).send(sendoProducts)
-  } catch(e) {
-    console.log(e)
-  }
 }
 
 module.exports.getSendoCategory = async (req, res) =>{
@@ -177,8 +142,8 @@ module.exports.createProductOnSendo = async (req, res) =>{
   }
 }
 module.exports.getWardById = async (req, res) =>{
+  // console.log(req.headers)
   
- 
   const wardId = req.params.id;
   
  

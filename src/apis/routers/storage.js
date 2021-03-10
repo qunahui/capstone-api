@@ -3,7 +3,7 @@ const router = express.Router();
 const auth = require("../../middlewares/auth");
 const controller = require("../controllers/storage");
 
-router.post("/get-storages", auth, controller.getStorages);
+router.get("/", auth, controller.getStorages);
 
 router.patch("/add-sendo-credentials", auth, controller.addSendoCredentials);
 

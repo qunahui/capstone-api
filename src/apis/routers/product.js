@@ -4,14 +4,14 @@ const auth = require("../../middlewares/auth");
 const productController = require("../controllers/product");
 const Product = require("../models/product");
 
-router.get("/", productController.getAllProduct);
+router.get("/", auth, productController.getAllProduct);
 
-router.get("/:id", productController.getMMSProductById);
+router.get("/:id", auth, productController.getMMSProductById);
 
-router.post("/", productController.createMMSProduct);
+router.post("/", auth, productController.createMMSProduct);
 
-router.patch("/:id", productController.updateProduct);
+router.patch("/:id", auth, productController.updateProduct);
 
-router.delete("/:id", productController.deleteProduct);
+router.delete("/:id", auth, productController.deleteProduct);
 
 module.exports = router;

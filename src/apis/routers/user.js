@@ -9,7 +9,7 @@ router.post("/sign-in", controller.signIn);
 
 router.post("/sign-up", controller.signUp);
 
-router.post("/sign-out", auth, controller.signOut);
+router.get("/sign-out", auth, controller.signOut);
 
 router.post("/logout-all", auth, controller.signOutAll);
 

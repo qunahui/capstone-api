@@ -125,7 +125,15 @@ module.exports.createSendoProduct = async (item, { store_id }) => {
             link: item.link,       
             unit: item.unit_id,
             avatar: item.avatar.picture_url,
-            variants: variants,
+            variants: variants.map(variant => ({
+              ...variant,
+              linkedProduct: {
+                id: '---',
+                name: '---',
+                sku: '---',
+                status: 'not connected yet',
+              }
+            })),
             //attributes: attributes,
             voucher: item.voucher
           },
@@ -149,14 +157,11 @@ module.exports.createSendoProduct = async (item, { store_id }) => {
 module.exports.getAllProducts = async (req, res) => {
   try {
     const { storeIds } = req.query;
-    console.log(storeIds)
     let sendoProducts = []
-    await Promise.all([...storeIds.map(async storeId => {
-      
-      const products = await SendoProduct.find({store_id: storeId })
-      
+    await Promise.all([...storeIds].map(async storeId => {
+      const products = await SendoProduct.find({ store_id: storeId })
       sendoProducts = [...sendoProducts, ...products]
-    })])
+    }))
 
     res.status(200).send(sendoProducts)
   } catch(e) {

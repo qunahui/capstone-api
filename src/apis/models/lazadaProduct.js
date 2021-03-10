@@ -21,9 +21,14 @@ const lazadaProductSchema = new Schema({
     },
     attributes:{
         type: Object
+    },
+    lastUpdatedAt: {
+
+    },
+    lastUpdatedBy: {
+
     }
-  }
-);
+});
 
 // schema.virtual("productDetails",{
 //   ref:"productDetail",

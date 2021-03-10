@@ -4,52 +4,134 @@ const Schema = mongoose.Schema;
 const validator = require("validator");
 
 const variantSchema = new Schema({
-  id:{
-    type: String
+  avatar: {
+    type: String,
   },
   name:{
-    type: String
+    type: String,
+    required: true
   },
-  sku:{
-    type: String
+  options: [{
+    optionName: {
+      type: String,
+    },
+    optionValue: {
+      type: String,
+    }
+  }],
+  sku: {
+    type: String,
+    required: true
   },
-  price:{
-    type: Number
+  retailPrice: {
+    type: Number,
+    required: true
   },
-  weight:{
-    type: String
+  wholeSalePrice: {
+    type: Number,
+    required: true
   },
-  quantity:{
-    type: Number
+  importPrice: {
+    type: Number,
+    required: true
   },
-  variant_attributes:{
-    type: Array
+  weightValue:{
+    type: Number,
+    required: true
+  },
+  weightUnit:{
+    type: String,
+    required: true
+  },
+  inventories: {
+    initPrice: {
+      type: Number,
+      required: true,
+    },
+    initStock: {
+      type: Number,
+      required: true,
+    },
   }
 })
 
 const productSchema = new Schema({
-  id:{
-    type: Number
+  avatar: [{
+    type: String,
+  }],
+  avatarList: {
+    type: String,
   },
-   name:{
-     type: String
-   },
-   description:{
-     type: String
-   },
-   avatar:{
-     type: String
-   },
-  //  created_date_timestamp:{
-  //    type: Date
-  //  },
-  //  updated_date_timestamp:{
-  //    type: Date
-  //  },
-   variants: [variantSchema]
-   
+  brand: { 
+    type: String,
+    default: 'No Brand',
+  },
+  categoryId: {
+    type: String,
+    required: true,
+  },
+  categoryName: {
+    type: String,
+    required: true,
+  },
+  description:{
+    type: String,
+  },
+  name:{
+    type: String,
+    required: true,
+  },
+  options: [{
+    optionName: {
+      type: String,
+    },
+    optionValue: [String],
+  }],
+  productType: {
+    type: String,
+    default: 'Normal',
+  },
+  weightValue: {
+    type: Number,
+    required: true,
+  },
+  weightUnit: {
+    type: String,
+    required: true,
+  },
+  sellable: {
+    type: Boolean,
+    required: true
+  },
+  sku: {
+    type: String,
+    required: true,
+  },
+  unit: {
+    type: String,
+  },
+  tags: [{
+    type: String
+  }],
+  createdAt: {
+    type: Date,
+  },
+  createdBy: {
+    type: String,
+  },
+  updatedAt: {
+    type: Date,
+  },
+  updatedBy: {
+    type: String,
+  },
+  variants: [variantSchema]
+}, {
+  timestamps: {
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt',
   }
-);
+});
 
 // schema.virtual("productDetails",{
 //   ref:"productDetail",

@@ -49,7 +49,7 @@ const schema = new Schema({
     // },
     voucher:{
         type: Object
-    }
+    },
   }
 );
 
