@@ -184,7 +184,7 @@ module.exports.fetchProducts = async (req, res) => {
         method: 'GET',
         url: 'http://localhost:5000/api/sendo/products/' + product.id + '?access_token=' + req.accessToken
       })
-      const actuallyFullProduct = JSON.parse(fullProduct)
+      const actuallyFullProduct = JSON.parse(fullProduct).result
       await createSendoProduct(actuallyFullProduct, { store_id: req.body.store_id })
     }))
 

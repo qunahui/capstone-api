@@ -102,7 +102,7 @@ module.exports.deleteProduct = async (req, res) => {
       return res.status(404).send();
     }
 
-    res.send(product).send();
+    res.send(product);
   } catch (e) {
     res.status(500).send(Error(e));
   }

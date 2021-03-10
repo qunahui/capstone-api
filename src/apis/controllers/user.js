@@ -10,8 +10,7 @@ module.exports.getCurrentUser = async (req, res) => {
 module.exports.signUp = async (req, res) => {
   try {
     const user = new User({ ...req.body });
-    console.log(user)
-    const storageName = 'STORAGE_' + user.uid.toUpperCase()
+    const storageName = 'STORAGE_' + user._id.toString().toUpperCase()
     const linkedStorage = new Storage({ displayName: storageName })
     await linkedStorage.save();
     

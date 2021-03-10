@@ -33,14 +33,14 @@ module.exports.getListCategory = async (req,res) =>{
     if(idpath.length == 0)
     {
       try {
-        const categories = await Category.find({idpath:{ $size: 1}}, {name: 1, category_id: 1, leaf: 1, idpath:1});
+        const categories = await Category.find({idpath:{ $size: 1}});
         res.send(categories);
       } catch (e) {
         res.status(500).send(e.message);
       }
     }else if( idpath.length != 0){
       try {
-        const categories = await Category.find({idpath:{$all:idpath ,$size: idpath.length+1}}, {name: 1, category_id: 1, leaf: 1, idpath:1});
+        const categories = await Category.find({idpath:{$all:idpath ,$size: idpath.length+1}});
     
         res.send(categories);
       } catch (e) {

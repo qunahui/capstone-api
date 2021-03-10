@@ -4,8 +4,8 @@ const auth = require("../../middlewares/auth");
 const controller = require("../controllers/Category");
 
 
-router.post("/", controller.getListCategory)
-router.post("/create-category-tree", controller.createCategoryTree) // just for dev, not for user
-router.get("/", controller.searchCategory)
+router.post("/", auth,controller.getListCategory)
+router.post("/create-category-tree", auth, controller.createCategoryTree) // just for dev, not for user
+router.get("/", auth, controller.searchCategory)
 
 module.exports = router;

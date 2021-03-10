@@ -22,7 +22,7 @@ module.exports.createLazadaProduct = async (item, additionalData) => {
         const option_value = variant[`${attribute_name}`]
         variant_attributes.push({
           "attribute_name": attribute_name,
-          "option_value": attribute_value
+          "option_value": option_value
         })
         delete variant[`${attribute_name}`]
       });
@@ -82,7 +82,7 @@ module.exports.fetchProducts = async (req, res) =>{
       "sign_method": "sha256",
       "access_token":accessToken,
   }
-  const filter = req.body.filter
+  const filter = req.body.filter || "live"
   const sign = signRequest(appSecret, apiPath, {...commonRequestParams, filter})
   try {
       var options = {

@@ -229,6 +229,12 @@
         ],
         "summary": "Get the current user",
         "operationId": "getCurrentUser",
+        "security": [
+          {
+            "bearerAuth":[],
+            "ApiKeyAuth":[]
+          }
+        ],
         "responses": {
           "200":{
             "description": "Successful",
@@ -244,13 +250,113 @@
           "500":{
             "description": "Error: Internal Server Error"
           }
-        },
+        }
+      }
+    },
+    "/users/logout-all": {
+      "post": {
+        "tags": [
+          "users"
+        ],
+        "summary": "Sign out all user",
+        "operationId": "signOutAll",
         "security": [
           {
             "bearerAuth":[],
             "ApiKeyAuth":[]
           }
-        ]
+        ],
+        "responses": {
+          "200":{
+            "description": "Successful",
+            "content":{
+              "application/json":{
+                "example": " "
+              }
+            }
+          },
+          "405": {
+            "description": "Invalid input"
+          },
+          "500":{
+            "description": "Error: Internal Server Error"
+          }
+        }
+      }
+    },
+    "/users/update": {
+      "patch": {
+        "tags": [
+          "users"
+        ],
+        "summary": "update current user",
+        "operationId": "updateUser",
+        "security": [
+          {
+            "bearerAuth":[],
+            "ApiKeyAuth":[]
+          }
+        ],
+        "requestBody": {
+          "content":{
+            "application/json":{
+              "schema":{
+
+              },
+              "example":{
+          
+                "displayName": "huihui1"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200":{
+            "description": "Successful",
+            "content":{
+              "application/json":{
+                "example": " "
+              }
+            }
+          },
+          "405": {
+            "description": "Invalid input"
+          },
+          "500":{
+            "description": "Error: Internal Server Error"
+          }
+        }
+      }
+    },
+    "/users/delete": {
+      "delete": {
+        "tags": [
+          "users"
+        ],
+        "summary": "delete user",
+        "operationId": "deleteUser",
+        "security": [
+          {
+            "bearerAuth":[],
+            "ApiKeyAuth":[]
+          }
+        ],
+        "responses": {
+          "200":{
+            "description": "Successful",
+            "content":{
+              "application/json":{
+                "example": " "
+              }
+            }
+          },
+          "405": {
+            "description": "Invalid input"
+          },
+          "500":{
+            "description": "Error: Internal Server Error"
+          }
+        }
       }
     },
     "/products": {
@@ -2395,9 +2501,370 @@
             "description": "Validation exception"
           }
         }
+      },
+      "post": {
+        "tags": [
+          "provinces"
+        ],
+        "summary": "create province in database",
+        "operationId": "createProvinces",
+        "security":[
+          {
+            "bearerAuth":[],
+            "ApiKeyAuth":[]
+          }
+        ],
+        "requestBody":{
+          "content":{
+            "application/json":{
+              "schema":{
+
+              },
+              "example":{
+                "id":"9999",
+                "name":"locpro",
+                "type": "Tỉnh"
+                
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful"
+           
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        }
       }
     },
-    "/address/districts/{provinceId}":{
+    "/address/provinces/{provinceId}":{
+      "get": {
+        "tags": [
+          "provinces"
+        ],
+        "summary": "get province by id in database",
+        "operationId": "getProvinceById",
+        "security":[
+          {
+            "bearerAuth":[],
+            "ApiKeyAuth":[]
+          }
+        ],
+        "parameters":[
+          {
+            "in":"path",
+            "name": "provinceId",
+            "required": true,
+            "schema":{
+              "type": "number",
+              "example": "22"
+            },
+            "description":""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful"
+           
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "provinces"
+        ],
+        "summary": "update province by id in database",
+        "operationId": "updateProvinceById",
+        "security":[
+          {
+            "bearerAuth":[],
+            "ApiKeyAuth":[]
+          }
+        ],
+        "parameters":[
+          {
+            "in":"path",
+            "name": "provinceId",
+            "required": true,
+            "schema":{
+              "type": "number",
+              "example": "9999"
+            },
+            "description":""
+          }
+        ],
+        "requestBody":{
+          "content":{
+            "application/json":{
+              "schema":{
+
+              },
+              "example":{
+                "name":"locpro1",
+                "type": "Tỉnh"
+                
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful"
+           
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "provinces"
+        ],
+        "summary": "delete province by id in database",
+        "operationId": "deleteProvinceById",
+        "security":[
+          {
+            "bearerAuth":[],
+            "ApiKeyAuth":[]
+          }
+        ],
+        "parameters":[
+          {
+            "in":"path",
+            "name": "provinceId",
+            "required": true,
+            "schema":{
+              "type": "number",
+              "example": "9999"
+            },
+            "description":""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful"
+           
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        }
+      }
+    },
+    "/address/districts":{
+      "get": {
+        "tags": [
+          "districts"
+        ],
+        "summary": "get all districts in database",
+        "operationId": "getAllDistricts",
+        "security":[
+          {
+            "bearerAuth":[],
+            "ApiKeyAuth":[]
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful"
+           
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "districts"
+        ],
+        "summary": "create district in database",
+        "operationId": "createDistricts",
+        "security":[
+          {
+            "bearerAuth":[],
+            "ApiKeyAuth":[]
+          }
+        ],
+        "requestBody":{
+          "content":{
+            "application/json":{
+              "schema":{
+
+              },
+              "example":{
+                "id":"9999",
+                "name":"locpro",
+                "type": "Huyện"
+                
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful"
+           
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        }
+      }
+    },
+    "/address/districts/{districtId}":{
+      "get": {
+        "tags": [
+          "districts"
+        ],
+        "summary": "get district by id in database",
+        "operationId": "getdistrictById",
+        "security":[
+          {
+            "bearerAuth":[],
+            "ApiKeyAuth":[]
+          }
+        ],
+        "parameters":[
+          {
+            "in":"path",
+            "name": "districtId",
+            "required": true,
+            "schema":{
+              "type": "number",
+              "example": "9999"
+            },
+            "description":""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful"
+           
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "districts"
+        ],
+        "summary": "update district by id in database",
+        "operationId": "updateDistrictById",
+        "security":[
+          {
+            "bearerAuth":[],
+            "ApiKeyAuth":[]
+          }
+        ],
+        "parameters":[
+          {
+            "in":"path",
+            "name": "districtId",
+            "required": true,
+            "schema":{
+              "type": "number",
+              "example": "9999"
+            },
+            "description":""
+          }
+        ],
+        "requestBody":{
+          "content":{
+            "application/json":{
+              "schema":{
+
+              },
+              "example":{
+                "name":"locpro1",
+                "type": "Huyện"
+                
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful"
+           
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "districts"
+        ],
+        "summary": "delete district by id in database",
+        "operationId": "deleteDistrictById",
+        "security":[
+          {
+            "bearerAuth":[],
+            "ApiKeyAuth":[]
+          }
+        ],
+        "parameters":[
+          {
+            "in":"path",
+            "name": "districtId",
+            "required": true,
+            "schema":{
+              "type": "number",
+              "example": "9999"
+            },
+            "description":""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful"
+           
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        }
+      }
+    },
+    "/address/province-districts/{provinceId}":{
       "get": {
         "tags": [
           "districts"
@@ -2432,7 +2899,201 @@
         }
       }
     },
-    "/address/wards/{districtId}":{
+    "/address/wards":{
+      "get": {
+        "tags": [
+          "wards"
+        ],
+        "summary": "get all wards in database",
+        "operationId": "getAllWards",
+        "security":[
+          {
+            "bearerAuth":[],
+            "ApiKeyAuth":[]
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful"
+           
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "wards"
+        ],
+        "summary": "create ward in database",
+        "operationId": "createWards",
+        "security":[
+          {
+            "bearerAuth":[],
+            "ApiKeyAuth":[]
+          }
+        ],
+        "requestBody":{
+          "content":{
+            "application/json":{
+              "schema":{
+
+              },
+              "example":{
+                "id":"9999",
+                "name":"locpro",
+                "type": "Phường"
+                
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful"
+           
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        }
+      }
+    },
+    "/address/wards/{wardId}":{
+      "get": {
+        "tags": [
+          "wards"
+        ],
+        "summary": "get ward by id in database",
+        "operationId": "getwardById",
+        "security":[
+          {
+            "bearerAuth":[],
+            "ApiKeyAuth":[]
+          }
+        ],
+        "parameters":[
+          {
+            "in":"path",
+            "name": "wardId",
+            "required": true,
+            "schema":{
+              "type": "number",
+              "example": "22"
+            },
+            "description":""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful"
+           
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "wards"
+        ],
+        "summary": "update ward by id in database",
+        "operationId": "updateWardById",
+        "security":[
+          {
+            "bearerAuth":[],
+            "ApiKeyAuth":[]
+          }
+        ],
+        "parameters":[
+          {
+            "in":"path",
+            "name": "wardId",
+            "required": true,
+            "schema":{
+              "type": "number",
+              "example": "9999"
+            },
+            "description":""
+          }
+        ],
+        "requestBody":{
+          "content":{
+            "application/json":{
+              "schema":{
+
+              },
+              "example":{
+                "name":"locpro1",
+                "type": "Phường"
+                
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful"
+           
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "wards"
+        ],
+        "summary": "delete ward by id in database",
+        "operationId": "deleteWardById",
+        "security":[
+          {
+            "bearerAuth":[],
+            "ApiKeyAuth":[]
+          }
+        ],
+        "parameters":[
+          {
+            "in":"path",
+            "name": "wardId",
+            "required": true,
+            "schema":{
+              "type": "number",
+              "example": "9999"
+            },
+            "description":""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful"
+           
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        }
+      }
+    },
+    "/address/district-wards/{districtId}":{
       "get": {
         "tags": [
           "wards"
