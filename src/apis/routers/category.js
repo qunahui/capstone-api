@@ -68,6 +68,7 @@ router.get("/playground", async (req, res) => {
   })
 })
 
+router.get("/")
 // router.get("/", auth, controller.getListCategory);
 
 // router.post("/create-lazada-category", controller.createCategory) // just for dev, not for user

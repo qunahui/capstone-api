@@ -147,8 +147,8 @@
 
               },
               "example":{
-                "email": "hui1@gmail.com",
-                "password":"huyhuy"
+                "email": "mrlocpro@gmail.com",
+                "password":"locpro"
               }
             }
           }
@@ -980,17 +980,12 @@
         "parameters":[
           {
             "in":"query",
-            "name": "storeIds",
-            "required": true,
+            "name": "storeIds[]",
+            "required": false,
             "description": "array of storeIds",
             "schema":{
               "type": "array",
-              "items":[
-                {
-                  "type": "string",
-                  "example": "d63aecd314b4463abc2204aa6a340c6b"
-                }
-              ]
+              "items":["d63aecd314b4463abc2204aa6a340c6b"]
             }
           }
         ],
@@ -1574,8 +1569,8 @@
         "parameters":[
           {
             "in":"query",
-            "name": "storeIds",
-            "required": true,
+            "name": "storeIds[]",
+            "required": false,
             "description": "array of storeIds",
             "schema":{
               "type": "array",
@@ -2152,7 +2147,7 @@
       }
     },
     "/categories":{
-      "post": {
+      "get": {
         "tags": [
           "categories"
         ],
@@ -2164,18 +2159,19 @@
             "ApiKeyAuth":[]
           }
         ],
-        "requestBody":{
-          "content":{
-            "application/json":{
-              "schema":{
-
-              },
-              "example":{
-                "idpath": []
-              }
-            }
-          }
-        },
+       "parameters":[
+        {
+          "in":"query",
+          "name": "idpath[]",
+          "required": false,
+          "schema":{
+            "type": "array",
+            "items": []
+            
+          },
+          "description":"categoryId must be primary category"
+        }
+       ],
         "responses": {
           "200": {
             "description": "Successful"
@@ -2188,7 +2184,7 @@
           }
         }
       },
-      "get": {
+      "patch": {
         "tags": [
           "categories"
         ],
