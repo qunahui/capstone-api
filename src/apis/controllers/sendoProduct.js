@@ -30,6 +30,80 @@ const unit ={
   "8": "Thùng"
 }
 
+
+const createSendoProduct = async (item, { store_id }) => {
+  try {
+    const update_at = new Date(item.updated_date_timestamp*1000)
+    const create_at = new Date(item.created_date_timestamp*1000)
+    const attributes = item.attributes
+    const variants = item.variants
+
+    attributes.forEach(element => {
+        var arr = element.attribute_values.filter((child) => {
+            return child.is_selected === true
+        });
+        element.attribute_values = arr
+    }); 
+    variants.forEach( e => {
+      e.variant_attributes.forEach(e1 => {
+        const attribute = attributes.find((attribute)=>{
+          return attribute.attribute_id === e1.attribute_id
+        });
+        const attribute_value = attribute.attribute_values.find((value)=>{
+          return value.id === e1.option_id
+        })
+        e1.attribute_name = attribute.attribute_name
+        e1.option_value = attribute_value.value
+      })
+    });
+
+    let query = { store_id: store_id, id: item.id },
+        update = {
+          store_id: store_id,
+          id: item.id,
+          name: item.name,
+          store_sku: item.sku,
+          weight: item.weight,
+          stock_quantity: item.stock_quantity, // total variants quantity
+          status: item.status,    
+          updated_date_timestamp: update_at,
+          created_date_timestamp: create_at,
+          link: item.link,       
+          unit: item.unit_id,
+          avatar: item.avatar.picture_url,
+          variants: variants.map(variant => ({
+            ...variant,
+            linkedProduct: {
+              id: '---',
+              name: '---',
+              sku: '---',
+              status: 'not connected yet',
+            }
+          })),
+          //attributes: attributes,
+          voucher: item.voucher
+        },
+        options = { upsert: true, new: true, setDefaultsOnInsert: true };
+  
+    console.log("Begin insert: ", update.id)
+    await SendoProduct.findOneAndUpdate(query, update, options, function(error, result) {
+      if (!error) {
+        if (!result) {
+          result = new SendoProduct(update);
+        }
+        result.save().then((res) => {
+          console.log("save: ", res.id)
+        });
+      }
+    });
+  } catch(e) { 
+    console.log("Error: ", e)
+  }
+};
+
+module.exports.createSendoProduct = createSendoProduct
+
+
 module.exports.createSendoProductByPing = async (req, res) => {
 console.log("received data")
     const item = req.body;
@@ -85,75 +159,6 @@ console.log("received data")
   }
 };
 
-module.exports.createSendoProduct = async (item, { store_id }) => {
-    try {
-      const update_at = new Date(item.updated_date_timestamp*1000)
-      const create_at = new Date(item.created_date_timestamp*1000)
-      const attributes = item.attributes
-      const variants = item.variants
-
-      attributes.forEach(element => {
-          var arr = element.attribute_values.filter((child) => {
-              return child.is_selected === true
-          });
-          element.attribute_values = arr
-      }); 
-      variants.forEach( e => {
-        e.variant_attributes.forEach(e1 => {
-          const attribute = attributes.find((attribute)=>{
-            return attribute.attribute_id === e1.attribute_id
-          });
-          const attribute_value = attribute.attribute_values.find((value)=>{
-            return value.id === e1.option_id
-          })
-          e1.attribute_name = attribute.attribute_name
-          e1.option_value = attribute_value.value
-        })
-      });
-
-      let query = { store_id: store_id, id: item.id },
-          update = {
-            store_id: store_id,
-            id: item.id,
-            name: item.name,
-            store_sku: item.sku,
-            weight: item.weight,
-            stock_quantity: item.stock_quantity, // total variants quantity
-            status: item.status,    
-            updated_date_timestamp: update_at,
-            created_date_timestamp: create_at,
-            link: item.link,       
-            unit: item.unit_id,
-            avatar: item.avatar.picture_url,
-            variants: variants.map(variant => ({
-              ...variant,
-              linkedProduct: {
-                id: '---',
-                name: '---',
-                sku: '---',
-                status: 'not connected yet',
-              }
-            })),
-            //attributes: attributes,
-            voucher: item.voucher
-          },
-          options = { upsert: true, new: true, setDefaultsOnInsert: true };
-    
-      console.log("Begin insert: ", update.id)
-      await SendoProduct.findOneAndUpdate(query, update, options, function(error, result) {
-        if (!error) {
-          if (!result) {
-            result = new SendoProduct(update);
-          }
-          result.save().then((res) => {
-            console.log("save: ", res.id)
-          });
-        }
-      });
-    } catch(e) { 
-      console.log("Error: ", e)
-    }
-};
 module.exports.getAllProducts = async (req, res) => {
   try {
     const { storeIds } = req.query;
@@ -170,7 +175,6 @@ module.exports.getAllProducts = async (req, res) => {
 }
 
 module.exports.fetchProducts = async (req, res) => {
-  
   try {
     const options = {
         'method': 'POST',
@@ -187,18 +191,20 @@ module.exports.fetchProducts = async (req, res) => {
     await Promise.all(products.map(async product => {
       const fullProduct = await rp({
         method: 'GET',
-        url: 'http://localhost:5000/api/sendo/products/' + product.id + '?access_token=' + req.accessToken
+        url: 'http://localhost:5000/api/sendo/products/' + product.id + '?access_token=' + req.accessToken,
+        headers: {
+          'Authorization': 'Bearer ' + req.mongoToken,
+          'Platform-Token': req.accessToken
+        }
       })
-      const actuallyFullProduct = JSON.parse(fullProduct)
+      const actuallyFullProduct = JSON.parse(fullProduct).result
       await createSendoProduct(actuallyFullProduct, { store_id: req.body.store_id })
     }))
-
-    console.log("Run this")
 
     const sendoProducts = await SendoProduct.find({ storageId: req.body.storageId})
 
     res.status(200).send(sendoProducts)
   } catch(e) {
-    console.log(e)
+    console.log(e.message)
   }
 }

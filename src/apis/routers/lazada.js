@@ -32,7 +32,7 @@ router.get('/refresh-token/',auth, controller.refreshToken)
 router.get('/products/:id', auth, controller.getProductById)
 
 router.get('/category-tree', auth, controller.getCategoryTree) // dont use :)
-router.get('/attribute/:id', auth, controller.getAttributes)
+router.get('/attribute/:id', controller.getAttributes)
 router.get('/brands', auth, controller.getBrands) //dont know what it use for
 router.get('/suggestion', auth, controller.getCategorySuggestion) // it can be useful // stop working
 router.post('/qc-status', auth, controller.getQcStatus)

@@ -12,7 +12,7 @@ const auth = async (req, res, next) => {
       _id: decoded._id,
       "tokens.token": mongoToken,
     });
-    
+
     if (!user) {
       return res.status(401).send(Error({
         message: "Please authenticate."
@@ -28,10 +28,11 @@ const auth = async (req, res, next) => {
 
     user.currentStorage = user.storages[0].storage
     delete user.storages
- 
+    
     req.user = user
     req.accessToken = platformToken
     req.mongoToken = mongoToken
+
     next();
 
   } catch (e) {

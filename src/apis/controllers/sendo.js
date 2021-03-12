@@ -1,7 +1,6 @@
 const Error = require("../utils/error");
 const request = require('request');
 const rp = require('request-promise');
-const { createSendoProduct } = require("./sendoProduct");
 const SendoProduct = require('../models/sendoProduct')
 const Storage = require('../models/storage')
 const Cookie = require('cookie')
