@@ -30,7 +30,7 @@ router.get('/token', auth, controller.getAccessToken)  // t4 fix cùng hui
 router.get('/refresh-token/',auth, controller.refreshToken)
 
 router.get('/products/:id', auth, controller.getProductById)
-
+router.get('/products/seller-sku/:id', auth, controller.getProductBySellerSku)
 router.get('/category-tree', auth, controller.getCategoryTree) // dont use :)
 router.get('/attribute/:id', controller.getAttributes)
 router.get('/brands', auth, controller.getBrands) //dont know what it use for

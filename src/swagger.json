@@ -1807,6 +1807,46 @@
         }
       }
     },
+    "/api/lazada/products/seller-sku/{sellerSku}":{
+      "get": {
+        "tags": [
+          "lazadaAPI"
+        ],
+        "summary": "get product by seller_sku on lazada",
+        "operationId": "getProductSku",
+        "security":[
+          {
+            "bearerAuth":[],
+            "ApiKeyAuth":[]
+          }
+        ],
+        "parameters":[
+          {
+            "in":"path",
+            "name": "sellerSku",
+            "required": true,
+            "schema":{
+              "type": "string",
+              "example": "859984666-1601101496431-0"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful"
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "404": {
+            "description": "Pet not found"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        }
+      }
+    },
     "/api/lazada/products/":{
       "post": {
         "tags": [
