@@ -7,22 +7,7 @@ const { time } = require("console");
 const rp = require('request-promise');
 const { signRequest } = require('../utils/laz-sign-request')
 
-module.exports.getAllProducts = async (req, res) => {
-  try {
-      const { storeIds } = req.query;
-      let lazadaProducts = [];
-      await Promise.all([...storeIds].map(async storeId => {
-        const products = await LazadaProduct.find({ store_id: storeId })
-        lazadaProducts = [...lazadaProducts, ...products]
-      }))
-  
-      res.status(200).send(lazadaProducts)
-    } catch(e) {
-      res.status(500).send(Error({ message: 'Something went wrong !'}))
-  }
-}
-
-module.exports.createLazadaProduct = async (item, additionalData) => {
+const createLazadaProduct = async (item, additionalData) => {
   try {
     const stringAttributes = await rp("http://localhost:5000/api/lazada/attribute/"+ item.primary_category)
     const attributes = JSON.parse(stringAttributes)
@@ -71,9 +56,28 @@ module.exports.createLazadaProduct = async (item, additionalData) => {
       } 
     });
   } catch(e) {
-    console.log("Something went wrong", e)
+    console.log(e.message)
   }
 };
+
+module.exports.createLazadaProduct = createLazadaProduct
+
+module.exports.getAllProducts = async (req, res) => {
+  try {
+      const { storeIds } = req.query;
+      let lazadaProducts = [];
+      await Promise.all([...storeIds].map(async storeId => {
+        const products = await LazadaProduct.find({ store_id: storeId })
+        lazadaProducts = [...lazadaProducts, ...products]
+      }))
+  
+      console.log("lazada all products: ", lazadaProducts)
+
+      res.status(200).send(lazadaProducts)
+    } catch(e) {
+      res.status(500).send(Error({ message: 'Something went wrong !'}))
+  }
+}
 
 module.exports.getAllProducts = async (req, res) => {
   try {
@@ -121,7 +125,7 @@ module.exports.fetchProducts = async (req, res) =>{
       };
       //console.log(options)
       const { data } = await rp(options).then(res => JSON.parse(res))
-      console.log("data: ", data)
+      console.log("options: ", options)
       const { products } = data
       await Promise.all(products.map(async product => await createLazadaProduct(product, { store_id: req.body.store_id })))
   } catch (e) {

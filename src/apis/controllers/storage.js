@@ -7,11 +7,10 @@ module.exports.getStorages = async (req, res) => {
   if(!storage) {
     storage = {}
   }
-  // console.log(storage)
-  // let sendoCredentials = storage?.sendoCredentials && storage.sendoCredentials   
-  // sendoCredentials = await Promise.all(sendoCredentials.map(async sendoCredential => await getSendoToken(sendoCredential)))
-  // storage.sendoCredentials = sendoCredentials
-  // await Storage.findOneAndUpdate({ _id: storage.id }, storage)
+  let sendoCredentials = storage.sendoCredentials || []
+  sendoCredentials = await Promise.all(sendoCredentials.map(async sendoCredential => await getSendoToken(sendoCredential)))
+  storage.sendoCredentials = sendoCredentials
+  await Storage.findOneAndUpdate({ _id: storage.id }, storage)
   res.status(200).send({ storage })
   // update token
 };

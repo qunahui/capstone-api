@@ -2,10 +2,30 @@ const auth = require("../../middlewares/auth");
 const Product = require("../models/product");
 const Error = require("../utils/error");
 // const sendo = require('./sendo')
-const request = require('request');
-const util = require('util');
-const { time } = require("console");
-const rp = require('request-promise');
+const SendoProduct = require('../models/sendoProduct')
+const LazadaProduct = require('../models/lazadaProduct')
+
+module.exports.linkProduct = async (req, res) => {
+  const { payload } = req.body;
+  const products = await Product.find({})
+
+  await Promise.all(payload.map(async credential => {
+    if(credential.platform_name === 'sendo') {
+      //call link sendo route
+      const platformProducts = await SendoProduct.find({ store_id: credential.store_id })
+      products.map(product => {
+        platformProducts.map(platProduct => {
+          if(platProduct.store_sku === product.sku) {
+            console.log("matched: ", platProduct.name, " === ", product.name)
+          }
+        })
+      })
+    } else if(credential.platform_name === 'lazada') {
+      //call link lazada route
+    }
+  }))
+  console.log("done")
+}
 
 module.exports.getAllProduct = async (req, res) => {
   try {
@@ -101,3 +121,25 @@ module.exports.deleteProduct = async (req, res) => {
     res.status(500).send(Error(e));
   }
 };
+
+module.exports.checkSku = async (req,res) => {
+  console.log(req.query)
+  const { sku } = req.query
+  const matchedProductSku = await Product.find({ sku })
+  if(matchedProductSku.length > 0) {
+    res.status(200).send({
+      isSkuExists: true
+    })
+  } else if(matchedProductSku.length === 0) {
+    const matchedVariantSku = await Product.find({ "variants.sku": sku })
+    if(matchedVariantSku.length > 0) { 
+      res.status(200).send({
+        isSkuExists: true
+      })
+    } else if(matchedProductSku.length === 0) {
+      res.status(200).send({
+        isSkuExists: false
+      })
+    }
+  }
+}

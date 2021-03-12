@@ -31,7 +31,7 @@ const sendoCredentialSchema = {
   },
   access_token: {
     type: String,
-    expires: '28800'
+    expires: '10'
   },
   status: {
     type: String,

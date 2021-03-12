@@ -35,6 +35,7 @@ const Category = require('../models/category')
 // };
 
 module.exports.getListCategory = async (req,res) =>{
+  console.log(req.query)
   const idpath = req.query.idpath ? req.query.idpath.map(i => parseInt(i)) : [];
     if(idpath.length == 0) {
       try {
@@ -46,7 +47,6 @@ module.exports.getListCategory = async (req,res) =>{
     } else if(idpath.length != 0) {
       try {
         const categories = await Category.find({ idpath:{ $all:idpath ,$size: idpath.length+1 }}, {name: 1, category_id: 1, leaf: 1, idpath:1, namepath: 1});
-        console.log(categories)
         res.send(categories);
       } catch (e) {
         res.status(500).send(e.message);

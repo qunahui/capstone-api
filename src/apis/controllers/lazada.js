@@ -20,6 +20,9 @@ module.exports.authorizeCredential = async (req, res) => {
       const result = await rp({
         method: 'GET',
         uri: 'http://localhost:5000/api/lazada/token?code='+ code + '&state=' + state,
+        headers: {
+          'Authorization': 'Bearer ' + req.mongoToken 
+        }
       })
       // const { access_token, name, store_id, storageId } = JSON.parse(result)
 
@@ -37,6 +40,7 @@ module.exports.getAccessToken = async (req, res) => {
     const appKey = process.env.LAZADA_APP_KEY 
     const {code, state} =  req.query 
     const timestamp = Date.now()
+    const { storageId } = req.user.currentStorage
     const commonRequestParams = {
         "app_key": appKey,
         "timestamp": timestamp,
@@ -59,26 +63,30 @@ module.exports.getAccessToken = async (req, res) => {
             }
         };
         const response = await rp(options).then(res => JSON.parse(res));
+
         if(response.code === '0') {
-          //if no error return
-          const [_id, storageId] = state.split('_')
           const storage = await Storage.findById(storageId)
+
           const insertCredentials = {
               store_name: response.name,
               platform_name: 'lazada',
               refresh_token: response.refresh_token,
               access_token: response.access_token,
+              status: 'connected',
               isActivated: true,
           }
-          const result = await rp.post({
-              method: 'GET',
+
+          const result = await rp.get({
               uri: 'http://localhost:5000/api/lazada/seller',
               headers:{ 
-                    "Authorization": req.header("Authorization"),
-                    "Platform-Token": req.header("Platform-Token")
+                "Authorization": 'Bearer ' + req.mongoToken,
+                "Platform-Token": response.access_token
               },
               json: true
-          }).then(res => res.data)
+          })
+          .then(res => res.data)
+          .catch(e => e.message)
+
           const { name, seller_id } = result 
           insertCredentials.store_name = name
           insertCredentials.store_id = seller_id
@@ -92,7 +100,7 @@ module.exports.getAccessToken = async (req, res) => {
                   return i
               })
           }
-          await Storage.findOneAndUpdate({ id: storageId }, storage, {}, (err, doc) => {
+          await Storage.findOneAndUpdate({ _id: storageId }, storage, {}, (err, doc) => {
               res.status(200).send(insertCredentials)
           })
         } else {
@@ -100,7 +108,7 @@ module.exports.getAccessToken = async (req, res) => {
           res.status(500).send(Error({ message: 'Something went wrong' }))
         }
     } catch (e) {
-        res.status(500).send(Error(e));
+      res.status(500).send(Error(e));
     }
 }
 
@@ -109,8 +117,9 @@ module.exports.refreshToken = async (req, res) =>{
     const apiPath=  '/auth/token/refresh'
     const appSecret = process.env.LAZADA_APP_SECRET 
     const appKey = process.env.LAZADA_APP_KEY 
+    const { storageId } = req.user.currentStorage
     let refreshToken = ""
-    const storage = await Storage.findOne({_id: req.user.currentStorage.storageId}, {lazadaCredentials: 1})
+    const storage = await Storage.findOne({_id: storageId}, {lazadaCredentials: 1})
     storage.lazadaCredentials.forEach(credential => {
         if(credential.access_token == req.accessToken)
         {
@@ -142,7 +151,7 @@ module.exports.refreshToken = async (req, res) =>{
             if (error) throw new Error(error);
             
             const {access_token, refresh_token} = JSON.parse(response.body)
-            const storage =  await Storage.findOne({_id: req.user.currentStorage.storageId})
+            const storage =  await Storage.findOne({_id: storageId})
             
             storage.lazadaCredentials.forEach( (credential) => {
                 if(credential.access_token == req.accessToken)
@@ -152,6 +161,7 @@ module.exports.refreshToken = async (req, res) =>{
                         credential.refresh_token = refresh_token
                 }
             });
+
             await Storage.update({_id: storage._id}, storage, { upsert: true})
            
             
@@ -231,7 +241,7 @@ module.exports.getProductById = async (req, res) =>{
             'headers': {
             }
         };
-        //console.log(options)
+        console.log(options)
         request(options, function (error, response) {
             //if (error) throw new Error(error);
             //console.log(response.body);
@@ -670,7 +680,7 @@ module.exports.getSellerInfo = async (req, res) =>{
         "app_key": appKey,
         "timestamp": timestamp,
         "sign_method": "sha256",
-        "access_token":accessToken
+        "access_token": accessToken
     }
     const sign = signRequest(appSecret, apiPath, commonRequestParams)
     try {
@@ -685,10 +695,10 @@ module.exports.getSellerInfo = async (req, res) =>{
             }
         };
         request(options, function (error, response) {
-            res.status(response.statusCode).send(response.body)
+          res.status(response.statusCode).send(response.body)
         });
     } catch (e) {
-        res.status(500).send(Error(e));
+      res.status(500).send(Error(e));
     }
 }
 //Provide seller metrics data of the specific seller, like positive seller rating, ship on time rate and etc.
@@ -759,7 +769,6 @@ module.exports.updateSellerEmail = async (req, res) =>{
             'headers': {
             }
         };
-        console.log(options)
         request(options, function (error, response) {
             if (error) throw new Error(error);
             //console.log(response.body);
