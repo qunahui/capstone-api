@@ -118,14 +118,8 @@ module.exports.refreshToken = async (req, res) =>{
     const appSecret = process.env.LAZADA_APP_SECRET 
     const appKey = process.env.LAZADA_APP_KEY 
     const { storageId } = req.user.currentStorage
-    let refreshToken = ""
-    const storage = await Storage.findOne({_id: storageId}, {lazadaCredentials: 1})
-    storage.lazadaCredentials.forEach(credential => {
-        if(credential.access_token == req.accessToken)
-        {
-            refreshToken = credential.refresh_token
-        }
-    });
+
+    const { refreshToken } = req.query
    
     const timestamp = Date.now()
     const commonRequestParams = {
@@ -150,19 +144,19 @@ module.exports.refreshToken = async (req, res) =>{
         request(options, async function (error, response) {
             if (error) throw new Error(error);
             
-            const {access_token, refresh_token} = JSON.parse(response.body)
-            const storage =  await Storage.findOne({_id: storageId})
+            const { access_token, refresh_token } = JSON.parse(response.body)
+            const storage =  await Storage.findOne({ _id: storageId })
             
             storage.lazadaCredentials.forEach( (credential) => {
-                if(credential.access_token == req.accessToken)
-                {
-                        
-                        credential.access_token = access_token
-                        credential.refresh_token = refresh_token
+                if(credential.refresh_token == refreshToken) {
+                  credential.access_token = access_token
+                  credential.refresh_token = refresh_token
+                  console.log("new: ", credential)
                 }
             });
 
-            await Storage.update({_id: storage._id}, storage, { upsert: true})
+
+            await Storage.updateOne({_id: storage._id}, storage, { upsert: true})
            
             
             res.status(response.statusCode).send(response.body)
