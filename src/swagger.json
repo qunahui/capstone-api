@@ -2224,12 +2224,189 @@
           }
         }
       },
+      "post": {
+        "tags": [
+          "categories"
+        ],
+        "summary": "create category in database",
+        "operationId": "createCategory",
+        "security":[
+          {
+            "bearerAuth":[],
+            "ApiKeyAuth":[]
+          }
+        ],
+       "requestBody":{
+         "content":{
+           "application/json":{
+             "schema":{
+
+             },
+             "example":{
+              "idpath": [],
+              "namepath": [],
+              "category_id": 99999,
+              "var": false,
+              "name": "locpro",
+              "leaf": false
+            }
+           }
+         }
+       },
+        "responses": {
+          "200": {
+            "description": "Successful"
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        }
+      }
+    },
+    "/categories/{categoryId}":{
+      "get": {
+        "tags": [
+          "categories"
+        ],
+        "summary": "get category by id in database",
+        "operationId": "getCategoryById",
+        "security":[
+          {
+            "bearerAuth":[],
+            "ApiKeyAuth":[]
+          }
+        ],
+       "parameters":[
+        {
+          "in":"path",
+          "name": "categoryId",
+          "required": true,
+          "schema":{
+            "type": "number",
+            "example":10100180
+            
+          },
+          "description":"categoryId must be primary category"
+        }
+       ],
+        "responses": {
+          "200": {
+            "description": "Successful"
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        }
+      },
       "patch": {
+        "tags": [
+          "categories"
+        ],
+        "summary": "update category in database",
+        "operationId": "updateCategory",
+        "security":[
+          {
+            "bearerAuth":[],
+            "ApiKeyAuth":[]
+          }
+        ],
+        "parameters":[
+          {
+            "in":"path",
+            "name": "categoryId",
+            "required": true,
+            "schema":{
+              "type": "number",
+              "example": "99999"
+            },
+            "description":""
+          }
+        ],
+       "requestBody":{
+         "content":{
+           "application/json":{
+             "schema":{
+
+             },
+             "example":{
+              "idpath": [],
+              "namepath": [],
+              "var": false,
+              "name": "locpro1",
+              "leaf": false
+            }
+           }
+         }
+       },
+        "responses": {
+          "200": {
+            "description": "Successful"
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "categories"
+        ],
+        "summary": "delete category by id in database",
+        "operationId": "deleteCategory",
+        "security":[
+          {
+            "bearerAuth":[],
+            "ApiKeyAuth":[]
+          }
+        ],
+        "parameters":[
+          {
+            "in":"path",
+            "name": "categoryId",
+            "required": true,
+            "schema":{
+              "type": "number",
+              "example": "99999"
+            },
+            "description":""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful"
+           
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        }
+      }
+    },
+    "/categories/search":{
+      "get": {
         "tags": [
           "categories"
         ],
         "summary": "searching primary categories in database",
         "operationId": "getCategories",
+        "security":[
+          {
+            "bearerAuth":[],
+            "ApiKeyAuth":[]
+          }
+        ],
         "parameters":[
           {
             "in":"query",

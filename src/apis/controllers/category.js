@@ -55,6 +55,81 @@ module.exports.getListCategory = async (req,res) =>{
     
 };
 
+module.exports.searchCategory = async (req,res) =>{
+ 
+  const search = req.query.search
+    
+      try {
+        const categories = await Category.find({leaf: true, name: new RegExp(search, 'i')});
+
+        res.send(categories);
+      } catch (e) {
+        res.status(500).send(e.message);
+      }
+    
+    
+};
+module.exports.createCategory = async (req, res) => {
+  const item = req.body;
+
+  const category = new Category({
+    idpath: item.idpath,
+    namepath: item.namepath,
+    category_id: item.category_id,
+    var: item.var,
+    name: item.name,
+    leaf: item.leaf
+  });
+
+  try {
+    await category.save();
+    res.send(category);
+  } catch (e) {
+    res.status(500).send(Error(e));
+  }
+};
+module.exports.getCategoryById = async (req, res) => {
+  try {
+      const category = await Category.find({category_id: req.params.id})
+
+      res.status(200).send(category)
+
+  } catch (e) {
+      res.status(500).send(Error(e));
+  }
+};
+module.exports.updateCategory = async (req, res) => {
+  const properties = Object.keys(req.body);
+
+
+  try {
+    const category = await Category.findOne({category_id: req.params.id});
+    if (!category) {
+      res.status(404).send(category);
+    }
+
+    properties.forEach((prop) => (category[prop] = req.body[prop]));
+    
+    category.save();
+
+    res.send(category);
+  } catch (e) {
+    res.status(404).send(Error(e));
+  }
+};
+module.exports.deleteCategory = async (req, res) => {
+  try {
+      const category = await Category.findOneAndDelete({category_id: req.params.id});
+  
+      if (!category) {
+        return res.status(404).send();
+      }
+  
+      res.send(category)
+    } catch (e) {
+      res.status(500).send(Error(e));
+    }
+};
 // module.exports.createLazadaCategory = async (req, res) => {
 //   const Category = req.body.data;
 //   try {
