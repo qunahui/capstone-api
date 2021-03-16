@@ -418,7 +418,7 @@ module.exports.getCategorySuggestion = async (req, res) =>{
     const apiPath=  '/product/category/suggestion/get'
     const appSecret = process.env.LAZADA_APP_SECRET
     const appKey = process.env.LAZADA_APP_KEY
-    const accessToken =  "500005000282pCawUSfbySlxELBNZvxde1hVjqrd1c60dd3csukWdjU9syzPtBwi" // goi db
+    const accessToken =  req.accessToken //acv 
     const timestamp = Date.now()
     const product_name = req.query.name
     const commonRequestParams = {

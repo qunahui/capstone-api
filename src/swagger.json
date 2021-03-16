@@ -2186,6 +2186,67 @@
         }
       }
     },
+    "/api/lazada/suggestion":{
+      "get": {
+        "tags": [
+          "lazadaAPI"
+        ],
+        "summary": "get category suggestion on lazada",
+        "operationId": "getSuggestion",
+        "security":[
+          {
+            "bearerAuth":[],
+            "ApiKeyAuth":[]
+          }
+        ],
+        "parameters":[
+          {
+            "in":"query",
+            "name": "name",
+            "required": false,
+            "schema":{
+              "type": "String",
+              "example": "áo thun"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful",
+            "content":{
+              "application/json":{
+                "example":{
+                  "data": {
+                    "ship_on_time": "0.0",
+                    "response_time": "null",
+                    "seller_id": 200163939035,
+                    "response_rate": "null"
+                  },
+                  "code": "0",
+                  "request_id": "0b1195ad16111533718203524"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "404": {
+            "description": "Attributes not found",
+            "content":{
+              "application/json":{
+                "example":{
+                  
+                }
+              }
+            }
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        }
+      }
+    },
     "/categories":{
       "get": {
         "tags": [
