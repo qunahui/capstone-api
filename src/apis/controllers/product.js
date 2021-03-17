@@ -3,7 +3,7 @@ const Product = require("../models/product");
 const Error = require("../utils/error");
 // const sendo = require('./sendo')
 const SendoProduct = require('../models/sendoProduct')
-const LazadaProduct = require('../models/lazadaProduct')
+const Inventory = require('../models/inventory')
 
 module.exports.linkProduct = async (req, res) => {
   const { payload } = req.body;
@@ -43,7 +43,6 @@ module.exports.getMMSProductById = async function (req, res) {
   try {
     const productId = req.params.id;
     const product = await Product.find({ _id: productId })
-    console.log(product)
     res.send(product)
   } catch (e) {
     res.status(500).send(Error(e));
@@ -51,36 +50,28 @@ module.exports.getMMSProductById = async function (req, res) {
 };
 
 module.exports.createMMSProduct = async (req, res) => {
- 
-  const item = req.body;
-  // console.log(item)
-  //util.inspect(item, false, null, true /* enable colors */)
-  //console.log(item)
-  //const update_at = new Date(item.data.updated_date_timestamp*1000)
-  //const create_at = new Date(item.data.created_date_timestamp*1000)
-  
-  // attributes.forEach(element => {
-  //   var arr = element.attribute_values.filter((child) => {
-  //     return child.is_selected === true
-  //   });
-  //   element.attribute_values = arr
-  // }); 
-  // const variants = item.data.variants
-  
-
-  // variants.forEach( e => {
-  //   e.variant_attributes.forEach(e1 => {
-  //     const attribute = attributes.find((attribute)=>{
-  //       return attribute.attribute_id === e1.attribute_id
-  //   });
-  //     e1.attribute_name = attribute.attribute_name
-  //   })
-  // });
-
-  const product = new Product({...req.body});
-
   try {
+    const product = new Product({...req.body});
+
     await product.save();
+
+    if(req.body.isConfigInventory === true) {
+      await Promise.all(product.variants.map(async (variant) => {
+        const inventory = new Inventory({
+          variantId: variant._id,
+          actionName: 'Khởi tạo biến thể',
+          change: {
+            amount: variant.inventories.initStock,
+            type: 'Tăng'
+          },
+          instock: variant.inventories.initStock,
+          price: variant.inventories.initPrice,
+        })
+  
+        await inventory.save()
+      }))
+    }
+
     res.send(product);
   } catch (e) {
     res.status(500).send(Error(e));
@@ -123,7 +114,6 @@ module.exports.deleteProduct = async (req, res) => {
 };
 
 module.exports.checkSku = async (req,res) => {
-  console.log(req.query)
   const { sku } = req.query
   const matchedProductSku = await Product.find({ sku })
   if(matchedProductSku.length > 0) {

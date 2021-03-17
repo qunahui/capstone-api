@@ -18,5 +18,4 @@ router.patch("/:id", auth, productController.updateProduct);
 
 router.delete("/:id", auth, productController.deleteProduct);
 
-
 module.exports = router;

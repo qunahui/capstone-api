@@ -37,30 +37,26 @@ const stepSchema = new Schema({
   },
 })
 
-const orderSchema = new Schema({
+const purchaseOrderSchema = new Schema({
   code: {
     type: String,
-  },
-  source: {
-    type: String,
-    default: 'web'
   },
   userId: {
     type: mongoose.Schema.Types.ObjectId
   },
-  customerId: {
+  supplierId: {
     type: mongoose.Schema.Types.ObjectId
   },
-  customerName: {
+  supplierName: {
     type: String
   },
-  customerAddress: {
+  supplierAddress: {
     type: String,
   },
-  customerEmail: {
+  supplierEmail: {
     type: String,
   },
-  customerPhone: {
+  supplierPhone: {
     type: String,
   },
   note: {
@@ -92,17 +88,13 @@ const orderSchema = new Schema({
     type: String,
     default: 'Đang giao dịch'
   },
-  outstockStatus: {
+  instockStatus: {
     type: Boolean,
     default: false
   },
   paymentStatus: {
     type: String,
     default: 'Chưa thanh toán'
-  },
-  packStatus: {
-    type: Boolean,
-    default: false
   },
   createdAt: {
     type: Date,
@@ -121,4 +113,10 @@ const orderSchema = new Schema({
   }
 });
 
-module.exports = mongoose.model("Order", orderSchema);
+// schema.virtual("productDetails",{
+//   ref:"productDetail",
+//   localField: "_id",
+//   foreignField: "productID"
+// })
+
+module.exports = mongoose.model("PurchaseOrder", purchaseOrderSchema);

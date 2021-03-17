@@ -125,7 +125,7 @@ const productSchema = new Schema({
   updatedBy: {
     type: String,
   },
-  variants: [variantSchema]
+  variants: [variantSchema],
 }, {
   timestamps: {
     createdAt: 'createdAt',
