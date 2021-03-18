@@ -204,7 +204,15 @@ module.exports.fetchProducts = async (req, res) => {
     const sendoProducts = await SendoProduct.find({ storageId: req.body.storageId})
 
     res.status(200).send(sendoProducts)
-  } catch(e) {
-    console.log(e.message)
+  } catch(error) {
+    if(error.response){
+      const errorSerialized = {
+        code: error.response.statusCode,
+        message: error.response.statusMessage,
+      }
+
+      return res.status(errorSerialized.code).send(Error(errorSerialized))
+    }
+    return res.status(400).send(Error({ message: "Unknown"}))
   }
 }

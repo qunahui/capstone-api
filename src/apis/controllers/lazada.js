@@ -562,6 +562,60 @@ module.exports.uploadImage = async (req, res) =>{
     }
 }
 
+// module.exports.updateProduct = async (req, res) =>{
+//     const apiUrl = 'https://api.lazada.vn/rest' 
+//     const apiPath=  '/product/update'
+//     const appSecret = process.env.LAZADA_APP_SECRET
+//     const appKey = process.env.LAZADA_APP_KEY
+//     const accessToken =  req.accessToken 
+//     const timestamp = Date.now()
+//     const data = {
+//         "Request": {
+//             "Product": {
+//                 "Skus": {
+//                     "Sku": [
+//                         {
+//                             "SellerSku": req.params.sellerSku,
+//                             ...req.body
+//                         }
+//                     ]   
+//                 }
+//             }
+//         }
+//     }
+//     const payload = '<?xml version="1.0" encoding="UTF-8" ?>'+ convert.js2xml(data, {compact: true, ignoreComment: true, spaces: 4})
+    
+//     const commonRequestParams = {
+//         "app_key": appKey,
+//         "timestamp": timestamp,
+//         "sign_method": "sha256",
+//         "access_token":accessToken
+//     }
+//     const sign = signRequest(appSecret, apiPath, {...commonRequestParams, payload})
+//     const encodePayload = encodeURI(payload)
+//     try {
+//         var options = {
+//             'method': 'POST',
+//             'url': apiUrl+apiPath+
+//             '?payload='+encodePayload+
+//             '&app_key='+appKey+
+//             '&sign_method=sha256&timestamp='+timestamp+
+//             '&access_token='+accessToken+
+//             '&sign='+sign,
+//             'headers': {
+//             }
+//         };
+//         //console.log(options)
+//         request(options, function (error, response) {
+//             if (error) throw new Error(error);
+            
+//             res.status(response.statusCode).send(response.body)
+//         });
+//     } catch (e) {
+//         res.status(500).send(Error(e));
+//     }
+    
+// }
 module.exports.updateProduct = async (req, res) =>{
     const apiUrl = 'https://api.lazada.vn/rest' 
     const apiPath=  '/product/update'
@@ -569,20 +623,7 @@ module.exports.updateProduct = async (req, res) =>{
     const appKey = process.env.LAZADA_APP_KEY
     const accessToken =  req.accessToken 
     const timestamp = Date.now()
-    const data = {
-        "Request": {
-            "Product": {
-                "Skus": {
-                    "Sku": [
-                        {
-                            "SellerSku": req.params.sellerSku,
-                            ...req.body
-                        }
-                    ]   
-                }
-            }
-        }
-    }
+    const data = req.body
     const payload = '<?xml version="1.0" encoding="UTF-8" ?>'+ convert.js2xml(data, {compact: true, ignoreComment: true, spaces: 4})
     
     const commonRequestParams = {
@@ -616,7 +657,6 @@ module.exports.updateProduct = async (req, res) =>{
     }
     
 }
-
 module.exports.createProductOnLazada = async (req, res) =>{
     const apiUrl = 'https://api.lazada.vn/rest' 
     const apiPath=  '/product/create'

@@ -41,7 +41,8 @@ router.get('/seller', auth, controller.getSellerInfo)
 router.get('/seller-metrics', auth, controller.getSellerMetrics)
 router.post('/update-seller-email', auth, controller.updateSellerEmail) //not working
 router.post('/upload-image', upload.single('image') ,auth , controller.uploadImage)
-router.patch('/products/:sellerSku',auth, controller.updateProduct)
+//router.patch('/products/:sellerSku',auth, controller.updateProduct)  //api cua laz thay doi
+router.patch('/products/',auth, controller.updateProduct)
 router.post('/products', auth, controller.createProductOnLazada)
 router.delete('/products/:sellerSku', auth, controller.deleteProduct)
 
