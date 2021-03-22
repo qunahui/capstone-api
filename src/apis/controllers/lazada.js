@@ -151,7 +151,6 @@ module.exports.refreshToken = async (req, res) =>{
                 if(credential.refresh_token == refreshToken) {
                   credential.access_token = access_token
                   credential.refresh_token = refresh_token
-                  console.log("new: ", credential)
                 }
             });
 

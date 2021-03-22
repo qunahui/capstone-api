@@ -1,50 +1,156 @@
-const auth = require("../../middlewares/auth");
-const Order = require("../models/order");
 const Error = require("../utils/error");
-const sendo = require('./sendo')
-const request = require('request');
-const rp = require('request-promise');
-const util = require('util');
-const { response } = require("express");
+const Order = require("../models/order")
+const Inventory = require("../models/inventory")
+const Product = require("../models/product");
 
-const payment_method ={
-  "1": "COD",
-  "2": "Senpay",
-  "4": "Compine",
-  "5": "PayLater"
+const checkComplete = async (_id) => {
+  try {
+    const order = await Order.findOne({ _id })
+    const { paymentStatus, outstockStatus } = order
+    if(paymentStatus === 'Đã thanh toán' && outstockStatus === true) {
+      order.step[3] = {
+        name: order.step[3].name,
+        isCreated: true,
+        createdAt: new Date()
+      }
+      order.orderStatus = 'Hoàn thành'
+  
+      await order.save()
+    } 
+  } catch(e) {
+    console.log(e.message)
+  }
 }
-const payment_status = {
-  "1": "NotPaid",
-  "2": "CODCarrier",
-  "3": "Paid",
-  "4": "Completed",
-  "5": "Refund",
-  "6": "Waiting",
-  "7": "Reject",
-  "14": "PartialPaid",
-  "15": "PartialRefund"
+
+module.exports.checkComplete = checkComplete
+
+module.exports.createReceipt = async (req,res) => {
+  try {
+    const { lineItems } = req.body
+
+    const order = await Order.findOne({ _id: req.params._id })
+    
+    await Promise.all(lineItems.map(async (item) => {
+      const variantId = item._id
+      const productId = item.productId
+      const product = await Product.findOne({ _id: productId }).lean()
+      const newVariants = await Promise.all(product.variants.map(async (variant) => {
+        variant.options.map(option => {
+          return option
+        })
+
+        if(variant._id.toString() === variantId) {
+          const newStock = variant.inventories.initStock - item.quantity
+          const inventory = new Inventory({
+            variantId: item._id,
+            actionName: '	Xuất kho giao hàng cho khách/shipper',
+            change: {
+              amount: item.quantity,
+              type: 'Giảm'
+            },
+            instock: newStock,
+            reference: order.code,
+            price: item.price,
+          })
+
+          await inventory.save()
+
+          return {
+            ...variant,
+            inventories: {
+              ...variant.inventories,
+              initStock: newStock,
+            }
+          }
+        }
+        return variant
+      }))
+
+      product.variants = newVariants;
+      product.options.map(option => {
+        return option
+      })
+
+      await Product.findOneAndUpdate({ _id: productId }, product, {})
+    }))
+
+    order.step[2] = {
+      name: order.step[2].name,
+      isCreated: true,
+      createdAt: new Date()
+    }
+
+    order.outstockStatus = true
+
+    await order.save()
+    await checkComplete(req.params._id)
+
+    res.status(200).send(order)
+  } catch(e) {
+    console.log(e)
+    res.status(500).send(Error({ message: 'Create order receipt went wrong!'}))
+  }
 }
-const order_status = {
-  "2": "New",
-  "3": "Proccessing",
-  "6": "Shipping",
-  "7": "POD",
-  "8": "Completed",
-  "10": "Closed",
-  "11": "Delaying",
-  "12": "Delay",
-  "13": "Cancelled",
-  "14": "Splitting",
-  "15": "Splitted",
-  "19": "Merging",
-  "21": "Returning",
-  "22": "Returned",
-  "23": "WaitingSendo",
+
+module.exports.createPackaging = async (req, res) => {
+  try { 
+    const order = await Order.findOne({ _id: req.params._id })
+    
+    order.step[1] = {
+      name: order.step[1].name,
+      isCreated: true,
+      createdAt: new Date()
+    }
+
+    order.packStatus = true
+
+    await order.save()
+
+    res.status(200).send(order)
+  } catch(e) {
+    console.log(e.message)
+    res.send(500).send(Error({ message: 'Đóng gói đơn hàng thất bại !' }))
+  }
 }
+
+module.exports.createOrder = async (req,res) => {
+  try {
+    const step = [
+    {
+      name: 'Đặt hàng và duyệt',
+      isCreated: true,
+      createdAt: Date.now()
+    },
+    {
+      name: 'Đóng gói',
+      isCreated: false,
+    },
+    {
+      name: 'Xuất kho',
+      isCreated: false,
+    },
+    {
+      name: 'Hoàn thành',
+      isCreated: false,
+    },
+    {
+      name: 'Đã hủy',
+      isCreated: false,
+    },
+    ]
+
+    const order = new Order({...req.body, step })
+    await order.save()
+    res.send(order)
+  } catch(e) {
+    res.status(500).send(Error('Create order went wrong!'))
+  }
+}
+
 module.exports.getAllOrder = async (req, res) => {
   try {
     
-    const orders = await Order.find({})
+    const orders = await Order.find({ userId: req.user._id })
     
     res.send(orders)
   } catch (e) {
@@ -52,140 +158,58 @@ module.exports.getAllOrder = async (req, res) => {
   }
 
 };
-//ping from sendo
-module.exports.createOrderByPing = async (req, res) => {
-  
-  const item = req.body;
-  const created_at = new Date(item.created_date_time_stamp * 1000)
-  const wardId = item.ship_to_ward_id
-  const districtId = item.ship_to_district_id
-  const regionId = item.ship_to_region_id
-  const ward = await rp('http://localhost:5000/api/sendo/ward/'+wardId)
-  const district = await rp('http://localhost:5000/api/sendo/district/'+districtId)
-  const region = await rp('http://localhost:5000/api/sendo/region/'+regionId)
-  const order = new Order({
-    store_id: item.store_id,
-    order_number: item.order_number,
-    order_status: item.order_status,
-    //order infomation
-    create_at: created_at,
-    payment_method: payment_method[`${item.payment_method}`],
-    discount: item.voucher_value,
-    payment_status: payment_status[`${item.payment_status}`],
-    seller_note: item.note,
-    //shipping infomation
-    delivery_service: item.carrier_name,
-    tracking_number: item.tracking_number,
-    shipping_fee: item.shipping_fee,
-    //customer overview
-    customer_name: item.ship_to_contact_name,
-    customer_email: item.ship_to_contact_email,
-    customer_address: item.ship_to_address
-    +", "+ward
-    +", "+district
-    +", "+region,
-    //list item
-    item_list: item.sales_order_details,
-  })
-  try {
-    await order.save();
-    res.send(order);
-  } catch (e) {
-    res.status(500).send(Error(e));
-  }
-};
-//sync from sendo
-module.exports.createOrderBySyncSendo = async (req, res) => {
-  
-  const item = req.body;
-  const created_at = new Date(item.sales_order.created_date_time_stamp * 1000)
-  const districtId = item.sales_order.ship_to_district_id
-  const regionId = item.sales_order.ship_to_region_id
-  var district= await rp('http://localhost:5000/api/sendo/district/'+districtId)
-  var region= await rp('http://localhost:5000/api/sendo/region/'+regionId)
-  const order = new Order({
-    store_id: item.store_id,
-    order_number: item.sales_order.order_number,
-    order_status: item.sales_order.order_status,
-    //order infomation
-    create_at: created_at,
-    payment_method: item.sales_order.payment_method,
-    discount: item.sales_order.voucher_value,
-    payment_status: item.sales_order.payment_status,
-    seller_note: item.sales_order.note,
-    //shipping infomation
-    delivery_service: item.sales_order.carrier_name,
-    tracking_number: item.sales_order.tracking_number,
-    shipping_fee: item.sales_order.shipping_fee,
-    //customer overview
-    customer_name: item.sales_order.receiver_name,
-    customer_email: item.sales_order.receiver_email,
-    customer_address: item.sales_order.ship_to_address
-    +", "+item.sales_order.ship_to_ward
-    +", "+district
-    +", "+region,
-    //list item
-    item_list: item.sku_details 
-  })
-  try {
-    await order.save();
-    res.send(order);
-  } catch (e) {
-    res.status(500).send(Error(e));
-  }
-};
-//sync from lazada
-module.exports.createOrderBySyncLazada = async (req, res) => {
-  
-  const item = req.body;
-  const stringListItem = await rp("http://localhost:5000/api/lazada/order-item/"+ item.order_number)
-  const listItem = JSON.parse(stringListItem)
-  const order = new Order({
-    store_id: item.store_id,
-    order_number: item.order_number,
-    order_status: item.statuses[0],
-    //order infomation
-    create_at: item.created_at,
-    payment_method: item.payment_method,
-    discount: item.voucher,
-    payment_status: item.payment_status,
-    seller_note: item.note,
-    //shipping infomation
-    delivery_service: item.carrier_name,
-    tracking_number: item.tracking_number,
-    shipping_fee: item.shipping_fee,
-    //customer overview
-    customer_name: item.address_shipping.first_name + item.address_shipping.last_name,
-    customer_email: item.address_shipping.receiver_email,
-    customer_phone: item.address_shipping.phone,
-    customer_address: item.address_shipping.address1
-    //+", "+address_shipping.address2
-    +", "+item.address_shipping.address5
-    +", "+item.address_shipping.address4
-    +", "+item.address_shipping.address3,
 
-    //list item
-    item_list: listItem
-  })
+module.exports.getOrderById = async function (req, res) {
   try {
-    await order.save();
-    res.send(order);
+    const purchaseOrderId = req.params.id;
+    const purchaseOrder = await Order.find({ _id: purchaseOrderId })
+    res.send(purchaseOrder)
   } catch (e) {
     res.status(500).send(Error(e));
   }
 };
-module.exports.getOrderById= async (req,res) =>{
+
+module.exports.updatePayment = async (req, res) => {
   try {
-    const orderNumber = req.params.orderNumber;
-    const order = await Order.find({'order_number': orderNumber})
-    
-    res.send(order)
-  } catch (e) {
-    res.status(500).send(Error(e));
+    const order = await Order.findOne({ _id: req.params._id, userId: req.user._id })
+
+    order.paidPrice += req.body.paidPrice
+    order.paidHistory.push({ title: `Xác nhận thanh toán ${req.body.formattedPaidPrice}`, date: Date.now()})
+    if(order.paidPrice === order.totalPrice) {
+      order.paymentStatus = 'Đã thanh toán'
+    } else if(order.paidPrice >= 0 && order.paidPrice <= order.totalPrice) {
+      order.paymentStatus = 'Thanh toán một phần'
+    }
+
+    await order.save()
+    await checkComplete(req.params._id)
+
+    res.status(200).send(order)
+  } catch(e) {
+    console.log(e.message)
+    res.status(400).send(Error({ message: 'update purchase payment went wrong !!!'}))
   }
 }
 
-module.exports.deleteOrder = async (req, res) =>{
-  // isDelete = true?
-  
+module.exports.cancelOrder = async (req, res) => {
+  try {
+    const { _id } = req.params
+
+    const order = await Order.findOne({ _id })
+
+    order.orderStatus = 'Đã hủy'
+
+    order.step[4] = {
+      name: order.step[4].name,
+      isCreated: true,
+      createdAt: new Date()
+    }
+
+    await order.save()
+
+    res.status(200).send(order)
+
+  } catch(e) {
+    res.status(400).send(Error({ message: 'Hủy đơn hàng thất bại!'}))
+  }
 }

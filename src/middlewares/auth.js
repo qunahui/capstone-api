@@ -29,10 +29,11 @@ const auth = async (req, res, next) => {
     user.currentStorage = user.storages[0].storage
     delete user.storages
     
+    
     req.user = user
     req.accessToken = platformToken
     req.mongoToken = mongoToken
-
+    
     next();
 
   } catch (e) {

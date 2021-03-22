@@ -1,18 +1,20 @@
 const express = require("express");
 const router = express.Router();
 const auth = require("../../middlewares/auth");
-const controller = require("../controllers/order");
-const order = require("../models/order");
+const orderController = require("../controllers/order");
 
-router.get("/", controller.getAllOrder);
-router.get("/:orderNumber", controller.getOrderById);
+router.get("/", auth, orderController.getAllOrder)
 
-router.post("/create-order-ping", controller.createOrderByPing);
-router.post("/create-order-sync-sendo", controller.createOrderBySyncSendo);
-router.post("/create-order-sync-lazada", controller.createOrderBySyncLazada);
-//router.post("/create-order", controller.createOrderByPing);
-//router.patch("/:id", controller.updateSendoOrder); update what? 
+router.get("/:id", auth, orderController.getOrderById)
 
-//router.delete("/:id", controller.deleteSendoOrder); isDelete=true?
+router.post("/", auth, orderController.createOrder)
+
+router.get("/cancel/:_id", auth, orderController.cancelOrder)
+
+router.post("/pack/:_id", auth, orderController.createPackaging)
+
+router.post("/receipt/:_id", auth, orderController.createReceipt)
+
+router.post("/payment/:_id", auth, orderController.updatePayment)
 
 module.exports = router;
