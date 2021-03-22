@@ -4,7 +4,7 @@ const validator = require("validator");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
-const sendoCredentialSchema = {
+const sendoCredentialSchema = new Schema({
   app_key: {
     type: String,
     required: true
@@ -37,10 +37,19 @@ const sendoCredentialSchema = {
     type: String,
     required: true,
     default: 'not connected yet'
+  },
+  expires: { 
+    type: Date,
+    required: true,
   }
-}
+}, {
+  timestamps: {
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  }
+})
 
-const lazadaCredentialSchema = {
+const lazadaCredentialSchema = new Schema({
   store_name: {
     type: String,
   },
@@ -69,8 +78,21 @@ const lazadaCredentialSchema = {
     type: String,
     required: true,
     default: 'not connected yet'
+  },
+  expires: { 
+    type: Date,
+    required: true,
+  },
+  refresh_expires: {
+    type: Date,
+    required: true
   }
-}
+}, {
+  timestamps: {
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt',
+  }
+})
 
 const storageSchema = new Schema({
   id: {

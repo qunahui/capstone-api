@@ -2,29 +2,16 @@ const auth = require("../../middlewares/auth");
 const Product = require("../models/product");
 const Error = require("../utils/error");
 // const sendo = require('./sendo')
-const SendoProduct = require('../models/sendoProduct')
 const Inventory = require('../models/inventory')
 
 module.exports.linkProduct = async (req, res) => {
-  const { payload } = req.body;
-  const products = await Product.find({})
+  const {  product, platformProduct } = req.body;
+  const matchedVariants = await Product.findOne({ 
+    _id: product.productId,
+    'variants._id': product._id
+  })
 
-  await Promise.all(payload.map(async credential => {
-    if(credential.platform_name === 'sendo') {
-      //call link sendo route
-      const platformProducts = await SendoProduct.find({ store_id: credential.store_id })
-      products.map(product => {
-        platformProducts.map(platProduct => {
-          if(platProduct.store_sku === product.sku) {
-            console.log("matched: ", platProduct.name, " === ", product.name)
-          }
-        })
-      })
-    } else if(credential.platform_name === 'lazada') {
-      //call link lazada route
-    }
-  }))
-  console.log("done")
+  res.sendStatus(200)
 }
 
 module.exports.getAllProduct = async (req, res) => {

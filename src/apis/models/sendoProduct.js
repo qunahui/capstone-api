@@ -45,7 +45,7 @@ const schema = new Schema({
         type: String
     },
     variants:{
-        type: Array
+      type: Array
     },
     // attributes:{
     //     type: Array

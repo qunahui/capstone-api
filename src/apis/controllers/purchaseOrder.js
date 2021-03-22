@@ -3,6 +3,27 @@ const PurchaseOrder = require("../models/purchaseOrder")
 const Inventory = require("../models/inventory")
 const Product = require("../models/product");
 
+const checkComplete = async (_id) => {
+  try {
+    const purchaseOrder = await PurchaseOrder.findOne({ _id })
+    const { paymentStatus, instockStatus } = purchaseOrder
+    if(paymentStatus === 'Đã thanh toán' && instockStatus === true) {
+      purchaseOrder.step[2] = {
+        name: purchaseOrder.step[2].name,
+        isCreated: true,
+        createdAt: new Date()
+      }
+      purchaseOrder.orderStatus = 'Hoàn thành'
+  
+      await purchaseOrder.save()
+    } 
+  } catch(e) {
+    console.log(e.message)
+  }
+}
+
+module.exports.checkComplete = checkComplete
+
 module.exports.createReceipt = async (req,res) => {
   try {
     const { lineItems } = req.body
@@ -62,6 +83,7 @@ module.exports.createReceipt = async (req,res) => {
     purchaseOrder.instockStatus = true
 
     await purchaseOrder.save()
+    await checkComplete(req.params._id)
 
     res.status(200).send(purchaseOrder)
   } catch(e) {
@@ -131,6 +153,7 @@ module.exports.updatePurchasePayment = async (req, res) => {
     }
 
     await purchaseOrder.save()
+    await checkComplete(req.params._id)
 
     res.status(200).send(purchaseOrder)
   } catch(e) {

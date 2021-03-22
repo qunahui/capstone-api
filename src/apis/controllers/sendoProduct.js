@@ -1,11 +1,10 @@
 const auth = require("../../middlewares/auth");
 const SendoProduct = require("../models/sendoProduct");
 const Error = require("../utils/error");
-const request = require('request');
-const util = require('util');
-const { time } = require("console");
+const util = require('util')
 const rp = require('request-promise');
 const sendoProduct = require("../models/sendoProduct");
+const timeDiff = require("../utils/timeDiff");
 
 const product_status ={
   "0": "Nháp",
@@ -43,8 +42,10 @@ const createSendoProduct = async (item, { store_id }) => {
             return child.is_selected === true
         });
         element.attribute_values = arr
+        console.log(element.attribute_values)
     }); 
     variants.forEach( e => {
+      let avatar = '';
       e.variant_attributes.forEach(e1 => {
         const attribute = attributes.find((attribute)=>{
           return attribute.attribute_id === e1.attribute_id
@@ -54,7 +55,11 @@ const createSendoProduct = async (item, { store_id }) => {
         })
         e1.attribute_name = attribute.attribute_name
         e1.option_value = attribute_value.value
+        e1.attribute_img = attribute_value.attribute_img
+        avatar = attribute_value.attribute_img || ''
       })
+
+      e.avatar = avatar
     });
 
     let query = { store_id: store_id, id: item.id },
@@ -72,15 +77,7 @@ const createSendoProduct = async (item, { store_id }) => {
           link: item.link,       
           unit: item.unit_id,
           avatar: item.avatar.picture_url,
-          variants: variants.map(variant => ({
-            ...variant,
-            linkedProduct: {
-              id: '---',
-              name: '---',
-              sku: '---',
-              status: 'not connected yet',
-            }
-          })),
+          variants: variants,
           //attributes: attributes,
           voucher: item.voucher
         },
@@ -141,7 +138,7 @@ console.log("received data")
     store_sku: item.data.store_sku,
     weight: item.data.weight,
     stock_quantity: item.data.stock_quantity, // total variants quantity
-    stock_availability: item.data.stock_availability,
+    stock_availability: item.data.stock_availability, 
     status: item.data.product_status,    
     updated_date_timestamp: update_at,
     created_date_timestamp: create_at,
@@ -155,9 +152,9 @@ console.log("received data")
 
   try {
     await product.save();
-    res.send(product);
+    return res.send(product);
   } catch (e) {
-    res.status(500).send(Error(e));
+    return res.status(500).send(Error(e));
   }
 };
 
@@ -170,13 +167,15 @@ module.exports.getAllProducts = async (req, res) => {
       sendoProducts = [...sendoProducts, ...products]
     }))
 
-    res.status(200).send(sendoProducts)
+    return res.status(200).send(sendoProducts)
   } catch(e) {
-    res.status(500).send(Error({ message: 'Something went wrong !'}))
+    return res.status(500).send(Error({ message: 'Something went wrong !'}))
   }
 }
 
 module.exports.fetchProducts = async (req, res) => {
+  const { store_id } = req.body
+  const { storageId } = req.user.currentStorage
   try {
     const options = {
         'method': 'POST',
@@ -191,6 +190,19 @@ module.exports.fetchProducts = async (req, res) => {
     const response = await rp(options)
     const products = JSON.parse(response).result.data
     await Promise.all(products.map(async product => {
+      const sendoProduct = await SendoProduct.findOne({ id: product.id, store_id })
+      if(sendoProduct) {
+        const secondDiff = timeDiff(new Date(product.updated_at_timestamp*1000), new Date(sendoProduct.updated_date_timestamp)).secondsDifference
+        if(secondDiff === 0) {
+          return product;
+        } else {
+          if(secondDiff < 0) {
+            // xu ly push len api lai
+            // return;
+          }
+        }
+      }
+
       const fullProduct = await rp({
         method: 'GET',
         url: 'http://localhost:5000/api/sendo/products/' + product.id + '?access_token=' + req.accessToken,
@@ -200,14 +212,14 @@ module.exports.fetchProducts = async (req, res) => {
         }
       })
       const actuallyFullProduct = JSON.parse(fullProduct).result
-      await createSendoProduct(actuallyFullProduct, { store_id: req.body.store_id })
+      await createSendoProduct(actuallyFullProduct, { store_id })
     }))
 
-    const sendoProducts = await SendoProduct.find({ storageId: req.body.storageId})
+    const sendoProducts = await SendoProduct.find({ storageId })
 
-    res.status(200).send(sendoProducts)
+    return res.status(200).send(sendoProducts)
   } catch(error) {
-    if(error.response){
+    if (error.response) {
       const errorSerialized = {
         code: error.response.statusCode,
         message: error.response.statusMessage,
@@ -215,6 +227,63 @@ module.exports.fetchProducts = async (req, res) => {
 
       return res.status(errorSerialized.code).send(Error(errorSerialized))
     }
-    return res.status(400).send(Error({ message: "Unknown"}))
+    console.log("Fetch error: ", error.message)
+    return res.status(400).send(Error({ message: "Unknown" }))
   }
+}
+
+module.exports.pushProducts = async (req, res) => {
+  console.log("log request: ", req)
+  res.sendStatus(200)
+}
+
+module.exports.syncProducts = async (req, res, next) => {
+  const { payload } = req.body
+  //check token
+  console.clear()
+  let newCredential = null;
+  try { 
+    newCredential = await rp({
+      method: 'POST',
+      url: 'http://localhost:5000/api/sendo/login',
+      headers: {
+        'Authorization': 'Bearer ' + req.mongoToken,
+        'Platform-Token': payload.access_token
+      },
+      body: {
+        credential: payload
+      },
+      json: true
+    })
+
+  } catch(e) {
+    console.log(e.message)
+    return res.status(400).send(Error({ message: 'Lấy sendo token thất bại !'}))
+  }
+
+  console.log("new cre: ", newCredential)
+
+  //fetch products
+  try {
+    const options = {
+      method: 'POST',
+      url: 'http://localhost:5000/sendo/products/fetch',
+      headers: {
+        'Authorization': 'Bearer ' + req.mongoToken,
+        'Platform-Token': newCredential.access_token
+      },
+      body: {
+        store_id: payload.store_id
+      },
+      json: true
+    }
+
+    await rp(options, function(err, response) {
+      return res.status(200).send("Đồng bộ sendo thành công !")
+    })
+  } catch(e) {
+    console.log("sync error: ", e.message)
+    return res.status(e.response.statusCode).send(Error({ message: e.response.statusMessage}))
+  }
+
 }
