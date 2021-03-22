@@ -65,6 +65,7 @@ const createSendoProduct = async (item, { store_id }) => {
           store_sku: item.sku,
           weight: item.weight,
           stock_quantity: item.stock_quantity, // total variants quantity
+          stock_availability: item.stock_availability,
           status: item.status,    
           updated_date_timestamp: update_at,
           created_date_timestamp: create_at,
@@ -140,6 +141,7 @@ console.log("received data")
     store_sku: item.data.store_sku,
     weight: item.data.weight,
     stock_quantity: item.data.stock_quantity, // total variants quantity
+    stock_availability: item.data.stock_availability,
     status: item.data.product_status,    
     updated_date_timestamp: update_at,
     created_date_timestamp: create_at,
