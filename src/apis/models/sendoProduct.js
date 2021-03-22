@@ -23,6 +23,9 @@ const schema = new Schema({
     stock_quantity:{
         type: Number
     },
+    stock_availability:{
+        type: Boolean
+    },
     status:{
         type: String
     },
@@ -42,7 +45,7 @@ const schema = new Schema({
         type: String
     },
     variants:{
-        type: Array
+      type: Array
     },
     // attributes:{
     //     type: Array

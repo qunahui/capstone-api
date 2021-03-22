@@ -16,18 +16,21 @@ const lazadaProductSchema = new Schema({
     variants:{
         type: Array
     },
+    avatar: {
+      type: String
+    },
     primary_category:{
         type: String
     },
     attributes:{
         type: Object
     },
-    lastUpdatedAt: {
-
+    updated_date_timestamp: {
+      type: Date,
     },
-    lastUpdatedBy: {
-
-    }
+    created_date_timestamp: {
+      type: Date,
+    },
 });
 
 // schema.virtual("productDetails",{

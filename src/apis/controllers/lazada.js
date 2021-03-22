@@ -1,15 +1,13 @@
-const crypto = require('crypto')
 const { signRequest } = require('../utils/laz-sign-request')
 var request = require('request');
 const rp = require('request-promise');
 var convert = require('xml-js');
 const fs = require('fs');
-const path = require('path')
-const server = require('../../app')
 const Storage = require('../models/storage');
 const { createLazadaProduct } = require('./lazadaProduct');
 const LazadaProduct = require('../models/lazadaProduct');
 const Error = require('../utils/error')
+const timeDiff = require('../utils/timeDiff')
 
 var options = {compact: true, ignoreComment: true, spaces: 4};
 
@@ -18,8 +16,8 @@ module.exports.authorizeCredential = async (req, res) => {
     const { code, state } = req.query
     if(req.query) {
       const result = await rp({
-        method: 'GET',
-        uri: 'http://localhost:5000/api/lazada/token?code='+ code + '&state=' + state,
+        method: 'POST',
+        uri: 'http://localhost:5000/api/lazada/login?code='+ code + '&state=' + state,
         headers: {
           'Authorization': 'Bearer ' + req.mongoToken 
         }
@@ -34,13 +32,27 @@ module.exports.authorizeCredential = async (req, res) => {
 }
 
 module.exports.getAccessToken = async (req, res) => {
+    const credential = req.body.credential
+    const { currentStorage } = req.user
+
+    if(credential) {
+      const timeDifference = timeDiff(new Date(), new Date(credential.expires))
+      const isTokenAvailable = timeDifference.hoursDifference <= 0
+  
+      console.log("is token available: ", isTokenAvailable)
+  
+      if(isTokenAvailable === true) {
+        return res.status(200).send(credential)
+      }
+    }
+
     const apiUrl = 'https://auth.lazada.com/rest' 
     const apiPath=  '/auth/token/create'
     const appSecret = process.env.LAZADA_APP_SECRET
     const appKey = process.env.LAZADA_APP_KEY 
-    const {code, state} =  req.query 
+    const { code, state } =  req.query 
     const timestamp = Date.now()
-    const { storageId } = req.user.currentStorage
+    const { storageId } = currentStorage
     const commonRequestParams = {
         "app_key": appKey,
         "timestamp": timestamp,
@@ -66,12 +78,14 @@ module.exports.getAccessToken = async (req, res) => {
 
         if(response.code === '0') {
           const storage = await Storage.findById(storageId)
-
-          const insertCredentials = {
-              store_name: response.name,
+          console.log(response)
+          const insertCredential = {
+              // store_name: response.name,
               platform_name: 'lazada',
               refresh_token: response.refresh_token,
               access_token: response.access_token,
+              expires: new Date(new Date().getTime() + response.expires_in*1000),
+              refresh_expires: new Date(new Date().getTime() + response.refresh_expires_in*1000),
               status: 'connected',
               isActivated: true,
           }
@@ -88,21 +102,27 @@ module.exports.getAccessToken = async (req, res) => {
           .catch(e => e.message)
 
           const { name, seller_id } = result 
-          insertCredentials.store_name = name
-          insertCredentials.store_id = seller_id
+          insertCredential.store_name = name
+          insertCredential.store_id = seller_id
           if(storage.lazadaCredentials.length === 0) {
-              storage.lazadaCredentials = [insertCredentials]
+              storage.lazadaCredentials = [insertCredential]
           } else {
               storage.lazadaCredentials = storage.lazadaCredentials.map(i => {
                   if(i.store_name === name) {
-                      return insertCredentials
+                      return insertCredential
                   }
                   return i
               })
           }
-          await Storage.findOneAndUpdate({ _id: storageId }, storage, {}, (err, doc) => {
-              res.status(200).send(insertCredentials)
-          })
+        
+        await Storage.findOneAndUpdate({ _id: req.user.currentStorage.storageId }, {
+          $push: {
+            lazadaCredentials: insertCredential
+          }
+        })
+
+        res.status(200).send(insertCredential)
+
         } else {
           // error return from lazada
           res.status(500).send(Error({ message: 'Something went wrong' }))

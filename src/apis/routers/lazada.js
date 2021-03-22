@@ -24,7 +24,7 @@ var upload = multer({
 
 // router.get('/first-connect', controller.authorizeCredential)
 router.get('/authorize', auth, controller.authorizeCredential)
-router.get('/token', auth, controller.getAccessToken)  // t4 fix cùng hui
+router.post('/login', auth, controller.getAccessToken)  // t4 fix cùng hui
 //router.post('/sign', controller.createSign)
 
 router.get('/refresh-token/',auth, controller.refreshToken)

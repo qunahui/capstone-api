@@ -52,6 +52,9 @@ const variantSchema = new Schema({
       type: Number,
       required: true,
     },
+  }, 
+  linkedItems: {
+    type: [mongoose.Schema.Types.ObjectId]
   }
 })
 

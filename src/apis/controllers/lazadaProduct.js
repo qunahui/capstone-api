@@ -5,7 +5,8 @@ const request = require('request');
 const util = require('util');
 const { time } = require("console");
 const rp = require('request-promise');
-const { signRequest } = require('../utils/laz-sign-request')
+const { signRequest } = require('../utils/laz-sign-request');
+const timeDiff = require("../utils/timeDiff");
 
 const createLazadaProduct = async (item, additionalData) => {
   try {
@@ -31,19 +32,14 @@ const createLazadaProduct = async (item, additionalData) => {
     });
     let query = { store_id: additionalData.store_id, id: item.item_id },
         update = {
+          avatar: variants.length > 0 && variants[0].Images[0],
           store_id: additionalData.store_id,
-          variants: variants.map(variant => ({
-            ...variant,
-            linkedProduct: {
-              id: '---',
-              name: '---',
-              sku: '---',
-              status: 'not connected yet',
-            }
-          })),
+          variants: variants,
           id: item.item_id,
           primary_category: item.primary_category,
-          attributes: item.attributes
+          attributes: item.attributes,
+          updated_date_timestamp: new Date(parseInt(item.updated_time)),
+          created_date_timestamp: new Date(parseInt(item.created_time))
         },
         options = { upsert: true, new: true, setDefaultsOnInsert: true };
     
@@ -96,7 +92,8 @@ module.exports.getAllProducts = async (req, res) => {
 }
 
 module.exports.fetchProducts = async (req, res) =>{
-  console.log(req.body)
+  const { store_id } = req.body
+  const { storageId } = req.user.currentStorage
   const apiUrl = 'https://api.lazada.vn/rest' 
   const apiPath=  '/products/get'
   const appSecret = process.env.LAZADA_APP_SECRET 
@@ -107,7 +104,7 @@ module.exports.fetchProducts = async (req, res) =>{
       "app_key": appKey,
       "timestamp": timestamp,
       "sign_method": "sha256",
-      "access_token":accessToken,
+      "access_token": accessToken,
   }
   const filter = req.body.filter || "live"
   const sign = signRequest(appSecret, apiPath, {...commonRequestParams, filter})
@@ -125,13 +122,73 @@ module.exports.fetchProducts = async (req, res) =>{
       };
       //console.log(options)
       const { data } = await rp(options).then(res => JSON.parse(res))
-      console.log("options: ", options)
       const { products } = data
-      await Promise.all(products.map(async product => await createLazadaProduct(product, { store_id: req.body.store_id })))
+      await Promise.all(products.map(async product => {
+        const lazadaProduct = await LazadaProduct.findOne({ id: product.item_id, store_id })
+        if(lazadaProduct) {
+          const secondDiff = timeDiff(new Date(parseInt(product.updated_time)), new Date(lazadaProduct.updated_date_timestamp)).secondsDifference
+          if(secondDiff === 0) {
+            return product;
+          } else if (secondDiff < 0) {
+            //xu ly push len api lazada
+            //return;
+          }
+        }
+
+        await createLazadaProduct(product, { store_id })
+      }))
   } catch (e) {
       res.status(500).send(Error(e));
   }
   const lazadaProducts = await LazadaProduct.find({ storageId: req.body.storageId, store_id: req.body.store_id })
   
   res.status(200).send(lazadaProducts)
+}
+
+module.exports.syncProducts = async (req, res) => {
+  const { payload } = req.body
+  //check token
+  console.clear()
+  let newCredential = null;
+  try { 
+    newCredential = await rp({
+      method: 'POST',
+      url: 'http://localhost:5000/api/lazada/login',
+      headers: {
+        'Authorization': 'Bearer ' + req.mongoToken,
+        'Platform-Token': payload.access_token
+      },
+      body: {
+        credential: payload
+      },
+      json: true
+    })
+
+  } catch(e) {
+    console.log(e.message)
+    return res.status(400).send(Error({ message: 'Lấy lazada token thất bại !'}))
+  }
+
+  //fetch products
+  try {
+    const options = {
+      method: 'POST',
+      url: 'http://localhost:5000/lazada/products/fetch',
+      headers: {
+        'Authorization': 'Bearer ' + req.mongoToken,
+        'Platform-Token': newCredential.access_token
+      },
+      body: {
+        store_id: payload.store_id
+      },
+      json: true
+    }
+
+    await rp(options, function(err, response) {
+      return res.status(200).send("Đồng bộ thành công !")
+    })
+  } catch(e) {
+    return res.status(e.response.statusCode).send(Error({ message: e.response.statusMessage}))
+  }
+
 }
