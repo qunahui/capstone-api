@@ -46,6 +46,12 @@ const sendoVariantSchema = new Schema({
   },
 })
 
+sendoVariantSchema.virtual("linkedDetails",{
+  ref: "Product",
+  localField: "linkedId",
+  foreignField: "variants._id"
+})
+
 const schema = new Schema({
     store_id:{
         type: String
@@ -105,11 +111,6 @@ const schema = new Schema({
   }
 );
 
-// schema.virtual("productDetails",{
-//   ref:"productDetail",
-//   localField: "_id",
-//   foreignField: "productID"
-// })
 
 
 

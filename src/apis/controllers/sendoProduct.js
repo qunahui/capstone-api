@@ -163,12 +163,14 @@ console.log("received data")
 module.exports.getAllProducts = async (req, res) => {
   try {
     const { storeIds } = req.query;
+    let sendoProducts = []
     await Promise.all([...storeIds].map(async storeId => {
       const products = await SendoProduct.find({ store_id: storeId })
         
+      sendoProducts = [...sendoProducts, ...products]
     }))
-    
-    res.status(200).send(products)
+
+    return res.status(200).send(sendoProducts)
   } catch(e) {
     console.log("err: ", e.message)
     return res.status(500).send(Error({ message: 'Something went wrong !'}))
