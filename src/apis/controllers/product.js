@@ -1,17 +1,51 @@
 const auth = require("../../middlewares/auth");
+const mongoose = require("mongoose")
 const Product = require("../models/product");
 const Error = require("../utils/error");
 // const sendo = require('./sendo')
-const Inventory = require('../models/inventory')
+const Inventory = require('../models/inventory');
+const SendoProduct = require("../models/sendoProduct");
 
 module.exports.linkProduct = async (req, res) => {
-  const {  product, platformProduct } = req.body;
-  const matchedVariants = await Product.findOne({ 
-    _id: product.productId,
-    'variants._id': product._id
-  })
+  const { variant, platformVariant } = req.body;
+  console.clear()
+  // console.log("Variant: ", variant)
+  // console.log("Platform: ", platformVariant)
+  try {
+    if(platformVariant.platform === 'sendo') {
+      // link sendoP to P
+      await SendoProduct.updateOne({
+        _id: platformVariant.productId,
+        variants: {
+          $elemMatch: {
+            _id: platformVariant._id
+          }
+        }
+      }, {
+        $set: {
+          "variants.$.linkedId": variant._id
+        }
+      })
+      // link P to sendoP
+      await Product.updateOne({
+        _id: variant.productId,
+        variants: {
+          $elemMatch: {
+            _id: variant._id
+          }
+        }
+      }, {
+        $addToSet: {
+          "variants.$.linkedIds": new mongoose.Types.ObjectId(platformVariant._id)
+        }
+      })
+    }
 
-  res.sendStatus(200)
+    res.status(200).send("Liên kết thành công !")
+  } catch(e) {
+    console.log("Liên kết thất bại: ", e.message)
+    res.status(400).send("Liên kết thất bại")
+  }
 }
 
 module.exports.getAllProduct = async (req, res) => {

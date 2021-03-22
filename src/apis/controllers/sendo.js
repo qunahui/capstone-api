@@ -105,7 +105,7 @@ module.exports.getSendoToken = async (req, res) => {
           }
         })
 
-        const newCredential = await Storage.findOne({
+        const newStorage = await Storage.findOne({
           id: currentStorage.storageId,
           sendoCredentials: {
             $elemMatch: {
@@ -115,7 +115,7 @@ module.exports.getSendoToken = async (req, res) => {
           }
         })
 
-        return res.status(200).send(newCredential)
+        return res.status(200).send(newStorage.sendoCredentials.find(cre => cre._id === credential._id))
       })
 
     } catch(e) {

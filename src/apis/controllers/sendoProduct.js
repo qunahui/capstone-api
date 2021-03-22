@@ -3,7 +3,7 @@ const SendoProduct = require("../models/sendoProduct");
 const Error = require("../utils/error");
 const util = require('util')
 const rp = require('request-promise');
-const sendoProduct = require("../models/sendoProduct");
+const Product = require("../models/product");
 const timeDiff = require("../utils/timeDiff");
 
 const product_status ={
@@ -18,16 +18,16 @@ const product_type ={
   "2": "Voucher/vé giấy",
   "3": "E-voucher/Vé điện tử"
 }
-const unit ={
-  "1": "Cái",
-  "2": "Bộ",
-  "3": "Chiếc",
-  "4": "Đôi",
-  "5": "Hộp",
-  "6": "Cuốn",
-  "7": "Chai",
-  "8": "Thùng"
-}
+const unit = [
+  "Cái",
+  "Bộ",
+  "Chiếc",
+  "Đôi",
+  "Hộp",
+  "Cuốn",
+  "Chai",
+  "Thùng"
+]
 
 
 const createSendoProduct = async (item, { store_id }) => {
@@ -64,21 +64,24 @@ const createSendoProduct = async (item, { store_id }) => {
 
     let query = { store_id: store_id, id: item.id },
         update = {
+          // id: item.id,
+          // name: item.name,
+          // store_sku: item.sku,
+          // weight: item.weight,
+          // stock_quantity: item.stock_quantity, // total variants quantity
+          // status: item.status,    
+          // link: item.link,       
+          // voucher: item.voucher,
+          // variants: variants,
+          ...item,
+          variants,
           store_id: store_id,
-          id: item.id,
-          name: item.name,
-          store_sku: item.sku,
-          weight: item.weight,
-          stock_quantity: item.stock_quantity, // total variants quantity
-          status: item.status,    
+          unit: unit[item.unit_id - 1],
+          unitId: item.unit_id,
+          avatar: item.avatar.picture_url,
           updated_date_timestamp: update_at,
           created_date_timestamp: create_at,
-          link: item.link,       
-          unit: item.unit_id,
-          avatar: item.avatar.picture_url,
-          variants: variants,
           //attributes: attributes,
-          voucher: item.voucher
         },
         options = { upsert: true, new: true, setDefaultsOnInsert: true };
   
@@ -160,14 +163,14 @@ console.log("received data")
 module.exports.getAllProducts = async (req, res) => {
   try {
     const { storeIds } = req.query;
-    let sendoProducts = []
     await Promise.all([...storeIds].map(async storeId => {
       const products = await SendoProduct.find({ store_id: storeId })
-      sendoProducts = [...sendoProducts, ...products]
+        
     }))
-
-    return res.status(200).send(sendoProducts)
+    
+    res.status(200).send(products)
   } catch(e) {
+    console.log("err: ", e.message)
     return res.status(500).send(Error({ message: 'Something went wrong !'}))
   }
 }
@@ -238,7 +241,7 @@ module.exports.pushProducts = async (req, res) => {
 
 module.exports.syncProducts = async (req, res, next) => {
   const { payload } = req.body
-  //check token
+  //check
   console.clear()
   let newCredential = null;
   try { 
