@@ -44,9 +44,9 @@ const schema = new Schema({
     avatar:{
         type: String
     },
-    variants:{
-      type: Array
-    },
+    // variants:{
+    //   type: Array
+    // },
     // attributes:{
     //     type: Array
     // },
@@ -56,10 +56,10 @@ const schema = new Schema({
   }
 );
 
-// schema.virtual("productDetails",{
-//   ref:"productDetail",
-//   localField: "_id",
-//   foreignField: "productID"
-// })
+schema.virtual("variant",{
+  ref:"variant",
+  localField: "_id",
+  foreignField: "flatformId"
+})
 
 module.exports = mongoose.model("sendoProduct", schema);

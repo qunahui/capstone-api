@@ -8,4 +8,7 @@ router.get('/products', controller.getAllProducts)
 router.post('/products/fetch', auth, controller.fetchProducts)
 router.post('/products/push', auth, controller.pushProducts)
 router.post('/products/sync', auth, controller.syncProducts)
+
+router.get('/testing', controller.testing)
+
 module.exports = router;

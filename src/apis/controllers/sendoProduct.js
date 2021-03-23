@@ -1,9 +1,10 @@
 const auth = require("../../middlewares/auth");
 const SendoProduct = require("../models/sendoProduct");
+const Product = require("../models/product");
 const Error = require("../utils/error");
 const util = require('util')
 const rp = require('request-promise');
-const sendoProduct = require("../models/sendoProduct");
+//const sendoProduct = require("../models/sendoProduct");
 const timeDiff = require("../utils/timeDiff");
 
 const product_status ={
@@ -286,4 +287,24 @@ module.exports.syncProducts = async (req, res, next) => {
     return res.status(e.response.statusCode).send(Error({ message: e.response.statusMessage}))
   }
 
+}
+
+module.exports.testing = async (req, res) => {
+  const id = 39297530
+  const sendoProduct = await SendoProduct.findOne({id: id})
+  .populate('variants.linkedId.$')
+  .populate({
+      path: 'product',
+      populate: {path: 'variants.linkedId.$'}
+  })
+
+
+
+
+  console.log(sendoProduct.variants[0].linkedId)
+  const linkedId = sendoProduct.variants[0].linkedId
+
+  const product = await Product.findOne({"variants._id": linkedId}, {'variants.$': 1})
+
+  res.send(sendoProduct)
 }
