@@ -324,7 +324,15 @@ module.exports.createProduct = async (req, res) =>{
             }, options, function(error, result) {
               if (!error) {
                 if (!result) {
-                  result = new SendoVariant(update);
+                  result = new SendoVariant({
+                    ...variant,
+                    sku: variant.variant_sku,
+                    Status: Status,
+                    price: variant.variant_price,
+                    special_price: variant.variant_special_price,
+                    quantity: variant.variant_quantity,
+                    platformId: res._id
+                  });
                 }
                 result.save().then((res) => {
                   console.log("save: ", res.id)

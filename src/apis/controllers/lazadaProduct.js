@@ -248,7 +248,12 @@ module.exports.createProduct = async (req, res) => {
             }, options, function(error, result) {
               if (!error) {
                 if (!result) {
-                  result = new LazadaVariant(update);
+                  result = new LazadaVariant( {
+                    ...variant,
+                    sku: variant.SellerSku,
+                    avatar: variant.Images,
+                    platformId: res._id
+                  });
                 }
                 result.save().then((res) => {
                   console.log("save: ", res.id)
