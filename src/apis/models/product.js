@@ -53,7 +53,7 @@ const variantSchema = new Schema({
       required: true,
     },
   }, 
-  linkedItems: {
+  linkedIds: {
     type: [mongoose.Schema.Types.ObjectId]
   }
 })
@@ -83,6 +83,7 @@ const productSchema = new Schema({
   name:{
     type: String,
     required: true,
+    ref: 'productName'
   },
   options: [{
     optionName: {
