@@ -10,4 +10,7 @@ router.post('/products/fetch', auth, controller.fetchProducts)
 router.post('/products/push', auth, async (req, res) => { res.sendStatus(200) })
 router.post('/products/sync', auth, controller.syncProducts)
 
+router.post("/product", controller.createProduct);
+
+router.get("/product/:id", controller.getProductById);
 module.exports = router;

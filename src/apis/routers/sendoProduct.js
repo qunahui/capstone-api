@@ -12,4 +12,9 @@ router.post('/products/push', auth, controller.pushProducts)
 
 router.post('/products/sync', auth, controller.syncProducts)
 
+router.post('/product', controller.createProduct)
+
+router.get('/product/:id', controller.getProductById)
+
+
 module.exports = router;

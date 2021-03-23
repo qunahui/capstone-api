@@ -5,11 +5,14 @@ const validator = require("validator");
 
 const variantSchema = new Schema({
   // chung
-  attributes:{
+  variant_attributes:{
     type: Array
   },
   sku:{
     type: String
+  },
+  Status:{
+    type: String // can nhac
   },
   price:{
     type: Number
@@ -26,37 +29,9 @@ const variantSchema = new Schema({
   platformId:{
     type: mongoose.Schema.Types.ObjectId,
     required: true,
-    refPath: "onModel"
-  },
-  onModel: {
-    type: String,
-    required: true,
-    enum: ['sendoProduct', 'lazadaProduct']
+    ref: "lazadaProduct"
   },
 
-  //rieng
-  //sendo
-  variant_is_promotion:{
-    type: Boolean
-  },
-  special_price:{
-    type: Number
-  },
-  variant_promotion_start_date_timestamp:{
-    type: Date
-  },
-  variant_promotion_end_date_timestamp:{
-    type: Date
-  },
-  variant_is_flash_sales:{
-    type: Boolean
-  },
-  variant_campaign_status:{
-    type: String
-  },
-  variant_attribute_hash:{ // quan trong
-    type: String
-  },
   //lazada
   package_width:{
     type: String
@@ -82,9 +57,6 @@ const variantSchema = new Schema({
   ShopSku:{
     type: String
   },
-  Status:{
-    type: String // can nhac
-  },
   Url:{
     type: String
   }
@@ -93,4 +65,4 @@ const variantSchema = new Schema({
 
 
 
-module.exports = mongoose.model("Variant", productSchema);
+module.exports = mongoose.model("lazadaVariant", variantSchema);
