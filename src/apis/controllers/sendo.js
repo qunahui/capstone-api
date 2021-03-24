@@ -485,6 +485,34 @@ module.exports.updateProduct = async (req, res) => {
       res.status(500).send(Error(e));
   }
 }
+module.exports.updateMultiProduct = async (req, res) =>{
+  
+  const items = req.body
+  
+  try {
+      const options = {
+          'method': 'POST',
+          'url': 'https://open.sendo.vn/api/partner/product/list',
+          'headers': {
+            'Authorization': 'bearer '+ req.accessToken,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(items)
+        };
+        
+      request(options, function (error, response) {
+        if (error) throw new Error(error);
+
+        console.log(response.body)
+        console.log(response.statusCode)
+
+        res.status(response.statusCode).send(response.body)
+          
+        });
+  } catch (e) {
+      res.status(500).send(Error(e));
+  }
+}
 module.exports.deleteProductOnSendo = async (req, res) => {
  
   const productId = req.params.id;

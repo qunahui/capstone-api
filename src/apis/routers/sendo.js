@@ -70,6 +70,7 @@ router.get('/orders/:id', auth, controller.getOrderByIdOnSendo)
 
 router.put('/orders/:id', auth, controller.updateOrderStatus)
 router.patch('/products/:id', auth, controller.updateProduct) 
+router.patch('/products/', auth, controller.updateMultiProduct) 
 router.delete("/products/:id", auth, controller.deleteProductOnSendo);
 module.exports = router;
 

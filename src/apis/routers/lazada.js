@@ -30,7 +30,7 @@ router.post('/login', auth, controller.getAccessToken)  // t4 fix cùng hui
 router.get('/refresh-token/',auth, controller.refreshToken)
 
 router.get('/products/:id', auth, controller.getProductById)
-
+router.get('/products/seller-sku/:id', auth, controller.getProductBySellerSku)
 router.get('/category-tree', auth, controller.getCategoryTree) // dont use :)
 router.get('/attribute/:id', controller.getAttributes)
 router.get('/brands', auth, controller.getBrands) //dont know what it use for
@@ -41,7 +41,8 @@ router.get('/seller', auth, controller.getSellerInfo)
 router.get('/seller-metrics', auth, controller.getSellerMetrics)
 router.post('/update-seller-email', auth, controller.updateSellerEmail) //not working
 router.post('/upload-image', upload.single('image') ,auth , controller.uploadImage)
-router.patch('/products/:sellerSku',auth, controller.updateProduct)
+//router.patch('/products/:sellerSku',auth, controller.updateProduct)  //api cua laz thay doi
+router.patch('/products/',auth, controller.updateProduct)
 router.post('/products', auth, controller.createProductOnLazada)
 router.delete('/products/:sellerSku', auth, controller.deleteProduct)
 

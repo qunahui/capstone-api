@@ -7,6 +7,8 @@ const { time } = require("console");
 const rp = require('request-promise');
 const { signRequest } = require('../utils/laz-sign-request');
 const timeDiff = require("../utils/timeDiff");
+const LazadaVariant = require("../models/lazadaVariant");
+
 
 const createLazadaProduct = async (item, additionalData) => {
   try {
@@ -191,4 +193,86 @@ module.exports.syncProducts = async (req, res) => {
     return res.status(e.response.statusCode).send(Error({ message: e.response.statusMessage}))
   }
 
+}
+
+module.exports.createProduct = async (req, res) => {
+  try {
+    const item = req.body // change this
+    const stringAttributes = await rp("http://localhost:5000/api/lazada/attribute/"+ item.primary_category)
+    const attributes = JSON.parse(stringAttributes)
+    const variants = item.skus
+    const attribute_sale_props = attributes.filter((attribute)=>{
+      return attribute.is_sale_prop === 1
+    })
+    variants.forEach(variant => {
+      const variant_attributes = []
+      attribute_sale_props.forEach(prop => {
+        const attribute_name = prop.name
+        const option_value = variant[`${attribute_name}`]
+        variant_attributes.push({
+          "attribute_name": attribute_name,
+          "option_value": option_value
+        })
+        delete variant[`${attribute_name}`]
+      });
+      variant.variant_attributes = variant_attributes
+
+    });
+    let query = { store_id: '123', id: item.item_id }, // change this
+        update = {
+          avatar: variants.length > 0 && variants[0].Images[0],
+          store_id: '123',
+          id: item.item_id,
+          primary_category: item.primary_category,
+          attributes: item.attributes,
+          updated_date_timestamp: new Date(parseInt(item.updated_time)),
+          created_date_timestamp: new Date(parseInt(item.created_time))
+        },
+        options = { upsert: true, new: true, setDefaultsOnInsert: true };
+    
+    await LazadaProduct.findOneAndUpdate(query, update, options, function(error, result) {
+      if (!error) {
+        if (!result) {
+          result = new LazadaProduct(update);
+        }
+
+        result.save().then((res) => {
+          console.log("save: ", res._id)
+
+          variants.forEach(async (variant)=>{
+            await LazadaVariant.findOneAndUpdate({sku: variant.SellerSku, platformId: res._id}, {
+              ...variant,
+              sku: variant.SellerSku,
+              avatar: variant.Images,
+              platformId: res._id
+            }, options, function(error, result) {
+              if (!error) {
+                if (!result) {
+                  result = new LazadaVariant( {
+                    ...variant,
+                    sku: variant.SellerSku,
+                    avatar: variant.Images,
+                    platformId: res._id
+                  });
+                }
+                result.save().then((res) => {
+                  console.log("save: ", res.id)
+                });
+              }
+            });
+          }) 
+        });
+      } 
+    });
+  } catch(e) {
+    console.log(e.message)
+  }
+}
+
+
+module.exports.getProductById = async (req, res) => {
+  const id = req.params.id
+  const lazadaproduct = await LazadaProduct.find({}).populate('lazadaVariants').lean()
+
+  res.send(lazadaproduct)
 }

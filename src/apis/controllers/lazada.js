@@ -174,7 +174,6 @@ module.exports.refreshToken = async (req, res) =>{
                 }
             });
 
-
             await Storage.updateOne({_id: storage._id}, storage, { upsert: true})
            
             
@@ -247,6 +246,46 @@ module.exports.getProductById = async (req, res) =>{
             'method': 'GET',
             'url': apiUrl+apiPath+
             '?item_id='+item_id+
+            '&app_key='+appKey+
+            '&sign_method=sha256&timestamp='+timestamp+
+            '&access_token='+accessToken+
+            '&sign='+sign,
+            'headers': {
+            }
+        };
+        console.log(options)
+        request(options, function (error, response) {
+            //if (error) throw new Error(error);
+            //console.log(response.body);
+            const product = JSON.parse(response.body)
+            res.send(product)
+        });
+    } catch (e) {
+        res.status(500).send(Error(e));
+    }
+}
+module.exports.getProductBySellerSku= async (req, res) =>{
+    
+    const apiUrl = 'https://api.lazada.vn/rest' 
+    const apiPath=  '/product/item/get'
+    const appSecret = process.env.LAZADA_APP_SECRET
+    const appKey = process.env.LAZADA_APP_KEY 
+    let accessToken =  req.accessToken
+    
+    const timestamp = Date.now()
+    const commonRequestParams = {
+        "app_key": appKey,
+        "timestamp": timestamp,
+        "sign_method": "sha256",
+        "access_token":accessToken,
+    }
+    const seller_sku = req.params.id
+    const sign = signRequest(appSecret, apiPath, {...commonRequestParams, seller_sku})
+    try {
+        var options = {
+            'method': 'GET',
+            'url': apiUrl+apiPath+
+            '?seller_sku='+seller_sku+
             '&app_key='+appKey+
             '&sign_method=sha256&timestamp='+timestamp+
             '&access_token='+accessToken+
@@ -398,7 +437,7 @@ module.exports.getCategorySuggestion = async (req, res) =>{
     const apiPath=  '/product/category/suggestion/get'
     const appSecret = process.env.LAZADA_APP_SECRET
     const appKey = process.env.LAZADA_APP_KEY
-    const accessToken =  "500005000282pCawUSfbySlxELBNZvxde1hVjqrd1c60dd3csukWdjU9syzPtBwi" // goi db
+    const accessToken =  req.accessToken //acv 
     const timestamp = Date.now()
     const product_name = req.query.name
     const commonRequestParams = {
@@ -542,6 +581,60 @@ module.exports.uploadImage = async (req, res) =>{
     }
 }
 
+// module.exports.updateProduct = async (req, res) =>{
+//     const apiUrl = 'https://api.lazada.vn/rest' 
+//     const apiPath=  '/product/update'
+//     const appSecret = process.env.LAZADA_APP_SECRET
+//     const appKey = process.env.LAZADA_APP_KEY
+//     const accessToken =  req.accessToken 
+//     const timestamp = Date.now()
+//     const data = {
+//         "Request": {
+//             "Product": {
+//                 "Skus": {
+//                     "Sku": [
+//                         {
+//                             "SellerSku": req.params.sellerSku,
+//                             ...req.body
+//                         }
+//                     ]   
+//                 }
+//             }
+//         }
+//     }
+//     const payload = '<?xml version="1.0" encoding="UTF-8" ?>'+ convert.js2xml(data, {compact: true, ignoreComment: true, spaces: 4})
+    
+//     const commonRequestParams = {
+//         "app_key": appKey,
+//         "timestamp": timestamp,
+//         "sign_method": "sha256",
+//         "access_token":accessToken
+//     }
+//     const sign = signRequest(appSecret, apiPath, {...commonRequestParams, payload})
+//     const encodePayload = encodeURI(payload)
+//     try {
+//         var options = {
+//             'method': 'POST',
+//             'url': apiUrl+apiPath+
+//             '?payload='+encodePayload+
+//             '&app_key='+appKey+
+//             '&sign_method=sha256&timestamp='+timestamp+
+//             '&access_token='+accessToken+
+//             '&sign='+sign,
+//             'headers': {
+//             }
+//         };
+//         //console.log(options)
+//         request(options, function (error, response) {
+//             if (error) throw new Error(error);
+            
+//             res.status(response.statusCode).send(response.body)
+//         });
+//     } catch (e) {
+//         res.status(500).send(Error(e));
+//     }
+    
+// }
 module.exports.updateProduct = async (req, res) =>{
     const apiUrl = 'https://api.lazada.vn/rest' 
     const apiPath=  '/product/update'
@@ -549,20 +642,7 @@ module.exports.updateProduct = async (req, res) =>{
     const appKey = process.env.LAZADA_APP_KEY
     const accessToken =  req.accessToken 
     const timestamp = Date.now()
-    const data = {
-        "Request": {
-            "Product": {
-                "Skus": {
-                    "Sku": [
-                        {
-                            "SellerSku": req.params.sellerSku,
-                            ...req.body
-                        }
-                    ]   
-                }
-            }
-        }
-    }
+    const data = req.body
     const payload = '<?xml version="1.0" encoding="UTF-8" ?>'+ convert.js2xml(data, {compact: true, ignoreComment: true, spaces: 4})
     
     const commonRequestParams = {
@@ -596,7 +676,6 @@ module.exports.updateProduct = async (req, res) =>{
     }
     
 }
-
 module.exports.createProductOnLazada = async (req, res) =>{
     const apiUrl = 'https://api.lazada.vn/rest' 
     const apiPath=  '/product/create'
@@ -975,7 +1054,7 @@ module.exports.cancelOrderOnLazada = async (req, res) =>{
     const timestamp = Date.now()
     const reason_detail = req.body.reason_detail // not required
     const reason_id = req.body.reason_id
-    const order_item_id = req.params.id
+    const order_seller_sku = req.params.id
     const commonRequestParams = {
         "app_key": appKey,
         "timestamp": timestamp,

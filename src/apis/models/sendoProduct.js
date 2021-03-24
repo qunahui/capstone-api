@@ -3,49 +3,6 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 const validator = require("validator");
 
-
-const sendoVariantSchema = new Schema({
-  linkedId: {
-    type: mongoose.Schema.Types.ObjectId,
-  },
-  avatar: {
-    type: String
-  },
-  variant_attributes: {
-    type: Array,
-  },
-  variant_is_promotion: {
-    type: Boolean,
-  },
-  variant_sku: {
-    type: String,
-  },
-  variant_price: {
-    type: Number,
-  },
-  variant_special_price: {
-    type: Number,
-  },
-  variant_quantity: {
-    type: Number,
-  },
-  variant_is_flash_sales: {
-    type: Boolean,
-  },
-  variant_campaign_status: {
-    type: Number,
-  },
-  variant_promotion_start_date_timestamp: {
-    type: Number,
-  },
-  variant_promotion_end_date_timestamp: {
-    type: Number,
-  },
-  variant_attribute_hash: {
-    type: String,
-  },
-})
-
 const schema = new Schema({
     store_id:{
         type: String
@@ -55,7 +12,7 @@ const schema = new Schema({
         unique: true
     },
     price: {
-      type: Number,
+        type: Number,
     },
     name:{
         type: String
@@ -88,24 +45,20 @@ const schema = new Schema({
         type: String
     },
     unitId: {
-      type: Number
+        type: Number
     },
     avatar:{
         type: String
-    },
-    variants:{
-      type: [sendoVariantSchema]
-    },
-    linkedId: {
-      type: mongoose.Schema.Types.ObjectId
     },
     voucher:{
         type: Object
     },
   }
 );
-
-
-
+schema.virtual("sendoVariants",{
+    ref: "sendoVariant",
+    localField: "_id",
+    foreignField: "platformId"
+  })
 
 module.exports = mongoose.model("sendoProduct", schema);
