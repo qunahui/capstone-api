@@ -1,62 +1,5 @@
-const { Decimal128, Timestamp, ObjectId } = require("mongodb");
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
-const validator = require("validator");
-
-const variantSchema = new Schema({
-  avatar: {
-    type: String,
-  },
-  name:{
-    type: String,
-    required: true
-  },
-  options: [{
-    optionName: {
-      type: String,
-    },
-    optionValue: {
-      type: String,
-    }
-  }],
-  sku: {
-    type: String,
-    required: true
-  },
-  retailPrice: {
-    type: Number,
-    required: true
-  },
-  wholeSalePrice: {
-    type: Number,
-    required: true
-  },
-  importPrice: {
-    type: Number,
-    required: true
-  },
-  weightValue:{
-    type: Number,
-    required: true
-  },
-  weightUnit:{
-    type: String,
-    required: true
-  },
-  inventories: {
-    initPrice: {
-      type: Number,
-      required: true,
-    },
-    initStock: {
-      type: Number,
-      required: true,
-    },
-  }, 
-  linkedIds: {
-    type: [mongoose.Schema.Types.ObjectId]
-  }
-})
 
 const productSchema = new Schema({
   avatar: [{
@@ -83,7 +26,6 @@ const productSchema = new Schema({
   name:{
     type: String,
     required: true,
-    ref: 'productName'
   },
   options: [{
     optionName: {
@@ -129,7 +71,7 @@ const productSchema = new Schema({
   updatedBy: {
     type: String,
   },
-  variants: [variantSchema],
+  // variants: [variantSchema],
 }, {
   timestamps: {
     createdAt: 'createdAt',
@@ -137,10 +79,10 @@ const productSchema = new Schema({
   }
 });
 
-// schema.virtual("productDetails",{
-//   ref:"productDetail",
-//   localField: "_id",
-//   foreignField: "productID"
-// })
+productSchema.virtual("variants",{
+  ref:"Variant",
+  localField: "_id",
+  foreignField: "productId"
+})
 
 module.exports = mongoose.model("Product", productSchema);

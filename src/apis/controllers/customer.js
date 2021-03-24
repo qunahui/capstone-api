@@ -30,7 +30,6 @@ module.exports.createCustomer = async (req, res) => {
 module.exports.getAllCustomer = async (req, res) => {
   try {
     const customers = await Customer.find({ userId: req.user._id })
-    console.log("Found: ", customers)
     res.send(customers)
   } catch (e) {
     res.status(500).send(Error(e));

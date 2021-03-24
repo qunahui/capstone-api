@@ -1,7 +1,7 @@
 const Error = require("../utils/error");
 const Order = require("../models/order")
 const Inventory = require("../models/inventory")
-const Product = require("../models/product");
+const Variant = require("../models/variant")
 
 const checkComplete = async (_id) => {
   try {
@@ -32,46 +32,25 @@ module.exports.createReceipt = async (req,res) => {
     
     await Promise.all(lineItems.map(async (item) => {
       const variantId = item._id
-      const productId = item.productId
-      const product = await Product.findOne({ _id: productId }).lean()
-      const newVariants = await Promise.all(product.variants.map(async (variant) => {
-        variant.options.map(option => {
-          return option
-        })
+      const mongoVariant = await Variant.findOne({ _id : variantId })
+      const newStock = mongoVariant.inventories.initStock - item.quantity
+      
+      mongoVariant.inventories.initStock = newStock;
+      await mongoVariant.save();
 
-        if(variant._id.toString() === variantId) {
-          const newStock = variant.inventories.initStock - item.quantity
-          const inventory = new Inventory({
-            variantId: item._id,
-            actionName: '	Xuất kho giao hàng cho khách/shipper',
-            change: {
-              amount: item.quantity,
-              type: 'Giảm'
-            },
-            instock: newStock,
-            reference: order.code,
-            price: item.price,
-          })
-
-          await inventory.save()
-
-          return {
-            ...variant,
-            inventories: {
-              ...variant.inventories,
-              initStock: newStock,
-            }
-          }
-        }
-        return variant
-      }))
-
-      product.variants = newVariants;
-      product.options.map(option => {
-        return option
+      const inventory = new Inventory({
+        variantId,
+        actionName: 'Xuất kho giao hàng cho khách/shipper',
+        change: {
+          amount: item.quantity,
+          type: 'Giảm'
+        },
+        instock: newStock,
+        reference: order.code,
+        price: item.price,
       })
 
-      await Product.findOneAndUpdate({ _id: productId }, product, {})
+      await inventory.save()
     }))
 
     order.step[2] = {
@@ -138,12 +117,13 @@ module.exports.createOrder = async (req,res) => {
       isCreated: false,
     },
     ]
-
     const order = new Order({...req.body, step })
+    
     await order.save()
     res.send(order)
   } catch(e) {
-    res.status(500).send(Error('Create order went wrong!'))
+    console.log(e.message)
+    res.status(500).send(Error({ message: 'Create order went wrong!'}))
   }
 }
 
