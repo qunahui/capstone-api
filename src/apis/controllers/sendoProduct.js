@@ -4,12 +4,11 @@ const Product = require("../models/product");
 const Error = require("../utils/error");
 const util = require('util')
 const rp = require('request-promise');
+const Product = require("../models/product");
+const Variant = require("../models/product");
 const timeDiff = require("../utils/timeDiff");
-const { populate } = require("../models/sendoProduct");
-const e = require("express");
+const mongoose = require('mongoose')
 const SendoVariant = require("../models/sendoVariant");
-const { ObjectId } = require('mongodb');
-
 
 const product_status ={
   "0": "Nháp",
@@ -115,7 +114,14 @@ module.exports.getAllProducts = async (req, res) => {
     let sendoProducts = []
     await Promise.all([...storeIds].map(async storeId => {
       const products = await SendoProduct.find({ store_id: storeId })
-        
+
+      // await Promise.all(products.map(async product => {
+      //   await Promise.all(product.variants.map(async variant => {
+      //     console.log("find match ", variant.linkedId)
+
+      //   }))
+      // }))
+
       sendoProducts = [...sendoProducts, ...products]
     }))
 

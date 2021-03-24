@@ -4,6 +4,7 @@ const Product = require("../models/product");
 const Error = require("../utils/error");
 // const sendo = require('./sendo')
 const Inventory = require('../models/inventory');
+const Variant = require('../models/variant')
 const SendoProduct = require("../models/sendoProduct");
 
 module.exports.linkProduct = async (req, res) => {
@@ -51,8 +52,8 @@ module.exports.linkProduct = async (req, res) => {
 module.exports.getAllProduct = async (req, res) => {
   try {
     
-    const products = await Product.find({})
-    
+    const products = await Product.find({}).populate('variants').lean()
+
     res.send(products)
   } catch (e) {
     res.status(500).send(Error(e));
@@ -63,7 +64,8 @@ module.exports.getAllProduct = async (req, res) => {
 module.exports.getMMSProductById = async function (req, res) {
   try {
     const productId = req.params.id;
-    const product = await Product.find({ _id: productId })
+    const product = await Product.find({ _id: productId }).populate('variants').lean()
+
     res.send(product)
   } catch (e) {
     res.status(500).send(Error(e));
@@ -73,13 +75,16 @@ module.exports.getMMSProductById = async function (req, res) {
 module.exports.createMMSProduct = async (req, res) => {
   try {
     const product = new Product({...req.body});
-
+    let configVariant = []
     await product.save();
 
     if(req.body.isConfigInventory === true) {
-      await Promise.all(product.variants.map(async (variant) => {
+      configVariant = await Promise.all(req.body.variants.map(async (variant) => {
+        const mongoVariant = new Variant({ ...variant, productId: product._id })
+        await mongoVariant.save()
+
         const inventory = new Inventory({
-          variantId: variant._id,
+          variantId: mongoVariant._id,
           actionName: 'Khởi tạo biến thể',
           change: {
             amount: variant.inventories.initStock,
@@ -88,12 +93,17 @@ module.exports.createMMSProduct = async (req, res) => {
           instock: variant.inventories.initStock,
           price: variant.inventories.initPrice,
         })
-  
+
         await inventory.save()
+
+        return mongoVariant
       }))
     }
 
-    res.send(product);
+    const result = await Product.findOne({ _id: product._id }).lean()
+    result.variants = configVariant
+
+    res.status(200).send(result);
   } catch (e) {
     res.status(500).send(Error(e));
   }

@@ -30,7 +30,6 @@ module.exports.createSupplier = async (req, res) => {
 module.exports.getAllSupplier = async (req, res) => {
   try {
     const suppliers = await Supplier.find({ userId: req.user._id })
-    console.log("Found: ", suppliers)
     res.send(suppliers)
   } catch (e) {
     res.status(500).send(Error(e));

@@ -16,12 +16,8 @@ module.exports.createInventory = async (req, res) => {
 module.exports.getAllInventoriesByVariantId = async (req, res) => {
   try {
     const { id } = req.params
-
-    console.log("Variant ID: ", req.params)
     
     const inventories = await Inventory.find({ variantId: id })
-
-    console.log("found: ", inventories)
 
     res.status(200).send(inventories)
   } catch(e) {
