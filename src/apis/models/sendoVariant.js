@@ -1,10 +1,13 @@
 const { Decimal128, Timestamp, ObjectId } = require("mongodb");
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
-const validator = require("validator");
 
 const variantSchema = new Schema({
   // chung
+  linkedId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Variant'
+  },
   variant_attributes:{
     type: Array
   },
@@ -26,12 +29,11 @@ const variantSchema = new Schema({
   avatar:{
     type: Array
   },
-  platformId:{
-    type: mongoose.Schema.Types.ObjectId,
+  productId:{
+    type: String,
     required: true,
     ref: "sendoProduct"
   },
-
   //rieng
   //sendo
   variant_is_promotion:{
@@ -57,7 +59,11 @@ const variantSchema = new Schema({
   },
 })
 
-
-
+variantSchema.virtual("linkedDetails",{
+  ref: "Variant",
+  localField: "linkedId",
+  foreignField: "_id",
+  justOne : true
+})
 
 module.exports = mongoose.model("sendoVariant", variantSchema);

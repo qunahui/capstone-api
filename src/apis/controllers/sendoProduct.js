@@ -1,13 +1,9 @@
 const auth = require("../../middlewares/auth");
 const SendoProduct = require("../models/sendoProduct");
-const Product = require("../models/product");
 const Error = require("../utils/error");
 const util = require('util')
 const rp = require('request-promise');
-const Product = require("../models/product");
-const Variant = require("../models/product");
 const timeDiff = require("../utils/timeDiff");
-const mongoose = require('mongoose')
 const SendoVariant = require("../models/sendoVariant");
 
 const product_status ={
@@ -46,9 +42,8 @@ const createSendoProduct = async (item, { store_id }) => {
             return child.is_selected === true
         });
         element.attribute_values = arr
-        console.log(element.attribute_values)
     }); 
-    variants.forEach( e => {
+    variants.forEach(e => {
       let avatar = '';
       e.variant_attributes.forEach(e1 => {
         const attribute = attributes.find((attribute)=>{
@@ -64,21 +59,12 @@ const createSendoProduct = async (item, { store_id }) => {
       })
 
       e.avatar = avatar
+
     });
 
     let query = { store_id: store_id, id: item.id },
         update = {
-          // id: item.id,
-          // name: item.name,
-          // store_sku: item.sku,
-          // weight: item.weight,
-          // stock_quantity: item.stock_quantity, // total variants quantity
-          // status: item.status,    
-          // link: item.link,       
-          // voucher: item.voucher,
-          // variants: variants,
           ...item,
-          variants,
           store_id: store_id,
           unit: unit[item.unit_id - 1],
           unitId: item.unit_id,
@@ -89,17 +75,19 @@ const createSendoProduct = async (item, { store_id }) => {
         },
         options = { upsert: true, new: true, setDefaultsOnInsert: true };
   
-    console.log("Begin insert: ", update.id)
-    await SendoProduct.findOneAndUpdate(query, update, options, function(error, result) {
-      if (!error) {
-        if (!result) {
-          result = new SendoProduct(update);
-        }
-        result.save().then((res) => {
-          console.log("save: ", res.id)
-        });
-      }
-    });
+    const sendoProduct = await SendoProduct.findOneAndUpdate(query, update, options)
+
+    variants.forEach(async (variant)=>{
+      await SendoVariant.findOneAndUpdate({ sku: variant.variant_sku, productId: sendoProduct._id}, {
+        ...variant,
+        sku: variant.variant_sku,
+        Status: item.status === '2' ? 'active' : 'inactive',
+        price: variant.variant_price,
+        special_price: variant.variant_special_price,
+        quantity: variant.variant_quantity,
+        productId: sendoProduct._id
+      }, options)
+    })
   } catch(e) { 
     console.log("Error: ", e)
   }
@@ -113,14 +101,13 @@ module.exports.getAllProducts = async (req, res) => {
     const { storeIds } = req.query;
     let sendoProducts = []
     await Promise.all([...storeIds].map(async storeId => {
-      const products = await SendoProduct.find({ store_id: storeId })
-
-      // await Promise.all(products.map(async product => {
-      //   await Promise.all(product.variants.map(async variant => {
-      //     console.log("find match ", variant.linkedId)
-
-      //   }))
-      // }))
+      const products = await SendoProduct.find({ store_id: storeId }).populate({
+        path: 'variants',
+        populate: {
+          path: 'linkedDetails'
+        }
+      }).lean()
+      console.log(products)
 
       sendoProducts = [...sendoProducts, ...products]
     }))
@@ -220,8 +207,6 @@ module.exports.syncProducts = async (req, res, next) => {
     return res.status(400).send(Error({ message: 'Lấy sendo token thất bại !'}))
   }
 
-  console.log("new cre: ", newCredential)
-
   //fetch products
   try {
     const options = {
@@ -255,13 +240,6 @@ module.exports.createProduct = async (req, res) =>{
     const create_at = new Date(item.created_date_timestamp*1000)
     const attributes = item.attributes
     const variants = item.variants
-    let Status = ""
-    if(item.status == '2'){
-      Status = "active"
-    }
-    else{
-      Status = "inactive"
-    }
 
     attributes.forEach(element => {
         var arr = element.attribute_values.filter((child) => {
@@ -289,14 +267,6 @@ module.exports.createProduct = async (req, res) =>{
 
     let query = { store_id: store_id, id: item.id },
         update = {
-          // id: item.id,
-          // name: item.name,
-          // store_sku: item.sku,
-          // weight: item.weight,
-          // stock_quantity: item.stock_quantity, // total variants quantity
-          // status: item.status,    
-          // link: item.link,       
-          // voucher: item.voucher,
           ...item,
           store_id: store_id,
           unit: unit[item.unit_id - 1],
@@ -316,36 +286,7 @@ module.exports.createProduct = async (req, res) =>{
         }
         //save sendoProduct
         result.save().then((res) => {
-          console.log("save: ", res._id)
-
-          variants.forEach(async (variant)=>{
-            await SendoVariant.findOneAndUpdate({sku: variant.variant_sku, platformId: res._id}, {
-              ...variant,
-              sku: variant.variant_sku,
-              Status: Status,
-              price: variant.variant_price,
-              special_price: variant.variant_special_price,
-              quantity: variant.variant_quantity,
-              platformId: res._id
-            }, options, function(error, result) {
-              if (!error) {
-                if (!result) {
-                  result = new SendoVariant({
-                    ...variant,
-                    sku: variant.variant_sku,
-                    Status: Status,
-                    price: variant.variant_price,
-                    special_price: variant.variant_special_price,
-                    quantity: variant.variant_quantity,
-                    platformId: res._id
-                  });
-                }
-                result.save().then((res) => {
-                  console.log("save: ", res.id)
-                });
-              }
-            });
-          }) 
+          console.log("save: ", res._id) 
         });
       }
     });
@@ -359,7 +300,7 @@ module.exports.createProduct = async (req, res) =>{
 
 module.exports.getProductById = async (req, res) =>{
   const id = req.params.id
-  const sendoproduct = await SendoProduct.find({}).populate('sendoVariants').lean()
+  const sendoproduct = await SendoProduct.find({}).populate('variants').lean()
 
   res.send(sendoproduct)
 }

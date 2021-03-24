@@ -12,8 +12,6 @@ router.get("/:id", auth, productController.getMMSProductById);
 
 router.post("/", auth, productController.createMMSProduct);
 
-router.post("/link", auth, productController.linkProduct);
-
 router.patch("/:id", auth, productController.updateProduct);
 
 router.delete("/:id", auth, productController.deleteProduct);

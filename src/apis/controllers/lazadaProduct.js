@@ -29,7 +29,7 @@ const createLazadaProduct = async (item, additionalData) => {
         })
         delete variant[`${attribute_name}`]
       });
-      variant.variant_attribute = variant_attributes
+      variant.variant_attributes = variant_attributes
 
     });
     let query = { store_id: additionalData.store_id, id: item.item_id },
@@ -45,14 +45,17 @@ const createLazadaProduct = async (item, additionalData) => {
         },
         options = { upsert: true, new: true, setDefaultsOnInsert: true };
     
-    await LazadaProduct.findOneAndUpdate(query, update, options, function(error, result) {
-      if (!error) {
-        if (!result) {
-          result = new LazadaProduct(update);
-        }
-        result.save();
-      } 
-    });
+    const lazadaProduct = await LazadaProduct.findOneAndUpdate(query, update, options)
+
+    variants.forEach(async (variant)=>{
+      await LazadaVariant.findOneAndUpdate({sku: variant.SellerSku, productId: lazadaProduct._id}, {
+        ...variant,
+        sku: variant.SellerSku,
+        avatar: variant.Images,
+        productId: lazadaProduct._id
+      }, options);
+    })
+
   } catch(e) {
     console.log(e.message)
   }
@@ -65,24 +68,7 @@ module.exports.getAllProducts = async (req, res) => {
       const { storeIds } = req.query;
       let lazadaProducts = [];
       await Promise.all([...storeIds].map(async storeId => {
-        const products = await LazadaProduct.find({ store_id: storeId })
-        lazadaProducts = [...lazadaProducts, ...products]
-      }))
-  
-      console.log("lazada all products: ", lazadaProducts)
-
-      res.status(200).send(lazadaProducts)
-    } catch(e) {
-      res.status(500).send(Error({ message: 'Something went wrong !'}))
-  }
-}
-
-module.exports.getAllProducts = async (req, res) => {
-  try {
-      const { storeIds } = req.query;
-      let lazadaProducts = [];
-      await Promise.all([...storeIds].map(async storeId => {
-        const products = await LazadaProduct.find({store_id: storeId})
+        const products = await LazadaProduct.find({store_id: storeId}).populate('variants').lean()
         lazadaProducts = [...lazadaProducts, ... products]
       }))
       
@@ -240,11 +226,11 @@ module.exports.createProduct = async (req, res) => {
           console.log("save: ", res._id)
 
           variants.forEach(async (variant)=>{
-            await LazadaVariant.findOneAndUpdate({sku: variant.SellerSku, platformId: res._id}, {
+            await LazadaVariant.findOneAndUpdate({sku: variant.SellerSku, productId: res._id}, {
               ...variant,
               sku: variant.SellerSku,
               avatar: variant.Images,
-              platformId: res._id
+              productId: res._id
             }, options, function(error, result) {
               if (!error) {
                 if (!result) {
@@ -252,7 +238,7 @@ module.exports.createProduct = async (req, res) => {
                     ...variant,
                     sku: variant.SellerSku,
                     avatar: variant.Images,
-                    platformId: res._id
+                    productId: res._id
                   });
                 }
                 result.save().then((res) => {

@@ -60,4 +60,5 @@ const variantSchema = new Schema({
   }
 })
 
+
 module.exports = mongoose.model("Variant", variantSchema);

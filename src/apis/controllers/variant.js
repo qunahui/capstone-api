@@ -4,7 +4,36 @@ const Error = require("../utils/error");
 // const sendo = require('./sendo')
 const Inventory = require('../models/inventory');
 const Variant = require("../models/variant")
+const SendoVariant = require("../models/sendoVariant")
 
+module.exports.linkVariant = async (req, res) => {
+  const { variant, platformVariant } = req.body;
+  console.clear()
+  try {
+    if(platformVariant.platform === 'sendo') {
+      // link sendoP to P
+      await SendoVariant.updateOne({
+        _id: platformVariant._id,
+      }, {
+        linkedId: variant._id
+      })
+      // link P to sendoP
+      await Variant.updateOne({
+        _id: variant._id,
+      }, {
+        $addToSet: {
+          linkedIds: mongoose.Types.ObjectId(platformVariant._id)
+        }
+      })
+
+    }
+
+    res.status(200).send("Liên kết thành công !")
+  } catch(e) {
+    console.log("Liên kết thất bại: ", e.message)
+    res.status(400).send("Liên kết thất bại")
+  }
+}
 
 module.exports.getAllVariant = async (req, res) => {
   try {

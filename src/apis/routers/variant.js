@@ -10,6 +10,8 @@ router.get("/:id", auth, variantController.getMMSVariantById);
 
 router.post("/", auth, variantController.createMMSVariant);
 
+router.post("/link", auth, variantController.linkVariant);
+
 router.patch("/:id", auth, variantController.updateVariant);
 
 router.delete("/:id", auth, variantController.deleteVariant);

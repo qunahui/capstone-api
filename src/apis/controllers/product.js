@@ -7,48 +7,6 @@ const Inventory = require('../models/inventory');
 const Variant = require('../models/variant')
 const SendoProduct = require("../models/sendoProduct");
 
-module.exports.linkProduct = async (req, res) => {
-  const { variant, platformVariant } = req.body;
-  console.clear()
-  // console.log("Variant: ", variant)
-  // console.log("Platform: ", platformVariant)
-  try {
-    if(platformVariant.platform === 'sendo') {
-      // link sendoP to P
-      await SendoProduct.updateOne({
-        _id: platformVariant.productId,
-        variants: {
-          $elemMatch: {
-            _id: platformVariant._id
-          }
-        }
-      }, {
-        $set: {
-          "variants.$.linkedId": variant._id
-        }
-      })
-      // link P to sendoP
-      await Product.updateOne({
-        _id: variant.productId,
-        variants: {
-          $elemMatch: {
-            _id: variant._id
-          }
-        }
-      }, {
-        $addToSet: {
-          "variants.$.linkedIds": new mongoose.Types.ObjectId(platformVariant._id)
-        }
-      })
-    }
-
-    res.status(200).send("Liên kết thành công !")
-  } catch(e) {
-    console.log("Liên kết thất bại: ", e.message)
-    res.status(400).send("Liên kết thất bại")
-  }
-}
-
 module.exports.getAllProduct = async (req, res) => {
   try {
     

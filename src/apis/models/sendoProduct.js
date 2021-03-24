@@ -55,10 +55,11 @@ const schema = new Schema({
     },
   }
 );
-schema.virtual("sendoVariants",{
-    ref: "sendoVariant",
-    localField: "_id",
-    foreignField: "platformId"
-  })
+
+schema.virtual("variants",{
+  ref: "sendoVariant",
+  localField: "_id",
+  foreignField: "productId"
+})
 
 module.exports = mongoose.model("sendoProduct", schema);
