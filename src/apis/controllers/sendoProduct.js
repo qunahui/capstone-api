@@ -106,8 +106,7 @@ module.exports.getAllProducts = async (req, res) => {
         populate: {
           path: 'linkedDetails'
         }
-      }).lean()
-      console.log(products)
+      }).populate('linkedDetails').lean()
 
       sendoProducts = [...sendoProducts, ...products]
     }))

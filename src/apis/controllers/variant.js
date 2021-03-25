@@ -5,6 +5,8 @@ const Error = require("../utils/error");
 const Inventory = require('../models/inventory');
 const Variant = require("../models/variant")
 const SendoVariant = require("../models/sendoVariant")
+const LazadaVariant = require("../models/lazadaVariant")
+const SendoProduct = require("../models/sendoProduct")
 
 module.exports.linkVariant = async (req, res) => {
   const { variant, platformVariant } = req.body;
@@ -12,11 +14,20 @@ module.exports.linkVariant = async (req, res) => {
   try {
     if(platformVariant.platform === 'sendo') {
       // link sendoP to P
-      await SendoVariant.updateOne({
-        _id: platformVariant._id,
-      }, {
-        linkedId: variant._id
-      })
+      if(platformVariant.productId) {
+        // variant
+        await SendoVariant.updateOne({
+          _id: platformVariant._id,
+        }, {
+          linkedId: variant._id
+        })
+      } else if(!platformVariant.productId) {
+        await SendoProduct.updateOne({
+          _id: platformVariant._id,
+        }, {
+          linkedId: variant._id
+        })
+      }
       // link P to sendoP
       await Variant.updateOne({
         _id: variant._id,
@@ -26,6 +37,20 @@ module.exports.linkVariant = async (req, res) => {
         }
       })
 
+    } else if(platformVariant.platform === 'lazada') {
+      await LazadaVariant.updateOne({
+        _id: platformVariant._id,
+      }, {
+        linkedId: variant._id
+      })
+
+      await Variant.updateOne({
+        _id: variant._id,
+      }, {
+        $addToSet: {
+          linkedIds: mongoose.Types.ObjectId(platformVariant._id)
+        }
+      })
     }
 
     res.status(200).send("Liên kết thành công !")
