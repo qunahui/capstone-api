@@ -3735,36 +3735,87 @@
       },
       "Product": {
         "required": [
-          "name"
+          
   
         ],
         "type": "object",
         "properties": {
-          "id":{
-            "type": "string",
-            "example": "1"
-          },
           "name": {
             "type": "string",
             "example": "dao1"
+          },
+          "avatar": {
+            "type": "array",
+            "example": ["url"]
+          },
+          "sku":{
+            "type": "string",
+            "example": "ao phong"
+          },
+          "categoryId":{
+            "type": "string",
+            "example": "7930"
+          },
+          "categoryName":{
+            "type": "string",
+            "example": "Giày dép & Quần áo nam > Quần áo nam > Áo thun & Áo không tay > Áo thun nam"
           },
           "description":{
             "type": "string",
             "example": "..."
           },
-          "avatar": {
-            "type": "string",
-            "example": "url"
+          "weightValue":{
+            "type": "number",
+            "example": 100
           },
-          "variants":{
-            "type":"array",
-            "items":{
-              "$ref": "#/components/schemas/Variant"
-            }
+          "weightUnit":{
+            "type": "string",
+            "example": "g"
+          },
+          "unit":{
+            "type": "string",
+            "example": "Cái"
+          },
+          "brand":{
+            "type": "string",
+            "example": "No Brand"
+          },
+          "productType":{
+            "type": "string",
+            "example": "normal"
+          },
+          "tags":{
+            "type": "array",
+            "example": ["áo","áo thun"]
+          },
+          "options":{
+              "type": "array",
+              "items":{
+                "type":"object",
+                "properties":{
+                  "optionName":{
+                    "type": "string",
+                    "exmaple": "Kích thước "
+                  },
+                  "optionValue":{
+                    "type": "array",
+                    "exmaple": ["27","8"]
+                  }
+                }
+              }
+          },
+          "sellable":{
+            "type": "boolean",
+            "example": true
+          },
+          "createdAt":{
+            "type": "Date",
+            "example": "2021-03-25T08:40:56.007+00:00"
+          },
+          "updatedAt":{
+            "type": "Date",
+            "example": "2021-03-25T08:40:56.007+00:00"
           }
-        },
-        "xml": {
-          "name": "Pet"
         }
       },
       "Variant": {
@@ -3876,6 +3927,10 @@
           "address": {
             "type": "string",
             "example": "1234567890"
+          },
+          "userId":{
+            "type": "objectId",
+            "example": "6049de8d057b130514ffc4b0"
           }
         },
         "xml": {
@@ -3910,10 +3965,11 @@
           "address": {
             "type": "string",
             "example": "address random 0.6330979062156514"
+          },
+          "userId":{
+            "type": "objectId",
+            "example": "6049de8d057b130514ffc4b0"
           }
-        },
-        "xml": {
-          "name": "Supplier"
         }
       },
       "Category": {
@@ -3949,6 +4005,206 @@
         },
         "xml": {
           "name": "Category"
+        }
+      },
+      "SendoVariant": {
+        "required": [
+         
+        ],
+        "type": "object",
+        "properties": {
+          "productId":{
+            "type": "objectId",
+            "example": "605c362fb172bb40c429cb87"
+          },
+          "linkedId":{
+            "type": "objectId",
+            "example": "605c362fb172bb40c429cb87"
+          },
+          "sku":{
+            "type": "string",
+            "example": "123456789123"
+          },
+          "Status":{
+            "type": "string",
+            "example": "active"
+          },
+          "avatar":{
+            "type": "Array",
+            "example": ["https://media3.scdn.vn/img4/2021/03_21/NpSb4jBlmliQLbEypOHv_simg_02d57e_50x50_maxb.jpg"]
+          },
+          "price": {
+            "type": "number",
+            "example": 120000
+          },
+          "quantity":{
+            "type": "number",
+            "example": 12
+          },
+          "special_price":{
+            "type": "number",
+            "example": 129754
+          },
+          "variant_attribute_hash":{
+            "type": "string",
+            "example": "603"
+          },
+          "variant_attributes":{
+            "type": "array",
+            "items":{
+              "type":"object",
+              "properties":{
+                "attribute_id":{
+                  "type": "number",
+                  "exmaple": 284
+                },
+                "attribute_code":{
+                  "type": "string",
+                  "exmaple": "mau_sac"
+                },
+                "option_id":{
+                  "type": "number",
+                  "exmaple": 603
+                },
+                "attribute_name":{
+                  "type": "string",
+                  "exmaple": "màu sắc"
+                },
+                "option_value":{
+                  "type": "string",
+                  "exmaple": "Vàng"
+                },
+                "attribute_img":{
+                  "type": "string",
+                  "exmaple": "https://media3.scdn.vn/img4/2021/03_21/NpSb4jBlmliQLbEypOHv_simg_02d57e_50x50_maxb.jpg"
+                }
+              }
+            }
+          },
+          "variant_campaign_status":{
+            "type": "string",
+            "example": null
+          },
+          "variant_is_flash_sales":{
+            "type": "boolean",
+            "example": null
+          },
+          "variant_is_promotion":{
+            "type": "boolean",
+            "example": null
+          },
+          "variant_promotion_end_date_timestamp":{
+            "type": "timestamp",
+            "example": null
+          },
+          "variant_promotion_start_date_timestamp":{
+            "type": "timestamp",
+            "example": null
+          }
+        }
+      },
+      "LazadaVariant": {
+        "required": [
+         
+        ],
+        "type": "object",
+        "properties": {
+          "productId":{
+            "type": "objectId",
+            "example": "605c362fb172bb40c429cb87"
+          },
+          "linkedId":{
+            "type": "objectId",
+            "example": "605c362fb172bb40c429cb87"
+          },
+          "sku":{
+            "type": "string",
+            "example": "123456789123"
+          },
+          "ShopSku":{
+            "type": "string",
+            "example": "859984666_VNAMZ-3713018288"
+          },
+          "SkuId":{
+            "type": "number",
+            "example": 3713018288
+          },
+          "Status":{
+            "type": "string",
+            "example": "active"
+          },
+          "Url":{
+            "type": "string",
+            "example": "https://www.lazada.vn/-i859984666-s3713018288.html"
+          },
+          "avatar":{
+            "type": "Array",
+            "example": ["https://vn-live.slatic.net/p/eeaca3c5adf96292ee5c5087787140a1.jpg"]
+          },
+          "multiWarehouseInventories":{
+            "type": "Array",
+            "items": {
+                "type":"object",
+                "properties":{
+                  "quantity":{
+                    "type": "number",
+                    "exmaple": 284
+                  },
+                  "warehouseCode":{
+                    "type": "string",
+                    "exmaple":"dropshipping"
+                  }
+                }
+            }
+          },
+          "package_height": {
+            "type": "string",
+            "example": "2.00"
+          },
+          "package_length": {
+            "type": "string",
+            "example": "12.00"
+          },
+          "package_weight": {
+            "type": "string",
+            "example": "0.2"
+          },
+          "package_width": {
+            "type": "string",
+            "example": "5.00"
+          },
+          "price":{
+            "type": "number",
+            "example": 150000
+          },
+          "quantity":{
+            "type": "number",
+            "example": 12
+          },
+          "special_price":{
+            "type": "number",
+            "example": 129754
+          },
+          "variant_attribute_hash":{
+            "type": "string",
+            "example": "603"
+          },
+          "variant_attributes":{
+            "type": "array",
+            "items":{
+              "type":"object",
+              "properties":{
+                "attribute_name":{
+                  "type": "string",
+                  "exmaple": "color_family"
+                },
+                "option_value":{
+                  "type": "string",
+                  "exmaple": "Galaxy"
+                }
+              }
+            }
+          }
         }
       }
     },

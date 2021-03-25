@@ -31,7 +31,7 @@ const variantSchema = new Schema({
   productId:{
     type: String,
     required: true,
-    ref: "lazadaProduct"
+    ref: "LazadaProduct"
   },
 
   //lazada
@@ -67,4 +67,4 @@ const variantSchema = new Schema({
 
 
 
-module.exports = mongoose.model("lazadaVariant", variantSchema);
+module.exports = mongoose.model("LazadaVariant", variantSchema);
