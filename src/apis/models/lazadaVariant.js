@@ -6,6 +6,7 @@ const variantSchema = new Schema({
   // chung
   linkedId: {
     type: mongoose.Schema.Types.ObjectId,
+    ref: 'Variant'
   },
   variant_attributes:{
     type: Array
@@ -64,7 +65,12 @@ const variantSchema = new Schema({
   }
 })
 
-
+variantSchema.virtual("linkedDetails",{
+  ref: "Variant",
+  localField: "linkedId",
+  foreignField: "_id",
+  justOne : true
+})
 
 
 module.exports = mongoose.model("LazadaVariant", variantSchema);

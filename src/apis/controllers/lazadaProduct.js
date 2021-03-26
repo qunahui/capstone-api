@@ -68,7 +68,12 @@ module.exports.getAllProducts = async (req, res) => {
       const { storeIds } = req.query;
       let lazadaProducts = [];
       await Promise.all([...storeIds].map(async storeId => {
-        const products = await LazadaProduct.find({store_id: storeId}).populate('variants').lean()
+        const products = await LazadaProduct.find({store_id: storeId}).populate({
+          path: 'variants',
+          populate: {
+            path: 'linkedDetails'
+          }
+        }).lean()
         lazadaProducts = [...lazadaProducts, ... products]
       }))
       

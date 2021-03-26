@@ -4,6 +4,10 @@ const Schema = mongoose.Schema;
 const validator = require("validator");
 
 const schema = new Schema({
+    linkedId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Variant'
+    },
     store_id:{
         type: String
     },
@@ -62,4 +66,11 @@ schema.virtual("variants",{
   foreignField: "productId"
 })
 
-module.exports = mongoose.model("SendoProduct", schema);
+schema.virtual("linkedDetails",{
+  ref: "Variant",
+  localField: "linkedId",
+  foreignField: "_id",
+  justOne : true
+})
+
+module.exports = mongoose.model("sendoProduct", schema);
