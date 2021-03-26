@@ -35,7 +35,6 @@ const Category = require('../models/category')
 // };
 
 module.exports.getListCategory = async (req,res) =>{
-  console.log(req.query)
   const idpath = req.query.idpath ? req.query.idpath.map(i => parseInt(i)) : [];
     if(idpath.length == 0) {
       try {
