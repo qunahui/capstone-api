@@ -82,25 +82,23 @@
         "summary": "Sign up the app",
         "operationId": "signUp",
         "requestBody": {
-          "content":{
-            "application/json":{
-              "schema":{
-
-              },
-              "example":{
+          "content": {
+            "application/json": {
+              "schema": {},
+              "example": {
                 "email": "mrlocpro@gmail.com",
-                "password":"locpro",
+                "password": "locpro",
                 "displayName": "locpro"
               }
             }
           }
         },
         "responses": {
-          "200":{
+          "200": {
             "description": "Successful",
-            "content":{
-              "application/json":{
-                "example":{
+            "content": {
+              "application/json": {
+                "example": {
                   "user": {
                     "_id": "603e3eb9486b9112e0183ecf",
                     "displayName": "huyhuy",
@@ -119,7 +117,7 @@
           "405": {
             "description": "Invalid input"
           },
-          "500":{
+          "500": {
             "description": "Error: Internal Server Error"
           }
         },
@@ -141,24 +139,22 @@
         "summary": "Sign in the app",
         "operationId": "signIn",
         "requestBody": {
-          "content":{
-            "application/json":{
-              "schema":{
-
-              },
-              "example":{
+          "content": {
+            "application/json": {
+              "schema": {},
+              "example": {
                 "email": "mrlocpro@gmail.com",
-                "password":"locpro"
+                "password": "locpro"
               }
             }
           }
         },
         "responses": {
-          "200":{
+          "200": {
             "description": "Successful",
-            "content":{
-              "application/json":{
-                "example":{
+            "content": {
+              "application/json": {
+                "example": {
                   "user": {
                     "_id": "603e3eb9486b9112e0183ecf",
                     "displayName": "huyhuy",
@@ -177,7 +173,7 @@
           "405": {
             "description": "Invalid input"
           },
-          "500":{
+          "500": {
             "description": "Error: Internal Server Error"
           }
         },
@@ -199,10 +195,10 @@
         "summary": "Sign out the current user",
         "operationId": "signOut",
         "responses": {
-          "200":{
+          "200": {
             "description": "Successful",
-            "content":{
-              "application/json":{
+            "content": {
+              "application/json": {
                 "example": " "
               }
             }
@@ -210,14 +206,14 @@
           "405": {
             "description": "Invalid input"
           },
-          "500":{
+          "500": {
             "description": "Error: Internal Server Error"
           }
         },
         "security": [
           {
-            "bearerAuth":[],
-            "ApiKeyAuth":[]
+            "bearerAuth": [],
+            "ApiKeyAuth": []
           }
         ]
       }
@@ -231,15 +227,15 @@
         "operationId": "getCurrentUser",
         "security": [
           {
-            "bearerAuth":[],
-            "ApiKeyAuth":[]
+            "bearerAuth": [],
+            "ApiKeyAuth": []
           }
         ],
         "responses": {
-          "200":{
+          "200": {
             "description": "Successful",
-            "content":{
-              "application/json":{
+            "content": {
+              "application/json": {
                 "example": " "
               }
             }
@@ -247,7 +243,7 @@
           "405": {
             "description": "Invalid input"
           },
-          "500":{
+          "500": {
             "description": "Error: Internal Server Error"
           }
         }
@@ -262,15 +258,15 @@
         "operationId": "signOutAll",
         "security": [
           {
-            "bearerAuth":[],
-            "ApiKeyAuth":[]
+            "bearerAuth": [],
+            "ApiKeyAuth": []
           }
         ],
         "responses": {
-          "200":{
+          "200": {
             "description": "Successful",
-            "content":{
-              "application/json":{
+            "content": {
+              "application/json": {
                 "example": " "
               }
             }
@@ -278,7 +274,7 @@
           "405": {
             "description": "Invalid input"
           },
-          "500":{
+          "500": {
             "description": "Error: Internal Server Error"
           }
         }
@@ -293,28 +289,25 @@
         "operationId": "updateUser",
         "security": [
           {
-            "bearerAuth":[],
-            "ApiKeyAuth":[]
+            "bearerAuth": [],
+            "ApiKeyAuth": []
           }
         ],
         "requestBody": {
-          "content":{
-            "application/json":{
-              "schema":{
-
-              },
-              "example":{
-          
+          "content": {
+            "application/json": {
+              "schema": {},
+              "example": {
                 "displayName": "huihui1"
               }
             }
           }
         },
         "responses": {
-          "200":{
+          "200": {
             "description": "Successful",
-            "content":{
-              "application/json":{
+            "content": {
+              "application/json": {
                 "example": " "
               }
             }
@@ -322,7 +315,7 @@
           "405": {
             "description": "Invalid input"
           },
-          "500":{
+          "500": {
             "description": "Error: Internal Server Error"
           }
         }
@@ -337,15 +330,15 @@
         "operationId": "deleteUser",
         "security": [
           {
-            "bearerAuth":[],
-            "ApiKeyAuth":[]
+            "bearerAuth": [],
+            "ApiKeyAuth": []
           }
         ],
         "responses": {
-          "200":{
+          "200": {
             "description": "Successful",
-            "content":{
-              "application/json":{
+            "content": {
+              "application/json": {
                 "example": " "
               }
             }
@@ -353,7 +346,7 @@
           "405": {
             "description": "Invalid input"
           },
-          "500":{
+          "500": {
             "description": "Error: Internal Server Error"
           }
         }
@@ -370,13 +363,13 @@
           "$ref": "#/components/requestBodies/Product"
         },
         "responses": {
-          "200":{
+          "200": {
             "description": "Successful"
           },
           "405": {
             "description": "Invalid input"
           },
-          "500":{
+          "500": {
             "description": "Error: Internal Server Error"
           }
         },
@@ -409,28 +402,28 @@
             "description": "Validation exception"
           }
         },
-        "security": [
-        ]
+        "security": []
       }
     },
-    "/products/{productId}":{
+    "/products/{productId}": {
       "get": {
         "tags": [
           "products"
         ],
         "summary": "Get an existing product by id",
         "operationId": "getProduct",
-        "parameters":[
+        "parameters": [
           {
-            "in":"products/:id",
+            "in": "products/:id",
             "name": "productId",
             "required": true,
             "description": "Numeric ID of the product to get",
-            "schema":{
+            "schema": {
               "type": "integer",
-              "enum":[1]
+              "enum": [
+                1
+              ]
             }
-
           }
         ],
         "responses": {
@@ -454,17 +447,18 @@
         ],
         "summary": "Update an existing product",
         "operationId": "updateProduct",
-        "parameters":[
+        "parameters": [
           {
-            "in":"products/:id",
+            "in": "products/:id",
             "name": "productId",
-            "schema":{
+            "schema": {
               "type": "integer",
-              "enum":[1]
+              "enum": [
+                1
+              ]
             },
             "required": true,
             "description": "Numeric ID of the product to update"
-
           }
         ],
         "requestBody": {
@@ -484,8 +478,7 @@
             "description": "Validation exception"
           }
         },
-        "security": [
-        ]
+        "security": []
       },
       "delete": {
         "tags": [
@@ -493,17 +486,18 @@
         ],
         "summary": "Delete an existing product",
         "operationId": "deleteProduct",
-        "parameters":[
+        "parameters": [
           {
-            "in":"products/:id",
+            "in": "products/:id",
             "name": "productId",
-            "schema":{
+            "schema": {
               "type": "integer",
-              "enum":[1]
+              "enum": [
+                1
+              ]
             },
             "required": true,
             "description": "Numeric ID of the product to delete"
-
           }
         ],
         "responses": {
@@ -522,37 +516,37 @@
         }
       }
     },
-    "/api/sendo/ward/{wardId}":{
+    "/api/sendo/ward/{wardId}": {
       "get": {
         "tags": [
           "sendoAPI"
         ],
-        "security":[
+        "security": [
           {
-            "bearerAuth":[],
-            "ApiKeyAuth":[]
+            "bearerAuth": [],
+            "ApiKeyAuth": []
           }
         ],
         "summary": "Get ward by wardId",
         "operationId": "getWard",
-        "parameters":[
+        "parameters": [
           {
-            "in":"path",
+            "in": "path",
             "name": "wardId",
             "required": true,
             "description": "Numeric ID of ward to get",
-            "schema":{
+            "schema": {
               "type": "integer",
-              "example":26734
+              "example": 26734
             }
           }
         ],
         "responses": {
           "200": {
             "description": "Successful",
-            "content":{
-              "application/json":{
-                "example":"Phường Tân Định"
+            "content": {
+              "application/json": {
+                "example": "Phường Tân Định"
               }
             }
           },
@@ -561,9 +555,11 @@
           },
           "401": {
             "description": "Pet not found",
-            "content":{
-              "application/json":{
-                "example":{"message":"Bad token; invalid JSON"}
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Bad token; invalid JSON"
+                }
               }
             }
           },
@@ -573,53 +569,55 @@
         }
       }
     },
-    "/api/sendo/district/{districtId}":{
+    "/api/sendo/district/{districtId}": {
       "get": {
         "tags": [
           "sendoAPI"
         ],
         "summary": "Get district by districtId",
         "operationId": "getDistrict",
-        "security":[
+        "security": [
           {
-            "bearerAuth":[],
-            "ApiKeyAuth":[]
+            "bearerAuth": [],
+            "ApiKeyAuth": []
           }
         ],
-        "parameters":[
+        "parameters": [
           {
-            "in":"path",
+            "in": "path",
             "name": "districtId",
             "required": true,
             "description": "Numeric ID of district to get",
-            "schema":{
+            "schema": {
               "type": "integer",
-              "example":"2"
+              "example": "2"
             }
           }
         ],
         "responses": {
           "200": {
             "description": "Successful",
-            "content":{
-              "application/json":{
-                "example":"Quận 2"
+            "content": {
+              "application/json": {
+                "example": "Quận 2"
               }
             }
           },
           "400": {
             "description": "Invalid ID supplied",
-            "content":{
-              "application/json":{
-                "example":"Invalid id"
+            "content": {
+              "application/json": {
+                "example": "Invalid id"
               }
             }
           },
           "401": {
             "description": "Pet not found",
-            "content":{
-              "application/json":{
-                "example":{"message":"Bad token; invalid JSON"}
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Bad token; invalid JSON"
+                }
               }
             }
           },
@@ -629,53 +627,55 @@
         }
       }
     },
-    "/api/sendo/region/{regionId}":{
+    "/api/sendo/region/{regionId}": {
       "get": {
         "tags": [
           "sendoAPI"
         ],
         "summary": "Get region by regionId",
         "operationId": "getRegion",
-        "security":[
+        "security": [
           {
-            "bearerAuth":[],
-            "ApiKeyAuth":[]
+            "bearerAuth": [],
+            "ApiKeyAuth": []
           }
         ],
-        "parameters":[
+        "parameters": [
           {
-            "in":"path",
+            "in": "path",
             "name": "regionId",
             "required": true,
             "description": "Numeric ID of region to get",
-            "schema":{
+            "schema": {
               "type": "integer",
-              "example":"2"
+              "example": "2"
             }
           }
         ],
         "responses": {
           "200": {
             "description": "Successful",
-            "content":{
-              "application/json":{
-                "example":"Hà nội"
+            "content": {
+              "application/json": {
+                "example": "Hà nội"
               }
             }
           },
           "400": {
             "description": "Invalid ID supplied",
-            "content":{
-              "application/json":{
-                "example":"Invalid id"
+            "content": {
+              "application/json": {
+                "example": "Invalid id"
               }
             }
           },
           "401": {
             "description": "",
-            "content":{
-              "application/json":{
-                "example":{"message":"Bad token; invalid JSON"}
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Bad token; invalid JSON"
+                }
               }
             }
           },
@@ -685,26 +685,24 @@
         }
       }
     },
-    "/api/sendo/products":{
+    "/api/sendo/products": {
       "post": {
         "tags": [
           "sendoAPI"
         ],
         "summary": "create product on Sendo",
         "operationId": "createProduct",
-        "security":[
+        "security": [
           {
-            "bearerAuth":[],
-            "ApiKeyAuth":[]
+            "bearerAuth": [],
+            "ApiKeyAuth": []
           }
         ],
-        "requestBody":{
-          "content":{
-            "application/json":{
-              "schema":{
-
-              },
-              "example":{
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {},
+              "example": {
                 "name": "đầm đầm đầm ",
                 "sku": "lp132435",
                 "price": 690000.0,
@@ -719,207 +717,206 @@
                 "unit_id": 2,
                 "stock_quantity": 2,
                 "avatar": {
-                    "picture_url": "http://media3.scdn.vn/img4/2021/01_05/ZcTCLs865UkFoBjyQhl2.jpg"
+                  "picture_url": "http://media3.scdn.vn/img4/2021/01_05/ZcTCLs865UkFoBjyQhl2.jpg"
                 },
                 "pictures": [
-                    {
-                        "picture_url": "http://media3.scdn.vn/img4/2021/01_05/ZcTCLs865UkFoBjyQhl2.jpg"
-                    }
+                  {
+                    "picture_url": "http://media3.scdn.vn/img4/2021/01_05/ZcTCLs865UkFoBjyQhl2.jpg"
+                  }
                 ],
                 "extended_shipping_package": {
-                    "is_using_instant": false,
-                    "is_using_in_day": false,
-                    "is_self_shipping": false,
-                    "is_using_standard": true,
-                    "is_using_eco": false
+                  "is_using_instant": false,
+                  "is_using_in_day": false,
+                  "is_self_shipping": false,
+                  "is_using_standard": true,
+                  "is_using_eco": false
                 },
                 "is_promotion": false,
-                 "attributes": [
-                        {
-                            "attribute_id": 298,
-                            "attribute_type": 2,
-                            "attribute_name": "Kích thước",
-                            "attribute_is_required": true,
-                            "attribute_code": "kich_thuoc_1",
-                            "attribute_is_custom": false,
-                            "attribute_is_checkout": true,
-                            "attribute_is_image": false,
-                            "attribute_values": [
-                                {
-                                    "id": 25304,
-                                    "value": "27",
-                                    "attribute_img": null,
-                                    "is_selected": true,
-                                    "is_custom": false
-                                }
-                            ]
-                        },
-                        {
-                            "attribute_id": 284,
-                            "attribute_type": 1,
-                            "attribute_name": "Màu sắc",
-                            "attribute_is_required": true,
-                            "attribute_code": "mau_sac",
-                            "attribute_is_custom": false,
-                            "attribute_is_checkout": true,
-                            "attribute_is_image": true,
-                            "attribute_values": [
-                                {
-                                    "id": 602,
-                                    "value": "Nâu",
-                                    "attribute_img": null,
-                                    "is_selected": true,
-                                    "is_custom": false
-                                }
-                            ]
-                        },
-                        {
-                            "attribute_id": 1495,
-                            "attribute_type": 3,
-                            "attribute_name": "Chất vải",
-                            "attribute_is_required": false,
-                            "attribute_code": "chat_vai",
-                            "attribute_is_custom": false,
-                            "attribute_is_checkout": false,
-                            "attribute_is_image": false,
-                            "attribute_values": [
-                                {
-                                    "id": 25068,
-                                    "value": "Ren",
-                                    "attribute_img": null,
-                                    "is_selected": true,
-                                    "is_custom": false
-                                }
-                            ]
-                        },
-                        {
-                            "attribute_id": 1485,
-                            "attribute_type": 3,
-                            "attribute_name": "Chiều dài váy",
-                            "attribute_is_required": false,
-                            "attribute_code": "chieu_dai_vay",
-                            "attribute_is_custom": false,
-                            "attribute_is_checkout": false,
-                            "attribute_is_image": false,
-                            "attribute_values": [
-                                {
-                                    "id": 24968,
-                                    "value": "Trên gối",
-                                    "attribute_img": null,
-                                    "is_selected": true,
-                                    "is_custom": false
-                                }
-                            ]
-                        },
-                        {
-                            "attribute_id": 1488,
-                            "attribute_type": 3,
-                            "attribute_name": "Chiều dài tay áo",
-                            "attribute_is_required": false,
-                            "attribute_code": "chieu_dai_tay_ao",
-                            "attribute_is_custom": false,
-                            "attribute_is_checkout": false,
-                            "attribute_is_image": false,
-                            "attribute_values": [
-                                {
-                                    "id": 24982,
-                                    "value": "Không tay",
-                                    "attribute_img": null,
-                                    "is_selected": true,
-                                    "is_custom": false
-                                }
-                            ]
-                        },
-                        {
-                            "attribute_id": 1489,
-                            "attribute_type": 3,
-                            "attribute_name": "Kiểu cổ áo",
-                            "attribute_is_required": false,
-                            "attribute_code": "kieu_co_ao_1_2_3",
-                            "attribute_is_custom": false,
-                            "attribute_is_checkout": false,
-                            "attribute_is_image": false,
-                            "attribute_values": [
-                                {
-                                    "id": 24986,
-                                    "value": "Cổ V",
-                                    "attribute_img": null,
-                                    "is_selected": true,
-                                    "is_custom": false
-                                }
-                            ]
-                        },
-                        {
-                            "attribute_id": 1490,
-                            "attribute_type": 3,
-                            "attribute_name": "Họa tiết",
-                            "attribute_is_required": false,
-                            "attribute_code": "hoa_tiet",
-                            "attribute_is_custom": false,
-                            "attribute_is_checkout": false,
-                            "attribute_is_image": false,
-                            "attribute_values": [
-                                {
-                                    "id": 25006,
-                                    "value": "Hoa lá",
-                                    "attribute_img": null,
-                                    "is_selected": true,
-                                    "is_custom": false
-                                }
-                            ]
-                        },
-                        {
-                            "attribute_id": 1491,
-                            "attribute_type": 3,
-                            "attribute_name": "Phong cách",
-                            "attribute_is_required": false,
-                            "attribute_code": "phong_cach",
-                            "attribute_is_custom": false,
-                            "attribute_is_checkout": false,
-                            "attribute_is_image": false,
-                            "attribute_values": [
-                                {
-                                    "id": 25023,
-                                    "value": "Dễ thương",
-                                    "attribute_img": null,
-                                    "is_selected": true,
-                                    "is_custom": false
-                                }
-                            ]
-                        }
-                    ],
+                "attributes": [
+                  {
+                    "attribute_id": 298,
+                    "attribute_type": 2,
+                    "attribute_name": "Kích thước",
+                    "attribute_is_required": true,
+                    "attribute_code": "kich_thuoc_1",
+                    "attribute_is_custom": false,
+                    "attribute_is_checkout": true,
+                    "attribute_is_image": false,
+                    "attribute_values": [
+                      {
+                        "id": 25304,
+                        "value": "27",
+                        "attribute_img": null,
+                        "is_selected": true,
+                        "is_custom": false
+                      }
+                    ]
+                  },
+                  {
+                    "attribute_id": 284,
+                    "attribute_type": 1,
+                    "attribute_name": "Màu sắc",
+                    "attribute_is_required": true,
+                    "attribute_code": "mau_sac",
+                    "attribute_is_custom": false,
+                    "attribute_is_checkout": true,
+                    "attribute_is_image": true,
+                    "attribute_values": [
+                      {
+                        "id": 602,
+                        "value": "Nâu",
+                        "attribute_img": null,
+                        "is_selected": true,
+                        "is_custom": false
+                      }
+                    ]
+                  },
+                  {
+                    "attribute_id": 1495,
+                    "attribute_type": 3,
+                    "attribute_name": "Chất vải",
+                    "attribute_is_required": false,
+                    "attribute_code": "chat_vai",
+                    "attribute_is_custom": false,
+                    "attribute_is_checkout": false,
+                    "attribute_is_image": false,
+                    "attribute_values": [
+                      {
+                        "id": 25068,
+                        "value": "Ren",
+                        "attribute_img": null,
+                        "is_selected": true,
+                        "is_custom": false
+                      }
+                    ]
+                  },
+                  {
+                    "attribute_id": 1485,
+                    "attribute_type": 3,
+                    "attribute_name": "Chiều dài váy",
+                    "attribute_is_required": false,
+                    "attribute_code": "chieu_dai_vay",
+                    "attribute_is_custom": false,
+                    "attribute_is_checkout": false,
+                    "attribute_is_image": false,
+                    "attribute_values": [
+                      {
+                        "id": 24968,
+                        "value": "Trên gối",
+                        "attribute_img": null,
+                        "is_selected": true,
+                        "is_custom": false
+                      }
+                    ]
+                  },
+                  {
+                    "attribute_id": 1488,
+                    "attribute_type": 3,
+                    "attribute_name": "Chiều dài tay áo",
+                    "attribute_is_required": false,
+                    "attribute_code": "chieu_dai_tay_ao",
+                    "attribute_is_custom": false,
+                    "attribute_is_checkout": false,
+                    "attribute_is_image": false,
+                    "attribute_values": [
+                      {
+                        "id": 24982,
+                        "value": "Không tay",
+                        "attribute_img": null,
+                        "is_selected": true,
+                        "is_custom": false
+                      }
+                    ]
+                  },
+                  {
+                    "attribute_id": 1489,
+                    "attribute_type": 3,
+                    "attribute_name": "Kiểu cổ áo",
+                    "attribute_is_required": false,
+                    "attribute_code": "kieu_co_ao_1_2_3",
+                    "attribute_is_custom": false,
+                    "attribute_is_checkout": false,
+                    "attribute_is_image": false,
+                    "attribute_values": [
+                      {
+                        "id": 24986,
+                        "value": "Cổ V",
+                        "attribute_img": null,
+                        "is_selected": true,
+                        "is_custom": false
+                      }
+                    ]
+                  },
+                  {
+                    "attribute_id": 1490,
+                    "attribute_type": 3,
+                    "attribute_name": "Họa tiết",
+                    "attribute_is_required": false,
+                    "attribute_code": "hoa_tiet",
+                    "attribute_is_custom": false,
+                    "attribute_is_checkout": false,
+                    "attribute_is_image": false,
+                    "attribute_values": [
+                      {
+                        "id": 25006,
+                        "value": "Hoa lá",
+                        "attribute_img": null,
+                        "is_selected": true,
+                        "is_custom": false
+                      }
+                    ]
+                  },
+                  {
+                    "attribute_id": 1491,
+                    "attribute_type": 3,
+                    "attribute_name": "Phong cách",
+                    "attribute_is_required": false,
+                    "attribute_code": "phong_cach",
+                    "attribute_is_custom": false,
+                    "attribute_is_checkout": false,
+                    "attribute_is_image": false,
+                    "attribute_values": [
+                      {
+                        "id": 25023,
+                        "value": "Dễ thương",
+                        "attribute_img": null,
+                        "is_selected": true,
+                        "is_custom": false
+                      }
+                    ]
+                  }
+                ],
                 "is_config_variant": true,
                 "variants": [
-                        {
-                            "variant_attributes": [
-                                {
-                                    "attribute_id": 298,
-                                    "attribute_code": "kich_thuoc_1",
-                                    "option_id": 25304
-                                },
-                                {
-                                    "attribute_id": 284,
-                                    "attribute_code": "mau_sac",
-                                    "option_id": 602
-                                }
-                            ],
-                            "variant_is_promotion": 0,
-                            "variant_sku": "12hfdeebd",
-                            "variant_price": 213435.0,
-                            "variant_special_price": 0.0,
-                            "variant_quantity": 122,
-                            "variant_promotion_start_date_timestamp": null,
-                            "variant_promotion_end_date_timestamp": null,
-                            "variant_is_flash_sales": null,
-                            "variant_campaign_status": null,
-                            "variant_attribute_hash": "602_25304",
-                            "message": null
-                        }
+                  {
+                    "variant_attributes": [
+                      {
+                        "attribute_id": 298,
+                        "attribute_code": "kich_thuoc_1",
+                        "option_id": 25304
+                      },
+                      {
+                        "attribute_id": 284,
+                        "attribute_code": "mau_sac",
+                        "option_id": 602
+                      }
                     ],
+                    "variant_is_promotion": 0,
+                    "variant_sku": "12hfdeebd",
+                    "variant_price": 213435.0,
+                    "variant_special_price": 0.0,
+                    "variant_quantity": 122,
+                    "variant_promotion_start_date_timestamp": null,
+                    "variant_promotion_end_date_timestamp": null,
+                    "variant_is_flash_sales": null,
+                    "variant_campaign_status": null,
+                    "variant_attribute_hash": "602_25304",
+                    "message": null
+                  }
+                ],
                 "voucher": {
-                "product_type": 1
-              }
-                
+                  "product_type": 1
+                }
               }
             }
           }
@@ -927,34 +924,41 @@
         "responses": {
           "200": {
             "description": "Successful",
-            "content":{
-              "application/json":{
-                "example":{"result":40182940,"success":true,"error":null,"status_code":200}
+            "content": {
+              "application/json": {
+                "example": {
+                  "result": 40182940,
+                  "success": true,
+                  "error": null,
+                  "status_code": 200
+                }
               }
             }
-            
           },
           "400": {
             "description": "Invalid ID supplied",
-            "content":{
-              "application/json":{
-                "example":{
-                  "result":null,
-                  "success":false,
-                  "error":{
-                    "message":"Mã sản phẩm đã tồn tại",
-                    "details":null,
-                    "error_details":null
+            "content": {
+              "application/json": {
+                "example": {
+                  "result": null,
+                  "success": false,
+                  "error": {
+                    "message": "Mã sản phẩm đã tồn tại",
+                    "details": null,
+                    "error_details": null
                   },
-                    "status_code":400}
+                  "status_code": 400
+                }
               }
             }
           },
           "401": {
             "description": "Pet not found",
-            "content":{
-              "application/json":{
-                "example":{"message":"Bad token; invalid JSON"}
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Bad token; invalid JSON"
+                }
               }
             }
           },
@@ -964,28 +968,30 @@
         }
       }
     },
-    "/sendo/products":{
+    "/sendo/products": {
       "get": {
         "tags": [
           "sendoProducts"
         ],
         "summary": "Get all sendoProduct in database",
         "operationId": "getAllSendoProduct",
-        "security":[
+        "security": [
           {
-            "bearerAuth":[],
-            "ApiKeyAuth":[]
+            "bearerAuth": [],
+            "ApiKeyAuth": []
           }
         ],
-        "parameters":[
+        "parameters": [
           {
-            "in":"query",
+            "in": "query",
             "name": "storeIds[]",
             "required": false,
             "description": "array of storeIds",
-            "schema":{
+            "schema": {
               "type": "array",
-              "items":["d63aecd314b4463abc2204aa6a340c6b"]
+              "items": [
+                "d63aecd314b4463abc2204aa6a340c6b"
+              ]
             }
           }
         ],
@@ -1005,26 +1011,26 @@
         }
       }
     },
-    "/api/sendo/products/{productId}":{
+    "/api/sendo/products/{productId}": {
       "get": {
         "tags": [
           "sendoAPI"
         ],
         "summary": "Get product by productId on sendo",
         "operationId": "getProduct",
-        "security":[
+        "security": [
           {
-            "bearerAuth":[],
-            "ApiKeyAuth":[]
+            "bearerAuth": [],
+            "ApiKeyAuth": []
           }
         ],
-        "parameters":[
+        "parameters": [
           {
-            "in":"path",
+            "in": "path",
             "name": "productId",
             "required": true,
             "description": "Numeric ID of product to get",
-            "schema":{
+            "schema": {
               "type": "integer",
               "example": 39107134
             }
@@ -1051,31 +1057,29 @@
         ],
         "summary": "update product on sendo",
         "operationId": "updateProduct",
-        "security":[
+        "security": [
           {
-            "bearerAuth":[],
-            "ApiKeyAuth":[]
+            "bearerAuth": [],
+            "ApiKeyAuth": []
           }
         ],
-        "parameters":[
+        "parameters": [
           {
-            "in":"path",
+            "in": "path",
             "name": "productId",
             "required": true,
             "description": "Numeric ID of product to update",
-            "schema":{
+            "schema": {
               "type": "integer",
               "example": 39508091
             }
           }
         ],
-        "requestBody":{
-          "content":{
-            "application/json":{
-              "schema":{
-
-              },
-              "example":{
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {},
+              "example": {
                 "name": "mrlocpro1397389213123232"
               }
             }
@@ -1084,12 +1088,10 @@
         "responses": {
           "200": {
             "description": "Successful",
-            "content":{ 
-              "application/json":{
-                "schema":{
-                  
-                },
-                "example":{
+            "content": {
+              "application/json": {
+                "schema": {},
+                "example": {
                   "result": [
                     {
                       "product_id": 39508091
@@ -1121,19 +1123,19 @@
         ],
         "summary": "Delete product by Id on sendo",
         "operationId": "deleteProduct",
-        "security":[
+        "security": [
           {
-            "bearerAuth":[],
-            "ApiKeyAuth":[]
+            "bearerAuth": [],
+            "ApiKeyAuth": []
           }
         ],
-        "parameters":[
+        "parameters": [
           {
-            "in":"path",
+            "in": "path",
             "name": "productId",
             "required": true,
             "description": "Numeric ID of product to get",
-            "schema":{
+            "schema": {
               "type": "integer",
               "example": 40205805
             }
@@ -1142,12 +1144,10 @@
         "responses": {
           "200": {
             "description": "Successful",
-            "content":{ 
-              "application/json":{
-                "schema":{
-                  
-                },
-                "example":{
+            "content": {
+              "application/json": {
+                "schema": {},
+                "example": {
                   "result": [
                     {
                       "product_id": 39508541
@@ -1174,28 +1174,26 @@
         }
       }
     },
-    "/api/sendo/products/":{
+    "/api/sendo/products/": {
       "patch": {
         "tags": [
           "sendoAPI"
         ],
         "summary": "update multi product on sendo",
         "operationId": "updateMultiProduct",
-        "security":[
+        "security": [
           {
-            "bearerAuth":[],
-            "ApiKeyAuth":[]
+            "bearerAuth": [],
+            "ApiKeyAuth": []
           }
         ],
-        "requestBody":{
-          "content":{
-            "application/json":{
-              "schema":{
-
-              },
-              "example":[
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {},
+              "example": [
                 {
-                  "id":41331091,
+                  "id": 41331091,
                   "name": "đầm đầm đầm ",
                   "sku": "lp132435",
                   "price": 690000,
@@ -1418,12 +1416,10 @@
         "responses": {
           "200": {
             "description": "Successful",
-            "content":{ 
-              "application/json":{
-                "schema":{
-                  
-                },
-                "example":{
+            "content": {
+              "application/json": {
+                "schema": {},
+                "example": {
                   "result": [
                     {
                       "product_id": 39508091
@@ -1450,26 +1446,26 @@
         }
       }
     },
-    "/api/sendo/category/{categoryId}":{
+    "/api/sendo/category/{categoryId}": {
       "get": {
         "tags": [
           "sendoAPI"
         ],
         "summary": "Get category by categoryId",
         "operationId": "getCategory",
-        "security":[
+        "security": [
           {
-            "bearerAuth":[],
-            "ApiKeyAuth":[]
+            "bearerAuth": [],
+            "ApiKeyAuth": []
           }
         ],
-        "parameters":[
+        "parameters": [
           {
-            "in":"path",
+            "in": "path",
             "name": "categoryId",
             "required": true,
             "description": "Numeric ID of category to get",
-            "schema":{
+            "schema": {
               "type": "integer",
               "example": 1485
             }
@@ -1491,28 +1487,28 @@
         }
       }
     },
-    "/api/sendo/attribute/{attributeId}":{
+    "/api/sendo/attribute/{attributeId}": {
       "get": {
         "tags": [
           "sendoAPI"
         ],
         "summary": "Get attribute by attributeId",
         "operationId": "getAttribute",
-        "security":[
+        "security": [
           {
-            "bearerAuth":[],
-            "ApiKeyAuth":[]
+            "bearerAuth": [],
+            "ApiKeyAuth": []
           }
         ],
-        "parameters":[
+        "parameters": [
           {
-            "in":"path",
+            "in": "path",
             "name": "attributeId",
             "required": true,
             "description": "Numeric ID of attribute to get",
-            "schema":{
+            "schema": {
               "type": "integer",
-              "example":1485
+              "example": 1485
             }
           }
         ],
@@ -1532,17 +1528,17 @@
         }
       }
     },
-    "/api/sendo/cancel-reason/":{
+    "/api/sendo/cancel-reason/": {
       "get": {
         "tags": [
           "sendoAPI"
         ],
         "summary": "Get cancel reason",
         "operationId": "getCancelReason",
-        "security":[
+        "security": [
           {
-            "bearerAuth":[],
-            "ApiKeyAuth":[]
+            "bearerAuth": [],
+            "ApiKeyAuth": []
           }
         ],
         "responses": {
@@ -1561,27 +1557,25 @@
         }
       }
     },
-    "/api/sendo/orders/":{
+    "/api/sendo/orders/": {
       "post": {
         "tags": [
           "sendoAPI"
         ],
         "summary": "search order",
         "operationId": "searchOrder",
-        "security":[
+        "security": [
           {
-            "bearerAuth":[],
-            "ApiKeyAuth":[]
+            "bearerAuth": [],
+            "ApiKeyAuth": []
           }
         ],
-        "requestBody":{
-          "description":"page_size: min 10, max 50, date: yyyy/MM/dd",
-          "content":{
-            "application/json":{
-              "schema":{
-                
-              },
-              "example":{
+        "requestBody": {
+          "description": "page_size: min 10, max 50, date: yyyy/MM/dd",
+          "content": {
+            "application/json": {
+              "schema": {},
+              "example": {
                 "page_size": 10,
                 "order_status": 2,
                 "order_date_from": "2020-05-01",
@@ -1609,26 +1603,26 @@
         }
       }
     },
-    "/api/sendo/orders/{orderNumber}":{
+    "/api/sendo/orders/{orderNumber}": {
       "get": {
         "tags": [
           "sendoAPI"
         ],
         "summary": "Get order by orderNumber on Sendo",
         "operationId": "getOrder",
-        "security":[
+        "security": [
           {
-            "bearerAuth":[],
-            "ApiKeyAuth":[]
+            "bearerAuth": [],
+            "ApiKeyAuth": []
           }
         ],
-        "parameters":[
+        "parameters": [
           {
-            "in":"path",
+            "in": "path",
             "name": "orderNumber",
             "required": true,
             "description": "Numeric of order to get",
-            "schema":{
+            "schema": {
               "type": "integer",
               "example": 14674394696
             }
@@ -1655,32 +1649,30 @@
         ],
         "summary": "Update order status by orderNumber on Sendo",
         "operationId": "updateOrder",
-        "security":[
+        "security": [
           {
-            "bearerAuth":[],
-            "ApiKeyAuth":[]
+            "bearerAuth": [],
+            "ApiKeyAuth": []
           }
         ],
-        "parameters":[
+        "parameters": [
           {
-            "in":"path",
+            "in": "path",
             "name": "orderNumber",
             "required": true,
             "description": "Numeric of order to update",
-            "schema":{
+            "schema": {
               "type": "integer",
               "example": 14674394696
             }
           }
         ],
-        "requestBody":{
-          "content":{
-            "application/json":{
-              "schema":{
-
-              },
-              "example":{
-                "orđerStatus" :"13",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {},
+              "example": {
+                "orđerStatus": "13",
                 "cancelReason": "CBS100"
               }
             }
@@ -1702,27 +1694,22 @@
         }
       }
     },
-    "/api/sendo/authorize":{
+    "/api/sendo/authorize": {
       "post": {
         "tags": [
           "sendoAPI"
         ],
         "summary": "authorize",
         "operationId": "authorize",
-        "parameters":[
-
-        ],
-        "requestBody":{
-          "content":{
-            "application/json":{
-              "schema":{
-
-              },
-              "example":{
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {},
+              "example": {
                 "app_key": "d63aecd314b4463abc2204aa6a340c6b",
-                "app_secret":"a6919d8125cc437c87f004ea2bc87959",
-                "storageId":"5ffac838ba04401744309345"
-                
+                "app_secret": "a6919d8125cc437c87f004ea2bc87959",
+                "storageId": "5ffac838ba04401744309345"
               }
             }
           }
@@ -1743,29 +1730,26 @@
         }
       }
     },
-    "/sendo/products/fetch":{
+    "/sendo/products/fetch": {
       "post": {
         "tags": [
           "sendoProducts"
         ],
         "summary": "fetch sendo products",
         "operationId": "fetchSendoProducts",
-        "security":[
+        "security": [
           {
-            "bearerAuth":[],
-            "ApiKeyAuth":[]
+            "bearerAuth": [],
+            "ApiKeyAuth": []
           }
         ],
-        "requestBody":{
-          "content":{
-            "application/json":{
-              "schema":{
-
-              },
-              "example":{
-                "store_id":"d63aecd314b4463abc2204aa6a340c6b",
-                "storageId":"5ffac838ba04401744309345"
-                
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {},
+              "example": {
+                "store_id": "d63aecd314b4463abc2204aa6a340c6b",
+                "storageId": "5ffac838ba04401744309345"
               }
             }
           }
@@ -1786,29 +1770,26 @@
         }
       }
     },
-    "/lazada/products/fetch":{
+    "/lazada/products/fetch": {
       "post": {
         "tags": [
           "lazadaProducts"
         ],
         "summary": "fetch lazada products",
         "operationId": "fetchLazadaProducts",
-        "security":[
+        "security": [
           {
-            "bearerAuth":[],
-            "ApiKeyAuth":[]
+            "bearerAuth": [],
+            "ApiKeyAuth": []
           }
         ],
-        "requestBody":{
-          "content":{
-            "application/json":{
-              "schema":{
-
-              },
-              "example":{
-                "store_id":"d63aecd314b4463abc2204aa6a340c6b",
-                "storageId":"5ffac838ba04401744309345"
-                
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {},
+              "example": {
+                "store_id": "d63aecd314b4463abc2204aa6a340c6b",
+                "storageId": "5ffac838ba04401744309345"
               }
             }
           }
@@ -1829,28 +1810,28 @@
         }
       }
     },
-    "/lazada/products":{
+    "/lazada/products": {
       "get": {
         "tags": [
           "lazadaProducts"
         ],
         "summary": "Get all lazadaProduct in database",
         "operationId": "getAllLazadaProduct",
-        "security":[
+        "security": [
           {
-            "bearerAuth":[],
-            "ApiKeyAuth":[]
+            "bearerAuth": [],
+            "ApiKeyAuth": []
           }
         ],
-        "parameters":[
+        "parameters": [
           {
-            "in":"query",
+            "in": "query",
             "name": "storeIds[]",
             "required": false,
             "description": "array of storeIds",
-            "schema":{
+            "schema": {
               "type": "array",
-              "items":[
+              "items": [
                 {
                   "type": "string",
                   "example": "200163939035"
@@ -1875,36 +1856,36 @@
         }
       }
     },
-    "/api/lazada/token":{
+    "/api/lazada/token": {
       "get": {
         "tags": [
           "lazadaAPI"
         ],
         "summary": "get accessToken on lazada",
         "operationId": "getAccessToken",
-        "security":[
+        "security": [
           {
-            "bearerAuth":[],
-            "ApiKeyAuth":[]
+            "bearerAuth": [],
+            "ApiKeyAuth": []
           }
         ],
-        "parameters":[
+        "parameters": [
           {
-            "in":"query",
+            "in": "query",
             "name": "code",
             "required": true,
             "description": "code receive from lazada",
-            "schema":{
+            "schema": {
               "type": "string",
               "example": ""
             }
           },
           {
-            "in":"query",
+            "in": "query",
             "name": "state",
             "required": true,
             "description": "state ",
-            "schema":{
+            "schema": {
               "type": "string",
               "example": ""
             }
@@ -1913,11 +1894,11 @@
         "responses": {
           "200": {
             "description": "Successful",
-            "content":{
-              "application/json":{
-                "example":{
-                  "code":"0",
-                  "request_id":"0b0e02a716117470077826212"
+            "content": {
+              "application/json": {
+                "example": {
+                  "code": "0",
+                  "request_id": "0b0e02a716117470077826212"
                 }
               }
             }
@@ -1934,25 +1915,25 @@
         }
       }
     },
-    "/api/lazada/products/{sellerSku}":{
+    "/api/lazada/products/{sellerSku}": {
       "delete": {
         "tags": [
           "lazadaAPI"
         ],
         "summary": "delete product by sellerSku on lazada",
         "operationId": "deleteProduct",
-        "security":[
+        "security": [
           {
-            "bearerAuth":[],
-            "ApiKeyAuth":[]
+            "bearerAuth": [],
+            "ApiKeyAuth": []
           }
         ],
-        "parameters":[
+        "parameters": [
           {
-            "in":"path",
+            "in": "path",
             "name": "sellerSku",
             "required": true,
-            "schema":{
+            "schema": {
               "type": "string",
               "example": "124324"
             }
@@ -1961,11 +1942,11 @@
         "responses": {
           "200": {
             "description": "Successful",
-            "content":{
-              "application/json":{
-                "example":{
-                  "code":"0",
-                  "request_id":"0b0e02a716117470077826212"
+            "content": {
+              "application/json": {
+                "example": {
+                  "code": "0",
+                  "request_id": "0b0e02a716117470077826212"
                 }
               }
             }
@@ -1982,25 +1963,25 @@
         }
       }
     },
-    "/api/lazada/products/{productId}":{
+    "/api/lazada/products/{productId}": {
       "get": {
         "tags": [
           "lazadaAPI"
         ],
         "summary": "get product by Id on lazada",
         "operationId": "getProduct",
-        "security":[
+        "security": [
           {
-            "bearerAuth":[],
-            "ApiKeyAuth":[]
+            "bearerAuth": [],
+            "ApiKeyAuth": []
           }
         ],
-        "parameters":[
+        "parameters": [
           {
-            "in":"path",
+            "in": "path",
             "name": "productId",
             "required": true,
-            "schema":{
+            "schema": {
               "type": "string",
               "example": "1201180724"
             }
@@ -2022,25 +2003,25 @@
         }
       }
     },
-    "/api/lazada/products/seller-sku/{sellerSku}":{
+    "/api/lazada/products/seller-sku/{sellerSku}": {
       "get": {
         "tags": [
           "lazadaAPI"
         ],
         "summary": "get product by seller_sku on lazada",
         "operationId": "getProductSku",
-        "security":[
+        "security": [
           {
-            "bearerAuth":[],
-            "ApiKeyAuth":[]
+            "bearerAuth": [],
+            "ApiKeyAuth": []
           }
         ],
-        "parameters":[
+        "parameters": [
           {
-            "in":"path",
+            "in": "path",
             "name": "sellerSku",
             "required": true,
-            "schema":{
+            "schema": {
               "type": "string",
               "example": "859984666-1601101496431-0"
             }
@@ -2062,26 +2043,24 @@
         }
       }
     },
-    "/api/lazada/products/":{
+    "/api/lazada/products/": {
       "post": {
         "tags": [
           "lazadaAPI"
         ],
         "summary": "create product on lazada",
         "operationId": "createProduct",
-        "security":[
+        "security": [
           {
-            "bearerAuth":[],
-            "ApiKeyAuth":[]
+            "bearerAuth": [],
+            "ApiKeyAuth": []
           }
         ],
-        "requestBody":{
-          "content":{
-            "application/json":{
-              "schema":{
-                
-              },
-              "example":{
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {},
+              "example": {
                 "Request": {
                   "Product": {
                     "PrimaryCategory": "13010",
@@ -2122,19 +2101,20 @@
         "responses": {
           "200": {
             "description": "Successful",
-            "content":{
-              "application/json":{
-                "data":{
-                  "item_id":1136164711,
-                  "sku_list":[
+            "content": {
+              "application/json": {
+                "data": {
+                  "item_id": 1136164711,
+                  "sku_list": [
                     {
-                      "shop_sku":"1136164711_VNAMZ-4026616019","seller_sku":"api-create-test-1",
-                      "sku_id":4026616019
-                      }
+                      "shop_sku": "1136164711_VNAMZ-4026616019",
+                      "seller_sku": "api-create-test-1",
+                      "sku_id": 4026616019
+                    }
                   ]
                 },
-                "code":"0",
-                "request_id":"0be6f7a716117479900025246"
+                "code": "0",
+                "request_id": "0be6f7a716117479900025246"
               }
             }
           },
@@ -2155,25 +2135,22 @@
         ],
         "summary": "update product on lazada",
         "operationId": "updateProduct",
-        "security":[
+        "security": [
           {
-            "bearerAuth":[],
-            "ApiKeyAuth":[]
+            "bearerAuth": [],
+            "ApiKeyAuth": []
           }
         ],
-        "requestBody":{
-          "content":{
-            "application/json":{
-              "schema":{
-                
-              },
-              "example":{
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {},
+              "example": {
                 "Request": {
                   "Product": {
                     "id": 1101914439,
                     "Attributes": {
                       "name": "loc pro 1"
-                     
                     },
                     "Skus": {
                       "Sku": [
@@ -2198,19 +2175,20 @@
         "responses": {
           "200": {
             "description": "Successful",
-            "content":{
-              "application/json":{
-                "data":{
-                  "item_id":1136164711,
-                  "sku_list":[
+            "content": {
+              "application/json": {
+                "data": {
+                  "item_id": 1136164711,
+                  "sku_list": [
                     {
-                      "shop_sku":"1136164711_VNAMZ-4026616019","seller_sku":"api-create-test-1",
-                      "sku_id":4026616019
-                      }
+                      "shop_sku": "1136164711_VNAMZ-4026616019",
+                      "seller_sku": "api-create-test-1",
+                      "sku_id": 4026616019
+                    }
                   ]
                 },
-                "code":"0",
-                "request_id":"0be6f7a716117479900025246"
+                "code": "0",
+                "request_id": "0be6f7a716117479900025246"
               }
             }
           },
@@ -2226,29 +2204,29 @@
         }
       }
     },
-    "/api/lazada/attribute/{categoryId}":{
+    "/api/lazada/attribute/{categoryId}": {
       "get": {
         "tags": [
           "lazadaAPI"
         ],
         "summary": "get Attributes by categoryId on lazada",
         "operationId": "getAttributes",
-        "security":[
+        "security": [
           {
-            "bearerAuth":[],
-            "ApiKeyAuth":[]
+            "bearerAuth": [],
+            "ApiKeyAuth": []
           }
         ],
-        "parameters":[
+        "parameters": [
           {
-            "in":"path",
+            "in": "path",
             "name": "categoryId",
             "required": true,
-            "schema":{
+            "schema": {
               "type": "number",
               "example": 10100183
             },
-            "description":"categoryId must be primary category"
+            "description": "categoryId must be primary category"
           }
         ],
         "responses": {
@@ -2260,12 +2238,13 @@
           },
           "404": {
             "description": "Attributes not found",
-            "content":{
-              "application/json":{
+            "content": {
+              "application/json": {
                 "example": {
-                  "code":"601",
-                  "type":"ISP",
-                  "message":"E601: Requested category not exists","request_id":"0b1195dd16111364977805848"
+                  "code": "601",
+                  "type": "ISP",
+                  "message": "E601: Requested category not exists",
+                  "request_id": "0b1195dd16111364977805848"
                 }
               }
             }
@@ -2276,49 +2255,54 @@
         }
       }
     },
-    "/api/lazada/qc-status":{
+    "/api/lazada/qc-status": {
       "post": {
         "tags": [
           "lazadaAPI"
         ],
         "summary": "get QcStatus by seller_sku on lazada",
         "operationId": "getQcStatus",
-        "security":[
+        "security": [
           {
-            "bearerAuth":[],
-            "ApiKeyAuth":[]
+            "bearerAuth": [],
+            "ApiKeyAuth": []
           }
         ],
-        "parameters":[
+        "parameters": [
           {
-            "in":"query",
+            "in": "query",
             "name": "limit",
             "required": true,
-            "schema":{
+            "schema": {
               "type": "number",
-              "enum":[100]
+              "enum": [
+                100
+              ]
             },
-            "description":""
+            "description": ""
           },
           {
-            "in":"query",
+            "in": "query",
             "name": "offset",
             "required": true,
-            "schema":{
+            "schema": {
               "type": "number",
-              "enum":[0]
+              "enum": [
+                0
+              ]
             },
-            "description":""
+            "description": ""
           }
         ],
-        "requestBody":{
-          "content":{
-            "application/json":{
-              "schema":{
-
-              },
-              "example":{
-                "seller_skus": ["12432456","124324"]
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {},
+              "example": {
+                "seller_skus": [
+                  "12432456",
+                  "124324"
+                ]
               }
             }
           }
@@ -2326,9 +2310,9 @@
         "responses": {
           "200": {
             "description": "Successful",
-            "content":{
-              "application/json":{
-                "example":{
+            "content": {
+              "application/json": {
+                "example": {
                   "data": [
                     {
                       "seller_sku": "124324",
@@ -2351,9 +2335,9 @@
           },
           "404": {
             "description": "Attributes not found",
-            "content":{
-              "application/json":{
-                "example":{
+            "content": {
+              "application/json": {
+                "example": {
                   "code": "1006",
                   "type": "ISP",
                   "message": "E1006: SellerSku Not Exist",
@@ -2368,39 +2352,39 @@
         }
       }
     },
-    "/api/lazada/cancel-reason":{
+    "/api/lazada/cancel-reason": {
       "get": {
         "tags": [
           "lazadaAPI"
         ],
         "summary": "get Cancel Reason on lazada",
         "operationId": "getCancelReason",
-        "security":[
+        "security": [
           {
-            "bearerAuth":[],
-            "ApiKeyAuth":[]
+            "bearerAuth": [],
+            "ApiKeyAuth": []
           }
         ],
         "responses": {
           "200": {
             "description": "Successful",
-            "content":{
-              "application/json":{
-                "example":{
-                  "data":[
+            "content": {
+              "application/json": {
+                "example": {
+                  "data": [
                     {
-                      "name":"Out of Stock",
-                      "type":"canceled",
-                      "reason_id":15
+                      "name": "Out of Stock",
+                      "type": "canceled",
+                      "reason_id": 15
                     },
                     {
-                      "name":"Wrong Price or Pricing Error",
-                      "type":"canceled",
-                      "reason_id":21
+                      "name": "Wrong Price or Pricing Error",
+                      "type": "canceled",
+                      "reason_id": 21
                     }
                   ],
-                  "code":"0",
-                  "request_id":"0b0e02a716117568792665768"
+                  "code": "0",
+                  "request_id": "0b0e02a716117568792665768"
                 }
               }
             }
@@ -2410,9 +2394,9 @@
           },
           "404": {
             "description": "Attributes not found",
-            "content":{
-              "application/json":{
-                "example":{
+            "content": {
+              "application/json": {
+                "example": {
                   "code": "1006",
                   "type": "ISP",
                   "message": "E1006: SellerSku Not Exist",
@@ -2427,25 +2411,25 @@
         }
       }
     },
-    "/api/lazada/seller-metrics":{
+    "/api/lazada/seller-metrics": {
       "get": {
         "tags": [
           "lazadaAPI"
         ],
         "summary": "get Seller Metrics by seller_sku on lazada",
         "operationId": "getSellerMetrics",
-        "security":[
+        "security": [
           {
-            "bearerAuth":[],
-            "ApiKeyAuth":[]
+            "bearerAuth": [],
+            "ApiKeyAuth": []
           }
         ],
         "responses": {
           "200": {
             "description": "Successful",
-            "content":{
-              "application/json":{
-                "example":{
+            "content": {
+              "application/json": {
+                "example": {
                   "data": {
                     "ship_on_time": "0.0",
                     "response_time": "null",
@@ -2463,11 +2447,9 @@
           },
           "404": {
             "description": "Attributes not found",
-            "content":{
-              "application/json":{
-                "example":{
-                  
-                }
+            "content": {
+              "application/json": {
+                "example": {}
               }
             }
           },
@@ -2477,25 +2459,25 @@
         }
       }
     },
-    "/api/lazada/suggestion":{
+    "/api/lazada/suggestion": {
       "get": {
         "tags": [
           "lazadaAPI"
         ],
         "summary": "get category suggestion on lazada",
         "operationId": "getSuggestion",
-        "security":[
+        "security": [
           {
-            "bearerAuth":[],
-            "ApiKeyAuth":[]
+            "bearerAuth": [],
+            "ApiKeyAuth": []
           }
         ],
-        "parameters":[
+        "parameters": [
           {
-            "in":"query",
+            "in": "query",
             "name": "name",
             "required": false,
-            "schema":{
+            "schema": {
               "type": "String",
               "example": "áo thun"
             }
@@ -2504,9 +2486,9 @@
         "responses": {
           "200": {
             "description": "Successful",
-            "content":{
-              "application/json":{
-                "example":{
+            "content": {
+              "application/json": {
+                "example": {
                   "data": {
                     "ship_on_time": "0.0",
                     "response_time": "null",
@@ -2524,11 +2506,9 @@
           },
           "404": {
             "description": "Attributes not found",
-            "content":{
-              "application/json":{
-                "example":{
-                  
-                }
+            "content": {
+              "application/json": {
+                "example": {}
               }
             }
           },
@@ -2538,32 +2518,31 @@
         }
       }
     },
-    "/categories":{
+    "/categories": {
       "get": {
         "tags": [
           "categories"
         ],
         "summary": "get list categories in database",
         "operationId": "getListCategories",
-        "security":[
+        "security": [
           {
-            "bearerAuth":[],
-            "ApiKeyAuth":[]
+            "bearerAuth": [],
+            "ApiKeyAuth": []
           }
         ],
-       "parameters":[
-        {
-          "in":"query",
-          "name": "idpath[]",
-          "required": false,
-          "schema":{
-            "type": "array",
-            "items": []
-            
-          },
-          "description":"categoryId must be primary category"
-        }
-       ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "idpath[]",
+            "required": false,
+            "schema": {
+              "type": "array",
+              "items": []
+            },
+            "description": "categoryId must be primary category"
+          }
+        ],
         "responses": {
           "200": {
             "description": "Successful"
@@ -2582,29 +2561,27 @@
         ],
         "summary": "create category in database",
         "operationId": "createCategory",
-        "security":[
+        "security": [
           {
-            "bearerAuth":[],
-            "ApiKeyAuth":[]
+            "bearerAuth": [],
+            "ApiKeyAuth": []
           }
         ],
-       "requestBody":{
-         "content":{
-           "application/json":{
-             "schema":{
-
-             },
-             "example":{
-              "idpath": [],
-              "namepath": [],
-              "category_id": 99999,
-              "var": false,
-              "name": "locpro",
-              "leaf": false
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {},
+              "example": {
+                "idpath": [],
+                "namepath": [],
+                "category_id": 99999,
+                "var": false,
+                "name": "locpro",
+                "leaf": false
+              }
             }
-           }
-         }
-       },
+          }
+        },
         "responses": {
           "200": {
             "description": "Successful"
@@ -2618,32 +2595,31 @@
         }
       }
     },
-    "/categories/{categoryId}":{
+    "/categories/{categoryId}": {
       "get": {
         "tags": [
           "categories"
         ],
         "summary": "get category by id in database",
         "operationId": "getCategoryById",
-        "security":[
+        "security": [
           {
-            "bearerAuth":[],
-            "ApiKeyAuth":[]
+            "bearerAuth": [],
+            "ApiKeyAuth": []
           }
         ],
-       "parameters":[
-        {
-          "in":"path",
-          "name": "categoryId",
-          "required": true,
-          "schema":{
-            "type": "number",
-            "example":10100180
-            
-          },
-          "description":"categoryId must be primary category"
-        }
-       ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "categoryId",
+            "required": true,
+            "schema": {
+              "type": "number",
+              "example": 10100180
+            },
+            "description": "categoryId must be primary category"
+          }
+        ],
         "responses": {
           "200": {
             "description": "Successful"
@@ -2662,40 +2638,38 @@
         ],
         "summary": "update category in database",
         "operationId": "updateCategory",
-        "security":[
+        "security": [
           {
-            "bearerAuth":[],
-            "ApiKeyAuth":[]
+            "bearerAuth": [],
+            "ApiKeyAuth": []
           }
         ],
-        "parameters":[
+        "parameters": [
           {
-            "in":"path",
+            "in": "path",
             "name": "categoryId",
             "required": true,
-            "schema":{
+            "schema": {
               "type": "number",
               "example": "99999"
             },
-            "description":""
+            "description": ""
           }
         ],
-       "requestBody":{
-         "content":{
-           "application/json":{
-             "schema":{
-
-             },
-             "example":{
-              "idpath": [],
-              "namepath": [],
-              "var": false,
-              "name": "locpro1",
-              "leaf": false
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {},
+              "example": {
+                "idpath": [],
+                "namepath": [],
+                "var": false,
+                "name": "locpro1",
+                "leaf": false
+              }
             }
-           }
-         }
-       },
+          }
+        },
         "responses": {
           "200": {
             "description": "Successful"
@@ -2714,28 +2688,27 @@
         ],
         "summary": "delete category by id in database",
         "operationId": "deleteCategory",
-        "security":[
+        "security": [
           {
-            "bearerAuth":[],
-            "ApiKeyAuth":[]
+            "bearerAuth": [],
+            "ApiKeyAuth": []
           }
         ],
-        "parameters":[
+        "parameters": [
           {
-            "in":"path",
+            "in": "path",
             "name": "categoryId",
             "required": true,
-            "schema":{
+            "schema": {
               "type": "number",
               "example": "99999"
             },
-            "description":""
+            "description": ""
           }
         ],
         "responses": {
           "200": {
             "description": "Successful"
-           
           },
           "400": {
             "description": "Invalid ID supplied"
@@ -2746,29 +2719,29 @@
         }
       }
     },
-    "/categories/search":{
+    "/categories/search": {
       "get": {
         "tags": [
           "categories"
         ],
         "summary": "searching primary categories in database",
         "operationId": "getCategories",
-        "security":[
+        "security": [
           {
-            "bearerAuth":[],
-            "ApiKeyAuth":[]
+            "bearerAuth": [],
+            "ApiKeyAuth": []
           }
         ],
-        "parameters":[
+        "parameters": [
           {
-            "in":"query",
+            "in": "query",
             "name": "search",
             "required": true,
-            "schema":{
+            "schema": {
               "type": "string",
               "example": "áo th"
             },
-            "description":""
+            "description": ""
           }
         ],
         "responses": {
@@ -2784,17 +2757,17 @@
         }
       }
     },
-    "/api/lazada/refresh-token":{
+    "/api/lazada/refresh-token": {
       "get": {
         "tags": [
           "lazadaAPI"
         ],
         "summary": "refresh token and save into database",
         "operationId": "refreshToken",
-        "security":[
+        "security": [
           {
-            "bearerAuth":[],
-            "ApiKeyAuth":[]
+            "bearerAuth": [],
+            "ApiKeyAuth": []
           }
         ],
         "responses": {
@@ -2810,39 +2783,37 @@
         }
       }
     },
-    "/api/lazada/orders/cancel/{order_item_id}":{
+    "/api/lazada/orders/cancel/{order_item_id}": {
       "post": {
         "tags": [
           "lazadaAPI"
         ],
         "summary": "cacel order item on lazada",
         "operationId": "cancelOrderItem",
-        "security":[
+        "security": [
           {
-            "bearerAuth":[],
-            "ApiKeyAuth":[]
+            "bearerAuth": [],
+            "ApiKeyAuth": []
           }
         ],
-        "parameters":[
+        "parameters": [
           {
-            "in":"path",
+            "in": "path",
             "name": "order_item_id",
             "required": true,
-            "schema":{
+            "schema": {
               "type": "number",
               "example": 267078668413259
             },
-            "description":""
+            "description": ""
           }
         ],
-        "requestBody":{
-          "content":{
-            "application/json":{
-              "schema":{
-
-              },
-              "example":{
-                "reason_id":21,
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {},
+              "example": {
+                "reason_id": 21,
                 "reason_detail": ""
               }
             }
@@ -2851,12 +2822,12 @@
         "responses": {
           "200": {
             "description": "Successful",
-            "content":{
-              "application/json":{
-                "example":{
-                  "success":true,
-                  "code":"0",
-                  "request_id":"0b1187a316117593884048180"
+            "content": {
+              "application/json": {
+                "example": {
+                  "success": true,
+                  "code": "0",
+                  "request_id": "0b1187a316117593884048180"
                 }
               }
             }
@@ -2870,29 +2841,29 @@
         }
       }
     },
-    "/api/lazada/orders/{order_id}":{
+    "/api/lazada/orders/{order_id}": {
       "get": {
         "tags": [
           "lazadaAPI"
         ],
         "summary": "Get order by id on lazada",
         "operationId": "getOrder",
-        "security":[
+        "security": [
           {
-            "bearerAuth":[],
-            "ApiKeyAuth":[]
+            "bearerAuth": [],
+            "ApiKeyAuth": []
           }
         ],
-        "parameters":[
+        "parameters": [
           {
-            "in":"path",
+            "in": "path",
             "name": "order_id",
             "required": true,
-            "schema":{
+            "schema": {
               "type": "string",
               "example": "267078668313259"
             },
-            "description":""
+            "description": ""
           }
         ],
         "responses": {
@@ -2908,29 +2879,29 @@
         }
       }
     },
-    "/api/lazada/orders/items/{order_id}":{
+    "/api/lazada/orders/items/{order_id}": {
       "get": {
         "tags": [
           "lazadaAPI"
         ],
         "summary": "Get order items by id on lazada",
         "operationId": "getOrderItems",
-        "security":[
+        "security": [
           {
-            "bearerAuth":[],
-            "ApiKeyAuth":[]
+            "bearerAuth": [],
+            "ApiKeyAuth": []
           }
         ],
-        "parameters":[
+        "parameters": [
           {
-            "in":"path",
+            "in": "path",
             "name": "order_id",
             "required": true,
-            "schema":{
+            "schema": {
               "type": "string",
               "example": "267078668313259"
             },
-            "description":""
+            "description": ""
           }
         ],
         "responses": {
@@ -2946,26 +2917,26 @@
         }
       }
     },
-    "/api/lazada/upload-image":{
+    "/api/lazada/upload-image": {
       "post": {
         "tags": [
           "lazadaAPI"
         ],
         "summary": "upload image on lazada",
         "operationId": "uploadImage",
-        "security":[
+        "security": [
           {
-            "bearerAuth":[],
-            "ApiKeyAuth":[]
+            "bearerAuth": [],
+            "ApiKeyAuth": []
           }
         ],
-        "requestBody":{
-          "content":{
-            "multipart/form-data":{
-              "schema":{
-                "type":"object",
-                "properties":{
-                  "image":{
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "image": {
                     "type": "string",
                     "format": "binary"
                   }
@@ -2977,17 +2948,17 @@
         "responses": {
           "200": {
             "description": "Successful",
-            "content":{
-              "application/json":{
-                "example":{
-                  "data":{
-                    "image":{
-                      "hash_code":"eeaca3c5adf96292ee5c5087787140a1",
-                      "url":"https://vn-live-02.slatic.net/p/eeaca3c5adf96292ee5c5087787140a1.jpg"
+            "content": {
+              "application/json": {
+                "example": {
+                  "data": {
+                    "image": {
+                      "hash_code": "eeaca3c5adf96292ee5c5087787140a1",
+                      "url": "https://vn-live-02.slatic.net/p/eeaca3c5adf96292ee5c5087787140a1.jpg"
                     }
                   },
-                  "code":"0",
-                  "request_id":"0be6f7a716116562977934279"
+                  "code": "0",
+                  "request_id": "0be6f7a716116562977934279"
                 }
               }
             }
@@ -3001,33 +2972,33 @@
         }
       }
     },
-    "/api/lazada/seller":{
+    "/api/lazada/seller": {
       "get": {
         "tags": [
           "lazadaAPI"
         ],
         "summary": "get seller info on lazada",
         "operationId": "getSellerInfo",
-        "security":[
+        "security": [
           {
-            "bearerAuth":[],
-            "ApiKeyAuth":[]
+            "bearerAuth": [],
+            "ApiKeyAuth": []
           }
         ],
         "responses": {
           "200": {
             "description": "Successful",
-            "content":{
-              "application/json":{
-                "example":{
-                  "data":{
-                    "image":{
-                      "hash_code":"eeaca3c5adf96292ee5c5087787140a1",
-                      "url":"https://vn-live-02.slatic.net/p/eeaca3c5adf96292ee5c5087787140a1.jpg"
+            "content": {
+              "application/json": {
+                "example": {
+                  "data": {
+                    "image": {
+                      "hash_code": "eeaca3c5adf96292ee5c5087787140a1",
+                      "url": "https://vn-live-02.slatic.net/p/eeaca3c5adf96292ee5c5087787140a1.jpg"
                     }
                   },
-                  "code":"0",
-                  "request_id":"0be6f7a716116562977934279"
+                  "code": "0",
+                  "request_id": "0be6f7a716116562977934279"
                 }
               }
             }
@@ -3041,23 +3012,22 @@
         }
       }
     },
-    "/address/provinces":{
+    "/address/provinces": {
       "get": {
         "tags": [
           "provinces"
         ],
         "summary": "get all provinces in database",
         "operationId": "getAllProvinces",
-        "security":[
+        "security": [
           {
-            "bearerAuth":[],
-            "ApiKeyAuth":[]
+            "bearerAuth": [],
+            "ApiKeyAuth": []
           }
         ],
         "responses": {
           "200": {
             "description": "Successful"
-           
           },
           "400": {
             "description": "Invalid ID supplied"
@@ -3073,23 +3043,20 @@
         ],
         "summary": "create province in database",
         "operationId": "createProvinces",
-        "security":[
+        "security": [
           {
-            "bearerAuth":[],
-            "ApiKeyAuth":[]
+            "bearerAuth": [],
+            "ApiKeyAuth": []
           }
         ],
-        "requestBody":{
-          "content":{
-            "application/json":{
-              "schema":{
-
-              },
-              "example":{
-                "id":"9999",
-                "name":"locpro",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {},
+              "example": {
+                "id": "9999",
+                "name": "locpro",
                 "type": "Tỉnh"
-                
               }
             }
           }
@@ -3097,7 +3064,6 @@
         "responses": {
           "200": {
             "description": "Successful"
-           
           },
           "400": {
             "description": "Invalid ID supplied"
@@ -3108,35 +3074,34 @@
         }
       }
     },
-    "/address/provinces/{provinceId}":{
+    "/address/provinces/{provinceId}": {
       "get": {
         "tags": [
           "provinces"
         ],
         "summary": "get province by id in database",
         "operationId": "getProvinceById",
-        "security":[
+        "security": [
           {
-            "bearerAuth":[],
-            "ApiKeyAuth":[]
+            "bearerAuth": [],
+            "ApiKeyAuth": []
           }
         ],
-        "parameters":[
+        "parameters": [
           {
-            "in":"path",
+            "in": "path",
             "name": "provinceId",
             "required": true,
-            "schema":{
+            "schema": {
               "type": "number",
               "example": "22"
             },
-            "description":""
+            "description": ""
           }
         ],
         "responses": {
           "200": {
             "description": "Successful"
-           
           },
           "400": {
             "description": "Invalid ID supplied"
@@ -3152,34 +3117,31 @@
         ],
         "summary": "update province by id in database",
         "operationId": "updateProvinceById",
-        "security":[
+        "security": [
           {
-            "bearerAuth":[],
-            "ApiKeyAuth":[]
+            "bearerAuth": [],
+            "ApiKeyAuth": []
           }
         ],
-        "parameters":[
+        "parameters": [
           {
-            "in":"path",
+            "in": "path",
             "name": "provinceId",
             "required": true,
-            "schema":{
+            "schema": {
               "type": "number",
               "example": "9999"
             },
-            "description":""
+            "description": ""
           }
         ],
-        "requestBody":{
-          "content":{
-            "application/json":{
-              "schema":{
-
-              },
-              "example":{
-                "name":"locpro1",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {},
+              "example": {
+                "name": "locpro1",
                 "type": "Tỉnh"
-                
               }
             }
           }
@@ -3187,7 +3149,6 @@
         "responses": {
           "200": {
             "description": "Successful"
-           
           },
           "400": {
             "description": "Invalid ID supplied"
@@ -3203,28 +3164,27 @@
         ],
         "summary": "delete province by id in database",
         "operationId": "deleteProvinceById",
-        "security":[
+        "security": [
           {
-            "bearerAuth":[],
-            "ApiKeyAuth":[]
+            "bearerAuth": [],
+            "ApiKeyAuth": []
           }
         ],
-        "parameters":[
+        "parameters": [
           {
-            "in":"path",
+            "in": "path",
             "name": "provinceId",
             "required": true,
-            "schema":{
+            "schema": {
               "type": "number",
               "example": "9999"
             },
-            "description":""
+            "description": ""
           }
         ],
         "responses": {
           "200": {
             "description": "Successful"
-           
           },
           "400": {
             "description": "Invalid ID supplied"
@@ -3235,23 +3195,22 @@
         }
       }
     },
-    "/address/districts":{
+    "/address/districts": {
       "get": {
         "tags": [
           "districts"
         ],
         "summary": "get all districts in database",
         "operationId": "getAllDistricts",
-        "security":[
+        "security": [
           {
-            "bearerAuth":[],
-            "ApiKeyAuth":[]
+            "bearerAuth": [],
+            "ApiKeyAuth": []
           }
         ],
         "responses": {
           "200": {
             "description": "Successful"
-           
           },
           "400": {
             "description": "Invalid ID supplied"
@@ -3267,23 +3226,20 @@
         ],
         "summary": "create district in database",
         "operationId": "createDistricts",
-        "security":[
+        "security": [
           {
-            "bearerAuth":[],
-            "ApiKeyAuth":[]
+            "bearerAuth": [],
+            "ApiKeyAuth": []
           }
         ],
-        "requestBody":{
-          "content":{
-            "application/json":{
-              "schema":{
-
-              },
-              "example":{
-                "id":"9999",
-                "name":"locpro",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {},
+              "example": {
+                "id": "9999",
+                "name": "locpro",
                 "type": "Huyện"
-                
               }
             }
           }
@@ -3291,7 +3247,6 @@
         "responses": {
           "200": {
             "description": "Successful"
-           
           },
           "400": {
             "description": "Invalid ID supplied"
@@ -3302,35 +3257,34 @@
         }
       }
     },
-    "/address/districts/{districtId}":{
+    "/address/districts/{districtId}": {
       "get": {
         "tags": [
           "districts"
         ],
         "summary": "get district by id in database",
         "operationId": "getdistrictById",
-        "security":[
+        "security": [
           {
-            "bearerAuth":[],
-            "ApiKeyAuth":[]
+            "bearerAuth": [],
+            "ApiKeyAuth": []
           }
         ],
-        "parameters":[
+        "parameters": [
           {
-            "in":"path",
+            "in": "path",
             "name": "districtId",
             "required": true,
-            "schema":{
+            "schema": {
               "type": "number",
               "example": "9999"
             },
-            "description":""
+            "description": ""
           }
         ],
         "responses": {
           "200": {
             "description": "Successful"
-           
           },
           "400": {
             "description": "Invalid ID supplied"
@@ -3346,34 +3300,31 @@
         ],
         "summary": "update district by id in database",
         "operationId": "updateDistrictById",
-        "security":[
+        "security": [
           {
-            "bearerAuth":[],
-            "ApiKeyAuth":[]
+            "bearerAuth": [],
+            "ApiKeyAuth": []
           }
         ],
-        "parameters":[
+        "parameters": [
           {
-            "in":"path",
+            "in": "path",
             "name": "districtId",
             "required": true,
-            "schema":{
+            "schema": {
               "type": "number",
               "example": "9999"
             },
-            "description":""
+            "description": ""
           }
         ],
-        "requestBody":{
-          "content":{
-            "application/json":{
-              "schema":{
-
-              },
-              "example":{
-                "name":"locpro1",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {},
+              "example": {
+                "name": "locpro1",
                 "type": "Huyện"
-                
               }
             }
           }
@@ -3381,7 +3332,6 @@
         "responses": {
           "200": {
             "description": "Successful"
-           
           },
           "400": {
             "description": "Invalid ID supplied"
@@ -3397,28 +3347,27 @@
         ],
         "summary": "delete district by id in database",
         "operationId": "deleteDistrictById",
-        "security":[
+        "security": [
           {
-            "bearerAuth":[],
-            "ApiKeyAuth":[]
+            "bearerAuth": [],
+            "ApiKeyAuth": []
           }
         ],
-        "parameters":[
+        "parameters": [
           {
-            "in":"path",
+            "in": "path",
             "name": "districtId",
             "required": true,
-            "schema":{
+            "schema": {
               "type": "number",
               "example": "9999"
             },
-            "description":""
+            "description": ""
           }
         ],
         "responses": {
           "200": {
             "description": "Successful"
-           
           },
           "400": {
             "description": "Invalid ID supplied"
@@ -3429,31 +3378,30 @@
         }
       }
     },
-    "/address/province-districts/{provinceId}":{
+    "/address/province-districts/{provinceId}": {
       "get": {
         "tags": [
           "districts"
         ],
         "summary": "get all districts by provinceId in database",
         "operationId": "getAllDistricts",
-        "security":[
+        "security": [
           {
-            "bearerAuth":[],
-            "ApiKeyAuth":[]
+            "bearerAuth": [],
+            "ApiKeyAuth": []
           }
         ],
-        "parameters":[
+        "parameters": [
           {
-            "in":"path",
-            "name":"provinceId",
-            "type":"string",
-            "example":"79"
+            "in": "path",
+            "name": "provinceId",
+            "type": "string",
+            "example": "79"
           }
         ],
         "responses": {
           "200": {
             "description": "Successful"
-           
           },
           "400": {
             "description": "Invalid ID supplied"
@@ -3464,23 +3412,22 @@
         }
       }
     },
-    "/address/wards":{
+    "/address/wards": {
       "get": {
         "tags": [
           "wards"
         ],
         "summary": "get all wards in database",
         "operationId": "getAllWards",
-        "security":[
+        "security": [
           {
-            "bearerAuth":[],
-            "ApiKeyAuth":[]
+            "bearerAuth": [],
+            "ApiKeyAuth": []
           }
         ],
         "responses": {
           "200": {
             "description": "Successful"
-           
           },
           "400": {
             "description": "Invalid ID supplied"
@@ -3496,23 +3443,20 @@
         ],
         "summary": "create ward in database",
         "operationId": "createWards",
-        "security":[
+        "security": [
           {
-            "bearerAuth":[],
-            "ApiKeyAuth":[]
+            "bearerAuth": [],
+            "ApiKeyAuth": []
           }
         ],
-        "requestBody":{
-          "content":{
-            "application/json":{
-              "schema":{
-
-              },
-              "example":{
-                "id":"9999",
-                "name":"locpro",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {},
+              "example": {
+                "id": "9999",
+                "name": "locpro",
                 "type": "Phường"
-                
               }
             }
           }
@@ -3520,7 +3464,6 @@
         "responses": {
           "200": {
             "description": "Successful"
-           
           },
           "400": {
             "description": "Invalid ID supplied"
@@ -3531,35 +3474,34 @@
         }
       }
     },
-    "/address/wards/{wardId}":{
+    "/address/wards/{wardId}": {
       "get": {
         "tags": [
           "wards"
         ],
         "summary": "get ward by id in database",
         "operationId": "getwardById",
-        "security":[
+        "security": [
           {
-            "bearerAuth":[],
-            "ApiKeyAuth":[]
+            "bearerAuth": [],
+            "ApiKeyAuth": []
           }
         ],
-        "parameters":[
+        "parameters": [
           {
-            "in":"path",
+            "in": "path",
             "name": "wardId",
             "required": true,
-            "schema":{
+            "schema": {
               "type": "number",
               "example": "22"
             },
-            "description":""
+            "description": ""
           }
         ],
         "responses": {
           "200": {
             "description": "Successful"
-           
           },
           "400": {
             "description": "Invalid ID supplied"
@@ -3575,34 +3517,31 @@
         ],
         "summary": "update ward by id in database",
         "operationId": "updateWardById",
-        "security":[
+        "security": [
           {
-            "bearerAuth":[],
-            "ApiKeyAuth":[]
+            "bearerAuth": [],
+            "ApiKeyAuth": []
           }
         ],
-        "parameters":[
+        "parameters": [
           {
-            "in":"path",
+            "in": "path",
             "name": "wardId",
             "required": true,
-            "schema":{
+            "schema": {
               "type": "number",
               "example": "9999"
             },
-            "description":""
+            "description": ""
           }
         ],
-        "requestBody":{
-          "content":{
-            "application/json":{
-              "schema":{
-
-              },
-              "example":{
-                "name":"locpro1",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {},
+              "example": {
+                "name": "locpro1",
                 "type": "Phường"
-                
               }
             }
           }
@@ -3610,7 +3549,6 @@
         "responses": {
           "200": {
             "description": "Successful"
-           
           },
           "400": {
             "description": "Invalid ID supplied"
@@ -3626,28 +3564,27 @@
         ],
         "summary": "delete ward by id in database",
         "operationId": "deleteWardById",
-        "security":[
+        "security": [
           {
-            "bearerAuth":[],
-            "ApiKeyAuth":[]
+            "bearerAuth": [],
+            "ApiKeyAuth": []
           }
         ],
-        "parameters":[
+        "parameters": [
           {
-            "in":"path",
+            "in": "path",
             "name": "wardId",
             "required": true,
-            "schema":{
+            "schema": {
               "type": "number",
               "example": "9999"
             },
-            "description":""
+            "description": ""
           }
         ],
         "responses": {
           "200": {
             "description": "Successful"
-           
           },
           "400": {
             "description": "Invalid ID supplied"
@@ -3658,31 +3595,30 @@
         }
       }
     },
-    "/address/district-wards/{districtId}":{
+    "/address/district-wards/{districtId}": {
       "get": {
         "tags": [
           "wards"
         ],
         "summary": "get all wards by districtId in database",
         "operationId": "getAllWards",
-        "security":[
+        "security": [
           {
-            "bearerAuth":[],
-            "ApiKeyAuth":[]
+            "bearerAuth": [],
+            "ApiKeyAuth": []
           }
         ],
-        "parameters":[
+        "parameters": [
           {
-            "in":"path",
-            "name":"districtId",
-            "type":"string",
-            "example":"761"
+            "in": "path",
+            "name": "districtId",
+            "type": "string",
+            "example": "761"
           }
         ],
         "responses": {
           "200": {
             "description": "Successful"
-           
           },
           "400": {
             "description": "Invalid ID supplied"
@@ -3693,7 +3629,7 @@
         }
       }
     }
-    },
+  },
   "components": {
     "schemas": {
       "Order": {
@@ -3734,10 +3670,7 @@
         }
       },
       "Product": {
-        "required": [
-          
-  
-        ],
+        "required": [],
         "type": "object",
         "properties": {
           "name": {
@@ -3746,73 +3679,81 @@
           },
           "avatar": {
             "type": "array",
-            "example": ["url"]
+            "example": [
+              "url"
+            ]
           },
-          "sku":{
+          "sku": {
             "type": "string",
             "example": "ao phong"
           },
-          "categoryId":{
+          "categoryId": {
             "type": "string",
             "example": "7930"
           },
-          "categoryName":{
+          "categoryName": {
             "type": "string",
             "example": "Giày dép & Quần áo nam > Quần áo nam > Áo thun & Áo không tay > Áo thun nam"
           },
-          "description":{
+          "description": {
             "type": "string",
             "example": "..."
           },
-          "weightValue":{
+          "weightValue": {
             "type": "number",
             "example": 100
           },
-          "weightUnit":{
+          "weightUnit": {
             "type": "string",
             "example": "g"
           },
-          "unit":{
+          "unit": {
             "type": "string",
             "example": "Cái"
           },
-          "brand":{
+          "brand": {
             "type": "string",
             "example": "No Brand"
           },
-          "productType":{
+          "productType": {
             "type": "string",
             "example": "normal"
           },
-          "tags":{
+          "tags": {
             "type": "array",
-            "example": ["áo","áo thun"]
+            "example": [
+              "áo",
+              "áo thun"
+            ]
           },
-          "options":{
-              "type": "array",
-              "items":{
-                "type":"object",
-                "properties":{
-                  "optionName":{
-                    "type": "string",
-                    "exmaple": "Kích thước "
-                  },
-                  "optionValue":{
-                    "type": "array",
-                    "exmaple": ["27","8"]
-                  }
+          "options": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "optionName": {
+                  "type": "string",
+                  "exmaple": "Kích thước "
+                },
+                "optionValue": {
+                  "type": "array",
+                  "exmaple": [
+                    "27",
+                    "8"
+                  ]
                 }
               }
+            }
           },
-          "sellable":{
+          "sellable": {
             "type": "boolean",
             "example": true
           },
-          "createdAt":{
+          "createdAt": {
             "type": "Date",
             "example": "2021-03-25T08:40:56.007+00:00"
           },
-          "updatedAt":{
+          "updatedAt": {
             "type": "Date",
             "example": "2021-03-25T08:40:56.007+00:00"
           }
@@ -3821,49 +3762,69 @@
       "Variant": {
         "required": [
           "id"
-  
         ],
         "type": "object",
         "properties": {
-          "id": {
-            "type": "string",
-            "example": "1"
+          "linkedIds": {
+            "type": "array",
+            "exmaple": ["605c4ca09d0e5315f41e742f"]
           },
-          "name":{
+          "avatar": {
             "type": "string",
-            "example": "dao - 27 - nâu"
+            "exmaple": "605c4ca09d0e5315f41e742f"
+          },
+          "name": {
+            "type": "string",
+            "example": "Áo phông EAGLES - 8 - nâu - gỗ"
           },
           "sku": {
             "type": "string",
-            "example": "123"
+            "example": "aophong-8-nau-go"
           },
-          "price":{
+          "importPrice": {
             "type": "number",
-            "example": "3243242"
+            "example": 3243242
           },
-          "weight":{
+          "wholeSalePrice": {
+            "type": "number",
+            "example": 3243242
+          },
+          "retailPrice": {
+            "type": "number",
+            "example": 3243242
+          },
+          "weightValue": {
+            "type": "number",
+            "example": 100
+          },
+          "weightUnit": {
             "type": "string",
-            "example": "0.2"
+            "example": "g"
           },
-          "quantity":{
+          "quantity": {
             "type": "number",
             "example": "2"
           },
-          "variant_attributes":{
-            "type": "array",
-            "items":{
-              "type":"object",
-              "properties":{
-                "attribute_name":{
-                  "type": "string",
-                  "exmaple": "Kích thước "
-                },
-                "option_value":{
-                  "type": "string",
-                  "exmaple": "27"
-                }
+          "inventories":{
+            "type": "object",
+            "properties":{
+              "initStock": {
+                "type": "number",
+                "example": 100
+              },
+              "initPrice": {
+                "type": "number",
+                "exmaple": 0
               }
             }
+          },
+          "productId":{
+              "type":"objectId",
+              "example":"605c4c979d0e5315f41e7403"
+          },
+          "sellable": {
+            "type": "boolean",
+            "example": true
           }
         },
         "xml": {
@@ -3878,7 +3839,7 @@
         ],
         "type": "object",
         "properties": {
-          "isDeleted":{
+          "isDeleted": {
             "type": "boolean",
             "example": false
           },
@@ -3886,13 +3847,45 @@
             "type": "string",
             "example": "huy"
           },
-          "email":{
+          "email": {
             "type": "string",
             "example": "huy1@gmail.com"
           },
           "password": {
             "type": "string",
             "example": "huyhuy"
+          },
+          "storages":{
+            "type": "array",
+            "items":{
+              "type":"object",
+              "properties":{
+                "storage":{
+                  "type": "object",
+                  "properties":{
+                    "storageId": {
+                      "type": "string",
+                      "exmaple": "6051909070939103d011db8a"
+                    },
+                    "storageName": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "token":{
+            "type": "array",
+            "items":{
+              "type": "object",
+              "properties":{
+                "token":{
+                  "type": "string",
+                  "exmaple":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9"
+                }
+              }
+            }
           }
         },
         "xml": {
@@ -3908,19 +3901,19 @@
         ],
         "type": "object",
         "properties": {
-          "group":{
+          "group": {
             "type": "string",
             "example": "Normal"
           },
-          "name":{
+          "name": {
             "type": "string",
             "example": "Supplier 1"
           },
-          "email":{
+          "email": {
             "type": "string",
             "example": "sup@gmail.com"
           },
-          "phone":{
+          "phone": {
             "type": "string",
             "example": "0987654321"
           },
@@ -3928,7 +3921,7 @@
             "type": "string",
             "example": "1234567890"
           },
-          "userId":{
+          "userId": {
             "type": "objectId",
             "example": "6049de8d057b130514ffc4b0"
           }
@@ -3946,19 +3939,19 @@
         ],
         "type": "object",
         "properties": {
-          "group":{
+          "group": {
             "type": "string",
             "example": "Normal"
           },
-          "name":{
+          "name": {
             "type": "string",
             "example": "Customer 1"
           },
-          "email":{
+          "email": {
             "type": "string",
             "example": "cus@gmail.com"
           },
-          "phone":{
+          "phone": {
             "type": "string",
             "example": "0987654321"
           },
@@ -3966,31 +3959,37 @@
             "type": "string",
             "example": "address random 0.6330979062156514"
           },
-          "userId":{
+          "userId": {
             "type": "objectId",
             "example": "6049de8d057b130514ffc4b0"
           }
         }
       },
       "Category": {
-        "required": [
-         
-        ],
+        "required": [],
         "type": "object",
         "properties": {
-          "idpath":{
+          "idpath": {
             "type": "array",
-            "example": [12648,10100180,10100183]
+            "example": [
+              12648,
+              10100180,
+              10100183
+            ]
           },
-          "namepath":{
+          "namepath": {
             "type": "array",
-            "example": ["Bếp & Phòng ăn","Dùng một lần","Bộ đồ uống dùng một lần "]
+            "example": [
+              "Bếp & Phòng ăn",
+              "Dùng một lần",
+              "Bộ đồ uống dùng một lần "
+            ]
           },
-          "category_id":{
+          "category_id": {
             "type": "number",
             "example": 10100183
           },
-          "var":{
+          "var": {
             "type": "boolean",
             "example": false
           },
@@ -3998,7 +3997,7 @@
             "type": "string",
             "example": "Bộ đồ uống dùng một lần"
           },
-          "leaf":{
+          "leaf": {
             "type": "boolean",
             "example": true
           }
@@ -4008,153 +4007,153 @@
         }
       },
       "SendoVariant": {
-        "required": [
-         
-        ],
+        "required": [],
         "type": "object",
         "properties": {
-          "productId":{
+          "productId": {
             "type": "objectId",
             "example": "605c362fb172bb40c429cb87"
           },
-          "linkedId":{
+          "linkedId": {
             "type": "objectId",
             "example": "605c362fb172bb40c429cb87"
           },
-          "sku":{
+          "sku": {
             "type": "string",
             "example": "123456789123"
           },
-          "Status":{
+          "Status": {
             "type": "string",
             "example": "active"
           },
-          "avatar":{
+          "avatar": {
             "type": "Array",
-            "example": ["https://media3.scdn.vn/img4/2021/03_21/NpSb4jBlmliQLbEypOHv_simg_02d57e_50x50_maxb.jpg"]
+            "example": [
+              "https://media3.scdn.vn/img4/2021/03_21/NpSb4jBlmliQLbEypOHv_simg_02d57e_50x50_maxb.jpg"
+            ]
           },
           "price": {
             "type": "number",
             "example": 120000
           },
-          "quantity":{
+          "quantity": {
             "type": "number",
             "example": 12
           },
-          "special_price":{
+          "special_price": {
             "type": "number",
             "example": 129754
           },
-          "variant_attribute_hash":{
+          "variant_attribute_hash": {
             "type": "string",
             "example": "603"
           },
-          "variant_attributes":{
+          "variant_attributes": {
             "type": "array",
-            "items":{
-              "type":"object",
-              "properties":{
-                "attribute_id":{
+            "items": {
+              "type": "object",
+              "properties": {
+                "attribute_id": {
                   "type": "number",
                   "exmaple": 284
                 },
-                "attribute_code":{
+                "attribute_code": {
                   "type": "string",
                   "exmaple": "mau_sac"
                 },
-                "option_id":{
+                "option_id": {
                   "type": "number",
                   "exmaple": 603
                 },
-                "attribute_name":{
+                "attribute_name": {
                   "type": "string",
                   "exmaple": "màu sắc"
                 },
-                "option_value":{
+                "option_value": {
                   "type": "string",
                   "exmaple": "Vàng"
                 },
-                "attribute_img":{
+                "attribute_img": {
                   "type": "string",
                   "exmaple": "https://media3.scdn.vn/img4/2021/03_21/NpSb4jBlmliQLbEypOHv_simg_02d57e_50x50_maxb.jpg"
                 }
               }
             }
           },
-          "variant_campaign_status":{
+          "variant_campaign_status": {
             "type": "string",
             "example": null
           },
-          "variant_is_flash_sales":{
+          "variant_is_flash_sales": {
             "type": "boolean",
             "example": null
           },
-          "variant_is_promotion":{
+          "variant_is_promotion": {
             "type": "boolean",
             "example": null
           },
-          "variant_promotion_end_date_timestamp":{
+          "variant_promotion_end_date_timestamp": {
             "type": "timestamp",
             "example": null
           },
-          "variant_promotion_start_date_timestamp":{
+          "variant_promotion_start_date_timestamp": {
             "type": "timestamp",
             "example": null
           }
         }
       },
       "LazadaVariant": {
-        "required": [
-         
-        ],
+        "required": [],
         "type": "object",
         "properties": {
-          "productId":{
+          "productId": {
             "type": "objectId",
             "example": "605c362fb172bb40c429cb87"
           },
-          "linkedId":{
+          "linkedId": {
             "type": "objectId",
             "example": "605c362fb172bb40c429cb87"
           },
-          "sku":{
+          "sku": {
             "type": "string",
             "example": "123456789123"
           },
-          "ShopSku":{
+          "ShopSku": {
             "type": "string",
             "example": "859984666_VNAMZ-3713018288"
           },
-          "SkuId":{
+          "SkuId": {
             "type": "number",
             "example": 3713018288
           },
-          "Status":{
+          "Status": {
             "type": "string",
             "example": "active"
           },
-          "Url":{
+          "Url": {
             "type": "string",
             "example": "https://www.lazada.vn/-i859984666-s3713018288.html"
           },
-          "avatar":{
+          "avatar": {
             "type": "Array",
-            "example": ["https://vn-live.slatic.net/p/eeaca3c5adf96292ee5c5087787140a1.jpg"]
+            "example": [
+              "https://vn-live.slatic.net/p/eeaca3c5adf96292ee5c5087787140a1.jpg"
+            ]
           },
-          "multiWarehouseInventories":{
+          "multiWarehouseInventories": {
             "type": "Array",
             "items": {
-                "type":"object",
-                "properties":{
-                  "quantity":{
-                    "type": "number",
-                    "exmaple": 284
-                  },
-                  "warehouseCode":{
-                    "type": "string",
-                    "exmaple":"dropshipping"
-                  }
+              "type": "object",
+              "properties": {
+                "quantity": {
+                  "type": "number",
+                  "exmaple": 284
+                },
+                "warehouseCode": {
+                  "type": "string",
+                  "exmaple": "dropshipping"
                 }
+              }
             }
           },
           "package_height": {
@@ -4173,32 +4172,32 @@
             "type": "string",
             "example": "5.00"
           },
-          "price":{
+          "price": {
             "type": "number",
             "example": 150000
           },
-          "quantity":{
+          "quantity": {
             "type": "number",
             "example": 12
           },
-          "special_price":{
+          "special_price": {
             "type": "number",
             "example": 129754
           },
-          "variant_attribute_hash":{
+          "variant_attribute_hash": {
             "type": "string",
             "example": "603"
           },
-          "variant_attributes":{
+          "variant_attributes": {
             "type": "array",
-            "items":{
-              "type":"object",
-              "properties":{
-                "attribute_name":{
+            "items": {
+              "type": "object",
+              "properties": {
+                "attribute_name": {
                   "type": "string",
                   "exmaple": "color_family"
                 },
-                "option_value":{
+                "option_value": {
                   "type": "string",
                   "exmaple": "Galaxy"
                 }
@@ -4236,25 +4235,23 @@
       }
     },
     "securitySchemes": {
-     
-      "bearerAuth":{
-        "type":"http",
-        "in":"header",
-        "name":"Authorization",
+      "bearerAuth": {
+        "type": "http",
+        "in": "header",
+        "name": "Authorization",
         "scheme": "bearer",
-        "bearerFormat": "JWT"  
+        "bearerFormat": "JWT"
       },
-      "ApiKeyAuth":{
-        "type":"apiKey",
-        "in":"header",
-        "name":"Platform-Token"
-
+      "ApiKeyAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "Platform-Token"
       }
     }
   },
-  "security":[
+  "security": [
     {
-      "bearerAuth": []  
+      "bearerAuth": []
     }
   ]
 }

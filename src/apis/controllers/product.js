@@ -10,7 +10,7 @@ const SendoProduct = require("../models/sendoProduct");
 module.exports.getAllProduct = async (req, res) => {
   try {
     
-    const products = await Product.find({}).populate('variants').lean()
+    const products = await Product.find({storageId: req.user.currentStorage.storageId}).populate('variants').lean()
 
     res.send(products)
   } catch (e) {
