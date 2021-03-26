@@ -8,9 +8,9 @@ const Variant = require('../models/variant')
 const SendoProduct = require("../models/sendoProduct");
 
 module.exports.getAllProduct = async (req, res) => {
+  console.log(req.user.currentStorage)
   try {
-    
-    const products = await Product.find({}).populate('variants').lean()
+    const products = await Product.find({ storageId: req.user.currentStorage.storageId }).populate('variants').lean()
 
     res.send(products)
   } catch (e) {
@@ -32,7 +32,11 @@ module.exports.getMMSProductById = async function (req, res) {
 
 module.exports.createMMSProduct = async (req, res) => {
   try {
-    const product = new Product({...req.body});
+    const product = new Product({
+      ...req.body,
+      storageId: req.user.currentStorage.storageId
+    });
+
     let configVariant = []
     await product.save();
 

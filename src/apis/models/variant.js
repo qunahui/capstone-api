@@ -55,6 +55,10 @@ const variantSchema = new Schema({
       required: true,
     },
   }, 
+  sellable: {
+    type: Boolean,
+    default: true
+  },
   linkedIds: {
     type: [mongoose.Schema.Types.ObjectId]
   }

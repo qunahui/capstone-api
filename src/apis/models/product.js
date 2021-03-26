@@ -5,8 +5,8 @@ const productSchema = new Schema({
   avatar: [{
     type: String,
   }],
-  avatarList: {
-    type: String,
+  storageId: {
+    type: mongoose.Schema.Types.ObjectId,
   },
   brand: { 
     type: String,
