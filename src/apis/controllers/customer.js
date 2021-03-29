@@ -1,15 +1,30 @@
 const Error = require('../utils/error')
 const Customer = require('../models/customer')
 
+module.exports.checkCustomerExist = async(req, res) => {
+  try {
+    const isCustomerExist = await Customer.findOne({ email: req.params.email, userId: req.user._id })
+    if(isCustomerExist) {
+      res.status(409).send(Error({ message: 'Khách hàng đã tồn tại !'}))
+    } else {
+      res.status(200).send({message: "Khách hàng có thể được tạo !"})
+    }
+  } catch(e) {
+    res.status(400).send(Error({message: "Có gì đó sai sai!"}))
+  }
+}
+
+
 module.exports.createCustomer = async (req, res) => {
   try { 
-    const customer = new Customer({ ...req.body, userId: req.user._id }) 
-    
-    console.log("Created: ", customer)
-
-    customer.save()
-
-    res.status(200).send(customer)
+    const isCustomerExist = await Customer.findOne({ email: req.body.email, userId: req.user._id })
+    if(isCustomerExist) {
+      return res.status(409).send(Error({ message: 'Khách hàng đã tồn tại !'}))
+    } else {
+      const customer = new Customer({ ...req.body, userId: req.user._id })
+      await customer.save()
+      return res.status(200).send(customer)
+    }
   } catch(e) {
     let status = 400;
     let error = e;

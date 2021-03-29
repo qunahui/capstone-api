@@ -5,6 +5,8 @@ const controller = require("../controllers/supplier");
 
 // router.post("/sign-in", controller.signIn);
 
+router.get("/check/:email", auth, controller.checkSupplierExist)
+
 router.get("/:_id", auth, controller.getSupplierById);
 
 router.get("/", auth, controller.getAllSupplier);

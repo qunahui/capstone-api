@@ -1,7 +1,8 @@
 const Error = require("../utils/error");
-const PurchaseOrder = require("../models/purchaseOrder")
+const { PurchaseOrder } = require("../models/order")
 const Inventory = require("../models/inventory")
 const Variant = require("../models/variant")
+const rp = require("request-promise")
 
 const checkComplete = async (_id) => {
   try {
@@ -33,6 +34,7 @@ module.exports.createReceipt = async (req,res) => {
     await Promise.all(lineItems.map(async (item) => {
       const variantId = item._id
       const mongoVariant = await Variant.findOne({ _id : variantId })
+
       const newStock = mongoVariant.inventories.initStock + item.quantity
 
       mongoVariant.inventories.initStock = newStock;
@@ -67,8 +69,62 @@ module.exports.createReceipt = async (req,res) => {
 
     return res.status(200).send(purchaseOrder)
   } catch(e) {
-    console.log(e)
+    console.log("create receipt error: ", e.message)
     return res.status(500).send(Error({ message: 'Create purchase order went wrong!'}))
+  }
+}
+
+module.exports.createInitialPurchaseOrder = async (req,res) => {
+  try {
+    const step = [
+    {
+      name: 'Đặt hàng và duyệt',
+      isCreated: true,
+      createdAt: Date.now()
+    },
+    {
+      name: 'Nhập kho',
+      isCreated: true,
+      createdAt: Date.now()
+    },
+    {
+      name: 'Hoàn thành',
+      isCreated: true,
+      createdAt: Date.now()
+    },
+    {
+      name: 'Đã hoàn trả',
+      isCreated: false,
+    },
+    {
+      name: 'Đã hủy',
+      isCreated: false,
+    },
+    ]
+
+    const purchaseOrder = new PurchaseOrder({
+      ...req.body, 
+      step,
+    })
+
+    await purchaseOrder.save()
+    
+    await rp({
+      method: 'POST',
+      url: 'http://localhost:5000/purchase-orders/receipt/' + purchaseOrder._id,
+      json: true,
+      body: {
+        ...req.body
+      },
+      headers: {
+        'Authorization': 'Bearer ' + req.mongoToken
+      }
+    })
+
+    res.send(purchaseOrder)
+  } catch(e) {
+    console.log(e)
+    res.status(500).send(Error('Create purchase order went wrong!'))
   }
 }
 
@@ -86,6 +142,10 @@ module.exports.createPurchaseOrder = async (req,res) => {
     },
     {
       name: 'Hoàn thành',
+      isCreated: false,
+    },
+    {
+      name: 'Đã hoàn trả',
       isCreated: false,
     },
     {
@@ -155,8 +215,8 @@ module.exports.cancelPurchaseOrder = async (req, res) => {
     
     purchaseOrder.orderStatus = 'Đã hủy'
     
-    purchaseOrder.step[3] = {
-      name: purchaseOrder.step[3].name,
+    purchaseOrder.step[4] = {
+      name: purchaseOrder.step[4].name,
       isCreated: true,
       createdAt: new Date()
     }

@@ -1,8 +1,7 @@
 const Storage = require("../models/storage")
-const auth = require("../../middlewares/auth");
 
 module.exports.getStorages = async (req, res) => {
-  let storage = await Storage.findById({ _id: req.user.currentStorage.storageId })
+  let storage = await Storage.findOne({ _id: req.user.currentStorage.storageId })
   if(!storage) {
     storage = {}
   }

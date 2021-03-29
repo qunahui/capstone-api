@@ -5,6 +5,8 @@ const controller = require("../controllers/customer");
 
 // router.post("/sign-in", controller.signIn);
 
+router.get("/check/:email", auth, controller.checkCustomerExist)
+
 router.get("/:_id", auth, controller.getCustomerById);
 
 router.get("/", auth, controller.getAllCustomer);

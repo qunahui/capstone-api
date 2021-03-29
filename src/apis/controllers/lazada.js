@@ -13,122 +13,128 @@ var options = {compact: true, ignoreComment: true, spaces: 4};
 
 module.exports.authorizeCredential = async (req, res) => {
   try {
-    const { code, state } = req.query
-    if(req.query) {
-      const result = await rp({
-        method: 'POST',
-        uri: 'http://localhost:5000/api/lazada/login?code='+ code + '&state=' + state,
-        headers: {
-          'Authorization': 'Bearer ' + req.mongoToken 
-        }
-      })
-      // const { access_token, name, store_id, storageId } = JSON.parse(result)
-
-      res.status(200).send(result)
-    }
-  } catch(e) {
-    res.status(500).send(Error({ message: 'Something went wrong' }))
-  }
-}
-
-module.exports.getAccessToken = async (req, res) => {
-    const credential = req.body.credential
-    const { currentStorage } = req.user
-
-    if(credential) {
-      const timeDifference = timeDiff(new Date(), new Date(credential.expires))
-      const isTokenAvailable = timeDifference.hoursDifference <= 0
-  
-      console.log("is token available: ", isTokenAvailable)
-  
-      if(isTokenAvailable === true) {
-        return res.status(200).send(credential)
-      }
-    }
-
+    const { code } = req.query
     const apiUrl = 'https://auth.lazada.com/rest' 
     const apiPath=  '/auth/token/create'
     const appSecret = process.env.LAZADA_APP_SECRET
     const appKey = process.env.LAZADA_APP_KEY 
-    const { code, state } =  req.query 
     const timestamp = Date.now()
-    const { storageId } = currentStorage
+    const { storageId } =req.user.currentStorage
     const commonRequestParams = {
         "app_key": appKey,
         "timestamp": timestamp,
         "sign_method": "sha256",
         "code":code,
-        "state": state
     }
     const sign = signRequest(appSecret, apiPath, commonRequestParams)
-    try {
-        let options = {
-            'method': 'GET',
-            'url': apiUrl+apiPath+
-            '?app_key='+appKey+
-            '&code='+code+
-            '&state='+state+
-            '&sign_method=sha256&timestamp='+timestamp+
-            '&sign='+sign,
-            'headers': {
-                'Content-Type': 'application/json'
-            }
-        };
-        const response = await rp(options).then(res => JSON.parse(res));
+    let options = {
+        'method': 'GET',
+        'url': apiUrl+apiPath+
+        '?app_key='+appKey+
+        '&code='+code+
+        '&sign_method=sha256&timestamp='+timestamp+
+        '&sign='+sign,
+        'headers': {
+            'Content-Type': 'application/json'
+        }
+    };
+    const response = await rp(options).then(res => JSON.parse(res));
 
-        if(response.code === '0') {
-          const storage = await Storage.findById(storageId)
-          console.log(response)
-          const insertCredential = {
-              // store_name: response.name,
-              platform_name: 'lazada',
-              refresh_token: response.refresh_token,
-              access_token: response.access_token,
-              expires: new Date(new Date().getTime() + response.expires_in*1000),
-              refresh_expires: new Date(new Date().getTime() + response.refresh_expires_in*1000),
-              status: 'connected',
-              isActivated: true,
-          }
+      if(response.code === '0') {
+        console.log(response)
+        const insertCredential = {
+            // store_name: response.name,
+            platform_name: 'lazada',
+            refresh_token: response.refresh_token,
+            access_token: response.access_token,
+            expires: new Date(new Date().getTime() + response.expires_in*1000),
+            refresh_expires: new Date(new Date().getTime() + response.refresh_expires_in*1000),
+            status: 'connected',
+            isActivated: true,
+        }
 
-          const result = await rp.get({
-              uri: 'http://localhost:5000/api/lazada/seller',
-              headers:{ 
-                "Authorization": 'Bearer ' + req.mongoToken,
-                "Platform-Token": response.access_token
-              },
-              json: true
+        const result = await rp.get({
+            uri: 'http://localhost:5000/api/lazada/seller',
+            headers:{ 
+              "Authorization": 'Bearer ' + req.mongoToken,
+              "Platform-Token": response.access_token
+            },
+            json: true
+        })
+        .then(res => res.data)
+        .catch(e => e.message)
+
+        const { name, seller_id } = result 
+        insertCredential.store_name = name
+        insertCredential.store_id = seller_id
+
+        const storage = await Storage.findOne({ _id: storageId })
+        if(storage.lazadaCredentials.length === 0) {
+          storage.lazadaCredentials = [insertCredential]
+        } else {
+          storage.lazadaCredentials = storage.lazadaCredentials.map(i => {
+              if(i.store_name === insertCredential.store_name) {
+                  return insertCredential
+              }
+              return i
           })
-          .then(res => res.data)
-          .catch(e => e.message)
+        }
 
-          const { name, seller_id } = result 
-          insertCredential.store_name = name
-          insertCredential.store_id = seller_id
-          if(storage.lazadaCredentials.length === 0) {
-              storage.lazadaCredentials = [insertCredential]
-          } else {
-              storage.lazadaCredentials = storage.lazadaCredentials.map(i => {
-                  if(i.store_name === name) {
-                      return insertCredential
-                  }
-                  return i
-              })
-          }
-        
-        await Storage.findOneAndUpdate({ _id: req.user.currentStorage.storageId }, {
-          $push: {
-            lazadaCredentials: insertCredential
-          }
+        await Storage.findOneAndUpdate({
+          _id: storageId
+        }, {
+          lazadaCredentials: storage.lazadaCredentials
         })
 
         res.status(200).send(insertCredential)
+      } else {
+        // error return from lazada
+        res.status(500).send(Error({ message: 'Something went wrong' }))
+      }
+  } catch (e) {
+    console.log("authorize lazada failed: ", e.message)
+    res.status(500).send(Error(e));
+  }
+}
 
-        } else {
-          // error return from lazada
-          res.status(500).send(Error({ message: 'Something went wrong' }))
+module.exports.getAccessToken = async (req, res) => {
+    const credential = req.body.credential
+
+    if(credential) {
+      const timeDifference = timeDiff(new Date(), new Date(credential.expires))
+      const isTokenAvailable = timeDifference.hoursDifference <= 0
+  
+      if(isTokenAvailable === true) {
+        console.log("old token available")
+        return res.status(200).send({
+          ...credential,
+          isCredentialRefreshed: false
+        })
+      }
+    }
+
+    console.log("try refresh new lazada token")
+
+    try {
+      const newCredential = await rp({
+        method: 'POST',
+        url: 'http://localhost:5000/api/lazada/refresh-token',
+        headers: {
+          "Authorization": "Bearer " + req.mongoToken
+        },
+        json: true,
+        body: {
+          credential
         }
-    } catch (e) {
-      res.status(500).send(Error(e));
+      })
+
+      return res.status(200).send({
+        ...newCredential,
+        isCredentialRefreshed: false
+      })
+    } catch(e) {
+      console.log("Refresh token failed: ", e.message)
+      res.status(500).send(Error({ message: "Lấy token lazada thất bại !"}))
     }
 }
 
@@ -138,16 +144,24 @@ module.exports.refreshToken = async (req, res) =>{
     const appSecret = process.env.LAZADA_APP_SECRET 
     const appKey = process.env.LAZADA_APP_KEY 
     const { storageId } = req.user.currentStorage
-
-    const { refreshToken } = req.query
+    const { credential } = req.body
+    const { refresh_token, refresh_expires } = credential
    
+    if(timeDiff(new Date(), new Date(refresh_expires)).hoursDifference > 0) {
+      return res.status(200).send({
+        ...credential,
+        isRefreshExpired: true,
+      })
+    }
+
     const timestamp = Date.now()
     const commonRequestParams = {
         "app_key": appKey,
         "timestamp": timestamp,
         "sign_method": "sha256",
-        "refresh_token": refreshToken
+        "refresh_token": refresh_token
     }
+
     const sign = signRequest(appSecret, apiPath, commonRequestParams)
     try {
         var options = {
@@ -155,7 +169,7 @@ module.exports.refreshToken = async (req, res) =>{
             'url': apiUrl+apiPath+
             '?app_key='+appKey+
             '&sign_method=sha256&timestamp='+timestamp+
-            '&refresh_token='+refreshToken+
+            '&refresh_token='+refresh_token+
             '&sign='+sign,
             'headers': {
             }
@@ -164,23 +178,31 @@ module.exports.refreshToken = async (req, res) =>{
         request(options, async function (error, response) {
             if (error) throw new Error(error);
             
-            const { access_token, refresh_token } = JSON.parse(response.body)
-            const storage =  await Storage.findOne({ _id: storageId })
-            
-            storage.lazadaCredentials.forEach( (credential) => {
-                if(credential.refresh_token == refreshToken) {
-                  credential.access_token = access_token
-                  credential.refresh_token = refresh_token
-                }
-            });
+            const { access_token, refresh_token, expires_in } = JSON.parse(response.body)
 
-            await Storage.updateOne({_id: storage._id}, storage, { upsert: true})
-           
-            
-            res.status(response.statusCode).send(response.body)
+            await Storage.updateOne({ 
+              _id: storageId,
+              lazadaCredentials: {
+                $elemMatch: {
+                  _id: credential._id,
+                  store_id: credential.store_id
+                }
+              }
+            } , {
+              $set: {
+                "lazadaCredentials.$.access_token": access_token,
+                "lazadaCredentials.$.refresh_token": refresh_token,
+                "lazadaCredentials.$.expires": new Date(new Date().getTime() + expires_in*1000),
+              }
+            })
+
+            return res.status(200).send({
+              ...JSON.parse(response.body),
+              isRefreshExpired: false
+            })
         });
     } catch (e) {
-        res.status(500).send(Error(e));
+        return res.status(500).send(Error(e));
     }
 }
 

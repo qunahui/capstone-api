@@ -55,7 +55,7 @@ const schema = new Schema({
     {
       storage: {
         storageId: {
-          type: String,
+          type: mongoose.Schema.Types.ObjectId,
         },
         storageName: {
           type: String
