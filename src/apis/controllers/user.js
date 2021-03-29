@@ -2,6 +2,16 @@ const User = require("../models/user");
 const Storage = require("../models/storage")
 const auth = require("../../middlewares/auth");
 const Error = require("../utils/error");
+const nodemailer = require('nodemailer');
+
+const option = {
+  service: 'gmail',
+  auth: {
+      user: 'clonelocpro1@gmail.com', // email hoặc username
+      pass: 'nhoxloctran!@#' // password
+  }
+};
+
 
 module.exports.getCurrentUser = async (req, res) => {
   res.status(200).send({ user: req.user });
@@ -99,5 +109,51 @@ module.exports.deleteProfile = async (req, res) => {
     res.send(user);
   } catch (e) {
     res.status(500).send(Error(e));
+  }
+};
+
+module.exports.sendMailResetPW = async (req, res) => {
+  const transporter = nodemailer.createTransport(option);
+  const email  = req.body.email
+  transporter.verify(function(error, success) {
+    // Nếu có lỗi.
+    if (error) {
+        console.log(error);
+    } else { //Nếu thành công.
+        console.log('Kết nối thành công!');
+
+        const mail = {
+          from: 'clonelocpro1@gmail.com', // Địa chỉ email của người gửi
+          to: email, // Địa chỉ email của người gửi
+          subject: 'Thư được gửi bằng Node.js', // Tiêu đề mail
+          text: 'bố reset pw cho lần này thôi nhé!', // Nội dung mail dạng text
+          //html :  url: localhost:3000/.... + token
+        };
+      
+        transporter.sendMail(mail, function(error, info) {
+          if (error) { // nếu có lỗi
+              console.log(error);
+          } else { //nếu thành công
+              console.log('Email sent: ' + info.response);
+              res.send("done")
+          }
+        });
+    }
+
+  });
+
+  
+};
+
+module.exports.resetPassword = async (req, res) => {
+  const token = req.body.token
+  const password = req.body.password
+  
+  //so sánh token
+
+  try {
+    //findOneAndUpdate
+  } catch (e) {
+    res.status(404).send(Error(e));
   }
 };

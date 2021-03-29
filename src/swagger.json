@@ -375,10 +375,8 @@
         },
         "security": [
           {
-            "petstore_auth": [
-              "write:pets",
-              "read:pets"
-            ]
+            "bearerAuth": [],
+            "ApiKeyAuth": []
           }
         ]
       },
@@ -402,7 +400,49 @@
             "description": "Validation exception"
           }
         },
-        "security": []
+        "security": [
+          {
+            "bearerAuth": [],
+            "ApiKeyAuth": []
+          }
+        ]
+      }
+    },
+    "/products/check-sku": {
+      "get": {
+        "tags": [
+          "products"
+        ],
+        "summary": "check sku in database",
+        "operationId": "checkSku",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "sku",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "aophong"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful"
+          },
+          "405": {
+            "description": "Invalid input"
+          },
+          "500": {
+            "description": "Error: Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": [],
+            "ApiKeyAuth": []
+          }
+        ]
       }
     },
     "/products/{productId}": {
@@ -414,15 +454,12 @@
         "operationId": "getProduct",
         "parameters": [
           {
-            "in": "products/:id",
+            "in": "path",
             "name": "productId",
             "required": true,
-            "description": "Numeric ID of the product to get",
             "schema": {
-              "type": "integer",
-              "enum": [
-                1
-              ]
+              "type": "string",
+              "example": "605feaf9d8706444f4e006f7"
             }
           }
         ],
@@ -439,7 +476,13 @@
           "405": {
             "description": "Validation exception"
           }
-        }
+        },
+        "security": [
+          {
+            "bearerAuth": [],
+            "ApiKeyAuth": []
+          }
+        ]
       },
       "patch": {
         "tags": [
@@ -449,20 +492,27 @@
         "operationId": "updateProduct",
         "parameters": [
           {
-            "in": "products/:id",
+            "in": "path",
             "name": "productId",
             "schema": {
-              "type": "integer",
-              "enum": [
-                1
-              ]
+              "type": "string",
+              "example": "605feaf9d8706444f4e006f7"
             },
             "required": true,
             "description": "Numeric ID of the product to update"
           }
         ],
         "requestBody": {
-          "$ref": "#/components/requestBodies/Product"
+            "content":{
+              "application/json":{
+                "schema":{
+                    "anyOf":[
+                      {"$ref": "#/components/schemas/Product"}
+                    ]
+                  
+                }
+              }
+            }
         },
         "responses": {
           "200": {
@@ -478,7 +528,12 @@
             "description": "Validation exception"
           }
         },
-        "security": []
+        "security": [
+          {
+            "bearerAuth": [],
+            "ApiKeyAuth": []
+          }
+        ]
       },
       "delete": {
         "tags": [
@@ -488,13 +543,11 @@
         "operationId": "deleteProduct",
         "parameters": [
           {
-            "in": "products/:id",
+            "in": "path",
             "name": "productId",
             "schema": {
-              "type": "integer",
-              "enum": [
-                1
-              ]
+              "type": "string",
+              "example": "605feaf9d8706444f4e006f7"
             },
             "required": true,
             "description": "Numeric ID of the product to delete"
@@ -513,7 +566,13 @@
           "405": {
             "description": "Validation exception"
           }
-        }
+        },
+        "security": [
+          {
+            "bearerAuth": [],
+            "ApiKeyAuth": []
+          }
+        ]
       }
     },
     "/api/sendo/ward/{wardId}": {
@@ -3635,38 +3694,432 @@
       "Order": {
         "type": "object",
         "properties": {
-          "id": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "petId": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "quantity": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "shipDate": {
+          "source": {
             "type": "string",
-            "format": "date-time"
+            "exmaple": "web"
           },
-          "status": {
+          "paidPrice": {
+            "type": "integer",
+            "exmaple": 0
+          },
+          "orderStatus": {
             "type": "string",
-            "description": "Order Status",
+            "exmaple": "Đang giao dịch"
+          },
+          "outstockStatus": {
+            "type": "boolean",
+            "exmaple": true
+          },
+          "paymentStatus": {
+            "type": "string",
+            "description": "Payment Status",
             "enum": [
-              "placed",
-              "approved",
-              "delivered"
+                "Chưa thanh toán"
             ]
           },
-          "complete": {
+          "packStatus": {
             "type": "boolean",
-            "default": false
+            "exmaple": true
+          },
+          "code": {
+            "type": "string",
+            "exmaple": "customer_1603"
+          },
+          "note": {
+            "type": "string",
+            "exmaple": "asd"
+          },
+          "customerId": {
+            "type": "objectId",
+            "exmaple": "605eab1ee89fe93770eaf930"
+          },
+          "customerName": {
+            "type": "string",
+            "exmaple": "customer 1"
+          },
+          "customerAddress": {
+            "type": "string",
+            "exmaple": "address random 0.7420040912769941"
+          },
+          "customerPhone": {
+            "type": "string",
+            "exmaple": "0987654321"
+          },
+          "customerEmail": {
+            "type": "string",
+            "exmaple": "cus@gmail.com"
+          },
+          "userId": {
+            "type": "objectId",
+            "exmaple": "605ea6bbe89fe93770eaf8ea"
+          },
+          "lineItems":{
+            "type": "array",
+            "items":{
+              "type": "object",
+              "properties":{
+                "_id": {
+                  "type": "objectId",
+                  "exmaple": "605ea7e0e89fe93770eaf902"
+                },
+                "name": {
+                  "type": "string",
+                  "exmaple": "Áo phông EAGLES - 8 - vàng - gỗ"
+                },
+                "sku": {
+                  "type": "string",
+                  "exmaple": "aophong-8-vang-go"
+                },
+                "productId": {
+                  "type": "objectId",
+                  "exmaple": "605ea7dfe89fe93770eaf8f6"
+                },
+                "price": {
+                  "type": "number",
+                  "exmaple": 150000
+                },
+                "quantity": {
+                  "type": "number",
+                  "exmaple": 50
+                }
+              }
+            }
+          },
+          "totalPrice": {
+            "type": "number",
+            "exmaple": 15000000
+          },
+          "totalQuantity": {
+            "type": "number",
+            "exmaple": 100
+          },
+          "step":{
+            "type": "array",
+            "items":{
+              "type": "object",
+              "properties":{
+                "_id": {
+                  "type": "objectId",
+                  "exmaple": "605ea7e0e89fe93770eaf902"
+                },
+                "name": {
+                  "type": "string",
+                  "exmaple": "Đặt hàng và duyệt"
+                },
+                "createdAt": {
+                  "type": "Date",
+                  "exmaple": "2021-03-27T03:50:51.340+00:00"
+                },
+                "isCreated": {
+                  "type": "boolean",
+                  "exmaple": true
+                }
+              }
+            }
+          },
+          "paidHistory":{
+            "type": "array",
+            "exmaple": []
+          },
+          "createdAt": {
+            "type": "Date",
+            "exmaple": "2021-03-27T03:50:51.342+00:00"
+          },
+          "updatedAt": {
+            "type": "Date",
+            "exmaple": "2021-03-27T03:51:15.497+00:00"
           }
         },
         "xml": {
           "name": "Order"
+        }
+      },
+      "PurchaseOrder": {
+        "type": "object",
+        "properties": {
+          "source": {
+            "type": "string",
+            "exmaple": "web"
+          },
+          "paidPrice": {
+            "type": "integer",
+            "exmaple": 0
+          },
+          "orderStatus": {
+            "type": "string",
+            "exmaple": "Hoàn thành"
+          },
+          "instockStatus": {
+            "type": "boolean",
+            "exmaple": true
+          },
+          "paymentStatus": {
+            "type": "string",
+            "description": "Payment Status",
+            "enum": [
+                "Đã thanh toán"
+            ]
+          },
+          "packStatus": {
+            "type": "boolean",
+            "exmaple": true
+          },
+          "code": {
+            "type": "string",
+            "exmaple": "KHỞI_TẠO_3/27/2021"
+          },
+          "note": {
+            "type": "string",
+            "exmaple": "Khởi tạo ban đầu"
+          },
+          "supplierId": {
+            "type": "objectId",
+            "exmaple": "605eab1ee89fe93770eaf930"
+          },
+          "supplierName": {
+            "type": "string",
+            "exmaple": "quang huy"
+          },
+          "supplierAddress": {
+            "type": "string",
+            "exmaple": "Chi nhánh mặc định"
+          },
+          "supplierPhone": {
+            "type": "string",
+            "exmaple": "Mặc định"
+          },
+          "supplierEmail": {
+            "type": "string",
+            "exmaple": "huy1@gmail.com"
+          },
+          "userId": {
+            "type": "objectId",
+            "exmaple": "605ea6bbe89fe93770eaf8ea"
+          },
+          "lineItems":{
+            "type": "array",
+            "items":{
+              "type": "object",
+              "properties":{
+                "_id": {
+                  "type": "objectId",
+                  "exmaple": "605ea7e0e89fe93770eaf902"
+                },
+                "name": {
+                  "type": "string",
+                  "exmaple": "Áo phông EAGLES - 8 - vàng - gỗ"
+                },
+                "sku": {
+                  "type": "string",
+                  "exmaple": "aophong-8-vang-go"
+                },
+                "productId": {
+                  "type": "objectId",
+                  "exmaple": "605ea7dfe89fe93770eaf8f6"
+                },
+                "variantId": {
+                  "type": "objectId",
+                  "exmaple": "605f00a3fd30851d20c638b2"
+                },
+                "price": {
+                  "type": "number",
+                  "exmaple": 150000
+                },
+                "quantity": {
+                  "type": "number",
+                  "exmaple": 50
+                }
+              }
+            }
+          },
+          "totalPrice": {
+            "type": "number",
+            "exmaple": 15000000
+          },
+          "totalQuantity": {
+            "type": "number",
+            "exmaple": 100
+          },
+          "step":{
+            "type": "array",
+            "items":{
+              "type": "object",
+              "properties":{
+                "_id": {
+                  "type": "objectId",
+                  "exmaple": "605ea7e0e89fe93770eaf902"
+                },
+                "name": {
+                  "type": "string",
+                  "exmaple": "Đặt hàng và duyệt"
+                },
+                "createdAt": {
+                  "type": "Date",
+                  "exmaple": "2021-03-27T03:50:51.340+00:00"
+                },
+                "isCreated": {
+                  "type": "boolean",
+                  "exmaple": true
+                }
+              }
+            }
+          },
+          "paidHistory":{
+            "type": "array",
+            "exmaple": []
+          },
+          "createdAt": {
+            "type": "Date",
+            "exmaple": "2021-03-27T03:50:51.342+00:00"
+          },
+          "updatedAt": {
+            "type": "Date",
+            "exmaple": "2021-03-27T03:51:15.497+00:00"
+          }
+        }
+      },
+      "RefundOrder": {
+        "type": "object",
+        "properties": {
+          "source": {
+            "type": "string",
+            "exmaple": "web"
+          },
+          "paidPrice": {
+            "type": "integer",
+            "exmaple": 0
+          },
+          "orderStatus": {
+            "type": "string",
+            "exmaple": "Hoàn thành"
+          },
+          "instockStatus": {
+            "type": "boolean",
+            "exmaple": true
+          },
+          "paymentStatus": {
+            "type": "string",
+            "description": "Payment Status",
+            "enum": [
+                "Đã thanh toán"
+            ]
+          },
+          "packStatus": {
+            "type": "boolean",
+            "exmaple": true
+          },
+          "code": {
+            "type": "string",
+            "exmaple": "KHỞI_TẠO_AOPHONG_3/28/2021"
+          },
+          "note": {
+            "type": "string",
+            "exmaple": "Khởi tạo ban đầu"
+          },
+          "supplierId": {
+            "type": "objectId",
+            "exmaple": "605eab1ee89fe93770eaf930"
+          },
+          "supplierName": {
+            "type": "string",
+            "exmaple": "quang huy"
+          },
+          "supplierAddress": {
+            "type": "string",
+            "exmaple": "Chi nhánh mặc định"
+          },
+          "supplierPhone": {
+            "type": "string",
+            "exmaple": "Mặc định"
+          },
+          "supplierEmail": {
+            "type": "string",
+            "exmaple": "huy1@gmail.com"
+          },
+          "userId": {
+            "type": "objectId",
+            "exmaple": "605ea6bbe89fe93770eaf8ea"
+          },
+          "lineItems":{
+            "type": "array",
+            "items":{
+              "type": "object",
+              "properties":{
+                "_id": {
+                  "type": "objectId",
+                  "exmaple": "605ea7e0e89fe93770eaf902"
+                },
+                "name": {
+                  "type": "string",
+                  "exmaple": "Áo phông EAGLES - 8 - vàng - gỗ"
+                },
+                "sku": {
+                  "type": "string",
+                  "exmaple": "aophong-8-vang-go"
+                },
+                "productId": {
+                  "type": "objectId",
+                  "exmaple": "605ea7dfe89fe93770eaf8f6"
+                },
+                "variantId": {
+                  "type": "objectId",
+                  "exmaple": "605f00a3fd30851d20c638b2"
+                },
+                "price": {
+                  "type": "number",
+                  "exmaple": 150000
+                },
+                "quantity": {
+                  "type": "number",
+                  "exmaple": 50
+                }
+              }
+            }
+          },
+          "totalPrice": {
+            "type": "number",
+            "exmaple": 15000000
+          },
+          "totalQuantity": {
+            "type": "number",
+            "exmaple": 100
+          },
+          "step":{
+            "type": "array",
+            "items":{
+              "type": "object",
+              "properties":{
+                "_id": {
+                  "type": "objectId",
+                  "exmaple": "605ea7e0e89fe93770eaf902"
+                },
+                "name": {
+                  "type": "string",
+                  "exmaple": "Đặt hàng và duyệt"
+                },
+                "createdAt": {
+                  "type": "Date",
+                  "exmaple": "2021-03-27T03:50:51.340+00:00"
+                },
+                "isCreated": {
+                  "type": "boolean",
+                  "exmaple": true
+                }
+              }
+            }
+          },
+          "paidHistory":{
+            "type": "array",
+            "exmaple": []
+          },
+          "createdAt": {
+            "type": "Date",
+            "exmaple": "2021-03-27T03:50:51.342+00:00"
+          },
+          "updatedAt": {
+            "type": "Date",
+            "exmaple": "2021-03-27T03:51:15.497+00:00"
+          }
         }
       },
       "Product": {
@@ -3757,6 +4210,9 @@
             "type": "Date",
             "example": "2021-03-25T08:40:56.007+00:00"
           }
+        },
+        "xml": {
+          "name": "Product"
         }
       },
       "Variant": {
@@ -3892,6 +4348,137 @@
           "name": "User"
         }
       },
+      "Storage": {
+        "required": [
+
+        ],
+        "type": "object",
+        "properties": {
+          "totalMoney": {
+            "type": "number",
+            "example": 0
+          },
+          "isActivated": {
+            "type": "boolean",
+            "example": true
+          },
+          "displayName": {
+            "type": "string",
+            "example": "STORAGE_605D865EEEC3381E501F6EDA"
+          },
+          "sendoCredentials": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties":{
+                "_id":{
+                  "type":"objectId",
+                  "exmaple": "605eb33fe89fe93770eaf951"
+                },
+                "isActivated":{
+                  "type": "boolean",
+                  "example": true
+                },
+                "status":{
+                  "type": "string",
+                  "example": "connected"
+                },
+                "app_key":{
+                  "type": "string",
+                  "exmaple": "d63aecd314b4463abc2204aa6a340c6b"
+                },
+                "app_secret":{
+                  "type": "string",
+                  "exmaple": "a6919d8125cc437c87f004ea2bc87959"
+                },
+                "store_id":{
+                  "type": "string",
+                  "exmaple": "d63aecd314b4463abc2204aa6a340c6b"
+                },
+                "store_name":{
+                  "type": "string",
+                  "exmaple": "SENDO-1"
+                },
+                "platform_name":{
+                  "type": "string",
+                  "exmaple": "sendo"
+                },
+                "access_token":{
+                  "type": "string",
+                  "exmaple": "sdsadsa"
+                },
+                "expires":{
+                  "type": "Date",
+                  "exmaple": "2021-03-27T12:23:30.856+00:00"
+                }
+              }
+            }
+          },
+          "lazadaCredentials": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties":{
+                "_id":{
+                  "type":"objectId",
+                  "exmaple": "605eb33fe89fe93770eaf951"
+                },
+                "isActivated":{
+                  "type": "boolean",
+                  "example": true
+                },
+                "status":{
+                  "type": "string",
+                  "example": "connected"
+                },
+                "app_key":{
+                  "type": "string",
+                  "exmaple": "d63aecd314b4463abc2204aa6a340c6b"
+                },
+                "app_secret":{
+                  "type": "string",
+                  "exmaple": "a6919d8125cc437c87f004ea2bc87959"
+                },
+                "store_id":{
+                  "type": "string",
+                  "exmaple": "200163939035"
+                },
+                "store_name":{
+                  "type": "string",
+                  "exmaple": "Orihss"
+                },
+                "platform_name":{
+                  "type": "string",
+                  "exmaple": "sendo"
+                },
+                "access_token":{
+                  "type": "string",
+                  "exmaple": "sdsadsa"
+                },
+                "refresh_token":{
+                  "type": "string",
+                  "exmaple": "sdsadsa"
+                },
+                "expires":{
+                  "type": "Date",
+                  "exmaple": "2021-03-27T12:23:30.856+00:00"
+                },
+                "refresh_expires":{
+                  "type": "Date",
+                  "exmaple": "2021-03-27T12:23:30.856+00:00"
+                }
+              }
+            }
+          },
+          "id":{
+            "type":"string",
+            "exmaple": "605eb33fe89fe93770eaf951"
+          }
+        },
+        "xml": {
+          "name": "Supplier"
+        }
+      },
       "Supplier": {
         "required": [
           "name",
@@ -4006,6 +4593,94 @@
           "name": "Category"
         }
       },
+      "SendoProduct": {
+        "required": [],
+        "type": "object",
+        "properties": {
+          "avatar": {
+            "type": "string",
+            "example": "https://vn-live.slatic.net/p.jpg"
+          },
+          "link": {
+            "type": "string",
+            "example": "https://www.sendo.vn/tivi-mr-locpro-125-41616795.html"
+          },
+          "id": {
+            "type": "string",
+            "example": "41616795"
+          },
+          "store_id": {
+            "type": "string",
+            "example": "d63aecd314b4463abc2204aa6a340c6b"
+          },
+          "name": {
+            "type": "string",
+            "example": "tivi mr locpro 125"
+          },
+          "price": {
+            "type": "number",
+            "example": 12122132
+          },
+          "sku": {
+            "type": "string",
+            "example": "mrlocpro125"
+          },
+          "status": {
+            "type": "string",
+            "example": "2"
+          },
+          "stock_quantity": {
+            "type": "number",
+            "example": 0
+          },
+          "stock_availability": {
+            "type": "boolean",
+            "example": true
+          },
+          "unit": {
+            "type": "string",
+            "example": "Cái"
+          },
+          "unit_id": {
+            "type": "number",
+            "example": 1
+          },
+          "voucher": {
+            "type": "object",
+            "properties": {
+              "product_type":{
+                "type": "number",
+                "exmaple": 1
+              },
+              "start_date":{
+                "type": "date",
+                "exmaple": "2021-03-27T03:50:51.340+00:00"
+              },
+              "end_date":{
+                "type": "date",
+                "exmaple": "2021-03-27T03:50:51.340+00:00"
+              },
+              "is_check_date":{
+                "type": "boolean",
+                "exmaple": null
+              }
+              
+            }
+          },
+          "weight": {
+            "type": "number",
+            "example": null
+          },
+          "created_date_timestamp": {
+            "type": "Date",
+            "example": "2021-03-25T08:40:56.007+00:00"
+          },
+          "updated_date_timestamp": {
+            "type": "Date",
+            "example": "2021-03-25T08:40:56.007+00:00"
+          }
+        }
+      },
       "SendoVariant": {
         "required": [],
         "type": "object",
@@ -4099,6 +4774,60 @@
           "variant_promotion_start_date_timestamp": {
             "type": "timestamp",
             "example": null
+          }
+        }
+      },
+      "LazadaProduct": {
+        "required": [],
+        "type": "object",
+        "properties": {
+          "avatar": {
+            "type": "string",
+            "example": "https://vn-live.slatic.net/p/75ce11c88e3bd778cb66f4d8c7e7d7c4.jpg"
+          },
+          "id": {
+            "type": "string",
+            "example": "1088960258"
+          },
+          "store_id": {
+            "type": "string",
+            "example": "200163939035"
+          },
+          "primary_category": {
+            "type": "string",
+            "example": "13099"
+          },
+          "attributes": {
+            "type": "array",
+            "items":{
+              "type": "object",
+              "properties":{
+                "name":{
+                  "type": "string",
+                  "example": "dao"
+                },
+                "description":{
+                  "type": "string",
+                  "example": "áđasa"
+                },
+                "brand":{
+                  "type": "string",
+                  "example": "No brand"
+                },
+                "source":{
+                  "type": "string",
+                  "example": "asc"
+                }
+              }
+            }
+          },
+          "created_date_timestamp": {
+            "type": "Date",
+            "example": "2021-03-25T08:40:56.007+00:00"
+          },
+          "updated_date_timestamp": {
+            "type": "Date",
+            "example": "2021-03-25T08:40:56.007+00:00"
           }
         }
       },
@@ -4204,6 +4933,60 @@
               }
             }
           }
+        }
+      },
+      "Inventory": {
+        "required": [],
+        "type": "object",
+        "properties": {
+          "department": {
+            "type": "string",
+            "example": "chi nhánh mặc định"
+          },
+          "variantId": {
+            "type": "objectId",
+            "example": "605feaf9d8706444f4e006ff"
+          },
+          "actionName": {
+            "type": "string",
+            "example": "Nhập hàng vào kho"
+          },
+          "change": {
+            "type": "object",
+            "properties":{
+              "amount":{
+                "type": "string",
+                "exmaple": "100"
+              },
+              "type":{
+                "type": "string",
+                "example": "Tăng"
+              }
+            }
+          },
+          "inStock":{
+            "type": "number",
+            "exmaple": 100
+          },
+          "reference":{
+            "type": "string",
+            "exmaple": "KHỞI_TẠO_AOPHONG_3/28/2021"
+          },
+          "price":{
+            "type": "number",
+            "exmaple": 150000
+          },
+          "createdAt":{
+            "type": "date",
+            "exmaple": "2021-03-28T02:33:30.448+00:00"
+          },
+          "updatedAt":{
+            "type": "date",
+            "exmaple": "2021-03-28T02:33:30.448+00:00"
+          }
+        },
+        "xml": {
+          "name": "Category"
         }
       }
     },

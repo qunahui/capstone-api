@@ -114,7 +114,7 @@ module.exports.checkSku = async (req,res) => {
       isSkuExists: true
     })
   } else if(matchedProductSku.length === 0) {
-    const matchedVariantSku = await Product.find({ "variants.sku": sku })
+    const matchedVariantSku = await Variant.find({ sku })
     if(matchedVariantSku.length > 0) { 
       res.status(200).send({
         isSkuExists: true
