@@ -87,11 +87,6 @@ const lazadaCredentialSchema = new Schema({
     type: Date,
     required: true
   }
-}, {
-  timestamps: {
-    createdAt: 'createdAt',
-    updatedAt: 'updatedAt',
-  }
 })
 
 const storageSchema = new Schema({

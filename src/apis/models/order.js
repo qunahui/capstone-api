@@ -1,5 +1,5 @@
-const mongoose = require("mongoose");
-const Schema = mongoose.Schema;
+const mongoose = require("mongoose")
+const Schema = mongoose.Schema
 
 const lineItemSchema = new Schema({
   price: {
@@ -46,21 +46,6 @@ const orderSchema = new Schema({
   userId: {
     type: mongoose.Schema.Types.ObjectId
   },
-  customerId: {
-    type: mongoose.Schema.Types.ObjectId
-  },
-  customerName: {
-    type: String
-  },
-  customerAddress: {
-    type: String,
-  },
-  customerEmail: {
-    type: String,
-  },
-  customerPhone: {
-    type: String,
-  },
   note: {
     type: String,
   },
@@ -84,23 +69,20 @@ const orderSchema = new Schema({
     type: Number,
   },
   reference: {
-    type: mongoose.Schema.Types.ObjectId,
+    name: {
+      type: String,
+    },
+    id: {
+      type: mongoose.Schema.Types.ObjectId,
+    }
   },
   orderStatus: {
     type: String,
     default: 'Đang giao dịch'
   },
-  outstockStatus: {
-    type: Boolean,
-    default: false
-  },
   paymentStatus: {
     type: String,
     default: 'Chưa thanh toán'
-  },
-  packStatus: {
-    type: Boolean,
-    default: false
   },
   createdAt: {
     type: Date,
@@ -119,4 +101,103 @@ const orderSchema = new Schema({
   }
 });
 
-module.exports = mongoose.model("Order", orderSchema);
+const purchaseOrderSchema = orderSchema.clone();
+purchaseOrderSchema.add({
+  supplierId: {
+    type: mongoose.Schema.Types.ObjectId
+  },
+  supplierName: {
+    type: String
+  },
+  supplierAddress: {
+    type: String,
+  },
+  supplierEmail: {
+    type: String,
+  },
+  supplierPhone: {
+    type: String,
+  },
+  instockStatus: {
+    type: Boolean,
+    default: false
+  },
+})
+const salesOrderSchema = orderSchema.clone();
+salesOrderSchema.add({
+  customerId: {
+    type: mongoose.Schema.Types.ObjectId
+  },
+  customerName: {
+    type: String
+  },
+  customerAddress: {
+    type: String,
+  },
+  customerEmail: {
+    type: String,
+  },
+  customerPhone: {
+    type: String,
+  },
+  packStatus: {
+    type: Boolean,
+    default: false
+  },
+  outstockStatus: {
+    type: Boolean,
+    default: false
+  },
+})
+const refundOrderSchema = orderSchema.clone();
+refundOrderSchema.add({
+  customerId: {
+    type: mongoose.Schema.Types.ObjectId
+  },
+  customerName: {
+    type: String
+  },
+  customerAddress: {
+    type: String,
+  },
+  customerEmail: {
+    type: String,
+  },
+  customerPhone: {
+    type: String,
+  },
+  instockStatus: {
+    type: Boolean,
+    default: false
+  }
+})
+const supplierRefundOrderSchema = orderSchema.clone();
+supplierRefundOrderSchema.add({
+  supplierId: {
+    type: mongoose.Schema.Types.ObjectId
+  },
+  supplierName: {
+    type: String
+  },
+  supplierAddress: {
+    type: String,
+  },
+  supplierEmail: {
+    type: String,
+  },
+  supplierPhone: {
+    type: String,
+  },
+  outstockStatus: {
+    type: Boolean,
+    default: false
+  }
+})
+
+const PurchaseOrder = mongoose.model("PurchaseOrder", purchaseOrderSchema)
+const Order = mongoose.model("Order", salesOrderSchema)
+const RefundOrder = mongoose.model("RefundOrder", refundOrderSchema)
+const SupplierRefundOrder = mongoose.model("SupplierRefundOrder", supplierRefundOrderSchema)
+
+module.exports = { PurchaseOrder, Order, RefundOrder, SupplierRefundOrder }
+

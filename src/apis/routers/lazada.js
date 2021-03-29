@@ -27,7 +27,7 @@ router.get('/authorize', auth, controller.authorizeCredential)
 router.post('/login', auth, controller.getAccessToken)  // t4 fix cùng hui
 //router.post('/sign', controller.createSign)
 
-router.get('/refresh-token/',auth, controller.refreshToken)
+router.post('/refresh-token/',auth, controller.refreshToken)
 
 router.get('/products/:id', auth, controller.getProductById)
 router.get('/products/seller-sku/:id', auth, controller.getProductBySellerSku)

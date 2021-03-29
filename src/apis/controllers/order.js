@@ -1,5 +1,5 @@
 const Error = require("../utils/error");
-const Order = require("../models/order")
+const { Order } = require("../models/order")
 const Inventory = require("../models/inventory")
 const Variant = require("../models/variant")
 
@@ -113,6 +113,10 @@ module.exports.createOrder = async (req,res) => {
       isCreated: false,
     },
     {
+      name: 'Đã hoàn trả',
+      isCreated: false,
+    },
+    {
       name: 'Đã hủy',
       isCreated: false,
     },
@@ -179,8 +183,8 @@ module.exports.cancelOrder = async (req, res) => {
 
     order.orderStatus = 'Đã hủy'
 
-    order.step[4] = {
-      name: order.step[4].name,
+    order.step[5] = {
+      name: order.step[5].name,
       isCreated: true,
       createdAt: new Date()
     }

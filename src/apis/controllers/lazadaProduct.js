@@ -162,6 +162,12 @@ module.exports.syncProducts = async (req, res) => {
     return res.status(400).send(Error({ message: 'Lấy lazada token thất bại !'}))
   }
 
+  if(newCredential.isRefreshExpired) {
+    return res.status(400).send(Error({
+      message: "Refresh token đã hết hạn !",
+    }))
+  }
+
   //fetch products
   try {
     const options = {
@@ -178,7 +184,10 @@ module.exports.syncProducts = async (req, res) => {
     }
 
     await rp(options, function(err, response) {
-      return res.status(200).send("Đồng bộ thành công !")
+      return res.status(200).send({
+        message: "Đồng bộ thành công !",
+        isCredentialRefreshed: newCredential.isCredentialRefreshed
+      })
     })
   } catch(e) {
     return res.status(e.response.statusCode).send(Error({ message: e.response.statusMessage}))

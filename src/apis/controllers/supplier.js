@@ -3,18 +3,21 @@ const Supplier = require('../models/supplier')
 
 module.exports.createSupplier = async (req, res) => {
   try { 
-    const supplier = new Supplier({ ...req.body, userId: req.user._id }) 
-    
-    console.log("Created: ", supplier)
-
-    supplier.save()
-
-    res.status(200).send(supplier)
+    const isSupplierExist = await Supplier.findOne({ email: req.body.email, userId: req.user._id })
+    if(isSupplierExist) {
+      res.status(409).send(Error({ message: 'Nhà cung cấp đã tồn tại !'}))
+    } else {
+      const supplier = new Supplier({ ...req.body, userId: req.user._id }) 
+      supplier.save()
+      console.log("Created: ", supplier)
+      res.status(200).send(supplier)
+    }
   } catch(e) {
     let status = 400;
     let error = e;
 
-    console.log("error: ", e)
+    console.log("error name: ", e.name)
+    console.log("error code: ", e.code)
 
     if (e.name === "MongoError" && e.code === 11000) {
       status = 409;
@@ -26,6 +29,19 @@ module.exports.createSupplier = async (req, res) => {
     res.status(status).send(Error(error));
   }
 };
+
+module.exports.checkSupplierExist = async(req, res) => {
+  try {
+    const isSupplierExist = await Supplier.findOne({ email: req.params.email, userId: req.user._id })
+    if(isSupplierExist) {
+      res.status(409).send(Error({ message: 'Nhà cung cấp đã tồn tại !'}))
+    } else {
+      res.status(200).send({message: "Nhà cung cấp có thể được tạo !"})
+    }
+  } catch(e) {
+    res.status(400).send(Error({message: "Có gì đó sai sai!"}))
+  }
+}
 
 module.exports.getAllSupplier = async (req, res) => {
   try {

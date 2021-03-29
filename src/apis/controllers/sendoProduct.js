@@ -222,7 +222,10 @@ module.exports.syncProducts = async (req, res, next) => {
     }
 
     await rp(options, function(err, response) {
-      return res.status(200).send("Đồng bộ sendo thành công !")
+      return res.status(200).send({
+        message: "Đồng bộ sendo thành công !",
+        isCredentialRefreshed: newCredential.isCredentialRefreshed
+      })
     })
   } catch(e) {
     console.log("sync error: ", e.message)

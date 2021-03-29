@@ -23,7 +23,7 @@ module.exports.authorizeCredential = async (req, res) => {
       }
     }
     await rp(options).then(async response => {
-      const storage = await Storage.findById({ _id: req.user.currentStorage.storageId })
+      const storage = await Storage.findOne({ _id: req.user.currentStorage.storageId })
       const { token, expires } = response.result
       const matchedCredential = storage.sendoCredentials.find(credential => credential.app_key === app_key)
       if(matchedCredential) {
@@ -44,8 +44,8 @@ module.exports.authorizeCredential = async (req, res) => {
       //   res.status(200).send(insertCredential)
       // })
 
-      await Storage.findOneAndUpdate({ _id: req.user.currentStorage.storageId }, {
-        $push: {
+      await Storage.updateOne({ _id: req.user.currentStorage.storageId }, {
+        $addToSet: {
           sendoCredentials: insertCredential
         }
       })
@@ -71,12 +71,18 @@ module.exports.getSendoToken = async (req, res) => {
     const isTokenAvailable = timeDifference.hoursDifference <= 0
 
     if(isTokenAvailable === true) {
-      return res.status(200).send(credential)
+      console.log("old token available")
+      return res.status(200).send({
+        ...credential,
+        isCredentialRefreshed: false
+      })
     }
+
+    console.log("try refresh sendo token")
 
     try {
       const { app_key, app_secret } = credential
-      await rp({
+      const response = await rp({
         method: 'POST',
         url: 'https://open.sendo.vn/login',
         header: {
@@ -87,37 +93,41 @@ module.exports.getSendoToken = async (req, res) => {
           shop_key: app_key,
           secret_key: app_secret
         }
-      }, async function(err, response) {
-        const { token, expires } = response.body.result
-
-        await Storage.updateOne({ 
-          id: currentStorage.storageId,
-          sendoCredentials: {
-            $elemMatch: {
-              _id: credential._id,
-              store_id: credential.store_id
-            }
-          }
-        } , {
-          $set: {
-            "sendoCredentials.$.access_token": token,
-            "sendoCredentials.$.expires": expires,
-          }
-        })
-
-        const newStorage = await Storage.findOne({
-          id: currentStorage.storageId,
-          sendoCredentials: {
-            $elemMatch: {
-              _id: credential._id,
-              store_id: credential.store_id
-            }
-          }
-        })
-
-        return res.status(200).send(newStorage.sendoCredentials.find(cre => cre._id === credential._id))
       })
 
+      const { token, expires } = response.result
+
+      await Storage.updateOne({ 
+        id: currentStorage.storageId,
+        sendoCredentials: {
+          $elemMatch: {
+            _id: credential._id,
+            store_id: credential.store_id
+          }
+        }
+      } , {
+        $set: {
+          "sendoCredentials.$.access_token": token,
+          "sendoCredentials.$.expires": expires,
+        }
+      })
+
+      const newStorage = await Storage.findOne({
+        id: currentStorage.storageId,
+        sendoCredentials: {
+          $elemMatch: {
+            _id: credential._id,
+            store_id: credential.store_id
+          }
+        }
+      }).lean()
+
+      const newCredential = newStorage.sendoCredentials.find(i => i._id.toString() === credential._id)
+
+      return res.status(200).send({
+        ...newCredential,
+        isCredentialRefreshed: true
+      })
     } catch(e) {
       console.log("Error: ", e)
       res.status(400).send(Error({ message: 'Lấy sendo token thất bại !'}))

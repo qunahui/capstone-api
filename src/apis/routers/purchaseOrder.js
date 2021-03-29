@@ -9,6 +9,8 @@ router.get("/:id", auth, purchaseOrderController.getPurchaseOrderById)
 
 router.post("/", auth, purchaseOrderController.createPurchaseOrder)
 
+router.post("/init", auth, purchaseOrderController.createInitialPurchaseOrder)
+
 router.get("/cancel/:_id", auth, purchaseOrderController.cancelPurchaseOrder)
 
 router.post("/receipt/:_id", auth, purchaseOrderController.createReceipt)
