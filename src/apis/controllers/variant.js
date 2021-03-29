@@ -10,6 +10,7 @@ const SendoProduct = require("../models/sendoProduct")
 
 module.exports.linkVariant = async (req, res) => {
   const { variant, platformVariant } = req.body;
+  let updatedPlatVariant = {}
   console.clear()
   try {
     if(platformVariant.platform === 'sendo') {
@@ -21,12 +22,20 @@ module.exports.linkVariant = async (req, res) => {
         }, {
           linkedId: variant._id
         })
+
+        updatedPlatVariant = await SendoVariant.findOne({
+          _id: platformVariant._id
+        }).populate('linkedDetails').lean()
       } else if(!platformVariant.productId) {
         await SendoProduct.updateOne({
           _id: platformVariant._id,
         }, {
           linkedId: variant._id
         })
+
+        updatedPlatVariant = await SendoProduct.findOne({
+          _id: platformVariant._id
+        }).populate('linkedDetails').lean()
       }
       // link P to sendoP
       await Variant.updateOne({
@@ -37,6 +46,7 @@ module.exports.linkVariant = async (req, res) => {
         }
       })
 
+      return res.status(200).send(updatedPlatVariant)
     } else if(platformVariant.platform === 'lazada') {
       await LazadaVariant.updateOne({
         _id: platformVariant._id,
@@ -51,9 +61,83 @@ module.exports.linkVariant = async (req, res) => {
           linkedIds: mongoose.Types.ObjectId(platformVariant._id)
         }
       })
+
+      let updatedPlatVariant = await LazadaVariant.findOne({
+        _id: platformVariant._id
+      }).populate('linkedDetails').lean()
+  
+      return res.status(200).send(updatedPlatVariant)
     }
 
-    res.status(200).send("Liên kết thành công !")
+    return res.status(400).send(Error({ message: 'Có gì đó sai sai !'}))
+  } catch(e) {
+    console.log("Liên kết thất bại: ", e.message)
+    res.status(400).send("Liên kết thất bại")
+  }
+}
+
+module.exports.unlinkVariant = async (req, res) => {
+  const { variant, platformVariant } = req.body;
+  let updatedPlatVariant = {}
+  console.clear()
+  try {
+    if(platformVariant.platform === 'sendo') {
+      // link sendoP to P
+      if(platformVariant.productId) {
+        // variant
+        await SendoVariant.updateOne({
+          _id: platformVariant._id,
+        }, {
+          linkedId: null
+        })
+
+        updatedPlatVariant = await SendoVariant.findOne({
+          _id: platformVariant._id
+        }).populate('linkedDetails').lean()
+      } else if(!platformVariant.productId) {
+        await SendoProduct.updateOne({
+          _id: platformVariant._id,
+        }, {
+          linkedId: null
+        })
+
+        updatedPlatVariant = await SendoProduct.findOne({
+          _id: platformVariant._id
+        }).populate('linkedDetails').lean()
+      }
+      // link P to sendoP
+      await Variant.updateOne({
+        _id: variant._id,
+      }, {
+        $pull: {
+          linkedIds: mongoose.Types.ObjectId(platformVariant._id)
+        }
+      })
+
+      return res.status(200).send(updatedPlatVariant)
+    } else if(platformVariant.platform === 'lazada') {
+      await LazadaVariant.updateOne({
+        _id: platformVariant._id,
+      }, {
+        linkedId: null
+      })
+
+      await Variant.updateOne({
+        _id: variant._id,
+      }, {
+        $pull: {
+          linkedIds: mongoose.Types.ObjectId(platformVariant._id)
+        }
+      })
+
+      let updatedPlatVariant = await LazadaVariant.findOne({
+        _id: platformVariant._id
+      }).populate('linkedDetails').lean()
+  
+      return res.status(200).send(updatedPlatVariant)
+    }
+
+    return res.status(400).send(Error({ message: 'Có gì đó sai sai !'}))
   } catch(e) {
     console.log("Liên kết thất bại: ", e.message)
     res.status(400).send("Liên kết thất bại")
