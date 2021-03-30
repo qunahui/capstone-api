@@ -105,7 +105,6 @@ module.exports.getAccessToken = async (req, res) => {
       const isTokenAvailable = timeDifference.hoursDifference <= 0
   
       if(isTokenAvailable === true) {
-        console.log("old token available")
         return res.status(200).send({
           ...credential,
           isCredentialRefreshed: false

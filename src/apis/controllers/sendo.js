@@ -98,7 +98,7 @@ module.exports.getSendoToken = async (req, res) => {
       const { token, expires } = response.result
 
       await Storage.updateOne({ 
-        id: currentStorage.storageId,
+        _id: currentStorage.storageId,
         sendoCredentials: {
           $elemMatch: {
             _id: credential._id,
