@@ -41,6 +41,30 @@
       }
     },
     {
+      "name": "orders",
+      "description": "Everything about your Orders",
+      "externalDocs": {
+        "description": "Find out more",
+        "url": ""
+      }
+    },
+    {
+      "name": "purchaseOrders",
+      "description": "Everything about your purchaseOrders",
+      "externalDocs": {
+        "description": "Find out more",
+        "url": ""
+      }
+    },
+    {
+      "name": "refundOrders",
+      "description": "Everything about your refundOrders",
+      "externalDocs": {
+        "description": "Find out more",
+        "url": ""
+      }
+    },
+    {
       "name": "sendoAPI",
       "description": "Access to Sendo API"
     },
@@ -59,6 +83,10 @@
     {
       "name": "categories",
       "description": "Access to Categories in Database"
+    },
+    {
+      "name": "inventory",
+      "description": "Access to Inventory in Database"
     },
     {
       "name": "provinces",
@@ -575,6 +603,562 @@
         ]
       }
     },
+    "/orders": {
+      "post": {
+        "tags": [
+          "orders"
+        ],
+        "summary": "Add a new MMS product to the store",
+        "operationId": "addProduct",
+        "requestBody": {
+          "content":{
+            "application/json":{
+              "schema":{
+                "anyOf":[
+                  {"$ref": "#/components/schemas/Order"}
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful"
+          },
+          "405": {
+            "description": "Invalid input"
+          },
+          "500": {
+            "description": "Error: Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": [],
+            "ApiKeyAuth": []
+          }
+        ]
+      },
+      "get": {
+        "tags": [
+          "orders"
+        ],
+        "summary": "Get all order",
+        "operationId": "getAllOrder",
+        "responses": {
+          "200": {
+            "description": "Successful"
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "404": {
+            "description": "Pet not found"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": [],
+            "ApiKeyAuth": []
+          }
+        ]
+      }
+    },
+    "/orders/{orderId}": {
+      "get": {
+        "tags": [
+          "orders"
+        ],
+        "summary": "Get an existing order by id",
+        "operationId": "getOrder",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "orderId",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "606152d8300e76563c5fe6d4"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful"
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "404": {
+            "description": "Pet not found"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": [],
+            "ApiKeyAuth": []
+          }
+        ]
+      }
+    },
+    "/orders/cancel/{_id}": {
+      "get": {
+        "tags": [
+          "orders"
+        ],
+        "summary": "Cancel order by _id",
+        "operationId": "cancelOrder",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "_id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "606152d8300e76563c5fe6d4"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful"
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "404": {
+            "description": "Pet not found"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": [],
+            "ApiKeyAuth": []
+          }
+        ]
+      }
+    },
+    "/orders/pack/{_id}": {
+      "post": {
+        "tags": [
+          "orders"
+        ],
+        "summary": "Pack order by _id",
+        "operationId": "packOrder",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "_id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "606152d8300e76563c5fe6d4"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful"
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "404": {
+            "description": "Pet not found"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": [],
+            "ApiKeyAuth": []
+          }
+        ]
+      }
+    },
+    "/orders/receipt/{_id}": {
+      "post": {
+        "tags": [
+          "orders"
+        ],
+        "summary": "Receipt order by _id",
+        "operationId": "receiptOrder",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "_id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "606152d8300e76563c5fe6d4"
+            }
+          }
+        ],
+        "requestBody":{
+          "content":{
+            "application/json":{
+              "schema":{
+
+              },
+              "example":{
+                "lineItems": [
+                  {
+                    "_id": "605feaf9d8706444f4e006fb",
+                    "name": "Áo phông EAGLES - 8 - nâu - gỗ",
+                    "sku": "aophong-8-nau-go",
+                    "productId": "605feaf9d8706444f4e006f7",
+                    "price": 150000,
+                    "quantity": 78
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful"
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "404": {
+            "description": "Pet not found"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": [],
+            "ApiKeyAuth": []
+          }
+        ]
+      }
+    },
+    "/orders/payment/{_id}": {
+      "post": {
+        "tags": [
+          "orders"
+        ],
+        "summary": "payment order by _id",
+        "operationId": "paymentOrder",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "_id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "606152d8300e76563c5fe6d4"
+            }
+          }
+        ],
+        "requestBody":{
+          "content":{
+            "application/json":{
+              "schema":{
+
+              },
+              "example":{
+                "paidPrice": 10000,
+                "formattedPaidPrice": "10,000"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful"
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "404": {
+            "description": "Pet not found"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": [],
+            "ApiKeyAuth": []
+          }
+        ]
+      }
+    },
+    "/purchase-orders": {
+      "post": {
+        "tags": [
+          "purchaseOrders"
+        ],
+        "summary": "Add a new purchase order to the store",
+        "operationId": "addPurchaseOrder",
+        "requestBody": {
+          "content":{
+            "application/json":{
+              "schema":{
+                "anyOf":[
+                  {"$ref": "#/components/schemas/PurchaseOrder"}
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful"
+          },
+          "405": {
+            "description": "Invalid input"
+          },
+          "500": {
+            "description": "Error: Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": [],
+            "ApiKeyAuth": []
+          }
+        ]
+      },
+      "get": {
+        "tags": [
+          "purchaseOrders"
+        ],
+        "summary": "Get all purchaseOrder",
+        "operationId": "getAllOrder",
+        "responses": {
+          "200": {
+            "description": "Successful"
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "404": {
+            "description": "Pet not found"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": [],
+            "ApiKeyAuth": []
+          }
+        ]
+      }
+    },
+    "/purchase-orders/{_id}": {
+      "get": {
+        "tags": [
+          "purchaseOrders"
+        ],
+        "summary": "Get an existing purchase order by id",
+        "operationId": "getpurchaseOrder",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "_id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "606158fa52045c5588eef074"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful"
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "404": {
+            "description": "Pet not found"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": [],
+            "ApiKeyAuth": []
+          }
+        ]
+      }
+    },
+    "/purchase-orders/cancel/{_id}": {
+      "get": {
+        "tags": [
+          "purchaseOrders"
+        ],
+        "summary": "Cancel purchase order by _id",
+        "operationId": "cancelPurchaseOrder",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "_id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "606158fa52045c5588eef074"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful"
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "404": {
+            "description": "Pet not found"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": [],
+            "ApiKeyAuth": []
+          }
+        ]
+      }
+    },
+    "/purchase-orders/receipt/{_id}": {
+      "post": {
+        "tags": [
+          "purchaseOrders"
+        ],
+        "summary": "Receipt purchase order by _id",
+        "operationId": "receiptPurchaseOrder",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "_id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "606158fa52045c5588eef074"
+            }
+          }
+        ],
+        "requestBody":{
+          "content":{
+            "application/json":{
+              "schema":{
+
+              },
+              "example":{
+                "lineItems": [
+                  {
+                    "_id": "605feaf9d8706444f4e006fb",
+                    "name": "Áo phông EAGLES - 8 - nâu - gỗ",
+                    "sku": "aophong-8-nau-go",
+                    "productId": "605feaf9d8706444f4e006f7",
+                    "price": 150000,
+                    "quantity": 78
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful"
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "404": {
+            "description": "Pet not found"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": [],
+            "ApiKeyAuth": []
+          }
+        ]
+      }
+    },
+    "/purchase-orders/payment/{_id}": {
+      "post": {
+        "tags": [
+          "purchaseOrders"
+        ],
+        "summary": "payment purchase order by _id",
+        "operationId": "paymentPurchaseOrder",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "_id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "606158fa52045c5588eef074"
+            }
+          }
+        ],
+        "requestBody":{
+          "content":{
+            "application/json":{
+              "schema":{
+
+              },
+              "example":{
+                "paidPrice": 10000,
+                "formattedPaidPrice": "10,000"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful"
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "404": {
+            "description": "Pet not found"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": [],
+            "ApiKeyAuth": []
+          }
+        ]
+      }
+    },
     "/api/sendo/ward/{wardId}": {
       "get": {
         "tags": [
@@ -1025,6 +1609,173 @@
             "description": "Validation exception"
           }
         }
+      },
+      "patch": {
+        "tags": [
+          "sendoAPI"
+        ],
+        "summary": "update product on sendo",
+        "operationId": "updateMultiProduct",
+        "security": [
+          {
+            "bearerAuth": [],
+            "ApiKeyAuth": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {},
+              "example": {
+                "_id": "6061c3fb50e0dd47185ac487",
+                "id": "39297530",
+                "store_id": "d63aecd314b4463abc2204aa6a340c6b",
+                "__v": 0,
+                "avatar": "https://media3.scdn.vn/img4/2021/01_04/xooWI9JHZXqREjFIeQTB.png",
+                "created_date_timestamp": "2021-01-04T12:55:43.000Z",
+                "link": "https://www.sendo.vn/locpro223423423432432432-39297530.html",
+                "name": "locpro223423423432432432",
+                "price": 120000,
+                "sku": "12345678",
+                "status": "2",
+                "stock_availability": true,
+                "stock_quantity": 456,
+                "unit": "Cái",
+                "unitId": 1,
+                "updated_date_timestamp": "2021-03-25T06:39:11.000Z",
+                "voucher": {
+                "product_type": 1,
+                "start_date": null,
+                "end_date": null,
+                "is_check_date": null
+                },
+                "weight": 1000,
+                "variants": [
+                {
+                "_id": "6061c3fb50e0dd47185ac489",
+                "productId": "6061c3fb50e0dd47185ac487",
+                "sku": "123456789123",
+                "Status": "inactive",
+                "__v": 0,
+                "avatar": [
+                "https://media3.scdn.vn/img4/2021/03_21/NpSb4jBlmliQLbEypOHv_simg_02d57e_50x50_maxb.jpg"
+                ],
+                "price": 120000,
+                "quantity": 0,
+                "special_price": 0,
+                "variant_attribute_hash": "603",
+                "variant_attributes": [
+                {
+                "attribute_id": 284,
+                "attribute_code": "mau_sac",
+                "option_id": 603,
+                "attribute_name": "Màu sắc",
+                "option_value": "Vàng",
+                "attribute_img": "https://media3.scdn.vn/img4/2021/03_21/NpSb4jBlmliQLbEypOHv_simg_02d57e_50x50_maxb.jpg"
+                }
+                ],
+                "variant_campaign_status": null,
+                "variant_is_flash_sales": null,
+                "variant_is_promotion": false,
+                "variant_promotion_end_date_timestamp": null,
+                "variant_promotion_start_date_timestamp": null,
+                "linkedId": null
+                },
+                {
+                "_id": "6061c3fb50e0dd47185ac48a",
+                "productId": "6061c3fb50e0dd47185ac487",
+                "sku": "123456789",
+                "Status": "inactive",
+                "__v": 0,
+                "avatar": [
+                "https://media3.scdn.vn/img4/2021/03_20/pRNRPvr1ZoL7oKDYDi9Q_simg_02d57e_50x50_maxb.png"
+                ],
+                "price": 120000,
+                "quantity": 234,
+                "special_price": 0,
+                "variant_attribute_hash": "613",
+                "variant_attributes": [
+                {
+                "attribute_id": 284,
+                "attribute_code": "mau_sac",
+                "option_id": 613,
+                "attribute_name": "Màu sắc",
+                "option_value": "Xám",
+                "attribute_img": "https://media3.scdn.vn/img4/2021/03_20/pRNRPvr1ZoL7oKDYDi9Q_simg_02d57e_50x50_maxb.png"
+                }
+                ],
+                "variant_campaign_status": null,
+                "variant_is_flash_sales": null,
+                "variant_is_promotion": false,
+                "variant_promotion_end_date_timestamp": null,
+                "variant_promotion_start_date_timestamp": null,
+                "linkedId": null
+                },
+                {
+                "_id": "6061c3fb50e0dd47185ac488",
+                "productId": "6061c3fb50e0dd47185ac487",
+                "sku": "xanh",
+                "Status": "inactive",
+                "__v": 0,
+                "avatar": [
+                "https://media3.scdn.vn/img4/2021/01_04/xooWI9JHZXqREjFIeQTB_simg_02d57e_50x50_maxb.png"
+                ],
+                "price": 120000,
+                "quantity": 123,
+                "special_price": 0,
+                "variant_attribute_hash": "608",
+                "variant_attributes": [
+                {
+                "attribute_id": 284,
+                "attribute_code": "mau_sac",
+                "option_id": 608,
+                "attribute_name": "Màu sắc",
+                "option_value": "Xanh nước biển",
+                "attribute_img": "https://media3.scdn.vn/img4/2021/01_04/xooWI9JHZXqREjFIeQTB_simg_02d57e_50x50_maxb.png"
+                }
+                ],
+                "variant_campaign_status": null,
+                "variant_is_flash_sales": null,
+                "variant_is_promotion": false,
+                "variant_promotion_end_date_timestamp": null,
+                "variant_promotion_start_date_timestamp": null
+                }
+                ]
+                }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful",
+            "content": {
+              "application/json": {
+                "schema": {},
+                "example": {
+                  "result": [
+                    {
+                      "product_id": 39508091
+                    }
+                  ],
+                  "success": true,
+                  "error": null,
+                  "status_code": 200,
+                  "total_records": null,
+                  "params": null
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "404": {
+            "description": "Pet not found"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        }
       }
     },
     "/sendo/products": {
@@ -1110,72 +1861,6 @@
           }
         }
       },
-      "patch": {
-        "tags": [
-          "sendoAPI"
-        ],
-        "summary": "update product on sendo",
-        "operationId": "updateProduct",
-        "security": [
-          {
-            "bearerAuth": [],
-            "ApiKeyAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "in": "path",
-            "name": "productId",
-            "required": true,
-            "description": "Numeric ID of product to update",
-            "schema": {
-              "type": "integer",
-              "example": 39508091
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {},
-              "example": {
-                "name": "mrlocpro1397389213123232"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Successful",
-            "content": {
-              "application/json": {
-                "schema": {},
-                "example": {
-                  "result": [
-                    {
-                      "product_id": 39508091
-                    }
-                  ],
-                  "success": true,
-                  "error": null,
-                  "status_code": 200,
-                  "total_records": null,
-                  "params": null
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Invalid ID supplied"
-          },
-          "404": {
-            "description": "Pet not found"
-          },
-          "405": {
-            "description": "Validation exception"
-          }
-        }
-      },
       "delete": {
         "tags": [
           "sendoAPI"
@@ -1210,278 +1895,6 @@
                   "result": [
                     {
                       "product_id": 39508541
-                    }
-                  ],
-                  "success": true,
-                  "error": null,
-                  "status_code": 200,
-                  "total_records": null,
-                  "params": null
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Invalid ID supplied"
-          },
-          "404": {
-            "description": "Pet not found"
-          },
-          "405": {
-            "description": "Validation exception"
-          }
-        }
-      }
-    },
-    "/api/sendo/products/": {
-      "patch": {
-        "tags": [
-          "sendoAPI"
-        ],
-        "summary": "update multi product on sendo",
-        "operationId": "updateMultiProduct",
-        "security": [
-          {
-            "bearerAuth": [],
-            "ApiKeyAuth": []
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {},
-              "example": [
-                {
-                  "id": 41331091,
-                  "name": "đầm đầm đầm ",
-                  "sku": "lp132435",
-                  "price": 690000,
-                  "weight": 20,
-                  "stock_availability": true,
-                  "description": "sạkfasjkhfkdjahfjkdshfjkdhskjfhsdjkhfsdjkhfkjsdhfkdshfjksdkfhsdjkfhdsjkhfsdkjhfsdkjfhksdjfhjksdfhjkdsfhjkds",
-                  "cat_4_id": 699,
-                  "tags": "đầm,đầm 2 dây suông,đầm trắng 2 dây,đầm hoa 2 dây,đầm body 2 dây",
-                  "height": 20,
-                  "length": 20,
-                  "width": 20,
-                  "unit_id": 2,
-                  "stock_quantity": 2,
-                  "avatar": {
-                    "picture_url": "http://media3.scdn.vn/img4/2021/01_05/ZcTCLs865UkFoBjyQhl2.jpg"
-                  },
-                  "pictures": [
-                    {
-                      "picture_url": "http://media3.scdn.vn/img4/2021/01_05/ZcTCLs865UkFoBjyQhl2.jpg"
-                    }
-                  ],
-                  "extended_shipping_package": {
-                    "is_using_instant": false,
-                    "is_using_in_day": false,
-                    "is_self_shipping": false,
-                    "is_using_standard": true,
-                    "is_using_eco": false
-                  },
-                  "is_promotion": false,
-                  "attributes": [
-                    {
-                      "attribute_id": 298,
-                      "attribute_type": 2,
-                      "attribute_name": "Kích thước",
-                      "attribute_is_required": true,
-                      "attribute_code": "kich_thuoc_1",
-                      "attribute_is_custom": false,
-                      "attribute_is_checkout": true,
-                      "attribute_is_image": false,
-                      "attribute_values": [
-                        {
-                          "id": 25304,
-                          "value": "27",
-                          "attribute_img": null,
-                          "is_selected": true,
-                          "is_custom": false
-                        }
-                      ]
-                    },
-                    {
-                      "attribute_id": 284,
-                      "attribute_type": 1,
-                      "attribute_name": "Màu sắc",
-                      "attribute_is_required": true,
-                      "attribute_code": "mau_sac",
-                      "attribute_is_custom": false,
-                      "attribute_is_checkout": true,
-                      "attribute_is_image": true,
-                      "attribute_values": [
-                        {
-                          "id": 602,
-                          "value": "Nâu",
-                          "attribute_img": null,
-                          "is_selected": true,
-                          "is_custom": false
-                        }
-                      ]
-                    },
-                    {
-                      "attribute_id": 1495,
-                      "attribute_type": 3,
-                      "attribute_name": "Chất vải",
-                      "attribute_is_required": false,
-                      "attribute_code": "chat_vai",
-                      "attribute_is_custom": false,
-                      "attribute_is_checkout": false,
-                      "attribute_is_image": false,
-                      "attribute_values": [
-                        {
-                          "id": 25068,
-                          "value": "Ren",
-                          "attribute_img": null,
-                          "is_selected": true,
-                          "is_custom": false
-                        }
-                      ]
-                    },
-                    {
-                      "attribute_id": 1485,
-                      "attribute_type": 3,
-                      "attribute_name": "Chiều dài váy",
-                      "attribute_is_required": false,
-                      "attribute_code": "chieu_dai_vay",
-                      "attribute_is_custom": false,
-                      "attribute_is_checkout": false,
-                      "attribute_is_image": false,
-                      "attribute_values": [
-                        {
-                          "id": 24968,
-                          "value": "Trên gối",
-                          "attribute_img": null,
-                          "is_selected": true,
-                          "is_custom": false
-                        }
-                      ]
-                    },
-                    {
-                      "attribute_id": 1488,
-                      "attribute_type": 3,
-                      "attribute_name": "Chiều dài tay áo",
-                      "attribute_is_required": false,
-                      "attribute_code": "chieu_dai_tay_ao",
-                      "attribute_is_custom": false,
-                      "attribute_is_checkout": false,
-                      "attribute_is_image": false,
-                      "attribute_values": [
-                        {
-                          "id": 24982,
-                          "value": "Không tay",
-                          "attribute_img": null,
-                          "is_selected": true,
-                          "is_custom": false
-                        }
-                      ]
-                    },
-                    {
-                      "attribute_id": 1489,
-                      "attribute_type": 3,
-                      "attribute_name": "Kiểu cổ áo",
-                      "attribute_is_required": false,
-                      "attribute_code": "kieu_co_ao_1_2_3",
-                      "attribute_is_custom": false,
-                      "attribute_is_checkout": false,
-                      "attribute_is_image": false,
-                      "attribute_values": [
-                        {
-                          "id": 24986,
-                          "value": "Cổ V",
-                          "attribute_img": null,
-                          "is_selected": true,
-                          "is_custom": false
-                        }
-                      ]
-                    },
-                    {
-                      "attribute_id": 1490,
-                      "attribute_type": 3,
-                      "attribute_name": "Họa tiết",
-                      "attribute_is_required": false,
-                      "attribute_code": "hoa_tiet",
-                      "attribute_is_custom": false,
-                      "attribute_is_checkout": false,
-                      "attribute_is_image": false,
-                      "attribute_values": [
-                        {
-                          "id": 25006,
-                          "value": "Hoa lá",
-                          "attribute_img": null,
-                          "is_selected": true,
-                          "is_custom": false
-                        }
-                      ]
-                    },
-                    {
-                      "attribute_id": 1491,
-                      "attribute_type": 3,
-                      "attribute_name": "Phong cách",
-                      "attribute_is_required": false,
-                      "attribute_code": "phong_cach",
-                      "attribute_is_custom": false,
-                      "attribute_is_checkout": false,
-                      "attribute_is_image": false,
-                      "attribute_values": [
-                        {
-                          "id": 25023,
-                          "value": "Dễ thương",
-                          "attribute_img": null,
-                          "is_selected": true,
-                          "is_custom": false
-                        }
-                      ]
-                    }
-                  ],
-                  "is_config_variant": true,
-                  "variants": [
-                    {
-                      "variant_attributes": [
-                        {
-                          "attribute_id": 298,
-                          "attribute_code": "kich_thuoc_1",
-                          "option_id": 25304
-                        },
-                        {
-                          "attribute_id": 284,
-                          "attribute_code": "mau_sac",
-                          "option_id": 602
-                        }
-                      ],
-                      "variant_is_promotion": 0,
-                      "variant_sku": "12hfdeebd",
-                      "variant_price": 213435,
-                      "variant_special_price": 0,
-                      "variant_quantity": 122,
-                      "variant_promotion_start_date_timestamp": null,
-                      "variant_promotion_end_date_timestamp": null,
-                      "variant_is_flash_sales": null,
-                      "variant_campaign_status": null,
-                      "variant_attribute_hash": "602_25304",
-                      "message": null
-                    }
-                  ],
-                  "voucher": {
-                    "product_type": 1
-                  }
-                }
-              ]
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Successful",
-            "content": {
-              "application/json": {
-                "schema": {},
-                "example": {
-                  "result": [
-                    {
-                      "product_id": 39508091
                     }
                   ],
                   "success": true,
@@ -3673,6 +4086,40 @@
             "name": "districtId",
             "type": "string",
             "example": "761"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful"
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        }
+      }
+    },
+    "/inventory/{id}":{
+      "get": {
+        "tags": [
+          "inventory"
+        ],
+        "summary": "get all inventory by variantId in database",
+        "operationId": "getAllInventoryByVariantId",
+        "security": [
+          {
+            "bearerAuth": [],
+            "ApiKeyAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "type": "string",
+            "example": "605feaf9d8706444f4e006ff"
           }
         ],
         "responses": {

@@ -76,9 +76,19 @@ const createSendoProduct = async (item, { store_id }) => {
         options = { upsert: true, new: true, setDefaultsOnInsert: true };
   
     const sendoProduct = await SendoProduct.findOneAndUpdate(query, update, options)
-
+    //find sendoVariants in db
+    const sendoVariants = await SendoVariant.find({productId: sendoProduct._id})
+    
+    //remove sendoVariants not in variants
+    sendoVariants.forEach(async (sendoVariant) =>{
+      const i = variants.findIndex(x => x.variant_attribute_hash === sendoVariant.variant_attribute_hash)
+      if(i < 0){
+        await SendoVariant.findOneAndDelete({_id: sendoVariant._id})
+      }
+    })
+    //create or update
     variants.forEach(async (variant)=>{
-      await SendoVariant.findOneAndUpdate({ sku: variant.variant_sku, productId: sendoProduct._id}, {
+      await SendoVariant.findOneAndUpdate({ variant_attribute_hash: variant.variant_attribute_hash, productId: sendoProduct._id}, {
         ...variant,
         sku: variant.variant_sku,
         Status: item.status === '2' ? 'active' : 'inactive',
@@ -236,64 +246,17 @@ module.exports.syncProducts = async (req, res, next) => {
 
 module.exports.createProduct = async (req, res) =>{
   try {
-    const store_id = '123'
-    const item = req.body
-    const update_at = new Date(item.updated_date_timestamp*1000)
-    const create_at = new Date(item.created_date_timestamp*1000)
-    const attributes = item.attributes
-    const variants = item.variants
-
-    attributes.forEach(element => {
-        var arr = element.attribute_values.filter((child) => {
-            return child.is_selected === true
-        });
-        element.attribute_values = arr
-    }); 
-    variants.forEach( e => {
-      let avatar = '';
-      e.variant_attributes.forEach(e1 => {
-        const attribute = attributes.find((attribute)=>{
-          return attribute.attribute_id === e1.attribute_id
-        });
-        const attribute_value = attribute.attribute_values.find((value)=>{
-          return value.id === e1.option_id
-        })
-        e1.attribute_name = attribute.attribute_name
-        e1.option_value = attribute_value.value
-        e1.attribute_img = attribute_value.attribute_img
-        avatar = [attribute_value.attribute_img] || '' // type: Array
-      })
-
-      e.avatar = avatar
-    });
-
-    let query = { store_id: store_id, id: item.id },
-        update = {
-          ...item,
-          store_id: store_id,
-          unit: unit[item.unit_id - 1],
-          unitId: item.unit_id,
-          avatar: item.avatar.picture_url,
-          updated_date_timestamp: update_at,
-          created_date_timestamp: create_at,
-        },
-        options = { upsert: true, new: true, setDefaultsOnInsert: true }
-        
-        
-    console.log("Begin insert: ", update.id)
-    await SendoProduct.findOneAndUpdate(query, update, options, function(error, result) {
-      if (!error) {
-        if (!result) {
-          result = new SendoProduct(update);
-        }
-        //save sendoProduct
-        result.save().then((res) => {
-          console.log("save: ", res._id) 
-        });
+    const {variants} = req.body
+    const sendoVariants = await SendoVariant.find({productId: "6062fcccbe681538acbbac81"})
+   
+    sendoVariants.forEach(async (sendoVariant) =>{
+      const i = variants.findIndex(x => x.variant_attribute_hash === sendoVariant.variant_attribute_hash)
+      if(i < 0){
+        await SendoVariant.findOneAndDelete({_id: sendoVariant._id})
       }
-    });
-    
-
+    })
+   
+    res.send("done") 
 
   } catch(e) { 
     console.log("Error: ", e)
@@ -302,7 +265,7 @@ module.exports.createProduct = async (req, res) =>{
 
 module.exports.getProductById = async (req, res) =>{
   const id = req.params.id
-  const sendoproduct = await SendoProduct.find({}).populate('variants').lean()
+  const sendoproduct = await SendoProduct.findOne({_id: id}).populate('variants').lean()
 
   res.send(sendoproduct)
 }

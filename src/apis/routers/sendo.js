@@ -68,9 +68,8 @@ router.get('/cancel-reason', auth, controller.getCancelReason) //extra route, it
 router.get('/orders/:id', auth, controller.getOrderByIdOnSendo)
 //router.get('/sync-orders', controller.syncAllOrderSendo)
 
-router.put('/orders/:id', auth, controller.updateOrderStatus)
-router.patch('/products/:id', auth, controller.updateProduct) 
-router.patch('/products/', auth, controller.updateMultiProduct) 
+router.put('/orders/:id', auth, controller.updateOrderStatus) 
+router.patch('/products/', auth, controller.updateProduct) 
 router.delete("/products/:id", auth, controller.deleteProductOnSendo);
 module.exports = router;
 
