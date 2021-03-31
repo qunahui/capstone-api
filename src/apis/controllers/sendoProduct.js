@@ -153,7 +153,9 @@ module.exports.fetchProducts = async (req, res) => {
       // xóa product trong db
       if(product.status === 5){
         const sendoProduct = await SendoProduct.findOneAndDelete({id: product.id, store_id}, {lean: true})
-        await SendoVariant.deleteMany({ productId: sendoProduct._id })
+        if(sendoProduct){
+          await SendoVariant.deleteMany({ productId: sendoProduct._id })
+        }
       }else if(product.status === 2){ // update or create product
         const sendoProduct = await SendoProduct.findOne({ id: product.id, store_id })
         if(sendoProduct) {
