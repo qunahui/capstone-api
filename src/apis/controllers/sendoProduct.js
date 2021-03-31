@@ -4,7 +4,8 @@ const Error = require("../utils/error");
 const util = require('util')
 const rp = require('request-promise');
 const timeDiff = require("../utils/timeDiff");
-const SendoVariant = require("../models/sendoVariant");
+const SendoVariant = require("../models/sendoVariant")
+const Storage = require("../models/storage")
 
 const product_status ={
   "0": "Nháp",
@@ -194,6 +195,7 @@ module.exports.pushProducts = async (req, res) => {
 
 module.exports.syncProducts = async (req, res, next) => {
   const { payload } = req.body
+  const { storageId } = req.user.currentStorage
   //check
   console.clear()
   let newCredential = null;
@@ -231,11 +233,25 @@ module.exports.syncProducts = async (req, res, next) => {
       json: true
     }
 
-    await rp(options, function(err, response) {
-      return res.status(200).send({
-        message: "Đồng bộ sendo thành công !",
-        isCredentialRefreshed: newCredential.isCredentialRefreshed
-      })
+    await rp(options)
+
+    await Storage.updateOne({ 
+      _id: storageId,
+      sendoCredentials: {
+        $elemMatch: {
+          _id: newCredential._id,
+          store_id: newCredential.store_id
+        }
+      }
+    } , {
+      $set: {
+        "sendoCredentials.$.lastSync": new Date(),
+      }
+    })
+
+    return res.status(200).send({
+      message: "Đồng bộ sendo thành công !",
+      isCredentialRefreshed: newCredential.isCredentialRefreshed
     })
   } catch(e) {
     console.log("sync error: ", e.message)

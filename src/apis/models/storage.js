@@ -41,6 +41,10 @@ const sendoCredentialSchema = new Schema({
   expires: { 
     type: Date,
     required: true,
+  },
+  lastSync: {
+    type: Date,
+    default: null
   }
 }, {
   timestamps: {
@@ -86,6 +90,10 @@ const lazadaCredentialSchema = new Schema({
   refresh_expires: {
     type: Date,
     required: true
+  },
+  lastSync: {
+    type: Date,
+    default: null
   }
 })
 
@@ -112,6 +120,10 @@ const storageSchema = new Schema({
     type: Boolean,
     default: true,
   },
+  lastSync: {
+    type: Date,
+    default: null
+  }
 });
 
 storageSchema.pre("validate",async function (next) {
