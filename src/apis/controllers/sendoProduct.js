@@ -81,12 +81,14 @@ const createSendoProduct = async (item, { store_id }) => {
     const sendoVariants = await SendoVariant.find({productId: sendoProduct._id})
     
     //remove sendoVariants not in variants
-    sendoVariants.forEach(async (sendoVariant) =>{
-      const i = variants.findIndex(x => x.variant_attribute_hash === sendoVariant.variant_attribute_hash)
-      if(i < 0){
-        await SendoVariant.findOneAndDelete({_id: sendoVariant._id})
-      }
-    })
+    if(sendoVariants){
+      sendoVariants.forEach(async (sendoVariant) =>{
+        const i = variants.findIndex(x => x.variant_attribute_hash === sendoVariant.variant_attribute_hash)
+        if(i < 0){
+          await SendoVariant.findOneAndDelete({_id: sendoVariant._id})
+        }
+      })
+    }
     //create or update
     variants.forEach(async (variant)=>{
       await SendoVariant.findOneAndUpdate({ variant_attribute_hash: variant.variant_attribute_hash, productId: sendoProduct._id}, {
@@ -130,8 +132,9 @@ module.exports.getAllProducts = async (req, res) => {
 }
 
 module.exports.fetchProducts = async (req, res) => {
-  const { store_id } = req.body
+  const { store_id, lastSync } = req.body
   const { storageId } = req.user.currentStorage
+  const sendoFormatDate = lastSync.split('T')[0] 
   try {
     const options = {
         'method': 'POST',
@@ -141,34 +144,42 @@ module.exports.fetchProducts = async (req, res) => {
           'Content-Type': 'application/json',
           'cache-control': 'no-cache'
         },
-        body: JSON.stringify({"page_size":10,"product_name":"","date_from":"2020-05-01","date_to":"9999-10-28","token":""})
+        body: JSON.stringify({"page_size":100,"product_name":"","date_from":sendoFormatDate,"date_to":"9999-10-28","token":"", "status": -1,})
     };
     const response = await rp(options)
-    const products = JSON.parse(response).result.data
+    const products = JSON.parse(response).result.data // product đã xóa, product ko update,  product update
+
     await Promise.all(products.map(async product => {
-      const sendoProduct = await SendoProduct.findOne({ id: product.id, store_id })
-      if(sendoProduct) {
-        const secondDiff = timeDiff(new Date(product.updated_at_timestamp*1000), new Date(sendoProduct.updated_date_timestamp)).secondsDifference
-        if(secondDiff === 0) {
-          return product;
-        } else {
-          if(secondDiff < 0) {
-            // xu ly push len api lai
-            // return;
+      // xóa product trong db
+      if(product.status === 5){
+        const sendoProduct = await SendoProduct.findOneAndDelete({id: product.id, store_id})
+        await SendoVariant.deleteMany({ productId: sendoProduct._id })
+      }else if(product.status === 2){ // update or create product
+        const sendoProduct = await SendoProduct.findOne({ id: product.id, store_id })
+        if(sendoProduct) {
+          const secondDiff = timeDiff(new Date(product.updated_at_timestamp*1000), new Date(sendoProduct.updated_date_timestamp)).secondsDifference
+          if(secondDiff === 0) {  //loại bỏ các product ko có update mới
+            return product;
+          } else {
+            if(secondDiff < 0) {
+              // xu ly push len api lai
+              // return;
+            }
           }
         }
+        
+        const fullProduct = await rp({
+          method: 'GET',
+          url: 'http://localhost:5000/api/sendo/products/' + product.id + '?access_token=' + req.accessToken,
+          headers: {
+            'Authorization': 'Bearer ' + req.mongoToken,
+            'Platform-Token': req.accessToken
+          }
+        })
+        const actuallyFullProduct = JSON.parse(fullProduct).result
+        await createSendoProduct(actuallyFullProduct, { store_id }) // create nếu ko có product, update nếu secondDiff > 0
       }
-
-      const fullProduct = await rp({
-        method: 'GET',
-        url: 'http://localhost:5000/api/sendo/products/' + product.id + '?access_token=' + req.accessToken,
-        headers: {
-          'Authorization': 'Bearer ' + req.mongoToken,
-          'Platform-Token': req.accessToken
-        }
-      })
-      const actuallyFullProduct = JSON.parse(fullProduct).result
-      await createSendoProduct(actuallyFullProduct, { store_id })
+     
     }))
 
     const sendoProducts = await SendoProduct.find({ storageId })
