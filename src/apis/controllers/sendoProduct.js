@@ -152,7 +152,7 @@ module.exports.fetchProducts = async (req, res) => {
     await Promise.all(products.map(async product => {
       // xóa product trong db
       if(product.status === 5){
-        const sendoProduct = await SendoProduct.findOneAndDelete({id: product.id, store_id})
+        const sendoProduct = await SendoProduct.findOneAndDelete({id: product.id, store_id}, {lean: true})
         await SendoVariant.deleteMany({ productId: sendoProduct._id })
       }else if(product.status === 2){ // update or create product
         const sendoProduct = await SendoProduct.findOne({ id: product.id, store_id })
