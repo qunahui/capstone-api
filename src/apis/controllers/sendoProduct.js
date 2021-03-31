@@ -1,11 +1,11 @@
-const auth = require("../../middlewares/auth");
 const SendoProduct = require("../models/sendoProduct");
 const Error = require("../utils/error");
-const util = require('util')
 const rp = require('request-promise');
 const timeDiff = require("../utils/timeDiff");
 const SendoVariant = require("../models/sendoVariant")
 const Storage = require("../models/storage")
+const Variant = require("../models/variant")
+const mongoose = require("mongoose")
 
 const product_status ={
   "0": "Nháp",
@@ -84,8 +84,18 @@ const createSendoProduct = async (item, { store_id }) => {
     if(sendoVariants){
       sendoVariants.forEach(async (sendoVariant) =>{
         const i = variants.findIndex(x => x.variant_attribute_hash === sendoVariant.variant_attribute_hash)
+        console.log("index: ", i)
         if(i < 0){
-          await SendoVariant.findOneAndDelete({_id: sendoVariant._id})
+          const deleted = await SendoVariant.findOneAndDelete({_id: sendoVariant._id}, { lean: true})
+          if(deleted.linkedId) {
+            await Variant.updateOne({
+              _id: deleted.linkedId,
+            }, {
+              $pull: {
+                linkedIds: mongoose.Types.ObjectId(deleted._id)
+              }
+            })
+          }
         }
       })
     }
@@ -164,7 +174,6 @@ module.exports.fetchProducts = async (req, res) => {
     };
     const response = await rp(options)
     const products = JSON.parse(response).result.data // product đã xóa, product ko update,  product update
-
     await Promise.all(products.map(async product => {
       // xóa product trong db
       if(product.status === 5){
@@ -257,7 +266,8 @@ module.exports.syncProducts = async (req, res, next) => {
         'Platform-Token': newCredential.access_token
       },
       body: {
-        store_id: payload.store_id
+        store_id: payload.store_id,
+        lastSync: newCredential.lastSync
       },
       json: true
     }
