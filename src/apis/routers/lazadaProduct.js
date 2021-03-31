@@ -6,8 +6,6 @@ const controller = require("../controllers/lazadaProduct");
 router.get('/products', auth, controller.getAllProducts);
 router.post("/create", auth, controller.createLazadaProduct);
 
-router.get('/products/fetch-no-auth', controller.fetchProductsWithoutAuth)
-
 router.post('/products/fetch', auth, controller.fetchProducts)
 
 router.post('/products/fetch-deleted', auth, controller.fetchDeletedProducts)

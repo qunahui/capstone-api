@@ -30,7 +30,7 @@ const variantSchema = new Schema({
     type: Array
   },
   productId:{
-    type: String,
+    type: mongoose.Schema.Types.ObjectId,
     required: true,
     ref: "lazadaProduct"
   },

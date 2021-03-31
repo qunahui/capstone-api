@@ -11,8 +11,8 @@ router.post('/ping', (req, res) => {
   // switch case
   
   const data = req.body
-  console.log(req.body) 
-  
+  console.log(req.body)
+
   //console.log(util.inspect(req.body, false, null, true /* enable colors */))
   switch(data.type){
     case 'PRODUCT.CREATE':{

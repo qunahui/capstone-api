@@ -119,6 +119,22 @@ module.exports.getAllProducts = async (req, res) => {
   }
 }
 
+module.exports.fetchWithoutAuth = async (req, res) => {
+  const options = {
+      'method': 'POST',
+      'url': 'https://open.sendo.vn/api/partner/product/search',
+      'headers': {
+        'Authorization': 'bearer ' + "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJTdG9yZUlkIjoiODU0MjE0IiwiVXNlck5hbWUiOiIiLCJTdG9yZVN0YXR1cyI6IjIiLCJTaG9wVHlwZSI6IjEiLCJTdG9yZUxldmVsIjoiMCIsImV4cCI6MTYxNzE5NjI1OCwiaXNzIjoiODU0MjE0IiwiYXVkIjoiODU0MjE0In0.TY0jlpnyQaYgUx__JDZkRGqr7-4efwwLC5WnOTd8i-8",
+        'Content-Type': 'application/json',
+        'cache-control': 'no-cache'
+      },
+      body: JSON.stringify({"page_size":10,"product_name":"","date_from":"2020-05-01","date_to":"9999-10-28","token":"", "status" : -1})
+  };
+  const response = await rp(options)
+  const products = JSON.parse(response).result.data
+  res.status(200).send(products)
+}
+
 module.exports.fetchProducts = async (req, res) => {
   const { store_id } = req.body
   const { storageId } = req.user.currentStorage
@@ -158,6 +174,7 @@ module.exports.fetchProducts = async (req, res) => {
         }
       })
       const actuallyFullProduct = JSON.parse(fullProduct).result
+
       await createSendoProduct(actuallyFullProduct, { store_id })
     }))
 

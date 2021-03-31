@@ -7,6 +7,8 @@ const util = require('util')
 //router.post("/create-ping", controller.createSendoProductByPing);
 router.get('/products', controller.getAllProducts)
 
+router.get('/products/fetch-without-auth', controller.fetchWithoutAuth)
+
 router.post('/products/fetch', auth, controller.fetchProducts)
 
 router.post('/products/push', auth, controller.pushProducts)

@@ -1,9 +1,9 @@
 const LazadaProduct = require("../models/lazadaProduct");
 const { LazadaRequest, LazadaClient } = require('lazada-sdk-client');
-const querystring = require('querystring')
+const mongoose = require('mongoose')
 const Error = require("../utils/error");
 const rp = require('request-promise');
-const { signRequest } = require('../utils/laz-sign-request');
+const Variant = require('../models/variant')
 const timeDiff = require("../utils/timeDiff");
 const LazadaVariant = require("../models/lazadaVariant");
 const Storage = require("../models/storage");
@@ -31,30 +31,48 @@ const createLazadaProduct = async (item, additionalData) => {
       variant.variant_attributes = variant_attributes
 
     });
+
     let query = { store_id: additionalData.store_id, id: item.item_id },
         update = {
           avatar: variants.length > 0 && variants[0].Images[0],
           store_id: additionalData.store_id,
-          variants: variants,
           id: item.item_id,
           primary_category: item.primary_category,
           attributes: item.attributes,
           updated_date_timestamp: new Date(parseInt(item.updated_time)),
           created_date_timestamp: new Date(parseInt(item.created_time))
         },
-        options = { upsert: true, new: true, setDefaultsOnInsert: true };
-    
+        options = { upsert: true, new: true };
+
     const lazadaProduct = await LazadaProduct.findOneAndUpdate(query, update, options)
 
+    const dbLazVariants = await LazadaVariant.find({ productId: lazadaProduct._id })
+    
+    dbLazVariants.forEach(async (dbLazVariant) => {
+      const index = variants.findIndex(i => i.ShopSku === dbLazVariant.ShopSku)
+      if(index === -1) {
+        console.log("delete: ", dbLazVariant._id)
+        const deleted = await LazadaVariant.findOneAndDelete({ _id: dbLazVariant._id }, { lean: true})
+        if(deleted.linkedId) {
+          await Variant.updateOne({
+            _id: deleted.linkedId,
+          }, {
+            $pull: {
+              linkedIds: mongoose.Types.ObjectId(deleted._id)
+            }
+          })
+        }
+      }
+    })
+
     variants.forEach(async (variant)=>{
-      await LazadaVariant.findOneAndUpdate({sku: variant.SellerSku, productId: lazadaProduct._id}, {
+      await LazadaVariant.findOneAndUpdate({ ShopSku: variant.ShopSku, productId: lazadaProduct._id}, {
         ...variant,
         sku: variant.SellerSku,
         avatar: variant.Images,
         productId: lazadaProduct._id
       }, options);
     })
-
   } catch(e) {
     console.log(e.message)
   }
@@ -84,60 +102,6 @@ module.exports.getAllProducts = async (req, res) => {
   }
 }
 
-module.exports.fetchProductsWithoutAuth = async (req, res) =>{
-  const { store_id } = req.body
-  const apiUrl = 'https://api.lazada.vn/rest' 
-  const apiPath=  '/products/get'
-  const appSecret = process.env.LAZADA_APP_SECRET 
-  const appKey = process.env.LAZADA_APP_KEY 
-  const accessToken =  req.accessToken
-  const timestamp = Date.now()
-  const commonRequestParams = {
-      "app_key": appKey,
-      "timestamp": timestamp,
-      "sign_method": "sha256",
-      "access_token": accessToken,
-  }
-  const filter = req.body.filter || "live"
-  const sign = signRequest(appSecret, apiPath, {...commonRequestParams, filter})
-  try {
-      var options = {
-          'method': 'GET',
-          'url': apiUrl+apiPath+
-          '?filter='+filter+
-          '&app_key='+appKey+
-          '&sign_method=sha256&timestamp='+timestamp+
-          '&access_token='+accessToken+
-          '&sign='+sign,
-          'headers': {
-          }
-      };
-      //console.log(options)
-      const { data } = await rp(options).then(res => JSON.parse(res))
-      const { products } = data
-      res.status(200).send(products)
-      await Promise.all(products.map(async product => {
-        const lazadaProduct = await LazadaProduct.findOne({ id: product.item_id, store_id })
-        if(lazadaProduct) {
-          const secondDiff = timeDiff(new Date(parseInt(product.updated_time)), new Date(lazadaProduct.updated_date_timestamp)).secondsDifference
-          if(secondDiff === 0) {
-            return product;
-          } else if (secondDiff < 0) {
-            //xu ly push len api lazada
-            //return;
-          }
-        }
-
-        await createLazadaProduct(product, { store_id })
-      }))
-  } catch (e) {
-      res.status(500).send(Error(e));
-  }
-  const lazadaProducts = await LazadaProduct.find({ storageId: req.body.storageId, store_id: req.body.store_id })
-  
-  res.status(200).send(lazadaProducts)
-}
-
 module.exports.fetchDeletedProducts = async (req, res) =>{
   try {
     const { store_id, lastSync } = req.body
@@ -162,50 +126,35 @@ module.exports.fetchDeletedProducts = async (req, res) =>{
 }
 
 module.exports.fetchProducts = async (req, res) =>{
-  const { store_id } = req.body
+  const { store_id, lastSync } = req.body
   const apiUrl = 'https://api.lazada.vn/rest' 
   const apiPath=  '/products/get'
   const appSecret = process.env.LAZADA_APP_SECRET 
   const appKey = process.env.LAZADA_APP_KEY 
   const accessToken =  req.accessToken
-  const timestamp = Date.now()
-  const commonRequestParams = {
-      "app_key": appKey,
-      "timestamp": timestamp,
-      "sign_method": "sha256",
-      "access_token": accessToken,
-  }
-  const filter = req.body.filter || "live"
-  const sign = signRequest(appSecret, apiPath, {...commonRequestParams, filter})
+  const lazFormatDate = lastSync.split('.')[0].concat('+0700')
+    
   try {
-      var options = {
-          'method': 'GET',
-          'url': apiUrl+apiPath+
-          '?filter='+filter+
-          '&app_key='+appKey+
-          '&sign_method=sha256&timestamp='+timestamp+
-          '&access_token='+accessToken+
-          '&sign='+sign,
-          'headers': {
-          }
-      };
-      //console.log(options)
-      const { data } = await rp(options).then(res => JSON.parse(res))
-      const products = data.products || []
-      await Promise.all(products.map(async product => {
-        const lazadaProduct = await LazadaProduct.findOne({ id: product.item_id, store_id })
-        if(lazadaProduct) {
-          const secondDiff = timeDiff(new Date(parseInt(product.updated_time)), new Date(lazadaProduct.updated_date_timestamp)).secondsDifference
-          if(secondDiff === 0) {
-            return product;
-          } else if (secondDiff < 0) {
-            //xu ly push len api lazada
-            //return;
-          }
+    const client = new LazadaClient(apiUrl, appKey, appSecret)
+    const request = new LazadaRequest(apiPath, 'GET');
+    request.addApiParam("filter", "live"); // http method default is post
+    // request.addApiParam("update_after", lazFormatDate);
+    const response = await client.execute(request, accessToken);
+    const products = response.data.data.products || []
+    await Promise.all(products.map(async product => {
+      const lazadaProduct = await LazadaProduct.findOne({ id: product.item_id, store_id })
+      if(lazadaProduct) {
+        const secondDiff = timeDiff(new Date(parseInt(product.updated_time)), new Date(lazadaProduct.updated_date_timestamp)).secondsDifference
+        if(secondDiff === 0) {
+          return product;
+        } else if (secondDiff < 0) {
+          //xu ly push len api lazada
+          //return;
         }
+      }
 
-        await createLazadaProduct(product, { store_id })
-      }))
+      await createLazadaProduct(product, { store_id })
+    }))
   } catch (e) {
     console.log(e)
       res.status(500).send(Error(e));
@@ -248,7 +197,6 @@ module.exports.syncProducts = async (req, res) => {
 
   // fetch deleted products
   if(newCredential.lastSync) {
-    console.log("check deleted lazada products")
     const options = {
       method: 'POST',
       url: 'http://localhost:5000/lazada/products/fetch-deleted',
@@ -264,11 +212,11 @@ module.exports.syncProducts = async (req, res) => {
     }
 
     const deletedProducts = await rp(options)
-    console.log(deletedProducts)
     await Promise.all(deletedProducts.map(async product => {
       const lazId = await LazadaProduct.findOne({ id: product.item_id})
       if(lazId) {
-        await LazadaVariant.deleteMany({ productId: lazId._id })
+        // await LazadaVariant.deleteMany({ productId: lazId._id })
+        // await LazadaProduct.deleteOne({ _id: lazId._id })
       }
     }))
   }
@@ -283,7 +231,8 @@ module.exports.syncProducts = async (req, res) => {
         'Platform-Token': newCredential.access_token
       },
       body: {
-        store_id: payload.store_id
+        store_id: payload.store_id,
+        lastSync: newCredential.lastSync
       },
       json: true
     }
