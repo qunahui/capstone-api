@@ -31,9 +31,9 @@ const schema = new Schema({
 });
 
 schema.virtual("variants",{
-  ref:"lazadaVariant",
+  ref:"LazadaVariant",
   localField: "_id",
   foreignField: "productId"
 })
 
-module.exports = mongoose.model("lazadaProduct", schema);
+module.exports = mongoose.model("LazadaProduct", schema);

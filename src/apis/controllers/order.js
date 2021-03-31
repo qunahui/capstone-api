@@ -145,9 +145,9 @@ module.exports.getAllOrder = async (req, res) => {
 
 module.exports.getOrderById = async function (req, res) {
   try {
-    const purchaseOrderId = req.params.id;
-    const purchaseOrder = await Order.find({ _id: purchaseOrderId })
-    res.send(purchaseOrder)
+    const orderId = req.params.id;
+    const order = await Order.find({ _id: orderId })
+    res.send(order)
   } catch (e) {
     res.status(500).send(Error(e));
   }

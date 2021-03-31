@@ -61,7 +61,7 @@ const schema = new Schema({
 );
 
 schema.virtual("variants",{
-  ref: "sendoVariant",
+  ref: "SendoVariant",
   localField: "_id",
   foreignField: "productId"
 })

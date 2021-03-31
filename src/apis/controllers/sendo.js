@@ -458,56 +458,127 @@ module.exports.syncAllOrderSendo = async (req, res) =>{
 
   res.send("done")
 }
-module.exports.updateProduct = async (req, res) => {
+// module.exports.updateProduct = async (req, res) => {
   
-  const productId = req.params.id;
-  const item = req.body
+//   const items = req.body 
+//   items.forEach(item => {
+//     let Field_Mask = Object.keys(item)
+//     //remove id
+//     Field_Mask = Field_Mask.filter(e =>{
+//       return e != "id"
+//     })
+//     //change field name
+//     Field_Mask = Field_Mask.map((e, i) =>{
+//       if(e === "StockQuantity"){
+//         return Field_Mask[i] = "quantity"
+//       }else{
+//         return e
+//       }
+//     })
+//     item.Field_Mask = Field_Mask
+
+//     if(item.variants){
+//       item.variants.forEach(variant => {
+//         const field_mask = Object.keys(variant)
+//         variant.field_mask = field_mask
+
+//       });
+//     }
+//   });
+//   //res.send(items)
+
+//   try {
+//       const options = {
+//           'method': 'POST',
+//           'url': 'https://open.sendo.vn/api/partner/product/update-by-field-mask',
+//           'headers': {
+//             'Authorization': 'bearer '+ req.accessToken
+//           },
+//           body: JSON.stringify(items)
+//       };
+//       //res.send(options)
+//         request(options, function (error, response) {
+//           if (error){
+            
+//             throw new Error(error);
+            
+//           } 
+//           //console.log(response.body);
+//           res.status(response.statusCode).send(response.body)
+//         });
+//   } catch (e) {
+//       res.status(500).send(Error(e));
+//   }
+// }
+module.exports.updateProduct = async (req, res) =>{
+  const id =  req.body.id
+  const item = req.body  //các field cần đc update
+    //get full product on sendo
+  const product = await rp({
+      method: 'GET',
+      uri: 'http://localhost:5000/api/sendo/products/' + id,
+      headers: {
+        'Authorization': 'Bearer ' + req.mongoToken,
+        'Platform-Token': req.accessToken
+      },
+      json: true
+  })
+  
+  let trueProduct = product.result
  
-  try {
-      const options = {
-          'method': 'POST',
-          'url': 'https://open.sendo.vn/api/partner/product/update-by-field-mask',
-          'headers': {
-            'Authorization': 'bearer '+ req.accessToken,
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(
-            [
-              {
-                "id": productId,
-                "field_mask": Object.keys(item),
-                ...item
-              }
-            ]
-        )
-      };
-      //res.send(options)
-        request(options, function (error, response) {
-          if (error){
-            
-            throw new Error(error);
-            
-          } 
-          //console.log(response.body);
-          res.status(response.statusCode).send(response.body)
-        });
-  } catch (e) {
-      res.status(500).send(Error(e));
+  //change field name
+  item["image"] = item["avatar"]
+
+  if(item.variants){
+    item.variants.forEach( (variant) =>{
+      variant["variant_sku"] = variant["sku"]
+      variant["variant_price"] = variant["price"]
+      variant["variant_quantity"] = variant["quantity"]
+      variant["variant_special_price"] = variant["special_price"]
+      //find index of variant in trueProduct.variants
+      
+      const index = trueProduct.variants.findIndex(x => x.variant_attribute_hash === variant.variant_attribute_hash);
+
+      
+      //update variant
+      if(index > -1)
+      {
+        trueProduct.variants[index] = variant
+      }
+
+      delete variant["sku"]
+      delete variant["price"]
+      delete variant["quantity"]
+      delete variant["special_price"]
+    })
   }
-}
-module.exports.updateMultiProduct = async (req, res) =>{
   
-  const items = req.body
+  //merge 2 product
+
+  trueProduct = {
+    ...trueProduct,
+    name: item.name,
+    sku:  item.sku,
+    price: item.price,
+    stock_quantity: item.stock_quantity, //you can change name
+    stock_availability: item.stock_availability,
+    unit_id: item.unitId,
+    weight: item.weight
+  }
   
+  
+
+  //res.send(trueProduct)
+  res.send(item)
   try {
       const options = {
           'method': 'POST',
-          'url': 'https://open.sendo.vn/api/partner/product/list',
+          'url': 'https://open.sendo.vn/api/partner/product/',
           'headers': {
             'Authorization': 'bearer '+ req.accessToken,
             'Content-Type': 'application/json'
           },
-          body: JSON.stringify(items)
+          body: JSON.stringify(trueProduct)
         };
         
       request(options, function (error, response) {
