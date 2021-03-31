@@ -32,7 +32,7 @@ const variantSchema = new Schema({
   productId:{
     type: String,
     required: true,
-    ref: "sendoProduct"
+    ref: "SendoProduct"
   },
   //rieng
   //sendo
@@ -66,4 +66,4 @@ variantSchema.virtual("linkedDetails",{
   justOne : true
 })
 
-module.exports = mongoose.model("sendoVariant", variantSchema);
+module.exports = mongoose.model("SendoVariant", variantSchema);
