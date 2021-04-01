@@ -120,7 +120,6 @@ module.exports.createMMSProduct = async (req, res) => {
 module.exports.updateProduct = async (req, res) => {
   
   const properties = Object.keys(req.body);
-
   
   try {
     const product = await Product.findOne({ id: req.body.id });

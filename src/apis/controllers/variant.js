@@ -1,12 +1,64 @@
 const mongoose = require("mongoose")
 const Product = require("../models/product");
 const Error = require("../utils/error");
-// const sendo = require('./sendo')
+const rp = require("request-promise")
 const Inventory = require('../models/inventory');
 const Variant = require("../models/variant")
 const SendoVariant = require("../models/sendoVariant")
 const LazadaVariant = require("../models/lazadaVariant")
 const SendoProduct = require("../models/sendoProduct")
+const Storage = require("../models/storage")
+
+module.exports.pushUpdatedToApi = async (req, res) => {
+  const { variant } = req.body
+  const { linkedIds } = variant
+  if(linkedIds.length === 0) {
+    return;
+  }
+
+  await Promise.all(linkedIds.map(async linkedId => {
+    if(linkedId.platform === 'sendo') {
+      const sendoVariant =  await SendoVariant.findOne({ _id: linkedId.id })
+      const sendoProduct = await SendoProduct.findOne({ _id: sendoVariant.productId }).populate('variants').lean()
+      const storage = await Storage.findOne({
+        _id: req.user.currentStorage.storageId,
+        sendoCredentials: {
+          $elemMatch: {
+            store_id: sendoProduct.store_id
+          }
+        }
+      }, { "sendoCredentials.$": 1 })
+
+      sendoProduct.variants = sendoProduct.variants.map(matchedVariant => {
+        if(matchedVariant._id.toString() === linkedId.id) {
+          return matchedVariant = {
+            ...matchedVariant,
+            price: variant.retailPrice,
+            quantity: variant.inventories.initStock
+          }
+        }
+        return matchedVariant
+      })
+
+      try {
+        await rp({
+          method: 'PATCH',
+          url: 'http://localhost:5000/api/sendo/products',
+          json: true,
+          body: sendoProduct,
+          headers: {
+            'Authorization': 'Bearer ' + req.mongoToken,
+            "Platform-Token": storage.sendoCredentials[0].access_token
+          }
+        })
+
+        res.sendStatus(200)
+      } catch(e) {
+        console.log("Push to api failed: ", e.message)
+      }
+    }
+  }))
+}
 
 module.exports.linkVariant = async (req, res) => {
   const { variant, platformVariant } = req.body;
@@ -42,7 +94,10 @@ module.exports.linkVariant = async (req, res) => {
         _id: variant._id,
       }, {
         $addToSet: {
-          linkedIds: mongoose.Types.ObjectId(platformVariant._id)
+          linkedIds: {
+            id: platformVariant._id,
+            platform: 'sendo'
+          }
         }
       })
 
@@ -58,7 +113,10 @@ module.exports.linkVariant = async (req, res) => {
         _id: variant._id,
       }, {
         $addToSet: {
-          linkedIds: mongoose.Types.ObjectId(platformVariant._id)
+          linkedIds: {
+            id: mongoose.Types.ObjectId(platformVariant._id),
+            platform: 'lazada'
+          }
         }
       })
 
@@ -108,9 +166,17 @@ module.exports.unlinkVariant = async (req, res) => {
       // link P to sendoP
       await Variant.updateOne({
         _id: variant._id,
+        linkedIds: {
+          $elemMatch: {
+            id: platformVariant._id,
+          }
+        }
       }, {
         $pull: {
-          linkedIds: mongoose.Types.ObjectId(platformVariant._id)
+          linkedIds: {
+            id: mongoose.Types.ObjectId(platformVariant._id),
+            platform: 'sendo'
+          }
         }
       })
 
@@ -126,7 +192,10 @@ module.exports.unlinkVariant = async (req, res) => {
         _id: variant._id,
       }, {
         $pull: {
-          linkedIds: mongoose.Types.ObjectId(platformVariant._id)
+          linkedIds: {
+            id: mongoose.Types.ObjectId(platformVariant._id),
+            platform: 'lazada'
+          }
         }
       })
 
@@ -200,11 +269,29 @@ module.exports.updateVariant = async (req, res) => {
       res.status(404).send(variant);
     }
 
+    const priceChanged = variant['retailPrice'] !== req.body['retailPrice']
+
     properties.forEach((prop) => (variant[prop] = req.body[prop]));
 
-    variant.save();
+    await variant.save();
+
+    if(priceChanged) {
+      await rp({ 
+        method: 'POST',
+        url: 'http://localhost:5000/variants/push-api',
+        json: true,
+        body: {
+          variant
+        },
+        headers: { 
+          'Authorization' : 'Bearer ' + req.mongoToken
+        }
+      })
+    }
 
     res.send(variant);
+
+
   } catch (e) {
     res.status(404).send(Error(e));
   }
@@ -213,7 +300,7 @@ module.exports.updateVariant = async (req, res) => {
 module.exports.deleteVariant = async (req, res) => {
   console.log(req.params)
   try {
-    const variant = await Variant.findOneAndDelete({ _id: req.params.id });
+    const variant = await Variant.findOneAndDelete({ _id: mongoose.Types.ObjectId(req.params.id) });
 
     if (!variant) {
       return res.status(404).send();
