@@ -160,7 +160,7 @@ module.exports.fetchWithoutAuth = async (req, res) => {
 module.exports.fetchProducts = async (req, res) => {
   const { store_id, lastSync } = req.body
   const { storageId } = req.user.currentStorage
-  const sendoFormatDate = lastSync.split('T')[0] 
+  const sendoFormatDate = lastSync && lastSync.split('T')[0] 
   try {
     const options = {
         'method': 'POST',
@@ -170,9 +170,10 @@ module.exports.fetchProducts = async (req, res) => {
           'Content-Type': 'application/json',
           'cache-control': 'no-cache'
         },
-        body: JSON.stringify({"page_size":100,"product_name":"","date_from":sendoFormatDate,"date_to":"9999-10-28","token":"", "status": -1,})
+        body: JSON.stringify({"page_size":100,"product_name":"","date_from": sendoFormatDate || "2021-01-01","date_to":"9999-10-28","token":"", "status": sendoFormatDate && -1,})
     };
     const response = await rp(options)
+    console.log(JSON.parse(response).result)
     const products = JSON.parse(response).result.data // product đã xóa, product ko update,  product update
     await Promise.all(products.map(async product => {
       // xóa product trong db
