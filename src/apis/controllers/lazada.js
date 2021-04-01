@@ -670,7 +670,7 @@ module.exports.updateProduct = async (req, res) =>{
     // forrmat Product
     if(lazadaproduct.variants){
         lazadaproduct.variants.forEach(variant => {
-            variant.SellerSku = variant.sku
+            variant.SellerSku = variant.sku // đổi tên
     
             delete variant["_id"]
             delete variant["sku"]
@@ -678,6 +678,7 @@ module.exports.updateProduct = async (req, res) =>{
             delete variant["productId"]
             delete variant["variant_attributes"]
             delete variant["__v"]
+            delete variant["special_price"]
         });
     }
 
@@ -704,7 +705,7 @@ module.exports.updateProduct = async (req, res) =>{
     
     // const response = await client.execute(request, accessToken);
 
-    // res.send(response.data)
+    
     
     const commonRequestParams = {
         "app_key": appKey,
