@@ -2618,29 +2618,55 @@
             "application/json": {
               "schema": {},
               "example": {
-                "Request": {
-                  "Product": {
-                    "id": 1101914439,
-                    "Attributes": {
-                      "name": "loc pro 1"
-                    },
-                    "Skus": {
-                      "Sku": [
-                        {
-                          "SellerSku": "12432456",
-                          "quantity": 88,
-                          "price": 350000
-                        },
-                        {
-                          "SellerSku": "12312333",
-                          "quantity": 44,
-                          "price": 488000
-                        }
-                      ]
-                    }
-                  }
+                "_id": "606555bed3ec056743f5cf88",
+                "id": "1252566024",
+                "store_id": "200163939035",
+                "__v": 0,
+                "attributes": {
+                "name": "dffdưe323r32",
+                "description": "<p style=\"margin: 0;padding: 8.0px 0;white-space: pre-wrap;\"><span style=\"font-family: none;\"></span></p>",
+                "brand": "No Brand",
+                "warranty_type": "Warranty Stamp",
+                "source": "asc"
+                },
+                "avatar": null,
+                "created_date_timestamp": "2021-03-31T08:31:25.000Z",
+                "primary_category": "10100182",
+                "updated_date_timestamp": "2021-03-31T08:31:25.000Z",
+                "variants": [
+                {
+                "_id": "606555bed3ec056743f5cfa2",
+                "ShopSku": "1252566024_VNAMZ-4669792705",
+                "productId": "606555bed3ec056743f5cf88",
+                "SkuId": 4669792705,
+                "Status": "active",
+                "Url": "https://www.lazada.vn/-i1252566024-s4669792705.html",
+                "__v": 0,
+                "avatar": [],
+                "multiWarehouseInventories": [
+                {
+                "quantity": 234,
+                "warehouseCode": "dropshipping"
                 }
-              }
+                ],
+                "package_height": "32.00",
+                "package_length": "32.00",
+                "package_weight": "32",
+                "package_width": "23.00",
+                "price": 23432,
+                "quantity": 234,
+                "sku": "324324",
+                "special_price": 0,
+                "variant_attributes": [
+                {
+                "attribute_name": "color_family",
+                "option_value": "Cherry"
+                }
+                ]
+                }
+                ]
+                }
+                
             }
           }
         },

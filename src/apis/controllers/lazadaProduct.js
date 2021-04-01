@@ -339,7 +339,22 @@ module.exports.createProduct = async (req, res) => {
 
 module.exports.getProductById = async (req, res) => {
   const id = req.params.id
-  const lazadaproduct = await LazadaProduct.find({}).populate('lazadaVariants').lean()
+  const lazadaproduct = await LazadaProduct.findOne({_id: id}).populate('variants').lean()
 
+  // let updateFormatProduct = {
+  //   "Request":{
+  //     "Product":{
+  //       "id": lazadaproduct.id,
+  //       "store_id": lazadaproduct.store_id,
+  //       "attributes": lazadaproduct.attributes,
+  //       "primary_category": lazadaproduct.primary_category,
+  //       "Skus":{
+  //         "sku": lazadaproduct.variants
+  //       }
+  //     }
+  //   }
+  // }
+
+  
   res.send(lazadaproduct)
 }

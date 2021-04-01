@@ -9,6 +9,9 @@ const LazadaProduct = require('../models/lazadaProduct');
 const Error = require('../utils/error')
 const timeDiff = require('../utils/timeDiff')
 
+const { LazadaRequest, LazadaClient } = require('lazada-sdk-client');
+
+
 var options = {compact: true, ignoreComment: true, spaces: 4};
 
 module.exports.authorizeCredential = async (req, res) => {
@@ -663,8 +666,45 @@ module.exports.updateProduct = async (req, res) =>{
     const appKey = process.env.LAZADA_APP_KEY
     const accessToken =  req.accessToken 
     const timestamp = Date.now()
-    const data = req.body
-    const payload = '<?xml version="1.0" encoding="UTF-8" ?>'+ convert.js2xml(data, {compact: true, ignoreComment: true, spaces: 4})
+    const lazadaproduct = req.body // full product in db
+    // forrmat Product
+    if(lazadaproduct.variants){
+        lazadaproduct.variants.forEach(variant => {
+            variant.SellerSku = variant.sku
+    
+            delete variant["_id"]
+            delete variant["sku"]
+            delete variant["ShopSku"]
+            delete variant["productId"]
+            delete variant["variant_attributes"]
+            delete variant["__v"]
+        });
+    }
+
+    let updateFormatProduct = {
+        "Request":{
+          "Product":{
+            "ItemId": lazadaproduct.id,
+            "Attributes": lazadaproduct.attributes,
+            "Skus":{
+              "Sku": lazadaproduct.variants
+            }
+          }
+        }
+      }
+
+    const payload = '<?xml version="1.0" encoding="UTF-8"?>'+ convert.js2xml(updateFormatProduct, {compact: true, ignoreComment: true, spaces: 4})
+    
+    // const encodePayload = encodeURIComponent(payload)
+
+    // const client = new LazadaClient(apiUrl, appKey, appSecret)
+    // const request = new LazadaRequest(apiPath);
+
+    // request.addApiParam("payload", encodePayload); // http method default is post
+    
+    // const response = await client.execute(request, accessToken);
+
+    // res.send(response.data)
     
     const commonRequestParams = {
         "app_key": appKey,
@@ -673,7 +713,8 @@ module.exports.updateProduct = async (req, res) =>{
         "access_token":accessToken
     }
     const sign = signRequest(appSecret, apiPath, {...commonRequestParams, payload})
-    const encodePayload = encodeURI(payload)
+    const encodePayload = encodeURIComponent(payload)
+   
     try {
         var options = {
             'method': 'POST',
