@@ -8,6 +8,17 @@ const SendoVariant = require("../models/sendoVariant")
 const LazadaVariant = require("../models/lazadaVariant")
 const SendoProduct = require("../models/sendoProduct")
 
+const pushUpdatedToApi = async (variant) => {
+  const { linkedIds } = variant
+  if(linkedIds.length === 0) {
+    return;
+  }
+
+  await Promise.all(linkedIds.map(async linkedId => {
+    
+  }))
+}
+
 module.exports.linkVariant = async (req, res) => {
   const { variant, platformVariant } = req.body;
   let updatedPlatVariant = {}
@@ -42,7 +53,10 @@ module.exports.linkVariant = async (req, res) => {
         _id: variant._id,
       }, {
         $addToSet: {
-          linkedIds: mongoose.Types.ObjectId(platformVariant._id)
+          linkedIds: {
+            id: platformVariant._id,
+            platform: 'sendo'
+          }
         }
       })
 
@@ -58,7 +72,10 @@ module.exports.linkVariant = async (req, res) => {
         _id: variant._id,
       }, {
         $addToSet: {
-          linkedIds: mongoose.Types.ObjectId(platformVariant._id)
+          linkedIds: {
+            id: mongoose.Types.ObjectId(platformVariant._id),
+            platform: 'lazada'
+          }
         }
       })
 
@@ -110,7 +127,9 @@ module.exports.unlinkVariant = async (req, res) => {
         _id: variant._id,
       }, {
         $pull: {
-          linkedIds: mongoose.Types.ObjectId(platformVariant._id)
+          linkedIds: {
+            id: mongoose.Types.ObjectId(platformVariant._id)
+          }
         }
       })
 
@@ -202,9 +221,11 @@ module.exports.updateVariant = async (req, res) => {
 
     properties.forEach((prop) => (variant[prop] = req.body[prop]));
 
-    variant.save();
+    await variant.save();
 
     res.send(variant);
+
+
   } catch (e) {
     res.status(404).send(Error(e));
   }
@@ -213,7 +234,7 @@ module.exports.updateVariant = async (req, res) => {
 module.exports.deleteVariant = async (req, res) => {
   console.log(req.params)
   try {
-    const variant = await Variant.findOneAndDelete({ _id: req.params.id });
+    const variant = await Variant.findOneAndDelete({ _id: mongoose.Types.ObjectId(req.params.id) });
 
     if (!variant) {
       return res.status(404).send();

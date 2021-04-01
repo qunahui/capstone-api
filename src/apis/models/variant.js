@@ -59,10 +59,24 @@ const variantSchema = new Schema({
     type: Boolean,
     default: true
   },
-  linkedIds: {
-    type: [mongoose.Schema.Types.ObjectId]
-  }
+  linkedIds: [{
+    id: {
+      type: mongoose.Schema.Types.ObjectId,
+    },
+    platform: {
+      type: String
+    }
+  }]
 })
+
+variantSchema.methods.toJSON = function () {
+  const variant = this;
+  const variantObject = variant.toObject();
+
+  delete variantObject.__v
+  
+  return variantObject;
+};
 
 
 module.exports = mongoose.model("Variant", variantSchema);
