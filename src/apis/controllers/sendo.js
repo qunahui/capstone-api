@@ -511,6 +511,7 @@ module.exports.syncAllOrderSendo = async (req, res) =>{
 //   }
 // }
 module.exports.updateProduct = async (req, res) =>{
+  console.log("run into update", req.body)
   const id =  req.body.id
   const item = req.body  //các field cần đc update
     //get full product on sendo
@@ -569,7 +570,7 @@ module.exports.updateProduct = async (req, res) =>{
   
 
   //res.send(trueProduct)
-  res.send(item)
+  // res.send(item)
   try {
       const options = {
           'method': 'POST',
@@ -587,11 +588,12 @@ module.exports.updateProduct = async (req, res) =>{
         console.log(response.body)
         console.log(response.statusCode)
 
-        res.status(response.statusCode).send(response.body)
+        return res.status(response.statusCode).send(response.body)
           
         });
   } catch (e) {
-      res.status(500).send(Error(e));
+      console.log("update sendo product failed: ", e.message)
+      return res.status(500).send(Error(e));
   }
 }
 module.exports.deleteProductOnSendo = async (req, res) => {

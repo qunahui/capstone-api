@@ -14,6 +14,8 @@ router.post("/link", auth, variantController.linkVariant);
 
 router.post("/unlink", auth, variantController.unlinkVariant);
 
+router.post("/push-api", auth, variantController.pushUpdatedToApi);
+
 router.patch("/:id", auth, variantController.updateVariant);
 
 router.delete("/:id", auth, variantController.deleteVariant);

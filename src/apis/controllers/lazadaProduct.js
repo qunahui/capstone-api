@@ -118,7 +118,7 @@ module.exports.fetchDeletedProducts = async (req, res) =>{
     request.addApiParam("update_after", lazFormatDate);
     const response = await client.execute(request, accessToken);
     const { data } = response.data
-    const { products } = data
+    const products = data.products || []
     res.status(200).send(products)
   } catch(e) {
     res.status(400).send(Error(e))
@@ -212,6 +212,7 @@ module.exports.syncProducts = async (req, res) => {
     }
 
     const deletedProducts = await rp(options)
+    console.log(deletedProducts)
     await Promise.all(deletedProducts.map(async product => {
       const lazId = await LazadaProduct.findOne({ id: product.item_id})
       if(lazId) {
