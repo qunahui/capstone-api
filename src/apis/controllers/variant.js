@@ -6,6 +6,7 @@ const Inventory = require('../models/inventory');
 const Variant = require("../models/variant")
 const SendoVariant = require("../models/sendoVariant")
 const LazadaVariant = require("../models/lazadaVariant")
+const LazadaProduct = require("../models/lazadaProduct")
 const SendoProduct = require("../models/sendoProduct")
 const Storage = require("../models/storage")
 
@@ -49,6 +50,44 @@ module.exports.pushUpdatedToApi = async (req, res) => {
           headers: {
             'Authorization': 'Bearer ' + req.mongoToken,
             "Platform-Token": storage.sendoCredentials[0].access_token
+          }
+        })
+
+      } catch(e) {
+        console.log("Push to api failed: ", e.message)
+      }
+    } else if(linkedId.platform === 'lazada') {
+      const lazadaVariant =  await LazadaVariant.findOne({ _id: linkedId.id })
+      const lazadaProduct = await LazadaProduct.findOne({ _id: lazadaVariant.productId }).populate('variants').lean()
+      const storage = await Storage.findOne({
+        _id: req.user.currentStorage.storageId,
+        lazadaCredentials: {
+          $elemMatch: {
+            store_id: lazadaProduct.store_id
+          }
+        }
+      }, { "lazadaCredentials.$": 1 })
+
+      lazadaProduct.variants = lazadaProduct.variants.map(matchedVariant => {
+        if(matchedVariant._id.toString() === linkedId.id) {
+          return matchedVariant = {
+            ...matchedVariant,
+            price: variant.retailPrice,
+            quantity: variant.inventories.initStock
+          }
+        }
+        return matchedVariant
+      })
+
+      try {
+        await rp({
+          method: 'PATCH',
+          url: 'http://localhost:5000/api/lazada/products',
+          json: true,
+          body: lazadaProduct,
+          headers: {
+            'Authorization': 'Bearer ' + req.mongoToken,
+            "Platform-Token": storage.lazadaCredentials[0].access_token
           }
         })
 
