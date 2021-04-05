@@ -1959,6 +1959,47 @@
         }
       }
     },
+    "/api/sendo/category/": {
+      "get": {
+        "tags": [
+          "sendoAPI"
+        ],
+        "summary": "Search category by lazada categoryName",
+        "operationId": "searchCategory",
+        "security": [
+          {
+            "bearerAuth": [],
+            "ApiKeyAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "search",
+            "required": true,
+            "description": "string of category to search",
+            "schema": {
+              "type": "string",
+              "example": "Áo khoác Denim nam"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful"
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "404": {
+            "description": "Pet not found"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        }
+      }
+    },
     "/api/sendo/attribute/{attributeId}": {
       "get": {
         "tags": [

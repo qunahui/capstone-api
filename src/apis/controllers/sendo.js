@@ -156,6 +156,34 @@ module.exports.getSendoCategory = async (req, res) =>{
       res.status(500).send(Error(e));
   }
 }
+module.exports.searchSendoCategory = async (req, res) =>{
+  const search = req.query.search
+  
+  const searchData = await rp("https://mapi.sendo.vn/mob/product/search?p=1&q="+ encodeURI(search))
+  const product = JSON.parse(searchData).data[0]
+  let idpath = product.category_id.split("/")
+  idpath.shift()
+ 
+
+  
+  const listCate = await rp({
+        'method': 'GET',
+        'url':"https://open.sendo.vn/api/partner/category/" + idpath[2],
+        'headers': {
+          'Authorization': 'bearer '+ req.accessToken
+        }
+  })
+  const cate = JSON.parse(listCate).result.find(item =>{
+        return item.id == idpath[3]
+      })
+
+  
+
+  res.send({
+    idpath: idpath,
+    namepath: cate.name.split("|")
+  })
+}
 //create or update product
 module.exports.createProductOnSendo = async (req, res) =>{
   //id = 0 -> create
