@@ -696,17 +696,6 @@ module.exports.updateProduct = async (req, res) =>{
 
     const payload = '<?xml version="1.0" encoding="UTF-8"?>'+ convert.js2xml(updateFormatProduct, {compact: true, ignoreComment: true, spaces: 4})
     
-    // const encodePayload = encodeURIComponent(payload)
-
-    // const client = new LazadaClient(apiUrl, appKey, appSecret)
-    // const request = new LazadaRequest(apiPath);
-
-    // request.addApiParam("payload", encodePayload); // http method default is post
-    
-    // const response = await client.execute(request, accessToken);
-
-    
-    
     const commonRequestParams = {
         "app_key": appKey,
         "timestamp": timestamp,
@@ -715,7 +704,6 @@ module.exports.updateProduct = async (req, res) =>{
     }
     const sign = signRequest(appSecret, apiPath, {...commonRequestParams, payload})
     const encodePayload = encodeURIComponent(payload)
-   
     try {
         var options = {
             'method': 'POST',
