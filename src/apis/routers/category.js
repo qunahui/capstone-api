@@ -6,7 +6,7 @@ const category = require("../models/category");
 
 
 router.get("/", auth, controller.getListCategory);
-
+router.get("/sendo-category", auth, controller.getSendoListCategory);
 router.get("/all", async (req, res) => {
   const Category = require('../models/category')
   await Category.find({}, (err, categories) => {
