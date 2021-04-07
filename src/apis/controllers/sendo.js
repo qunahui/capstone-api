@@ -156,64 +156,64 @@ module.exports.getSendoCategory = async (req, res) =>{
       res.status(500).send(Error(e));
   }
 }
-// module.exports.createSendoCategory = async (req, res) =>{
-//   const dataLv1 = await rp({
-//     'method': 'GET',
-//     'url':"https://open.sendo.vn/api/partner/category/0",
-//     'headers': {
-//       'Authorization': 'bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJTdG9yZUlkIjoiODU0MjE0IiwiVXNlck5hbWUiOiIiLCJTdG9yZVN0YXR1cyI6IjIiLCJTaG9wVHlwZSI6IjEiLCJTdG9yZUxldmVsIjoiMCIsImV4cCI6MTYxNzY5ODc5OSwiaXNzIjoiODU0MjE0IiwiYXVkIjoiODU0MjE0In0.OD2auZ7MvFr6b78pSiUtTPgPsn-6o_M-X1Jo0AlAzjg'
-//     }
-//   })
-//   const listLv1 = JSON.parse(dataLv1).result
-//   listLv1.map( async (itemLv1) =>{
-//       //lv2
-//       const cateLv1 = new SendoCategory({
-//         category_id: itemLv1.id,
-//         name: itemLv1.name,
-//         idpath: [itemLv1.id],
-//         namepath: [itemLv1.name]
-//       })
-//       await cateLv1.save() 
-//       //lv3
-//       const dataLv2 = await rp({
-//         'method': 'GET',
-//         'url':"https://open.sendo.vn/api/partner/category/"+ itemLv1.id,
-//         'headers': {
-//           'Authorization': 'bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJTdG9yZUlkIjoiODU0MjE0IiwiVXNlck5hbWUiOiIiLCJTdG9yZVN0YXR1cyI6IjIiLCJTaG9wVHlwZSI6IjEiLCJTdG9yZUxldmVsIjoiMCIsImV4cCI6MTYxNzY5ODc5OSwiaXNzIjoiODU0MjE0IiwiYXVkIjoiODU0MjE0In0.OD2auZ7MvFr6b78pSiUtTPgPsn-6o_M-X1Jo0AlAzjg'
-//         }
-//       })
-//       const listLv2 = JSON.parse(dataLv2).result
-//       listLv2.map(async itemLv2 =>{
-//         const cateLv2 = new SendoCategory({
-//           category_id: itemLv2.id,
-//           name: itemLv2.name.split("|")[1],
-//           idpath: [itemLv1.id, itemLv2.id],
-//           namepath: itemLv2.name.split("|")
-//         })
-//         await cateLv2.save() 
-//         //lv4
-//         const dataLv3 = await rp({
-//           'method': 'GET',
-//           'url':"https://open.sendo.vn/api/partner/category/"+ itemLv2.id,
-//           'headers': {
-//             'Authorization': 'bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJTdG9yZUlkIjoiODU0MjE0IiwiVXNlck5hbWUiOiIiLCJTdG9yZVN0YXR1cyI6IjIiLCJTaG9wVHlwZSI6IjEiLCJTdG9yZUxldmVsIjoiMCIsImV4cCI6MTYxNzY5ODc5OSwiaXNzIjoiODU0MjE0IiwiYXVkIjoiODU0MjE0In0.OD2auZ7MvFr6b78pSiUtTPgPsn-6o_M-X1Jo0AlAzjg'
-//           }
-//         })
-//         const listLv3 = JSON.parse(dataLv3).result
-//         listLv3.map(async itemLv3 =>{
-//           const cateLv3 = new SendoCategory({
-//             category_id: itemLv3.id,
-//             name: itemLv3.name.split("|")[2],
-//             idpath: [itemLv1.id, itemLv2.id,itemLv3.id],
-//             namepath: itemLv3.name.split("|"),
-//             leaf: true
-//           })
-//           await cateLv3.save()
-//         })
-//       })
-//   })
-//   res.send("done")
-// }
+module.exports.createSendoCategory = async (req, res) =>{
+  const dataLv1 = await rp({
+    'method': 'GET',
+    'url':"https://open.sendo.vn/api/partner/category/0",
+    'headers': {
+      'Authorization': 'bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJTdG9yZUlkIjoiODU0MjE0IiwiVXNlck5hbWUiOiIiLCJTdG9yZVN0YXR1cyI6IjIiLCJTaG9wVHlwZSI6IjEiLCJTdG9yZUxldmVsIjoiMCIsImV4cCI6MTYxNzY5ODc5OSwiaXNzIjoiODU0MjE0IiwiYXVkIjoiODU0MjE0In0.OD2auZ7MvFr6b78pSiUtTPgPsn-6o_M-X1Jo0AlAzjg'
+    }
+  })
+  const listLv1 = JSON.parse(dataLv1).result
+  listLv1.map( async (itemLv1) =>{
+      //lv2
+      const cateLv1 = new SendoCategory({
+        category_id: itemLv1.id,
+        name: itemLv1.name,
+        idpath: [itemLv1.id],
+        namepath: [itemLv1.name]
+      })
+      await cateLv1.save() 
+      //lv3
+      const dataLv2 = await rp({
+        'method': 'GET',
+        'url':"https://open.sendo.vn/api/partner/category/"+ itemLv1.id,
+        'headers': {
+          'Authorization': 'bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJTdG9yZUlkIjoiODU0MjE0IiwiVXNlck5hbWUiOiIiLCJTdG9yZVN0YXR1cyI6IjIiLCJTaG9wVHlwZSI6IjEiLCJTdG9yZUxldmVsIjoiMCIsImV4cCI6MTYxNzY5ODc5OSwiaXNzIjoiODU0MjE0IiwiYXVkIjoiODU0MjE0In0.OD2auZ7MvFr6b78pSiUtTPgPsn-6o_M-X1Jo0AlAzjg'
+        }
+      })
+      const listLv2 = JSON.parse(dataLv2).result
+      listLv2.map(async itemLv2 =>{
+        const cateLv2 = new SendoCategory({
+          category_id: itemLv2.id,
+          name: itemLv2.name.split("|")[1],
+          idpath: [itemLv1.id, itemLv2.id],
+          namepath: itemLv2.name.split("|")
+        })
+        await cateLv2.save() 
+        //lv4
+        const dataLv3 = await rp({
+          'method': 'GET',
+          'url':"https://open.sendo.vn/api/partner/category/"+ itemLv2.id,
+          'headers': {
+            'Authorization': 'bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJTdG9yZUlkIjoiODU0MjE0IiwiVXNlck5hbWUiOiIiLCJTdG9yZVN0YXR1cyI6IjIiLCJTaG9wVHlwZSI6IjEiLCJTdG9yZUxldmVsIjoiMCIsImV4cCI6MTYxNzY5ODc5OSwiaXNzIjoiODU0MjE0IiwiYXVkIjoiODU0MjE0In0.OD2auZ7MvFr6b78pSiUtTPgPsn-6o_M-X1Jo0AlAzjg'
+          }
+        })
+        const listLv3 = JSON.parse(dataLv3).result
+        listLv3.map(async itemLv3 =>{
+          const cateLv3 = new SendoCategory({
+            category_id: itemLv3.id,
+            name: itemLv3.name.split("|")[2],
+            idpath: [itemLv1.id, itemLv2.id,itemLv3.id],
+            namepath: itemLv3.name.split("|"),
+            leaf: true
+          })
+          await cateLv3.save()
+        })
+      })
+  })
+  res.send("done")
+}
 //create or update product
 module.exports.createProductOnSendo = async (req, res) =>{
   //id = 0 -> create

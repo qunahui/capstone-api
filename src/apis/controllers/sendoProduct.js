@@ -6,6 +6,7 @@ const SendoVariant = require("../models/sendoVariant")
 const Storage = require("../models/storage")
 const Variant = require("../models/variant")
 const mongoose = require("mongoose")
+const SendoCategory = require("../models/sendoCategory")
 
 const product_status ={
   "0": "Nháp",
@@ -30,6 +31,36 @@ const unit = [
   "Thùng"
 ]
 
+module.exports.getSendoListCategory = async (req,res) =>{
+  const idpath = req.query.idpath ? req.query.idpath.map(i => parseInt(i)) : [];
+    if(idpath.length == 0) {
+      try {
+        const categories = await SendoCategory.find({idpath:{ $size: 1}}, {name: 1, category_id: 1, leaf: 1, idpath:1});
+        res.send(categories);
+      } catch (e) {
+        res.status(500).send(e.message);
+      }
+    } else if(idpath.length != 0) {
+      try {
+        const categories = await SendoCategory.find({ idpath:{ $all:idpath ,$size: idpath.length+1 }}, {name: 1, category_id: 1, leaf: 1, idpath:1, namepath: 1});
+        res.send(categories);
+      } catch (e) {
+        res.status(500).send(e.message);
+      }
+    }
+    
+};
+
+module.exports.getSuggestCategory = async (req, res) => {
+  try {
+    const result = await SendoCategory.fuzzySearch(req.body.name).findOne({ leaf: true })
+
+    res.status(200).send(result)
+  } catch(e) {
+    console.log(e.message)
+    res.status(500).send(Error({ message: 'Có gì đó sai sai'}))
+  }
+}
 
 const createSendoProduct = async (item, { store_id }) => {
   try {

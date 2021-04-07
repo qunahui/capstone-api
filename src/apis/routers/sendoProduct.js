@@ -19,4 +19,8 @@ router.post('/product', controller.createProduct)
 
 router.get('/product/:id', controller.getProductById)
 
+router.get("/categories", auth, controller.getSendoListCategory);
+
+router.post("/suggest-category", auth, controller.getSuggestCategory);
+
 module.exports = router;

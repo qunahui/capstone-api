@@ -53,25 +53,7 @@ module.exports.getListCategory = async (req,res) =>{
     }
     
 };
-module.exports.getSendoListCategory = async (req,res) =>{
-  const idpath = req.query.idpath ? req.query.idpath.map(i => parseInt(i)) : [];
-    if(idpath.length == 0) {
-      try {
-        const categories = await SendoCategory.find({idpath:{ $size: 1}}, {name: 1, category_id: 1, leaf: 1, idpath:1});
-        res.send(categories);
-      } catch (e) {
-        res.status(500).send(e.message);
-      }
-    } else if(idpath.length != 0) {
-      try {
-        const categories = await SendoCategory.find({ idpath:{ $all:idpath ,$size: idpath.length+1 }}, {name: 1, category_id: 1, leaf: 1, idpath:1, namepath: 1});
-        res.send(categories);
-      } catch (e) {
-        res.status(500).send(e.message);
-      }
-    }
-    
-};
+
 module.exports.searchCategory = async (req,res) =>{
  
   const search = req.query.search

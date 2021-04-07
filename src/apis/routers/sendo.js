@@ -57,7 +57,7 @@ router.post('/products/', auth, controller.createProductOnSendo)
 
 
 router.get('/category/:id', auth, controller.getSendoCategory)
-//router.get('/category/', controller.createSendoCategory)
+router.get('/category/', controller.createSendoCategory)
 router.get('/ward/:id', auth, controller.getWardById)
 router.get('/district/:id', auth, controller.getDistrictById)
 router.get('/region/:id', auth, controller.getRegionById)
