@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const auth = require("../../middlewares/auth");
 const controller = require("../controllers/category");
-const category = require("../models/category");
+const Category = require("../models/category");
 
 
 router.get("/", auth, controller.getListCategory);
@@ -67,12 +67,21 @@ router.get("/playground", async (req, res) => {
   })
 })
 
-router.get("/search",auth, controller.searchCategory)
+router.get("/search", auth, controller.searchCategory)
+
+router.get('/add-fuzzy', async (req, res) => {
+  for await (const doc of Category.find().cursor()) {
+    await Category.findByIdAndUpdate(doc._id, doc)
+  }
+
+  res.status(200).send("Ok")
+})
 
 router.post("/", auth, controller.createCategory);
 router.get("/:id", auth, controller.getCategoryById);
 router.patch("/:id", auth, controller.updateCategory);
 router.delete("/:id", auth, controller.deleteCategory);
+
 // router.get("/", auth, controller.getListCategory);
 
 // router.post("/create-lazada-category", controller.createCategory) // just for dev, not for user

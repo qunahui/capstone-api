@@ -51,6 +51,20 @@ module.exports.getSendoListCategory = async (req,res) =>{
     
 };
 
+module.exports.searchSendoCategory = async (req,res) =>{
+ 
+  const search = req.query.search
+
+  try {
+    const categories = await SendoCategory.fuzzySearch({ query: search, minSize: 3 }).find({ leaf: true }).limit(10)
+
+    res.send(categories);
+  } catch (e) {
+    res.status(500).send(e.message);
+  }
+
+};
+
 module.exports.getSuggestCategory = async (req, res) => {
   try {
     const result = await SendoCategory.fuzzySearch(req.body.name).findOne({ leaf: true })

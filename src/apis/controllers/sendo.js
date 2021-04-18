@@ -332,6 +332,7 @@ module.exports.getSendoAttribute = async (req, res) =>{
       res.status(500).send(Error(e));
   }
 }
+
 module.exports.getSendoProductById = async (req, res) =>{
   
   const productId = req.params.id;

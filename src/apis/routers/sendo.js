@@ -6,48 +6,6 @@ const controller = require("../controllers/sendo");
 const productController = require("../controllers/product")
 const checkController = require("../../middlewares/check")
 const util = require('util');
-router.post('/ping', (req, res) => {
-  // received object
-  // switch case
-  
-  const data = req.body
-  console.log(req.body)
-
-  //console.log(util.inspect(req.body, false, null, true /* enable colors */))
-  switch(data.type){
-    case 'PRODUCT.CREATE':{
-      request.post({ url: "http://localhost:5000/products/sendo/create-ping", 
-      json: data })
-
-      break 
-    }
-    case 'PRODUCT.UPDATE': {
-      request.patch({ url:"http://localhost:5000/products/"+data.id,
-        json: data
-      })
-
-      break
-    }
-    case 'SALESORDER.CREATE': {
-      request.post({ url: "http://localhost:5000/orders/sendo/create-order-ping",
-        json: data
-      })
-
-      break
-    }
-    //sendo chưa hoạt động 
-    case 'SALESORDER.UPDATE': {
-      request.patch({ url:"http://localhost:5000/orders/sendo/"+data.id,
-        json: data
-      })
-
-      break
-    }
-    default:
-      break
-  }
-})
-// local's routes
 
 //api's routes
 router.post('/authorize', auth, controller.authorizeCredential)
@@ -118,3 +76,46 @@ module.exports = router;
     }
   })
 */
+
+// router.post('/ping', (req, res) => {
+//   // received object
+//   // switch case
+  
+//   const data = req.body
+//   console.log(req.body)
+
+//   //console.log(util.inspect(req.body, false, null, true /* enable colors */))
+//   switch(data.type){
+//     case 'PRODUCT.CREATE':{
+//       request.post({ url: "http://localhost:5000/products/sendo/create-ping", 
+//       json: data })
+
+//       break 
+//     }
+//     case 'PRODUCT.UPDATE': {
+//       request.patch({ url:"http://localhost:5000/products/"+data.id,
+//         json: data
+//       })
+
+//       break
+//     }
+//     case 'SALESORDER.CREATE': {
+//       request.post({ url: "http://localhost:5000/orders/sendo/create-order-ping",
+//         json: data
+//       })
+
+//       break
+//     }
+//     //sendo chưa hoạt động 
+//     case 'SALESORDER.UPDATE': {
+//       request.patch({ url:"http://localhost:5000/orders/sendo/"+data.id,
+//         json: data
+//       })
+
+//       break
+//     }
+//     default:
+//       break
+//   }
+// })
+// // local's routes

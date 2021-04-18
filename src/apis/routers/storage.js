@@ -7,6 +7,8 @@ router.get("/", auth, controller.getStorages);
 
 router.patch("/add-sendo-credentials", auth, controller.addSendoCredentials);
 
+router.get("/refresh-all", auth, controller.refreshAllToken)
+
 router.get("/fetch-shops", auth, controller.fetchShops);
 
 

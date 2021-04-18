@@ -17,6 +17,8 @@ const syncRoutes = require('./routers/sync')
 const supplierRoutes = require('./routers/supplier')
 const customerRoutes = require('./routers/customer')
 const inventoryRoutes = require('./routers/inventory')
+const lazadaAttributeRoutes = require('./routers/lazadaAttribute')
+const brandRoutes = require('./routers/brand')
 
 module.exports = (app) => {
   app.use("/products", productRoutes);
@@ -38,4 +40,6 @@ module.exports = (app) => {
   app.use("/supplier", supplierRoutes);
   app.use("/customer", customerRoutes);
   app.use("/inventory", inventoryRoutes);
+  app.use("/lazada-attribute", lazadaAttributeRoutes);
+  app.use("/brand", brandRoutes);
 };
