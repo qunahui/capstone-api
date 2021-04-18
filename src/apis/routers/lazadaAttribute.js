@@ -64,9 +64,11 @@ router.get('/fix', async (req, res) => {
   for await (const doc of Category.find().cursor()) {
     const found = await LazadaAttribute.findOne({ categoryNamepath: doc.namepath })
     if(found){
-      await LazadaAttribute.findByIdAndUpdate(found._id, {
-        categoryId: doc.category_id
-      })
+      if(found.categoryId !== doc.category_id) {
+        await LazadaAttribute.findByIdAndUpdate(found._id, {
+          categoryId: doc.category_id
+        })
+      }
     } else {
       missing.push(doc)
     }
