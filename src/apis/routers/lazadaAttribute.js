@@ -73,7 +73,11 @@ router.get('/fix', async (req, res) => {
     console.log("Loop: ", loop++)
   }
 
-  console.log("ok")
+  fs.writeFile('missing.json', JSON.stringify({
+    length: missing.length,
+    missing
+  }), 'utf-8', () => console.log("Ok"))
+
   res.status(200).send("Ok")
 })
 
