@@ -2,6 +2,8 @@ const Error = require("../utils/error");
 const { Order } = require("../models/order")
 const Inventory = require("../models/inventory")
 const Variant = require("../models/variant")
+const Product = require('../models/product')
+const rp = require('request-promise')
 
 const checkComplete = async (_id) => {
   try {
@@ -17,6 +19,25 @@ const checkComplete = async (_id) => {
   
       await order.save()
     } 
+  } catch(e) {
+    console.log(e.message)
+  }
+}
+
+const checkLinkedVariants = async (variant, mongoToken) => {
+  try {
+    console.log("checking: ,", variant)
+    await rp({ 
+      method: 'POST',
+      url: 'http://localhost:5000/variants/push-api',
+      json: true,
+      body: {
+        variant
+      },
+      headers: { 
+        'Authorization' : 'Bearer ' + mongoToken
+      }
+    })
   } catch(e) {
     console.log(e.message)
   }
@@ -51,6 +72,8 @@ module.exports.createReceipt = async (req,res) => {
       })
 
       await inventory.save()
+
+      await checkLinkedVariants(mongoVariant, req.mongoToken)
     }))
 
     order.step[2] = {

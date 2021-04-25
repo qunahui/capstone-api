@@ -8,11 +8,12 @@ const { createLazadaProduct } = require('./lazadaProduct');
 const LazadaProduct = require('../models/lazadaProduct');
 const Error = require('../utils/error')
 const timeDiff = require('../utils/timeDiff')
+const util = require('util')
 
 const { LazadaRequest, LazadaClient } = require('lazada-sdk-client');
 
 
-var options = {compact: true, ignoreComment: true, spaces: 4};
+var options = {compact: true, ignoreComment: true, spaces: 0};
 
 module.exports.authorizeCredential = async (req, res) => {
   try {
@@ -626,7 +627,7 @@ module.exports.uploadImage = async (req, res) =>{
 //             }
 //         }
 //     }
-//     const payload = '<?xml version="1.0" encoding="UTF-8" ?>'+ convert.js2xml(data, {compact: true, ignoreComment: true, spaces: 4})
+//     const payload = '<?xml version="1.0" encoding="UTF-8" ?>'+ convert.js2xml(data, {compact: true, ignoreComment: true, spaces: 0})
     
 //     const commonRequestParams = {
 //         "app_key": appKey,
@@ -682,6 +683,8 @@ module.exports.updateProduct = async (req, res) =>{
         });
     }
 
+    delete lazadaproduct.attributes.description
+
     let updateFormatProduct = {
         "Request":{
           "Product":{
@@ -694,7 +697,49 @@ module.exports.updateProduct = async (req, res) =>{
         }
       }
 
-    const payload = '<?xml version="1.0" encoding="UTF-8"?>'+ convert.js2xml(updateFormatProduct, {compact: true, ignoreComment: true, spaces: 4})
+    const payload = '<?xml version="1.0" encoding="UTF-8"?>'+ convert.js2xml(updateFormatProduct, {compact: true, ignoreComment: true, spaces: 0})
+    
+    const commonRequestParams = {
+        "app_key": appKey,
+        "timestamp": timestamp,
+        "sign_method": "sha256",
+        "access_token":accessToken
+    }
+
+    const sign = signRequest(appSecret, apiPath, {...commonRequestParams, payload})
+    const encodePayload = encodeURIComponent(payload)
+    try {
+        var options = {
+            'method': 'POST',
+            'url': apiUrl+apiPath+
+            '?payload='+encodePayload+
+            '&app_key='+appKey+
+            '&sign_method=sha256&timestamp='+timestamp+
+            '&access_token='+accessToken+
+            '&sign='+sign,
+            'headers': {
+            }
+        };
+        console.log(util.inspect(updateFormatProduct, {showHidden: false, depth: null}))
+        request(options, function (error, response) {
+            if (error) throw new Error(error);
+            
+            res.status(response.statusCode).send(response.body)
+        });
+    } catch (e) {
+        res.status(500).send(Error(e));
+    }
+    
+}
+module.exports.createProductOnLazada = async (req, res) =>{
+    const apiUrl = 'https://api.lazada.vn/rest' 
+    const apiPath=  '/product/create'
+    const appSecret = process.env.LAZADA_APP_SECRET
+    const appKey = process.env.LAZADA_APP_KEY
+    const accessToken =  req.accessToken // goi db
+    const timestamp = Date.now()
+    const data = req.body
+    const payload = '<?xml version="1.0" encoding="UTF-8" ?>'+ convert.js2xml(data, {compact: true, ignoreComment: true, spaces: 0})
     
     const commonRequestParams = {
         "app_key": appKey,
@@ -716,54 +761,17 @@ module.exports.updateProduct = async (req, res) =>{
             'headers': {
             }
         };
-        //console.log(options)
+
+        console.log(options)
         request(options, function (error, response) {
-            if (error) throw new Error(error);
-            
-            res.status(response.statusCode).send(response.body)
-        });
-    } catch (e) {
-        res.status(500).send(Error(e));
-    }
-    
-}
-module.exports.createProductOnLazada = async (req, res) =>{
-    const apiUrl = 'https://api.lazada.vn/rest' 
-    const apiPath=  '/product/create'
-    const appSecret = process.env.LAZADA_APP_SECRET
-    const appKey = process.env.LAZADA_APP_KEY
-    const accessToken =  req.accessToken // goi db
-    const timestamp = Date.now()
-    const data = req.body
-    const payload = '<?xml version="1.0" encoding="UTF-8" ?>'+ convert.js2xml(data, {compact: true, ignoreComment: true, spaces: 4})
-    
-    const commonRequestParams = {
-        "app_key": appKey,
-        "timestamp": timestamp,
-        "sign_method": "sha256",
-        "access_token":accessToken
-    }
-    const sign = signRequest(appSecret, apiPath, {...commonRequestParams, payload})
-    const encodePayload = encodeURI(payload)
-    try {
-        var options = {
-            'method': 'POST',
-            'url': apiUrl+apiPath+
-            '?payload='+encodePayload+
-            '&app_key='+appKey+
-            '&sign_method=sha256&timestamp='+timestamp+
-            '&access_token='+accessToken+
-            '&sign='+sign,
-            'headers': {
+            if (error) {
+              throw new Error(error);
             }
-        };
-        //console.log(options)
-        request(options, function (error, response) {
-            if (error) throw new Error(error);
             
             res.status(response.statusCode).send(response.body)
         });
     } catch (e) {
+        console.log("Error: ", e.message)
         res.status(500).send(Error(e));
     }
     
@@ -890,7 +898,7 @@ module.exports.updateSellerEmail = async (req, res) =>{
     const accessToken =  req.accessToken
     const timestamp = Date.now()
     const data = req.body
-    const payload = '<?xml version="1.0" encoding="UTF-8" ?>'+ convert.js2xml(data, {compact: true, ignoreComment: true, spaces: 4})
+    const payload = '<?xml version="1.0" encoding="UTF-8" ?>'+ convert.js2xml(data, {compact: true, ignoreComment: true, spaces: 0})
     console.log(payload)
     const commonRequestParams = {
         "app_key": appKey,

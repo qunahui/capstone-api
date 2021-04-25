@@ -6,6 +6,8 @@ const Storage = require('../models/storage')
 const timeDiff = require('../utils/timeDiff')
 const Cookie = require('cookie')
 const SendoCategory = require('../models/sendoCategory')
+const util = require('util')
+
 
 module.exports.authorizeCredential = async (req, res) => {
   try {
@@ -68,10 +70,9 @@ module.exports.getSendoToken = async (req, res) => {
     const { currentStorage } = req.user
 
     const timeDifference = timeDiff(new Date(), new Date(credential.expires))
-    const isTokenAvailable = timeDifference.hoursDifference <= 0
+    const isTokenAvailable = timeDifference.hoursDifference < 0 ? true : timeDifference.minutesDifference <= 0 ? true : false
 
     if(isTokenAvailable === true) {
-      console.log("old token available")
       return res.status(200).send({
         ...credential,
         isCredentialRefreshed: false
@@ -220,7 +221,8 @@ module.exports.createProductOnSendo = async (req, res) =>{
   //id != 0 -> update
   
   const item = {id: 0, ...req.body};
-  
+  console.log(util.inspect(item.attributes, {showHidden: false, depth: null}))
+  console.log(util.inspect(item.variants, {showHidden: false, depth: null}))
   try {
       const options = {
           'method': 'POST',
@@ -570,7 +572,6 @@ module.exports.syncAllOrderSendo = async (req, res) =>{
 //   }
 // }
 module.exports.updateProduct = async (req, res) =>{
-  console.log("run into update", req.body)
   const id =  req.body.id
   const item = req.body  //các field cần đc update
     //get full product on sendo
@@ -644,8 +645,8 @@ module.exports.updateProduct = async (req, res) =>{
       request(options, function (error, response) {
         if (error) throw new Error(error);
 
-        console.log(response.body)
-        console.log(response.statusCode)
+        // console.log(response.body)
+        // console.log(response.statusCode)
 
         return res.status(response.statusCode).send(response.body)
           

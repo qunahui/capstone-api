@@ -2,6 +2,90 @@ const Product = require("../models/product");
 const Error = require("../utils/error");
 const Variant = require('../models/variant')
 const rp = require('request-promise')
+const fs = require('fs')
+
+module.exports.createMultiPlatform = async (req, res) => {
+  const products = req.body
+
+  try {
+    for(let item of products) {
+      if(item.post === true) {
+        console.log("Begin create to: ", item.store_name)
+        if(item.platform_name === 'lazada') {
+            await rp({
+              method: 'POST',
+              url: 'http://localhost:5000/api/lazada/products',
+              body: {
+                Request: item.Request
+              },
+              json: true,
+              headers: {
+                'Authorization': 'Bearer ' + req.mongoToken,
+                'Platform-Token': item.access_token
+            }
+          })
+
+          await rp({
+            method: 'POST',
+            url: 'http://localhost:5000/lazada/products/fetch',
+            headers: {
+              'Authorization': 'Bearer ' + req.mongoToken,
+              'Platform-Token': item.access_token
+            },
+            body: {
+              store_id: item.store_id,
+              lastSync: item.lastSync
+            },
+            json: true
+          })   
+        } else if(item.platform_name === 'sendo') {
+          await rp({
+            method: 'POST',
+            url: 'http://localhost:5000/api/sendo/products',
+            body: item,
+            json: true,
+            headers: {
+              'Authorization': 'Bearer ' + req.mongoToken,
+              'Platform-Token': item.access_token
+            }
+          })
+
+          await rp({
+            method: 'POST',
+            url: 'http://localhost:5000/sendo/products/fetch',
+            headers: {
+              'Authorization': 'Bearer ' + req.mongoToken,
+              'Platform-Token': item.access_token
+            },
+            body: {
+              store_id: item.store_id,
+              lastSync: item.lastSync
+            },
+            json: true
+          })          
+        } else if(item.platform_name === 'system') {
+          await rp({
+            method: 'POST',
+            url: 'http://localhost:5000/products',
+            body: {
+              ...item,
+              sellable: true,
+            },
+            json: true,
+            headers: {
+              'Authorization': 'Bearer ' + req.mongoToken,
+            }
+          })
+        }
+      }
+    }
+
+    return res.status(200).send("Ok")
+  } catch(e) {
+    console.log("Error", e.message)
+    res.status(500).send(Error({ message: 'Có gì đó không ổn !'}))
+  }
+};
 
 module.exports.getAllProduct = async (req, res) => {
   console.log(req.user.currentStorage)
@@ -28,6 +112,7 @@ module.exports.getMMSProductById = async function (req, res) {
 
 module.exports.createMMSProduct = async (req, res) => {
   try {
+    console.log("req body: ", req.body)
     const product = new Product({
       ...req.body,
       storageId: req.user.currentStorage.storageId

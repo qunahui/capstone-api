@@ -13,6 +13,9 @@ const LazadaAttributeSchema = new Schema({
     type: String
   }],
   attributes: [{
+    id: {
+      type: Number,
+    },
     attribute_type: {
       type: Number,
     },
@@ -28,15 +31,11 @@ const LazadaAttributeSchema = new Schema({
     name: {
       type: String
     },
-    options: [{
-      name: {
-        type: String
-      }
+    option: [{
+      type: String
     }],
-    options_en: [{
-      name: {
+    option_en: [{
         type: String
-      }
     }],
     values: {
       type: String

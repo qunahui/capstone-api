@@ -9,6 +9,7 @@ const LazadaVariant = require("../models/lazadaVariant")
 const LazadaProduct = require("../models/lazadaProduct")
 const SendoProduct = require("../models/sendoProduct")
 const Storage = require("../models/storage")
+const { htmlToText } = require('html-to-text');
 
 module.exports.pushUpdatedToApi = async (req, res) => {
   const { variant } = req.body
@@ -78,6 +79,8 @@ module.exports.pushUpdatedToApi = async (req, res) => {
         }
         return matchedVariant
       })
+
+      lazadaProduct.attributes.short_description = htmlToText(lazadaProduct.attributes.short_description, { limits: 80 }).replace(/(\r\n|\n|\r)/gm, "");
 
       try {
         await rp({

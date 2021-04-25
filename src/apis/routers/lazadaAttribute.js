@@ -3,60 +3,83 @@ const router = express.Router();
 const fs = require('fs')
 const Category = require('../models/category')
 const LazadaAttribute = require('../models/lazadaAttribute')
+const Error = require('../utils/error')
 const { signRequest } = require('../utils/laz-sign-request')
 const rp = require('request-promise')
 
-router.get('/count', async (req, res) => {
-  const total = await Category.find({ leaf: true })
-  res.status(200).send({ length: total.length })
+router.get('/:categoryId', async (req, res) => {
+  const categoryId = parseInt(req.params.categoryId)
+
+  try {
+    // const attrs = await LazadaAttribute.findOne({ categoryId })
+    const attrs = null // tạm sử dụng tiếng anh
+    if(attrs) {
+      return res.status(200).send(attrs.attributes)
+    } else {
+      // find in lazada api if not exists
+      const apiAttrs = await rp({ 
+        method: 'GET',
+        url: 'http://localhost:5000/api/lazada/attribute/' + categoryId,
+        json: true,
+      })
+
+      return res.status(200).send(apiAttrs)
+    }
+  } catch(e) {
+    console.log(e.message)
+    return res.status(500).send(Error({ message: 'Something went wrong !'}))
+  }
 })
 
-// router.get("/create", async (req, res) => {
-//   try {
-//     // const allLeafCategory = await Category.find({ leaf: true })
-//     let all = []
-//     for(let index = 1; index <= 15999; index++) {
-//       var options = {
-//         'method': 'GET',
-//         'url': `https://market-place.sapoapps.vn/product-listing/attribute?categoryId=${index}`,
-//         'headers': {
-//           'authority': 'market-place.sapoapps.vn',
-//           'sec-ch-ua': '"Google Chrome";v="89", "Chromium";v="89", ";Not A Brand";v="99"',
-//           'accept': 'application/json',
-//           'dnt': '1',
-//           'x-market-token': 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJrcmlyaXJpcmkiLCJleHAiOjE2MTg3NTE3NTAsImlhdCI6MTYxODY2NTM1MH0.uH-BjBVLJmQlGq1666h_NQICi6t4dM2rTaIyK0BEFiU',
-//           'sec-ch-ua-mobile': '?0',
-//           'authorization': 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJrcmlyaXJpcmkiLCJleHAiOjE2MTg3NTE3NTAsImlhdCI6MTYxODY2NTM1MH0.uH-BjBVLJmQlGq1666h_NQICi6t4dM2rTaIyK0BEFiU',
-//           'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.128 Safari/537.36',
-//           'sec-fetch-site': 'same-origin',
-//           'sec-fetch-mode': 'cors',
-//           'sec-fetch-dest': 'empty',
-//           'referer': 'https://market-place.sapoapps.vn/home/product-listing/51032',
-//           'accept-language': 'en,vi-VN;q=0.9,vi;q=0.8'
-//         }
-//       };
+router.get("/create", async (req, res) => {
+  try {
+    // const allLeafCategory = await Category.find({ leaf: true })
+    let all = []
+    for(let index = 9092; index <= 9104; index++) {
+      var options = {
+        'method': 'GET',
+        'url': `https://market-place.sapoapps.vn/product-listing/attribute?categoryId=${index}&channelType=2`,
+        'headers': {
+          'authority': 'market-place.sapoapps.vn',
+          'sec-ch-ua': '"Google Chrome";v="89", "Chromium";v="89", ";Not A Brand";v="99"',
+          'accept': 'application/json',
+          'dnt': '1',
+          'x-market-token': 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJrcmlyaXJpcmkiLCJleHAiOjE2MTg4MjU4MjMsImlhdCI6MTYxODczOTQyM30.VBENI3tf4JmUaurgLH5VmCSRQEDBqAt8Enb1pzN_00k',
+          'sec-ch-ua-mobile': '?0',
+          'authorization': 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJrcmlyaXJpcmkiLCJleHAiOjE2MTg4MjU4MjMsImlhdCI6MTYxODczOTQyM30.VBENI3tf4JmUaurgLH5VmCSRQEDBqAt8Enb1pzN_00k',
+          'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.128 Safari/537.36',
+          'sec-fetch-site': 'same-origin',
+          'sec-fetch-mode': 'cors',
+          'sec-fetch-dest': 'empty',
+          'referer': 'https://market-place.sapoapps.vn/home/product-listing/51032',
+          'accept-language': 'en,vi-VN;q=0.9,vi;q=0.8'
+        }
+      };
 
-//       let response = await rp(options)
-//       if(response) {
-//         let parsed = JSON.parse(response)
-//         all.push({
-//           categoryId: parsed['category'].id,
-//           categoryName: parsed['category'].name,
-//           categoryNamepath: parsed['category'].node_name.split('|').filter(i => i !== ''),
-//           attributes: parsed['attributes']
-//         })
-//       }
+      let response = await rp(options)
+      if(response) {
+        let parsed = JSON.parse(response)
+        if(parsed['category'].channel_type === 2) {
+          all.push({
+            categoryId: parsed['category'].id,
+            categoryName: parsed['category'].name,
+            categoryNamepath: parsed['category'].node_name.split('|').filter(i => i !== ''),
+            attributes: parsed['attributes']
+          })
+        }
+      }
       
-//       console.log(index)
-//     }
+      console.log(index)
+    }
 
-//     await LazadaAttribute.insertMany(all)
-//     res.status(200).send({ length: all.length })
-//   } catch(e) {
-//     console.log(e.message)
-//     res.status(400).send(e.message)
-//   }
-// })
+    await LazadaAttribute.insertMany(all)
+    console.log("Done")
+    res.status(200).send({ data: all.length })
+  } catch(e) {
+    console.log(e.message)
+    res.status(400).send(e.message)
+  }
+})
 
 router.get('/fix', async (req, res) => {
   let missing = []
