@@ -112,7 +112,6 @@ module.exports.getMMSProductById = async function (req, res) {
 
 module.exports.createMMSProduct = async (req, res) => {
   try {
-    console.log("req body: ", req.body)
     const product = new Product({
       ...req.body,
       storageId: req.user.currentStorage.storageId
@@ -125,31 +124,16 @@ module.exports.createMMSProduct = async (req, res) => {
       let totalQuantity = 0
 
         await Promise.all(req.body.variants.map(async (variant) => {
-        totalQuantity += variant.inventories.initStock
-        const mongoVariant = new Variant({ 
-          ...variant,
-          inventories: {
-            initStock: 0,
-            initPrice: variant.inventories.initPrice
-          },
-          productId: product._id 
-        })
-        await mongoVariant.save()
-        // const inventory = new Inventory({
-        //   variantId: mongoVariant._id,
-        //   actionName: 'Khởi tạo biến thể',
-        //   change: {
-        //     amount: variant.inventories.initStock,
-        //     type: 'Tăng'
-        //   },
-        //   instock: variant.inventories.initStock,
-        //   price: variant.inventories.initPrice,
-        // })
+          totalQuantity += variant.inventories.onHand
+          const mongoVariant = new Variant({ 
+            ...variant,
+            productId: product._id 
+          })
 
-        // await inventory.save()
+          await mongoVariant.save()
 
-        return mongoVariant
-      }))
+          return mongoVariant
+        }))
 
       configVariant = await Variant.find({ productId: product._id }).lean()
 
@@ -172,13 +156,14 @@ module.exports.createMMSProduct = async (req, res) => {
             lineItems: configVariant.map((variant, index) => ({
               ...variant,
               inventories: {
-                initStock: req.body.variants[index].inventories.initStock, 
+                onHand: req.body.variants[index].inventories.onHand, 
                 initPrice: variant.inventories.initPrice
               },
               variantId: variant._id,
               price: variant.inventories.initPrice,
-              quantity: req.body.variants[index].inventories.initStock,
+              quantity: req.body.variants[index].inventories.onHand,
             })),
+            init: true,
             orderStatus: 'Đã hoàn thành',
             instockStatus: true,
             paymentStatus: 'Đã thanh toán',
@@ -198,6 +183,7 @@ module.exports.createMMSProduct = async (req, res) => {
 
     res.status(200).send(result);
   } catch (e) {
+    console.log(e.message)
     res.status(500).send(Error(e));
   }
 };
@@ -229,6 +215,8 @@ module.exports.deleteProduct = async (req, res) => {
     if (!product) {
       return res.status(404).send();
     }
+
+    await Variant.deleteMany({ productId: product._id })
 
     res.send(product);
   } catch (e) {

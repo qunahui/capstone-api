@@ -36,7 +36,7 @@ module.exports.pushUpdatedToApi = async (req, res) => {
           return matchedVariant = {
             ...matchedVariant,
             price: variant.retailPrice,
-            quantity: variant.inventories.initStock
+            quantity: variant.inventories.available
           }
         }
         return matchedVariant
@@ -74,7 +74,7 @@ module.exports.pushUpdatedToApi = async (req, res) => {
           return matchedVariant = {
             ...matchedVariant,
             price: variant.retailPrice,
-            quantity: variant.inventories.initStock
+            quantity: variant.inventories.available
           }
         }
         return matchedVariant
@@ -85,9 +85,12 @@ module.exports.pushUpdatedToApi = async (req, res) => {
       try {
         await rp({
           method: 'PATCH',
-          url: 'http://localhost:5000/api/lazada/products',
+          url: 'http://localhost:5000/api/lazada/products/price_quantity',
           json: true,
-          body: lazadaProduct,
+          body: {
+            lazadaProduct,
+            variantId: lazadaProduct.variants.find(matchedVariant => matchedVariant._id.toString() === linkedId.id).SkuId
+          },
           headers: {
             'Authorization': 'Bearer ' + req.mongoToken,
             "Platform-Token": storage.lazadaCredentials[0].access_token
@@ -287,10 +290,10 @@ module.exports.createMMSVariant = async (req, res) => {
       variantId: variant._id,
       actionName: 'Khởi tạo biến thể',
       change: {
-        amount: variant.inventories.initStock,
+        amount: variant.inventories.onHand,
         type: 'Tăng'
       },
-      instock: variant.inventories.initStock,
+      instock: variant.inventories.onHand,
       price: variant.inventories.initPrice,
     })
 

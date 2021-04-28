@@ -43,6 +43,7 @@ router.post('/update-seller-email', auth, controller.updateSellerEmail) //not wo
 router.post('/upload-image', upload.single('image') ,auth , controller.uploadImage)
 //router.patch('/products/:sellerSku',auth, controller.updateProduct)  //api cua laz thay doi
 router.patch('/products/',auth, controller.updateProduct)
+router.patch('/products/price_quantity',auth, controller.updatePriceQuantity)
 router.post('/products', auth, controller.createProductOnLazada)
 router.delete('/products/:sellerSku', auth, controller.deleteProduct)
 

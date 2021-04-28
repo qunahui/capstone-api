@@ -26,7 +26,6 @@ const checkComplete = async (_id) => {
 
 const checkLinkedVariants = async (variant, mongoToken) => {
   try {
-    console.log("checking: ,", variant)
     await rp({ 
       method: 'POST',
       url: 'http://localhost:5000/variants/push-api',
@@ -54,9 +53,11 @@ module.exports.createReceipt = async (req,res) => {
     await Promise.all(lineItems.map(async (item) => {
       const variantId = item._id
       const mongoVariant = await Variant.findOne({ _id : variantId })
-      const newStock = mongoVariant.inventories.initStock - item.quantity
+      // const newStock = mongoVariant.inventories.onHand - item.quantity
       
-      mongoVariant.inventories.initStock = newStock;
+      mongoVariant.inventories.onHand -= item.quantity;
+      mongoVariant.inventories.trading -= item.quantity;
+
       await mongoVariant.save();
 
       const inventory = new Inventory({
@@ -66,14 +67,16 @@ module.exports.createReceipt = async (req,res) => {
           amount: item.quantity,
           type: 'Giảm'
         },
-        instock: newStock,
+        instock: mongoVariant.inventories.onHand,
         reference: order.code,
         price: item.price,
       })
 
       await inventory.save()
 
-      await checkLinkedVariants(mongoVariant, req.mongoToken)
+      if(mongoVariant.linkedIds.length > 0) {
+        await checkLinkedVariants(mongoVariant, req.mongoToken)
+      }
     }))
 
     order.step[2] = {
@@ -145,7 +148,15 @@ module.exports.createOrder = async (req,res) => {
     },
     ]
     const order = new Order({...req.body, step })
+
+    const { lineItems } = req.body
     
+    await Promise.all(lineItems.map(async variant => {
+      const matchedVariant = await Variant.findOne({ _id: variant._id })
+      matchedVariant.inventories.trading += variant.quantity
+      matchedVariant.save()
+    }))
+
     await order.save()
     res.send(order)
   } catch(e) {
