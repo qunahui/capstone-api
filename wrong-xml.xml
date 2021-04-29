@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" ?><Request>
+    <Product>
+        <PrimaryCategory>6191</PrimaryCategory>
+        <SPUId/>
+        <Attributes>
+            <name>Laptop gaming ASUS</name>
+            <brand>ASUS</brand>
+            <warranty_type>Electronic Warranty</warranty_type>
+        </Attributes>
+        <Skus>
+            <Sku>
+                <color_family>Antique White</color_family>
+                <SellerSku>laptop-sku - Antique White - var1</SellerSku>
+                <quantity>100</quantity>
+                <price>100000</price>
+                <package_weight>100</package_weight>
+                <package_length>100</package_length>
+                <package_width>100</package_width>
+                <package_height>100</package_height>
+                <Variation>var1</Variation>
+                <Images>
+                    <Image>https://firebasestorage.googleapis.com/v0/b/testapi-3a32b.appspot.com/o/6062f18961721e243858b760%2F1619162840941_56942541_734065423656092_5830308110207549440_n.jpg?alt=media</Image>
+                </Images>
+            </Sku>
+            <Sku>
+                <color_family>Antique White</color_family>
+                <SellerSku>laptop-sku - Antique White - var2</SellerSku>
+                <quantity>100</quantity>
+                <price>100000</price>
+                <package_weight>100</package_weight>
+                <package_length>100</package_length>
+                <package_width>100</package_width>
+                <package_height>100</package_height>
+                <Variation>var2</Variation>
+                <Images>
+                    <Image>https://firebasestorage.googleapis.com/v0/b/testapi-3a32b.appspot.com/o/6062f18961721e243858b760%2F1619162840941_56942541_734065423656092_5830308110207549440_n.jpg?alt=media</Image>
+                </Images>
+            </Sku>
+            <Sku>
+                <color_family>Apricot</color_family>
+                <SellerSku>laptop-sku - Apricot - var1</SellerSku>
+                <quantity>100</quantity>
+                <price>100000</price>
+                <package_weight>100</package_weight>
+                <package_length>100</package_length>
+                <package_width>100</package_width>
+                <package_height>100</package_height>
+                <Variation>var1</Variation>
+                <Images>
+                    <Image>https://firebasestorage.googleapis.com/v0/b/testapi-3a32b.appspot.com/o/6062f18961721e243858b760%2F1619162840941_56942541_734065423656092_5830308110207549440_n.jpg?alt=media</Image>
+                </Images>
+            </Sku>
+            <Sku>
+                <color_family>Apricot</color_family>
+                <SellerSku>laptop-sku - Apricot - var2</SellerSku>
+                <quantity>100</quantity>
+                <price>100000</price>
+                <package_weight>100</package_weight>
+                <package_length>100</package_length>
+                <package_width>100</package_width>
+                <package_height>100</package_height>
+                <Variation>var2</Variation>
+                <Images>
+                    <Image>https://firebasestorage.googleapis.com/v0/b/testapi-3a32b.appspot.com/o/6062f18961721e243858b760%2F1619162840941_56942541_734065423656092_5830308110207549440_n.jpg?alt=media</Image>
+                </Images>
+            </Sku>
+        </Skus>
+    </Product>
+</Request>

@@ -1,0 +1,98 @@
+{
+  "isActivated": true,
+  "status": "connected",
+  "lastSync": "2021-04-16T11:06:40.078Z",
+  "_id": "60796e917791bd12dc343110",
+  "platform_name": "lazada",
+  "refresh_token": "50001500511V3qcqMIw7qHv1973b0fa2uTb8co1gnsbTvlYfbvBkt2HllQmirOVB",
+  "access_token": "500005000112pCawUSfbySl12f92c6axELBNZvxde1hVjqrdsukWdjU9syzPtBwi",
+  "expires": "2021-04-23T11:01:37.093Z",
+  "refresh_expires": "2021-05-16T11:01:37.093Z",
+  "store_name": "Orihss",
+  "store_id": "200163939035",
+  "name": "Laptop gaming ASUS",
+  "sku": "laptop-sku",
+  "quantity": 100,
+  "retailPrice": 100000,
+  "specialPrice": 100000,
+  "post": true,
+  "Request": {
+    "Product": {
+      "PrimaryCategory": 6191,
+      "SPUId": null,
+      "Attributes": {
+        "name": "Laptop gaming ASUS",
+        "brand": "ASUS",
+        "warranty_type": "Electronic Warranty"
+      },
+      "Skus": {
+        "Sku": [
+          {
+            "color_family": "Antique White",
+            "SellerSku": "laptop-sku - Antique White - var1",
+            "quantity": 100,
+            "price": 100000,
+            "package_weight": 100,
+            "package_length": 100,
+            "package_width": 100,
+            "package_height": 100,
+            "Variation": "var1",
+            "Images": {
+              "Image": [
+                "https://firebasestorage.googleapis.com/v0/b/testapi-3a32b.appspot.com/o/6062f18961721e243858b760%2F1619162840941_56942541_734065423656092_5830308110207549440_n.jpg?alt=media"
+              ]
+            }
+          },
+          {
+            "color_family": "Antique White",
+            "SellerSku": "laptop-sku - Antique White - var2",
+            "quantity": 100,
+            "price": 100000,
+            "package_weight": 100,
+            "package_length": 100,
+            "package_width": 100,
+            "package_height": 100,
+            "Variation": "var2",
+            "Images": {
+              "Image": [
+                "https://firebasestorage.googleapis.com/v0/b/testapi-3a32b.appspot.com/o/6062f18961721e243858b760%2F1619162840941_56942541_734065423656092_5830308110207549440_n.jpg?alt=media"
+              ]
+            }
+          },
+          {
+            "color_family": "Apricot",
+            "SellerSku": "laptop-sku - Apricot - var1",
+            "quantity": 100,
+            "price": 100000,
+            "package_weight": 100,
+            "package_length": 100,
+            "package_width": 100,
+            "package_height": 100,
+            "Variation": "var1",
+            "Images": {
+              "Image": [
+                "https://firebasestorage.googleapis.com/v0/b/testapi-3a32b.appspot.com/o/6062f18961721e243858b760%2F1619162840941_56942541_734065423656092_5830308110207549440_n.jpg?alt=media"
+              ]
+            }
+          },
+          {
+            "color_family": "Apricot",
+            "SellerSku": "laptop-sku - Apricot - var2",
+            "quantity": 100,
+            "price": 100000,
+            "package_weight": 100,
+            "package_length": 100,
+            "package_width": 100,
+            "package_height": 100,
+            "Variation": "var2",
+            "Images": {
+              "Image": [
+                "https://firebasestorage.googleapis.com/v0/b/testapi-3a32b.appspot.com/o/6062f18961721e243858b760%2F1619162840941_56942541_734065423656092_5830308110207549440_n.jpg?alt=media"
+              ]
+            }
+          }
+        ]
+      }
+    }
+  }
+}

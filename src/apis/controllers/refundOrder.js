@@ -35,9 +35,11 @@ module.exports.createReceipt = async (req,res) => {
         const variantId = item._id
         const mongoVariant = await Variant.findOne({ _id : variantId })
   
-        const newStock = mongoVariant.inventories.initStock + item.quantity
+        const newStock = mongoVariant.inventories.onHand + item.quantity
   
-        mongoVariant.inventories.initStock = newStock;
+        mongoVariant.inventories.onHand = newStock;
+        mongoVariant.inventories.incoming -= item.quantity;
+
         await mongoVariant.save();
   
         const inventory = new Inventory({
@@ -108,6 +110,14 @@ module.exports.createRefundOrder = async (req,res) => {
       isCreated: false,
     },
     ]
+
+    const { lineItems } = req.body
+
+    await Promise.all(lineItems.map(async variant => {
+       const matchedVariant = await Variant.findOne({ _id: variant._id })
+       matchedVariant.inventories.incoming += variant.quantity
+       matchedVariant.save()
+    }))
 
     const refundOrder = new RefundOrder({
       ...req.body, 
