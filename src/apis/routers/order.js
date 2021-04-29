@@ -10,6 +10,10 @@ router.get("/:id", auth, orderController.getOrderById)
 
 router.post("/", auth, orderController.createOrder)
 
+router.post("/lazada", auth, orderController.createLazadaOrder)
+
+router.post("/sendo", auth, orderController.createSendoOrder)
+
 router.get("/cancel/:_id", auth, orderController.cancelOrder)
 
 router.post("/pack/:_id", auth, orderController.createPackaging)

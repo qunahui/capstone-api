@@ -814,6 +814,7 @@ module.exports.createProductOnLazada = async (req, res) =>{
     const data = req.body
     const payload = '<?xml version="1.0" encoding="UTF-8" ?>'+ convert.js2xml(data, {compact: true, ignoreComment: true, spaces: 0})
     
+    //res.send(payload)
     const commonRequestParams = {
         "app_key": appKey,
         "timestamp": timestamp,
@@ -822,6 +823,7 @@ module.exports.createProductOnLazada = async (req, res) =>{
     }
     const sign = signRequest(appSecret, apiPath, {...commonRequestParams, payload})
     const encodePayload = encodeURIComponent(payload)
+    
     try {
         var options = {
             'method': 'POST',
@@ -1058,7 +1060,7 @@ module.exports.searchOrder = async (req, res) =>{
     }
     const created_after = req.query.created_after
     //const status = req.query.status
-    const sign = this.signRequest(appSecret, apiPath, {...commonRequestParams, created_after})
+    const sign = signRequest(appSecret, apiPath, {...commonRequestParams, created_after})
     const encodeCreateAfter = encodeURIComponent(created_after)
     try {
         var options = {
@@ -1155,7 +1157,7 @@ module.exports.getOrderItems = async (req, res) =>{
             const listItem = JSON.parse(response.body).data
             listItem.forEach(item => {
                 item.quantity = 1
-                item.store_sku = item.sku
+                item.price = item.item_price
             });
             var i,m =0
             for(i =1;i < listItem.length;i++)

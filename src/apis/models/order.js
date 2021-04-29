@@ -48,9 +48,19 @@ const orderSchema = new Schema({
   },
   note: {
     type: String,
+    default: ''
+  },
+  shippingFee:{
+    type: Number
+  },
+  trackingNumber:{
+    type: String
+  },
+  deliveryInfo:{
+    type: String
   },
   totalPrice: {
-    type: Number,
+    type: String,
   },
   paidPrice: {
     type: Number,
@@ -83,6 +93,10 @@ const orderSchema = new Schema({
   paymentStatus: {
     type: String,
     default: 'Chưa thanh toán'
+  },
+  paymentMethod: {
+    type: String,
+    default: 'COD'
   },
   createdAt: {
     type: Date,
