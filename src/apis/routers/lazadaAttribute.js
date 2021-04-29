@@ -7,24 +7,39 @@ const Error = require('../utils/error')
 const { signRequest } = require('../utils/laz-sign-request')
 const rp = require('request-promise')
 
+router.get('/test', async (req, res) => {
+  const all = await LazadaAttribute.find({})
+
+  let hmmm = []
+
+  all.map((i, index) => {
+    i.attributes.map(att => {
+      if(att.input_type === 9) {
+        hmmm.push(att)
+      }
+    })
+    console.log(index)
+  })
+
+  res.send(hmmm)
+})
+
 router.get('/:categoryId', async (req, res) => {
   const categoryId = parseInt(req.params.categoryId)
 
   try {
-    // const attrs = await LazadaAttribute.findOne({ categoryId })
-    const attrs = null // tạm sử dụng tiếng anh
-    if(attrs) {
-      return res.status(200).send(attrs.attributes)
-    } else {
-      // find in lazada api if not exists
-      const apiAttrs = await rp({ 
-        method: 'GET',
-        url: 'http://localhost:5000/api/lazada/attribute/' + categoryId,
-        json: true,
-      })
+    const attrs = await LazadaAttribute.findOne({ categoryId })
+    // find in lazada api if not exists
+    const apiAttrs = await rp({ 
+      method: 'GET',
+      url: 'http://localhost:5000/api/lazada/attribute/' + categoryId,
+      json: true,
+    })
 
-      return res.status(200).send(apiAttrs)
-    }
+    return res.status(200).send({
+      api: apiAttrs,
+      db: attrs
+    })
   } catch(e) {
     console.log(e.message)
     return res.status(500).send(Error({ message: 'Something went wrong !'}))

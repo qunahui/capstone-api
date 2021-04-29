@@ -12,7 +12,7 @@ module.exports.createMultiPlatform = async (req, res) => {
       if(item.post === true) {
         console.log("Begin create to: ", item.store_name)
         if(item.platform_name === 'lazada') {
-            await rp({
+            const lazRes = await rp({
               method: 'POST',
               url: 'http://localhost:5000/api/lazada/products',
               body: {
@@ -23,7 +23,9 @@ module.exports.createMultiPlatform = async (req, res) => {
                 'Authorization': 'Bearer ' + req.mongoToken,
                 'Platform-Token': item.access_token
             }
-          })
+           })
+          
+          console.log(lazRes)
 
           await rp({
             method: 'POST',
@@ -38,6 +40,7 @@ module.exports.createMultiPlatform = async (req, res) => {
             },
             json: true
           })   
+
         } else if(item.platform_name === 'sendo') {
           await rp({
             method: 'POST',
