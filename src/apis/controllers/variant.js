@@ -45,7 +45,7 @@ module.exports.pushUpdatedToApi = async (req, res) => {
       try {
         await rp({
           method: 'PATCH',
-          url: 'http://localhost:5000/api/sendo/products',
+          url: `{process.env.API_URL}/api/sendo/products`,
           json: true,
           body: sendoProduct,
           headers: {
@@ -85,7 +85,7 @@ module.exports.pushUpdatedToApi = async (req, res) => {
       try {
         await rp({
           method: 'PATCH',
-          url: 'http://localhost:5000/api/lazada/products/price_quantity',
+          url: `{process.env.API_URL}/api/lazada/products/price_quantity`,
           json: true,
           body: {
             lazadaProduct,
@@ -323,7 +323,7 @@ module.exports.updateVariant = async (req, res) => {
     if(priceChanged) {
       await rp({ 
         method: 'POST',
-        url: 'http://localhost:5000/variants/push-api',
+        url: `{process.env.API_URL}/variants/push-api`,
         json: true,
         body: {
           variant
