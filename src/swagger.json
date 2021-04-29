@@ -667,6 +667,338 @@
         ]
       }
     },
+    "/orders/lazada": {
+      "post": {
+        "tags": [
+          "orders"
+        ],
+        "summary": "Add a new Lazada product to the store",
+        "operationId": "addLazadaOrder",
+        "requestBody": {
+          "content":{
+            "application/json":{
+              "schema":{
+              },
+              "example":{
+                "voucher_platform": 0,
+                "voucher": 0,
+                "warehouse_code": "dropshipping",
+                "order_number": 267078668313259,
+                "voucher_seller": 0,
+                "created_at": "2020-12-19 09:34:17 +0700",
+                "voucher_code": "",
+                "gift_option": false,
+                "shipping_fee_discount_platform": 0,
+                "customer_last_name": "",
+                "updated_at": "2020-12-19 09:37:02 +0700",
+                "promised_shipping_times": "",
+                "price": "700,000.00",
+                "national_registration_number": "",
+                "shipping_fee_original": 9900,
+                "payment_method": "COD",
+                "customer_first_name": "L******* ",
+                "shipping_fee_discount_seller": 0,
+                "shipping_fee": 9900,
+                "items_count": 1,
+                "delivery_info": "",
+                "statuses": [
+                  "canceled"
+                ],
+                "address_billing": {
+                  "country": "Vietnam",
+                  "address3": "H*********h",
+                  "phone": "84********98",
+                  "address2": "",
+                  "city": "Quận 12",
+                  "address1": "2******3",
+                  "post_code": "",
+                  "phone2": "",
+                  "last_name": "",
+                  "address5": "P********************n",
+                  "address4": "Q*****2",
+                  "first_name": "Trần Vũ Lộc"
+                },
+                "extra_attributes": "{\"TaxInvoiceRequested\":false}",
+                "order_id": 267078668313259,
+                "gift_message": "",
+                "remarks": "",
+                "address_shipping": {
+                  "country": "Vietnam",
+                  "address3": "H*********h",
+                  "phone": "84********98",
+                  "address2": "",
+                  "city": "Quận 12",
+                  "address1": "2******3",
+                  "post_code": "",
+                  "phone2": "",
+                  "last_name": "",
+                  "address5": "P********************n",
+                  "address4": "Q*****2",
+                  "first_name": "Trần Vũ Lộc"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful"
+          },
+          "405": {
+            "description": "Invalid input"
+          },
+          "500": {
+            "description": "Error: Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": [],
+            "ApiKeyAuth": []
+          }
+        ]
+      },
+      "get": {
+        "tags": [
+          "orders"
+        ],
+        "summary": "Get all order",
+        "operationId": "getAllOrder",
+        "responses": {
+          "200": {
+            "description": "Successful"
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "404": {
+            "description": "Pet not found"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": [],
+            "ApiKeyAuth": []
+          }
+        ]
+      }
+    },
+    "/orders/sendo": {
+      "post": {
+        "tags": [
+          "orders"
+        ],
+        "summary": "Add a new Sendo product to the store",
+        "operationId": "addSendoOrder",
+        "requestBody": {
+          "content":{
+            "application/json":{
+              "schema":{
+              },
+              "example":  {
+                "sales_order": {
+                    "order_number": "14678191438",
+                    "order_status": 13,
+                    "delivery_status": 0,
+                    "payment_status": 1,
+                    "tracking_number": "",
+                    "carrier_name": "Chuyển phát tiêu chuẩn",
+                    "carrier_code": "ecom_shipping_dispatch_cptc_sc",
+                    "carrier_phone": "",
+                    "sort_code": "",
+                    "buyer_phone": "0914350100",
+                    "buyer_address": "269 Đường Liên Phường, Phường Phước Long B, Quận 9",
+                    "buyer_region_id": 1,
+                    "buyer_district_id": 9,
+                    "buyer_region": "",
+                    "buyer_district": "",
+                    "buyer_ward": "",
+                    "sales_order_merges": "",
+                    "is_shop_voucher": false,
+                    "is_delivery_failed": false,
+                    "warning_status": 0,
+                    "is_merge": false,
+                    "mobile_discount_amount": 0.0,
+                    "allow_check": false,
+                    "is_self_shipping": false,
+                    "bank_name": "",
+                    "is_installment": false,
+                    "is_first_order": false,
+                    "installment_fee": 0.0,
+                    "sendo_support_fee_to_buyer": 0.0,
+                    "reason_cancel_code": "CBS",
+                    "voucher_value": 0.0,
+                    "region_name": "269 Đường Liên Phường, Phường Phước Long B, Quận 9, Phường Phước Long B, Quận 9, Hồ Chí Minh",
+                    "seller_shipping_fee": 0.0,
+                    "senpay_free_shipping": 0.0,
+                    "sendo_support_fee": 0.0,
+                    "parent_order_number": "",
+                    "child_order_number": "",
+                    "transferred_amount": 0.0,
+                    "affiliate_from_source": "",
+                    "affiliate_name": "",
+                    "affiliate_total_amount": 0.0,
+                    "receiver_address": "",
+                    "receiver_ward": "",
+                    "receiver_district": "",
+                    "receiver_region": "",
+                    "bank_code": "",
+                    "installment_bank_fee": 0.0,
+                    "payment_period": "",
+                    "percent_installment": 0.0,
+                    "transportation_type": "",
+                    "receiver_email": "",
+                    "tracking_link": "",
+                    "payment_status_name": "Chưa nhận tiền",
+                    "senpay_fee": 0.0,
+                    "store_picking_address": "269 Đường Liên Phườn, Phường Phước Long B, Quận 9, Hồ Chí Minh",
+                    "is_declare_value": false,
+                    "declare_value_fee": 0.0,
+                    "cod_fee": 0.0,
+                    "is_post_office": false,
+                    "post_offices_fee": 0.0,
+                    "sales_order_type": 1,
+                    "sales_promotion_amount": 0.0,
+                    "types_of_sales_promotion": 0,
+                    "is_printed": false,
+                    "sales_product_type": 1,
+                    "payment_type": 0,
+                    "ship_from_region_id": 1,
+                    "ship_from_country_code": "",
+                    "receiver_name": "Đặng Quang Huy",
+                    "ship_to_address": "269 Đường Liên Phường, Phường Phước Long B, Quận 9",
+                    "ship_to_ward": "Phường Phước Long B",
+                    "ship_from_district_id": 9,
+                    "ship_to_district_id": 9,
+                    "ship_to_country_code": "",
+                    "ship_to_zipcode": "",
+                    "shipping_contact_phone": "0914350100",
+                    "ship_to_region_id": 1,
+                    "ship_from_ward": "Phường Phước Long B",
+                    "shipping_type": 1,
+                    "shipping_fee": 14000.0,
+                    "ship_from_address": "269 Đường Liên Phườn",
+                    "total_amount": 100000.0,
+                    "weight": 1000.0,
+                    "actual_weight": 1000.0,
+                    "payment_method": 1,
+                    "note": "",
+                    "reason_delay": "",
+                    "reason_cancel": "Người bán quá hạn xác nhận tình trạng hàng",
+                    "canceled_by": "",
+                    "refund_to_buyer_amount": 0.0,
+                    "transfer_to_seller_amount": 0.0,
+                    "refund_trans": null,
+                    "is_disputing": false,
+                    "sub_total": 100000.0,
+                    "stage": 10,
+                    "process_refund_amount": 0.0,
+                    "can_action": true,
+                    "order_date_time_stamp": 1609839040.0,
+                    "ticket_use_date_time_stamp": 0.0,
+                    "payment_status_date_time_stamp": 1609839040.0,
+                    "delay_date_time_stamp": null,
+                    "delay_to_date_time_stamp": null,
+                    "submit_date_time_stamp": null,
+                    "pod_date_time_stamp": null,
+                    "canceled_date_time_stamp": 1610012100.0,
+                    "created_date_time_stamp": 1609839040.0,
+                    "updated_date_time_stamp": 1610012096.0,
+                    "expected_delivery_date_time_stamp": null,
+                    "order_status_date_time_stamp": 1610012100.0,
+                    "delivery_status_date_time_stamp": null,
+                    "total_amount_buyer": 100000.0,
+                    "payment_type1": 0,
+                    "payment_status1": 0,
+                    "payment_type1_amount": 0.0,
+                    "payment_type2": 0,
+                    "payment_status2": 0,
+                    "payment_type2_amount": 0.0,
+                    "fds_expired_time": 0,
+                    "shop_program_name": "",
+                    "shop_program_amount": 0.0,
+                    "shipping_voucher_amount": 14000.0,
+                    "seller_pay_later_fee": 0.0,
+                    "shop_voucher_amount": 0.0,
+                    "sendo_voucher_amount": 0.0
+                },
+                "sku_details": [
+                    {
+                        "product_variant_id": 39297530,
+                        "product_name": "dao làm bếp",
+                        "sku": "123456789-123456789",
+                        "quantity": 1,
+                        "size": "",
+                        "color": "",
+                        "price": 100000.0,
+                        "sub_total": 100000.0,
+                        "weight": 1000.0,
+                        "product_image": "https://media3.scdn.vn/img4/2021/01_04/xooWI9JHZXqREjFIeQTB.png",
+                        "description": "Màu sắc: Xám ",
+                        "unit_id": 0,
+                        "attribute_hash": "613",
+                        "shop_program_percent": 0.0,
+                        "shop_program_amount": 0.0,
+                        "is_flash_sales": false,
+                        "flash_sale_amount": 0.0,
+                        "flash_deal_type_names": [],
+                        "is_combo_discount": false,
+                        "combo_parent_product_id": 0
+                    }
+                ]
+            }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful"
+          },
+          "405": {
+            "description": "Invalid input"
+          },
+          "500": {
+            "description": "Error: Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": [],
+            "ApiKeyAuth": []
+          }
+        ]
+      },
+      "get": {
+        "tags": [
+          "orders"
+        ],
+        "summary": "Get all order",
+        "operationId": "getAllOrder",
+        "responses": {
+          "200": {
+            "description": "Successful"
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "404": {
+            "description": "Pet not found"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": [],
+            "ApiKeyAuth": []
+          }
+        ]
+      }
+    },
     "/orders/{orderId}": {
       "get": {
         "tags": [
@@ -3358,6 +3690,53 @@
             }
           }
         },
+        "responses": {
+          "200": {
+            "description": "Successful",
+            "content": {
+              "application/json": {
+                "example": {
+                  "success": true,
+                  "code": "0",
+                  "request_id": "0b1187a316117593884048180"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        }
+      }
+    },
+    "/api/lazada/orders/": {
+      "get": {
+        "tags": [
+          "lazadaAPI"
+        ],
+        "summary": "search order on lazada",
+        "operationId": "searchOrder",
+        "security": [
+          {
+            "bearerAuth": [],
+            "ApiKeyAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "created_after",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "2017-02-10T09:00:00+08:00"
+            },
+            "description": ""
+          }
+        ],
         "responses": {
           "200": {
             "description": "Successful",

@@ -13,8 +13,14 @@ const LazadaAttributeSchema = new Schema({
     type: String
   }],
   attributes: [{
+    id: {
+      type: Number,
+    },
     attribute_type: {
       type: Number,
+    },
+    attribute_name: {
+      type: String,
     },
     input_type: {
       type: Number,

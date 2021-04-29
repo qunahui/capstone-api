@@ -6,11 +6,61 @@ const LazadaAttribute = require('../models/lazadaAttribute')
 const { signRequest } = require('../utils/laz-sign-request')
 const rp = require('request-promise')
 
+
+
 router.get('/count', async (req, res) => {
   const total = await Category.find({ leaf: true })
   res.status(200).send({ length: total.length })
 })
 
+router.get('/search', async (req, res) => {
+  const search = req.query.search
+    
+  try {
+    const attributes = await LazadaAttribute.find({categoryName: new RegExp(search, 'i')});
+
+    res.send(attributes);
+  } catch (e) {
+    res.status(500).send(e.message);
+  }
+
+})
+router.get('/update-attribute-name/', async (req, res) => {
+  var i = 0
+    
+  try {
+   for(i=0;i<=1380;i++){
+    console.log(i)
+    await LazadaAttribute.updateMany({ 
+      attributes: {
+        $elemMatch: {
+          id: i
+        }
+      }
+    } , {
+      $set: {
+        "attributes.$.attribute_name": attributeLabel[i]
+      }
+    })
+     
+   }
+    res.send("done");
+  } catch (e) {
+    res.status(500).send(e.message);
+  }
+
+})
+router.get('/find-null/', async (req, res) => {
+    
+  try {
+    const Name = await LazadaAttribute.find({"attributes.attribute_name": 'null'});
+    
+    res.send(Name)
+  } catch (e) {
+    res.status(500).send(e.message);
+  }
+
+})
 // router.get("/create", async (req, res) => {
 //   try {
 //     // const allLeafCategory = await Category.find({ leaf: true })

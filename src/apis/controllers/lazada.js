@@ -694,7 +694,75 @@ module.exports.updateProduct = async (req, res) =>{
         }
       }
 
-    const payload = '<?xml version="1.0" encoding="UTF-8"?>'+ convert.js2xml(updateFormatProduct, {compact: true, ignoreComment: true, spaces: 4})
+    const payload = '<?xml version="1.0" encoding="UTF-8"?>'+ convert.js2xml(updateFormatProduct, {compact: true, ignoreComment: true, spaces: 0})
+    
+    const commonRequestParams = {
+        "app_key": appKey,
+        "timestamp": timestamp,
+        "sign_method": "sha256",
+        "access_token":accessToken
+    }
+    const sign = signRequest(appSecret, apiPath, {...commonRequestParams, payload})
+    const encodePayload = encodeURIComponent(payload)
+    try {
+        var options = {
+            'method': 'POST',
+            'url': apiUrl+apiPath+
+            '?payload='+encodePayload+
+            '&app_key='+appKey+
+            '&sign_method=sha256&timestamp='+timestamp+
+            '&access_token='+accessToken+
+            '&sign='+sign,
+            'headers': {
+            }
+        };
+        //console.log(options)
+        request(options, function (error, response) {
+            if (error) throw new Error(error);
+            
+            res.status(response.statusCode).send(response.body)
+        });
+    } catch (e) {
+        res.status(500).send(Error(e));
+    }
+    
+}
+module.exports.updatePriceQuantity = async (req, res) =>{
+    const apiUrl = 'https://api.lazada.vn/rest' 
+    const apiPath=  '/product/price_quantity/update'
+    const appSecret = process.env.LAZADA_APP_SECRET
+    const appKey = process.env.LAZADA_APP_KEY
+    const accessToken =  req.accessToken 
+    const timestamp = Date.now()
+    const lazadaproduct = req.body // full product in db
+    // forrmat Product
+
+    if(lazadaproduct.variants){
+        lazadaproduct.variants.forEach(variant => {
+            variant.SellerSku = variant.sku // đổi tên
+            variant.ItemId = lazadaproduct.id  //add ItemId in each variant
+
+            delete variant["_id"]
+            delete variant["sku"]
+            delete variant["ShopSku"]
+            delete variant["productId"]
+            delete variant["variant_attributes"]
+            delete variant["__v"]
+            delete variant["special_price"]
+        });
+    }
+
+    let updateFormatProduct = {
+        "Request":{
+          "Product":{
+            "Skus":{
+              "Sku": lazadaproduct.variants
+            }
+          }
+        }
+      }
+
+    const payload = '<?xml version="1.0" encoding="UTF-8"?>'+ convert.js2xml(updateFormatProduct, {compact: true, ignoreComment: true, spaces: 0})
     
     const commonRequestParams = {
         "app_key": appKey,
@@ -735,8 +803,9 @@ module.exports.createProductOnLazada = async (req, res) =>{
     const accessToken =  req.accessToken // goi db
     const timestamp = Date.now()
     const data = req.body
-    const payload = '<?xml version="1.0" encoding="UTF-8" ?>'+ convert.js2xml(data, {compact: true, ignoreComment: true, spaces: 4})
+    const payload = '<?xml version="1.0" encoding="UTF-8" ?>'+ convert.js2xml(data, {compact: true, ignoreComment: true, spaces: 0})
     
+    //res.send(payload)
     const commonRequestParams = {
         "app_key": appKey,
         "timestamp": timestamp,
@@ -744,7 +813,8 @@ module.exports.createProductOnLazada = async (req, res) =>{
         "access_token":accessToken
     }
     const sign = signRequest(appSecret, apiPath, {...commonRequestParams, payload})
-    const encodePayload = encodeURI(payload)
+    const encodePayload = encodeURIComponent(payload)
+    //res.send(encodePayload)
     try {
         var options = {
             'method': 'POST',
@@ -977,7 +1047,7 @@ module.exports.searchOrder = async (req, res) =>{
     }
     const created_after = req.query.created_after
     //const status = req.query.status
-    const sign = this.signRequest(appSecret, apiPath, {...commonRequestParams, created_after})
+    const sign = signRequest(appSecret, apiPath, {...commonRequestParams, created_after})
     const encodeCreateAfter = encodeURIComponent(created_after)
     try {
         var options = {
@@ -1074,7 +1144,7 @@ module.exports.getOrderItems = async (req, res) =>{
             const listItem = JSON.parse(response.body).data
             listItem.forEach(item => {
                 item.quantity = 1
-                item.store_sku = item.sku
+                item.price = item.item_price
             });
             var i,m =0
             for(i =1;i < listItem.length;i++)
