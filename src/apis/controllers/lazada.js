@@ -823,6 +823,7 @@ module.exports.createProductOnLazada = async (req, res) =>{
     }
     const sign = signRequest(appSecret, apiPath, {...commonRequestParams, payload})
     const encodePayload = encodeURIComponent(payload)
+    
     try {
         var options = {
             'method': 'POST',
