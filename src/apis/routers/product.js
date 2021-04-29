@@ -16,4 +16,6 @@ router.patch("/:id", auth, productController.updateProduct);
 
 router.delete("/:id", auth, productController.deleteProduct);
 
+router.post('/create-multi-platform', auth, productController.createMultiPlatform)
+
 module.exports = router;

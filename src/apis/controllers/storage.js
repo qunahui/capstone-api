@@ -37,6 +37,8 @@ module.exports.refreshAllToken = async (req, res) => {
         },
         json: true
       })
+
+      console.log("refresh: ", newCred.store_name)
     }))
 
     const newStorage = await Storage.findOne({ _id: storageId }) 

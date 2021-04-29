@@ -38,6 +38,28 @@ router.get("/create", async (req, res) => {
   res.status(200).send({ length: all.length })
 })
 
+router.get('/search/:search', async (req, res) => {
+  const search = req.params.search
+  try { 
+    //scoring sometimes wrong, so I make the exact result always the best match
+    let brands = await Brand.fuzzySearch({ query: search, minSize: 5 }).limit(10)
+    let exactIndex = brands.findIndex(i => i.name.toLowerCase().trim() === search.toLowerCase().trim())
+    if(exactIndex === -1) {
+      let exact = await Brand.findOne({ name: { $regex: new RegExp('^' + search.toLowerCase() + '$', "i") }})
+      if(exact) {
+        brands = [exact, ...brands]
+      }
+    } else {
+      let swap = brands[0]
+      brands[0] = brands[exactIndex]
+      brands[exactIndex] = swap
+    }
 
+    res.status(200).send(brands)
+  } catch(e) {
+    console.log(e.message)
+    res.status(500).send(Error({ message: 'Something went wrong, ' + e.message }))
+  }
+})
 
 module.exports = router;

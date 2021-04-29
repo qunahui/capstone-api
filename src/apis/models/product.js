@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
+const mongooseFuzzySearching = require('mongoose-fuzzy-searching')
 
 const productSchema = new Schema({
   avatar: [{
@@ -19,6 +20,9 @@ const productSchema = new Schema({
   categoryName: {
     type: String,
     required: true,
+  },
+  shortDescription: {
+    type: String,
   },
   description:{
     type: String,
@@ -47,7 +51,7 @@ const productSchema = new Schema({
   },
   sellable: {
     type: Boolean,
-    required: true
+    required: true,
   },
   sku: {
     type: String,
@@ -84,5 +88,10 @@ productSchema.virtual("variants",{
   localField: "_id",
   foreignField: "productId"
 })
+
+productSchema.plugin(mongooseFuzzySearching, { fields: [{
+  name: 'name',
+  minSize: 3
+}] })
 
 module.exports = mongoose.model("Product", productSchema);

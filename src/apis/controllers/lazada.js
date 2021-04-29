@@ -8,11 +8,12 @@ const { createLazadaProduct } = require('./lazadaProduct');
 const LazadaProduct = require('../models/lazadaProduct');
 const Error = require('../utils/error')
 const timeDiff = require('../utils/timeDiff')
+const util = require('util')
 
 const { LazadaRequest, LazadaClient } = require('lazada-sdk-client');
 
 
-var options = {compact: true, ignoreComment: true, spaces: 4};
+var options = {compact: true, ignoreComment: true, spaces: 0};
 
 module.exports.authorizeCredential = async (req, res) => {
   try {
@@ -626,7 +627,7 @@ module.exports.uploadImage = async (req, res) =>{
 //             }
 //         }
 //     }
-//     const payload = '<?xml version="1.0" encoding="UTF-8" ?>'+ convert.js2xml(data, {compact: true, ignoreComment: true, spaces: 4})
+//     const payload = '<?xml version="1.0" encoding="UTF-8" ?>'+ convert.js2xml(data, {compact: true, ignoreComment: true, spaces: 0})
     
 //     const commonRequestParams = {
 //         "app_key": appKey,
@@ -682,11 +683,13 @@ module.exports.updateProduct = async (req, res) =>{
         });
     }
 
+    delete lazadaproduct.attributes.description
+
     let updateFormatProduct = {
         "Request":{
           "Product":{
             "ItemId": lazadaproduct.id,
-            "Attributes": lazadaproduct.attributes,
+            // "Attributes": lazadaproduct.attributes,
             "Skus":{
               "Sku": lazadaproduct.variants
             }
@@ -702,6 +705,7 @@ module.exports.updateProduct = async (req, res) =>{
         "sign_method": "sha256",
         "access_token":accessToken
     }
+
     const sign = signRequest(appSecret, apiPath, {...commonRequestParams, payload})
     const encodePayload = encodeURIComponent(payload)
     try {
@@ -716,7 +720,7 @@ module.exports.updateProduct = async (req, res) =>{
             'headers': {
             }
         };
-        //console.log(options)
+        console.log(util.inspect(updateFormatProduct, {showHidden: false, depth: null}))
         request(options, function (error, response) {
             if (error) throw new Error(error);
             
@@ -727,74 +731,79 @@ module.exports.updateProduct = async (req, res) =>{
     }
     
 }
+
 module.exports.updatePriceQuantity = async (req, res) =>{
-    const apiUrl = 'https://api.lazada.vn/rest' 
-    const apiPath=  '/product/price_quantity/update'
-    const appSecret = process.env.LAZADA_APP_SECRET
-    const appKey = process.env.LAZADA_APP_KEY
-    const accessToken =  req.accessToken 
-    const timestamp = Date.now()
-    const lazadaproduct = req.body // full product in db
-    // forrmat Product
+  const apiUrl = 'https://api.lazada.vn/rest' 
+  const apiPath=  '/product/update'
+  const appSecret = process.env.LAZADA_APP_SECRET
+  const appKey = process.env.LAZADA_APP_KEY
+  const accessToken =  req.accessToken 
+  const timestamp = Date.now()
+  const { lazadaProduct, variantId } = req.body // full product in db
+  // forrmat Product
+  if(lazadaProduct.variants){
+      lazadaProduct.variants.forEach(variant => {
+          variant.SellerSku = variant.sku // đổi tên
+  
+          delete variant["_id"]
+          delete variant["sku"]
+          delete variant["ShopSku"]
+          delete variant["productId"]
+          delete variant["variant_attributes"]
+          delete variant["__v"]
+          delete variant["special_price"]
+      });
+  }
 
-    if(lazadaproduct.variants){
-        lazadaproduct.variants.forEach(variant => {
-            variant.SellerSku = variant.sku // đổi tên
-            variant.ItemId = lazadaproduct.id  //add ItemId in each variant
+  delete lazadaProduct.attributes.description
 
-            delete variant["_id"]
-            delete variant["sku"]
-            delete variant["ShopSku"]
-            delete variant["productId"]
-            delete variant["variant_attributes"]
-            delete variant["__v"]
-            delete variant["special_price"]
-        });
-    }
-
-    let updateFormatProduct = {
-        "Request":{
-          "Product":{
-            "Skus":{
-              "Sku": lazadaproduct.variants
-            }
+  let updateFormatProduct = {
+      "Request":{
+        "Product":{
+          "ItemId": lazadaProduct.id,
+          // "Attributes": lazadaProduct.attributes,
+          "Skus":{
+            "Sku": [lazadaProduct.variants.find(matchedVariant => matchedVariant.SkuId === variantId)]
           }
         }
       }
+    }
 
-    const payload = '<?xml version="1.0" encoding="UTF-8"?>'+ convert.js2xml(updateFormatProduct, {compact: true, ignoreComment: true, spaces: 0})
-    
-    const commonRequestParams = {
-        "app_key": appKey,
-        "timestamp": timestamp,
-        "sign_method": "sha256",
-        "access_token":accessToken
-    }
-    const sign = signRequest(appSecret, apiPath, {...commonRequestParams, payload})
-    const encodePayload = encodeURIComponent(payload)
-    try {
-        var options = {
-            'method': 'POST',
-            'url': apiUrl+apiPath+
-            '?payload='+encodePayload+
-            '&app_key='+appKey+
-            '&sign_method=sha256&timestamp='+timestamp+
-            '&access_token='+accessToken+
-            '&sign='+sign,
-            'headers': {
-            }
-        };
-        //console.log(options)
-        request(options, function (error, response) {
-            if (error) throw new Error(error);
-            
-            res.status(response.statusCode).send(response.body)
-        });
-    } catch (e) {
-        res.status(500).send(Error(e));
-    }
-    
+  const payload = '<?xml version="1.0" encoding="UTF-8"?>'+ convert.js2xml(updateFormatProduct, {compact: true, ignoreComment: true, spaces: 0})
+  
+  const commonRequestParams = {
+      "app_key": appKey,
+      "timestamp": timestamp,
+      "sign_method": "sha256",
+      "access_token":accessToken
+  }
+
+  const sign = signRequest(appSecret, apiPath, {...commonRequestParams, payload})
+  const encodePayload = encodeURIComponent(payload)
+  try {
+      var options = {
+          'method': 'POST',
+          'url': apiUrl+apiPath+
+          '?payload='+encodePayload+
+          '&app_key='+appKey+
+          '&sign_method=sha256&timestamp='+timestamp+
+          '&access_token='+accessToken+
+          '&sign='+sign,
+          'headers': {
+          }
+      };
+      console.log(util.inspect(updateFormatProduct, {showHidden: false, depth: null}))
+      request(options, function (error, response) {
+          if (error) throw new Error(error);
+          
+          res.status(response.statusCode).send(response.body)
+      });
+  } catch (e) {
+      res.status(500).send(Error(e));
+  }
 }
+
+
 module.exports.createProductOnLazada = async (req, res) =>{
     const apiUrl = 'https://api.lazada.vn/rest' 
     const apiPath=  '/product/create'
@@ -814,7 +823,7 @@ module.exports.createProductOnLazada = async (req, res) =>{
     }
     const sign = signRequest(appSecret, apiPath, {...commonRequestParams, payload})
     const encodePayload = encodeURIComponent(payload)
-    //res.send(encodePayload)
+    
     try {
         var options = {
             'method': 'POST',
@@ -827,13 +836,17 @@ module.exports.createProductOnLazada = async (req, res) =>{
             'headers': {
             }
         };
-        //console.log(options)
+
+        console.log(options)
         request(options, function (error, response) {
-            if (error) throw new Error(error);
+            if (error) {
+              throw new Error(error);
+            }
             
             res.status(response.statusCode).send(response.body)
         });
     } catch (e) {
+        console.log("Error: ", e.message)
         res.status(500).send(Error(e));
     }
     
@@ -960,7 +973,7 @@ module.exports.updateSellerEmail = async (req, res) =>{
     const accessToken =  req.accessToken
     const timestamp = Date.now()
     const data = req.body
-    const payload = '<?xml version="1.0" encoding="UTF-8" ?>'+ convert.js2xml(data, {compact: true, ignoreComment: true, spaces: 4})
+    const payload = '<?xml version="1.0" encoding="UTF-8" ?>'+ convert.js2xml(data, {compact: true, ignoreComment: true, spaces: 0})
     console.log(payload)
     const commonRequestParams = {
         "app_key": appKey,
