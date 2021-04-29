@@ -20,7 +20,11 @@
   "servers": [
     {
       "url": "http://localhost:5000/",
-      "description": "MMS API Auto Mocking"
+      "description": "localhost"
+    },
+    {
+      "url": "https://capstone-api-mms.herokuapp.com/",
+      "description": "Heroku app"
     }
   ],
   "tags": [
@@ -531,16 +535,17 @@
           }
         ],
         "requestBody": {
-            "content":{
-              "application/json":{
-                "schema":{
-                    "anyOf":[
-                      {"$ref": "#/components/schemas/Product"}
-                    ]
-                  
-                }
+          "content": {
+            "application/json": {
+              "schema": {
+                "anyOf": [
+                  {
+                    "$ref": "#/components/schemas/Product"
+                  }
+                ]
               }
             }
+          }
         },
         "responses": {
           "200": {
@@ -611,11 +616,13 @@
         "summary": "Add a new MMS product to the store",
         "operationId": "addProduct",
         "requestBody": {
-          "content":{
-            "application/json":{
-              "schema":{
-                "anyOf":[
-                  {"$ref": "#/components/schemas/Order"}
+          "content": {
+            "application/json": {
+              "schema": {
+                "anyOf": [
+                  {
+                    "$ref": "#/components/schemas/Order"
+                  }
                 ]
               }
             }
@@ -675,11 +682,10 @@
         "summary": "Add a new Lazada product to the store",
         "operationId": "addLazadaOrder",
         "requestBody": {
-          "content":{
-            "application/json":{
-              "schema":{
-              },
-              "example":{
+          "content": {
+            "application/json": {
+              "schema": {},
+              "example": {
                 "voucher_platform": 0,
                 "voucher": 0,
                 "warehouse_code": "dropshipping",
@@ -794,162 +800,161 @@
         "summary": "Add a new Sendo product to the store",
         "operationId": "addSendoOrder",
         "requestBody": {
-          "content":{
-            "application/json":{
-              "schema":{
-              },
-              "example":  {
+          "content": {
+            "application/json": {
+              "schema": {},
+              "example": {
                 "sales_order": {
-                    "order_number": "14678191438",
-                    "order_status": 13,
-                    "delivery_status": 0,
-                    "payment_status": 1,
-                    "tracking_number": "",
-                    "carrier_name": "Chuyển phát tiêu chuẩn",
-                    "carrier_code": "ecom_shipping_dispatch_cptc_sc",
-                    "carrier_phone": "",
-                    "sort_code": "",
-                    "buyer_phone": "0914350100",
-                    "buyer_address": "269 Đường Liên Phường, Phường Phước Long B, Quận 9",
-                    "buyer_region_id": 1,
-                    "buyer_district_id": 9,
-                    "buyer_region": "",
-                    "buyer_district": "",
-                    "buyer_ward": "",
-                    "sales_order_merges": "",
-                    "is_shop_voucher": false,
-                    "is_delivery_failed": false,
-                    "warning_status": 0,
-                    "is_merge": false,
-                    "mobile_discount_amount": 0.0,
-                    "allow_check": false,
-                    "is_self_shipping": false,
-                    "bank_name": "",
-                    "is_installment": false,
-                    "is_first_order": false,
-                    "installment_fee": 0.0,
-                    "sendo_support_fee_to_buyer": 0.0,
-                    "reason_cancel_code": "CBS",
-                    "voucher_value": 0.0,
-                    "region_name": "269 Đường Liên Phường, Phường Phước Long B, Quận 9, Phường Phước Long B, Quận 9, Hồ Chí Minh",
-                    "seller_shipping_fee": 0.0,
-                    "senpay_free_shipping": 0.0,
-                    "sendo_support_fee": 0.0,
-                    "parent_order_number": "",
-                    "child_order_number": "",
-                    "transferred_amount": 0.0,
-                    "affiliate_from_source": "",
-                    "affiliate_name": "",
-                    "affiliate_total_amount": 0.0,
-                    "receiver_address": "",
-                    "receiver_ward": "",
-                    "receiver_district": "",
-                    "receiver_region": "",
-                    "bank_code": "",
-                    "installment_bank_fee": 0.0,
-                    "payment_period": "",
-                    "percent_installment": 0.0,
-                    "transportation_type": "",
-                    "receiver_email": "",
-                    "tracking_link": "",
-                    "payment_status_name": "Chưa nhận tiền",
-                    "senpay_fee": 0.0,
-                    "store_picking_address": "269 Đường Liên Phườn, Phường Phước Long B, Quận 9, Hồ Chí Minh",
-                    "is_declare_value": false,
-                    "declare_value_fee": 0.0,
-                    "cod_fee": 0.0,
-                    "is_post_office": false,
-                    "post_offices_fee": 0.0,
-                    "sales_order_type": 1,
-                    "sales_promotion_amount": 0.0,
-                    "types_of_sales_promotion": 0,
-                    "is_printed": false,
-                    "sales_product_type": 1,
-                    "payment_type": 0,
-                    "ship_from_region_id": 1,
-                    "ship_from_country_code": "",
-                    "receiver_name": "Đặng Quang Huy",
-                    "ship_to_address": "269 Đường Liên Phường, Phường Phước Long B, Quận 9",
-                    "ship_to_ward": "Phường Phước Long B",
-                    "ship_from_district_id": 9,
-                    "ship_to_district_id": 9,
-                    "ship_to_country_code": "",
-                    "ship_to_zipcode": "",
-                    "shipping_contact_phone": "0914350100",
-                    "ship_to_region_id": 1,
-                    "ship_from_ward": "Phường Phước Long B",
-                    "shipping_type": 1,
-                    "shipping_fee": 14000.0,
-                    "ship_from_address": "269 Đường Liên Phườn",
-                    "total_amount": 100000.0,
-                    "weight": 1000.0,
-                    "actual_weight": 1000.0,
-                    "payment_method": 1,
-                    "note": "",
-                    "reason_delay": "",
-                    "reason_cancel": "Người bán quá hạn xác nhận tình trạng hàng",
-                    "canceled_by": "",
-                    "refund_to_buyer_amount": 0.0,
-                    "transfer_to_seller_amount": 0.0,
-                    "refund_trans": null,
-                    "is_disputing": false,
-                    "sub_total": 100000.0,
-                    "stage": 10,
-                    "process_refund_amount": 0.0,
-                    "can_action": true,
-                    "order_date_time_stamp": 1609839040.0,
-                    "ticket_use_date_time_stamp": 0.0,
-                    "payment_status_date_time_stamp": 1609839040.0,
-                    "delay_date_time_stamp": null,
-                    "delay_to_date_time_stamp": null,
-                    "submit_date_time_stamp": null,
-                    "pod_date_time_stamp": null,
-                    "canceled_date_time_stamp": 1610012100.0,
-                    "created_date_time_stamp": 1609839040.0,
-                    "updated_date_time_stamp": 1610012096.0,
-                    "expected_delivery_date_time_stamp": null,
-                    "order_status_date_time_stamp": 1610012100.0,
-                    "delivery_status_date_time_stamp": null,
-                    "total_amount_buyer": 100000.0,
-                    "payment_type1": 0,
-                    "payment_status1": 0,
-                    "payment_type1_amount": 0.0,
-                    "payment_type2": 0,
-                    "payment_status2": 0,
-                    "payment_type2_amount": 0.0,
-                    "fds_expired_time": 0,
-                    "shop_program_name": "",
-                    "shop_program_amount": 0.0,
-                    "shipping_voucher_amount": 14000.0,
-                    "seller_pay_later_fee": 0.0,
-                    "shop_voucher_amount": 0.0,
-                    "sendo_voucher_amount": 0.0
+                  "order_number": "14678191438",
+                  "order_status": 13,
+                  "delivery_status": 0,
+                  "payment_status": 1,
+                  "tracking_number": "",
+                  "carrier_name": "Chuyển phát tiêu chuẩn",
+                  "carrier_code": "ecom_shipping_dispatch_cptc_sc",
+                  "carrier_phone": "",
+                  "sort_code": "",
+                  "buyer_phone": "0914350100",
+                  "buyer_address": "269 Đường Liên Phường, Phường Phước Long B, Quận 9",
+                  "buyer_region_id": 1,
+                  "buyer_district_id": 9,
+                  "buyer_region": "",
+                  "buyer_district": "",
+                  "buyer_ward": "",
+                  "sales_order_merges": "",
+                  "is_shop_voucher": false,
+                  "is_delivery_failed": false,
+                  "warning_status": 0,
+                  "is_merge": false,
+                  "mobile_discount_amount": 0.0,
+                  "allow_check": false,
+                  "is_self_shipping": false,
+                  "bank_name": "",
+                  "is_installment": false,
+                  "is_first_order": false,
+                  "installment_fee": 0.0,
+                  "sendo_support_fee_to_buyer": 0.0,
+                  "reason_cancel_code": "CBS",
+                  "voucher_value": 0.0,
+                  "region_name": "269 Đường Liên Phường, Phường Phước Long B, Quận 9, Phường Phước Long B, Quận 9, Hồ Chí Minh",
+                  "seller_shipping_fee": 0.0,
+                  "senpay_free_shipping": 0.0,
+                  "sendo_support_fee": 0.0,
+                  "parent_order_number": "",
+                  "child_order_number": "",
+                  "transferred_amount": 0.0,
+                  "affiliate_from_source": "",
+                  "affiliate_name": "",
+                  "affiliate_total_amount": 0.0,
+                  "receiver_address": "",
+                  "receiver_ward": "",
+                  "receiver_district": "",
+                  "receiver_region": "",
+                  "bank_code": "",
+                  "installment_bank_fee": 0.0,
+                  "payment_period": "",
+                  "percent_installment": 0.0,
+                  "transportation_type": "",
+                  "receiver_email": "",
+                  "tracking_link": "",
+                  "payment_status_name": "Chưa nhận tiền",
+                  "senpay_fee": 0.0,
+                  "store_picking_address": "269 Đường Liên Phườn, Phường Phước Long B, Quận 9, Hồ Chí Minh",
+                  "is_declare_value": false,
+                  "declare_value_fee": 0.0,
+                  "cod_fee": 0.0,
+                  "is_post_office": false,
+                  "post_offices_fee": 0.0,
+                  "sales_order_type": 1,
+                  "sales_promotion_amount": 0.0,
+                  "types_of_sales_promotion": 0,
+                  "is_printed": false,
+                  "sales_product_type": 1,
+                  "payment_type": 0,
+                  "ship_from_region_id": 1,
+                  "ship_from_country_code": "",
+                  "receiver_name": "Đặng Quang Huy",
+                  "ship_to_address": "269 Đường Liên Phường, Phường Phước Long B, Quận 9",
+                  "ship_to_ward": "Phường Phước Long B",
+                  "ship_from_district_id": 9,
+                  "ship_to_district_id": 9,
+                  "ship_to_country_code": "",
+                  "ship_to_zipcode": "",
+                  "shipping_contact_phone": "0914350100",
+                  "ship_to_region_id": 1,
+                  "ship_from_ward": "Phường Phước Long B",
+                  "shipping_type": 1,
+                  "shipping_fee": 14000.0,
+                  "ship_from_address": "269 Đường Liên Phườn",
+                  "total_amount": 100000.0,
+                  "weight": 1000.0,
+                  "actual_weight": 1000.0,
+                  "payment_method": 1,
+                  "note": "",
+                  "reason_delay": "",
+                  "reason_cancel": "Người bán quá hạn xác nhận tình trạng hàng",
+                  "canceled_by": "",
+                  "refund_to_buyer_amount": 0.0,
+                  "transfer_to_seller_amount": 0.0,
+                  "refund_trans": null,
+                  "is_disputing": false,
+                  "sub_total": 100000.0,
+                  "stage": 10,
+                  "process_refund_amount": 0.0,
+                  "can_action": true,
+                  "order_date_time_stamp": 1609839040.0,
+                  "ticket_use_date_time_stamp": 0.0,
+                  "payment_status_date_time_stamp": 1609839040.0,
+                  "delay_date_time_stamp": null,
+                  "delay_to_date_time_stamp": null,
+                  "submit_date_time_stamp": null,
+                  "pod_date_time_stamp": null,
+                  "canceled_date_time_stamp": 1610012100.0,
+                  "created_date_time_stamp": 1609839040.0,
+                  "updated_date_time_stamp": 1610012096.0,
+                  "expected_delivery_date_time_stamp": null,
+                  "order_status_date_time_stamp": 1610012100.0,
+                  "delivery_status_date_time_stamp": null,
+                  "total_amount_buyer": 100000.0,
+                  "payment_type1": 0,
+                  "payment_status1": 0,
+                  "payment_type1_amount": 0.0,
+                  "payment_type2": 0,
+                  "payment_status2": 0,
+                  "payment_type2_amount": 0.0,
+                  "fds_expired_time": 0,
+                  "shop_program_name": "",
+                  "shop_program_amount": 0.0,
+                  "shipping_voucher_amount": 14000.0,
+                  "seller_pay_later_fee": 0.0,
+                  "shop_voucher_amount": 0.0,
+                  "sendo_voucher_amount": 0.0
                 },
                 "sku_details": [
-                    {
-                        "product_variant_id": 39297530,
-                        "product_name": "dao làm bếp",
-                        "sku": "123456789-123456789",
-                        "quantity": 1,
-                        "size": "",
-                        "color": "",
-                        "price": 100000.0,
-                        "sub_total": 100000.0,
-                        "weight": 1000.0,
-                        "product_image": "https://media3.scdn.vn/img4/2021/01_04/xooWI9JHZXqREjFIeQTB.png",
-                        "description": "Màu sắc: Xám ",
-                        "unit_id": 0,
-                        "attribute_hash": "613",
-                        "shop_program_percent": 0.0,
-                        "shop_program_amount": 0.0,
-                        "is_flash_sales": false,
-                        "flash_sale_amount": 0.0,
-                        "flash_deal_type_names": [],
-                        "is_combo_discount": false,
-                        "combo_parent_product_id": 0
-                    }
+                  {
+                    "product_variant_id": 39297530,
+                    "product_name": "dao làm bếp",
+                    "sku": "123456789-123456789",
+                    "quantity": 1,
+                    "size": "",
+                    "color": "",
+                    "price": 100000.0,
+                    "sub_total": 100000.0,
+                    "weight": 1000.0,
+                    "product_image": "https://media3.scdn.vn/img4/2021/01_04/xooWI9JHZXqREjFIeQTB.png",
+                    "description": "Màu sắc: Xám ",
+                    "unit_id": 0,
+                    "attribute_hash": "613",
+                    "shop_program_percent": 0.0,
+                    "shop_program_amount": 0.0,
+                    "is_flash_sales": false,
+                    "flash_sale_amount": 0.0,
+                    "flash_deal_type_names": [],
+                    "is_combo_discount": false,
+                    "combo_parent_product_id": 0
+                  }
                 ]
-            }
+              }
             }
           }
         },
@@ -1137,13 +1142,11 @@
             }
           }
         ],
-        "requestBody":{
-          "content":{
-            "application/json":{
-              "schema":{
-
-              },
-              "example":{
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {},
+              "example": {
                 "lineItems": [
                   {
                     "_id": "605feaf9d8706444f4e006fb",
@@ -1198,13 +1201,11 @@
             }
           }
         ],
-        "requestBody":{
-          "content":{
-            "application/json":{
-              "schema":{
-
-              },
-              "example":{
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {},
+              "example": {
                 "paidPrice": 10000,
                 "formattedPaidPrice": "10,000"
               }
@@ -1241,11 +1242,13 @@
         "summary": "Add a new purchase order to the store",
         "operationId": "addPurchaseOrder",
         "requestBody": {
-          "content":{
-            "application/json":{
-              "schema":{
-                "anyOf":[
-                  {"$ref": "#/components/schemas/PurchaseOrder"}
+          "content": {
+            "application/json": {
+              "schema": {
+                "anyOf": [
+                  {
+                    "$ref": "#/components/schemas/PurchaseOrder"
+                  }
                 ]
               }
             }
@@ -1395,13 +1398,11 @@
             }
           }
         ],
-        "requestBody":{
-          "content":{
-            "application/json":{
-              "schema":{
-
-              },
-              "example":{
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {},
+              "example": {
                 "lineItems": [
                   {
                     "_id": "605feaf9d8706444f4e006fb",
@@ -1456,13 +1457,11 @@
             }
           }
         ],
-        "requestBody":{
-          "content":{
-            "application/json":{
-              "schema":{
-
-              },
-              "example":{
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {},
+              "example": {
                 "paidPrice": 10000,
                 "formattedPaidPrice": "10,000"
               }
@@ -1976,104 +1975,104 @@
                 "unitId": 1,
                 "updated_date_timestamp": "2021-03-25T06:39:11.000Z",
                 "voucher": {
-                "product_type": 1,
-                "start_date": null,
-                "end_date": null,
-                "is_check_date": null
+                  "product_type": 1,
+                  "start_date": null,
+                  "end_date": null,
+                  "is_check_date": null
                 },
                 "weight": 1000,
                 "variants": [
-                {
-                "_id": "6061c3fb50e0dd47185ac489",
-                "productId": "6061c3fb50e0dd47185ac487",
-                "sku": "123456789123",
-                "Status": "inactive",
-                "__v": 0,
-                "avatar": [
-                "https://media3.scdn.vn/img4/2021/03_21/NpSb4jBlmliQLbEypOHv_simg_02d57e_50x50_maxb.jpg"
-                ],
-                "price": 120000,
-                "quantity": 0,
-                "special_price": 0,
-                "variant_attribute_hash": "603",
-                "variant_attributes": [
-                {
-                "attribute_id": 284,
-                "attribute_code": "mau_sac",
-                "option_id": 603,
-                "attribute_name": "Màu sắc",
-                "option_value": "Vàng",
-                "attribute_img": "https://media3.scdn.vn/img4/2021/03_21/NpSb4jBlmliQLbEypOHv_simg_02d57e_50x50_maxb.jpg"
-                }
-                ],
-                "variant_campaign_status": null,
-                "variant_is_flash_sales": null,
-                "variant_is_promotion": false,
-                "variant_promotion_end_date_timestamp": null,
-                "variant_promotion_start_date_timestamp": null,
-                "linkedId": null
-                },
-                {
-                "_id": "6061c3fb50e0dd47185ac48a",
-                "productId": "6061c3fb50e0dd47185ac487",
-                "sku": "123456789",
-                "Status": "inactive",
-                "__v": 0,
-                "avatar": [
-                "https://media3.scdn.vn/img4/2021/03_20/pRNRPvr1ZoL7oKDYDi9Q_simg_02d57e_50x50_maxb.png"
-                ],
-                "price": 120000,
-                "quantity": 234,
-                "special_price": 0,
-                "variant_attribute_hash": "613",
-                "variant_attributes": [
-                {
-                "attribute_id": 284,
-                "attribute_code": "mau_sac",
-                "option_id": 613,
-                "attribute_name": "Màu sắc",
-                "option_value": "Xám",
-                "attribute_img": "https://media3.scdn.vn/img4/2021/03_20/pRNRPvr1ZoL7oKDYDi9Q_simg_02d57e_50x50_maxb.png"
-                }
-                ],
-                "variant_campaign_status": null,
-                "variant_is_flash_sales": null,
-                "variant_is_promotion": false,
-                "variant_promotion_end_date_timestamp": null,
-                "variant_promotion_start_date_timestamp": null,
-                "linkedId": null
-                },
-                {
-                "_id": "6061c3fb50e0dd47185ac488",
-                "productId": "6061c3fb50e0dd47185ac487",
-                "sku": "xanh",
-                "Status": "inactive",
-                "__v": 0,
-                "avatar": [
-                "https://media3.scdn.vn/img4/2021/01_04/xooWI9JHZXqREjFIeQTB_simg_02d57e_50x50_maxb.png"
-                ],
-                "price": 120000,
-                "quantity": 123,
-                "special_price": 0,
-                "variant_attribute_hash": "608",
-                "variant_attributes": [
-                {
-                "attribute_id": 284,
-                "attribute_code": "mau_sac",
-                "option_id": 608,
-                "attribute_name": "Màu sắc",
-                "option_value": "Xanh nước biển",
-                "attribute_img": "https://media3.scdn.vn/img4/2021/01_04/xooWI9JHZXqREjFIeQTB_simg_02d57e_50x50_maxb.png"
-                }
-                ],
-                "variant_campaign_status": null,
-                "variant_is_flash_sales": null,
-                "variant_is_promotion": false,
-                "variant_promotion_end_date_timestamp": null,
-                "variant_promotion_start_date_timestamp": null
-                }
+                  {
+                    "_id": "6061c3fb50e0dd47185ac489",
+                    "productId": "6061c3fb50e0dd47185ac487",
+                    "sku": "123456789123",
+                    "Status": "inactive",
+                    "__v": 0,
+                    "avatar": [
+                      "https://media3.scdn.vn/img4/2021/03_21/NpSb4jBlmliQLbEypOHv_simg_02d57e_50x50_maxb.jpg"
+                    ],
+                    "price": 120000,
+                    "quantity": 0,
+                    "special_price": 0,
+                    "variant_attribute_hash": "603",
+                    "variant_attributes": [
+                      {
+                        "attribute_id": 284,
+                        "attribute_code": "mau_sac",
+                        "option_id": 603,
+                        "attribute_name": "Màu sắc",
+                        "option_value": "Vàng",
+                        "attribute_img": "https://media3.scdn.vn/img4/2021/03_21/NpSb4jBlmliQLbEypOHv_simg_02d57e_50x50_maxb.jpg"
+                      }
+                    ],
+                    "variant_campaign_status": null,
+                    "variant_is_flash_sales": null,
+                    "variant_is_promotion": false,
+                    "variant_promotion_end_date_timestamp": null,
+                    "variant_promotion_start_date_timestamp": null,
+                    "linkedId": null
+                  },
+                  {
+                    "_id": "6061c3fb50e0dd47185ac48a",
+                    "productId": "6061c3fb50e0dd47185ac487",
+                    "sku": "123456789",
+                    "Status": "inactive",
+                    "__v": 0,
+                    "avatar": [
+                      "https://media3.scdn.vn/img4/2021/03_20/pRNRPvr1ZoL7oKDYDi9Q_simg_02d57e_50x50_maxb.png"
+                    ],
+                    "price": 120000,
+                    "quantity": 234,
+                    "special_price": 0,
+                    "variant_attribute_hash": "613",
+                    "variant_attributes": [
+                      {
+                        "attribute_id": 284,
+                        "attribute_code": "mau_sac",
+                        "option_id": 613,
+                        "attribute_name": "Màu sắc",
+                        "option_value": "Xám",
+                        "attribute_img": "https://media3.scdn.vn/img4/2021/03_20/pRNRPvr1ZoL7oKDYDi9Q_simg_02d57e_50x50_maxb.png"
+                      }
+                    ],
+                    "variant_campaign_status": null,
+                    "variant_is_flash_sales": null,
+                    "variant_is_promotion": false,
+                    "variant_promotion_end_date_timestamp": null,
+                    "variant_promotion_start_date_timestamp": null,
+                    "linkedId": null
+                  },
+                  {
+                    "_id": "6061c3fb50e0dd47185ac488",
+                    "productId": "6061c3fb50e0dd47185ac487",
+                    "sku": "xanh",
+                    "Status": "inactive",
+                    "__v": 0,
+                    "avatar": [
+                      "https://media3.scdn.vn/img4/2021/01_04/xooWI9JHZXqREjFIeQTB_simg_02d57e_50x50_maxb.png"
+                    ],
+                    "price": 120000,
+                    "quantity": 123,
+                    "special_price": 0,
+                    "variant_attribute_hash": "608",
+                    "variant_attributes": [
+                      {
+                        "attribute_id": 284,
+                        "attribute_code": "mau_sac",
+                        "option_id": 608,
+                        "attribute_name": "Màu sắc",
+                        "option_value": "Xanh nước biển",
+                        "attribute_img": "https://media3.scdn.vn/img4/2021/01_04/xooWI9JHZXqREjFIeQTB_simg_02d57e_50x50_maxb.png"
+                      }
+                    ],
+                    "variant_campaign_status": null,
+                    "variant_is_flash_sales": null,
+                    "variant_is_promotion": false,
+                    "variant_promotion_end_date_timestamp": null,
+                    "variant_promotion_start_date_timestamp": null
+                  }
                 ]
-                }
+              }
             }
           }
         },
@@ -2996,50 +2995,49 @@
                 "store_id": "200163939035",
                 "__v": 0,
                 "attributes": {
-                "name": "dffdưe323r32",
-                "description": "<p style=\"margin: 0;padding: 8.0px 0;white-space: pre-wrap;\"><span style=\"font-family: none;\"></span></p>",
-                "brand": "No Brand",
-                "warranty_type": "Warranty Stamp",
-                "source": "asc"
+                  "name": "dffdưe323r32",
+                  "description": "<p style=\"margin: 0;padding: 8.0px 0;white-space: pre-wrap;\"><span style=\"font-family: none;\"></span></p>",
+                  "brand": "No Brand",
+                  "warranty_type": "Warranty Stamp",
+                  "source": "asc"
                 },
                 "avatar": null,
                 "created_date_timestamp": "2021-03-31T08:31:25.000Z",
                 "primary_category": "10100182",
                 "updated_date_timestamp": "2021-03-31T08:31:25.000Z",
                 "variants": [
-                {
-                "_id": "606555bed3ec056743f5cfa2",
-                "ShopSku": "1252566024_VNAMZ-4669792705",
-                "productId": "606555bed3ec056743f5cf88",
-                "SkuId": 4669792705,
-                "Status": "active",
-                "Url": "https://www.lazada.vn/-i1252566024-s4669792705.html",
-                "__v": 0,
-                "avatar": [],
-                "multiWarehouseInventories": [
-                {
-                "quantity": 234,
-                "warehouseCode": "dropshipping"
-                }
-                ],
-                "package_height": "32.00",
-                "package_length": "32.00",
-                "package_weight": "32",
-                "package_width": "23.00",
-                "price": 23432,
-                "quantity": 234,
-                "sku": "324324",
-                "special_price": 0,
-                "variant_attributes": [
-                {
-                "attribute_name": "color_family",
-                "option_value": "Cherry"
-                }
+                  {
+                    "_id": "606555bed3ec056743f5cfa2",
+                    "ShopSku": "1252566024_VNAMZ-4669792705",
+                    "productId": "606555bed3ec056743f5cf88",
+                    "SkuId": 4669792705,
+                    "Status": "active",
+                    "Url": "https://www.lazada.vn/-i1252566024-s4669792705.html",
+                    "__v": 0,
+                    "avatar": [],
+                    "multiWarehouseInventories": [
+                      {
+                        "quantity": 234,
+                        "warehouseCode": "dropshipping"
+                      }
+                    ],
+                    "package_height": "32.00",
+                    "package_length": "32.00",
+                    "package_weight": "32",
+                    "package_width": "23.00",
+                    "price": 23432,
+                    "quantity": 234,
+                    "sku": "324324",
+                    "special_price": 0,
+                    "variant_attributes": [
+                      {
+                        "attribute_name": "color_family",
+                        "option_value": "Cherry"
+                      }
+                    ]
+                  }
                 ]
-                }
-                ]
-                }
-                
+              }
             }
           }
         },
@@ -4547,7 +4545,7 @@
         }
       }
     },
-    "/inventory/{id}":{
+    "/inventory/{id}": {
       "get": {
         "tags": [
           "inventory"
@@ -4607,7 +4605,7 @@
             "type": "string",
             "description": "Payment Status",
             "enum": [
-                "Chưa thanh toán"
+              "Chưa thanh toán"
             ]
           },
           "packStatus": {
@@ -4646,11 +4644,11 @@
             "type": "objectId",
             "exmaple": "605ea6bbe89fe93770eaf8ea"
           },
-          "lineItems":{
+          "lineItems": {
             "type": "array",
-            "items":{
+            "items": {
               "type": "object",
-              "properties":{
+              "properties": {
                 "_id": {
                   "type": "objectId",
                   "exmaple": "605ea7e0e89fe93770eaf902"
@@ -4686,11 +4684,11 @@
             "type": "number",
             "exmaple": 100
           },
-          "step":{
+          "step": {
             "type": "array",
-            "items":{
+            "items": {
               "type": "object",
-              "properties":{
+              "properties": {
                 "_id": {
                   "type": "objectId",
                   "exmaple": "605ea7e0e89fe93770eaf902"
@@ -4710,7 +4708,7 @@
               }
             }
           },
-          "paidHistory":{
+          "paidHistory": {
             "type": "array",
             "exmaple": []
           },
@@ -4750,7 +4748,7 @@
             "type": "string",
             "description": "Payment Status",
             "enum": [
-                "Đã thanh toán"
+              "Đã thanh toán"
             ]
           },
           "packStatus": {
@@ -4789,11 +4787,11 @@
             "type": "objectId",
             "exmaple": "605ea6bbe89fe93770eaf8ea"
           },
-          "lineItems":{
+          "lineItems": {
             "type": "array",
-            "items":{
+            "items": {
               "type": "object",
-              "properties":{
+              "properties": {
                 "_id": {
                   "type": "objectId",
                   "exmaple": "605ea7e0e89fe93770eaf902"
@@ -4833,11 +4831,11 @@
             "type": "number",
             "exmaple": 100
           },
-          "step":{
+          "step": {
             "type": "array",
-            "items":{
+            "items": {
               "type": "object",
-              "properties":{
+              "properties": {
                 "_id": {
                   "type": "objectId",
                   "exmaple": "605ea7e0e89fe93770eaf902"
@@ -4857,7 +4855,7 @@
               }
             }
           },
-          "paidHistory":{
+          "paidHistory": {
             "type": "array",
             "exmaple": []
           },
@@ -4894,7 +4892,7 @@
             "type": "string",
             "description": "Payment Status",
             "enum": [
-                "Đã thanh toán"
+              "Đã thanh toán"
             ]
           },
           "packStatus": {
@@ -4933,11 +4931,11 @@
             "type": "objectId",
             "exmaple": "605ea6bbe89fe93770eaf8ea"
           },
-          "lineItems":{
+          "lineItems": {
             "type": "array",
-            "items":{
+            "items": {
               "type": "object",
-              "properties":{
+              "properties": {
                 "_id": {
                   "type": "objectId",
                   "exmaple": "605ea7e0e89fe93770eaf902"
@@ -4977,11 +4975,11 @@
             "type": "number",
             "exmaple": 100
           },
-          "step":{
+          "step": {
             "type": "array",
-            "items":{
+            "items": {
               "type": "object",
-              "properties":{
+              "properties": {
                 "_id": {
                   "type": "objectId",
                   "exmaple": "605ea7e0e89fe93770eaf902"
@@ -5001,7 +4999,7 @@
               }
             }
           },
-          "paidHistory":{
+          "paidHistory": {
             "type": "array",
             "exmaple": []
           },
@@ -5116,7 +5114,9 @@
         "properties": {
           "linkedIds": {
             "type": "array",
-            "exmaple": ["605c4ca09d0e5315f41e742f"]
+            "exmaple": [
+              "605c4ca09d0e5315f41e742f"
+            ]
           },
           "avatar": {
             "type": "string",
@@ -5154,9 +5154,9 @@
             "type": "number",
             "example": "2"
           },
-          "inventories":{
+          "inventories": {
             "type": "object",
-            "properties":{
+            "properties": {
               "initStock": {
                 "type": "number",
                 "example": 100
@@ -5167,9 +5167,9 @@
               }
             }
           },
-          "productId":{
-              "type":"objectId",
-              "example":"605c4c979d0e5315f41e7403"
+          "productId": {
+            "type": "objectId",
+            "example": "605c4c979d0e5315f41e7403"
           },
           "sellable": {
             "type": "boolean",
@@ -5204,14 +5204,14 @@
             "type": "string",
             "example": "huyhuy"
           },
-          "storages":{
+          "storages": {
             "type": "array",
-            "items":{
-              "type":"object",
-              "properties":{
-                "storage":{
+            "items": {
+              "type": "object",
+              "properties": {
+                "storage": {
                   "type": "object",
-                  "properties":{
+                  "properties": {
                     "storageId": {
                       "type": "string",
                       "exmaple": "6051909070939103d011db8a"
@@ -5224,14 +5224,14 @@
               }
             }
           },
-          "token":{
+          "token": {
             "type": "array",
-            "items":{
+            "items": {
               "type": "object",
-              "properties":{
-                "token":{
+              "properties": {
+                "token": {
                   "type": "string",
-                  "exmaple":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9"
+                  "exmaple": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9"
                 }
               }
             }
@@ -5242,9 +5242,7 @@
         }
       },
       "Storage": {
-        "required": [
-
-        ],
+        "required": [],
         "type": "object",
         "properties": {
           "totalMoney": {
@@ -5263,44 +5261,44 @@
             "type": "array",
             "items": {
               "type": "object",
-              "properties":{
-                "_id":{
-                  "type":"objectId",
+              "properties": {
+                "_id": {
+                  "type": "objectId",
                   "exmaple": "605eb33fe89fe93770eaf951"
                 },
-                "isActivated":{
+                "isActivated": {
                   "type": "boolean",
                   "example": true
                 },
-                "status":{
+                "status": {
                   "type": "string",
                   "example": "connected"
                 },
-                "app_key":{
+                "app_key": {
                   "type": "string",
                   "exmaple": "d63aecd314b4463abc2204aa6a340c6b"
                 },
-                "app_secret":{
+                "app_secret": {
                   "type": "string",
                   "exmaple": "a6919d8125cc437c87f004ea2bc87959"
                 },
-                "store_id":{
+                "store_id": {
                   "type": "string",
                   "exmaple": "d63aecd314b4463abc2204aa6a340c6b"
                 },
-                "store_name":{
+                "store_name": {
                   "type": "string",
                   "exmaple": "SENDO-1"
                 },
-                "platform_name":{
+                "platform_name": {
                   "type": "string",
                   "exmaple": "sendo"
                 },
-                "access_token":{
+                "access_token": {
                   "type": "string",
                   "exmaple": "sdsadsa"
                 },
-                "expires":{
+                "expires": {
                   "type": "Date",
                   "exmaple": "2021-03-27T12:23:30.856+00:00"
                 }
@@ -5311,60 +5309,60 @@
             "type": "array",
             "items": {
               "type": "object",
-              "properties":{
-                "_id":{
-                  "type":"objectId",
+              "properties": {
+                "_id": {
+                  "type": "objectId",
                   "exmaple": "605eb33fe89fe93770eaf951"
                 },
-                "isActivated":{
+                "isActivated": {
                   "type": "boolean",
                   "example": true
                 },
-                "status":{
+                "status": {
                   "type": "string",
                   "example": "connected"
                 },
-                "app_key":{
+                "app_key": {
                   "type": "string",
                   "exmaple": "d63aecd314b4463abc2204aa6a340c6b"
                 },
-                "app_secret":{
+                "app_secret": {
                   "type": "string",
                   "exmaple": "a6919d8125cc437c87f004ea2bc87959"
                 },
-                "store_id":{
+                "store_id": {
                   "type": "string",
                   "exmaple": "200163939035"
                 },
-                "store_name":{
+                "store_name": {
                   "type": "string",
                   "exmaple": "Orihss"
                 },
-                "platform_name":{
+                "platform_name": {
                   "type": "string",
                   "exmaple": "sendo"
                 },
-                "access_token":{
+                "access_token": {
                   "type": "string",
                   "exmaple": "sdsadsa"
                 },
-                "refresh_token":{
+                "refresh_token": {
                   "type": "string",
                   "exmaple": "sdsadsa"
                 },
-                "expires":{
+                "expires": {
                   "type": "Date",
                   "exmaple": "2021-03-27T12:23:30.856+00:00"
                 },
-                "refresh_expires":{
+                "refresh_expires": {
                   "type": "Date",
                   "exmaple": "2021-03-27T12:23:30.856+00:00"
                 }
               }
             }
           },
-          "id":{
-            "type":"string",
+          "id": {
+            "type": "string",
             "exmaple": "605eb33fe89fe93770eaf951"
           }
         },
@@ -5541,23 +5539,22 @@
           "voucher": {
             "type": "object",
             "properties": {
-              "product_type":{
+              "product_type": {
                 "type": "number",
                 "exmaple": 1
               },
-              "start_date":{
+              "start_date": {
                 "type": "date",
                 "exmaple": "2021-03-27T03:50:51.340+00:00"
               },
-              "end_date":{
+              "end_date": {
                 "type": "date",
                 "exmaple": "2021-03-27T03:50:51.340+00:00"
               },
-              "is_check_date":{
+              "is_check_date": {
                 "type": "boolean",
                 "exmaple": null
               }
-              
             }
           },
           "weight": {
@@ -5692,22 +5689,22 @@
           },
           "attributes": {
             "type": "array",
-            "items":{
+            "items": {
               "type": "object",
-              "properties":{
-                "name":{
+              "properties": {
+                "name": {
                   "type": "string",
                   "example": "dao"
                 },
-                "description":{
+                "description": {
                   "type": "string",
                   "example": "áđasa"
                 },
-                "brand":{
+                "brand": {
                   "type": "string",
                   "example": "No brand"
                 },
-                "source":{
+                "source": {
                   "type": "string",
                   "example": "asc"
                 }
@@ -5846,34 +5843,34 @@
           },
           "change": {
             "type": "object",
-            "properties":{
-              "amount":{
+            "properties": {
+              "amount": {
                 "type": "string",
                 "exmaple": "100"
               },
-              "type":{
+              "type": {
                 "type": "string",
                 "example": "Tăng"
               }
             }
           },
-          "inStock":{
+          "inStock": {
             "type": "number",
             "exmaple": 100
           },
-          "reference":{
+          "reference": {
             "type": "string",
             "exmaple": "KHỞI_TẠO_AOPHONG_3/28/2021"
           },
-          "price":{
+          "price": {
             "type": "number",
             "exmaple": 150000
           },
-          "createdAt":{
+          "createdAt": {
             "type": "date",
             "exmaple": "2021-03-28T02:33:30.448+00:00"
           },
-          "updatedAt":{
+          "updatedAt": {
             "type": "date",
             "exmaple": "2021-03-28T02:33:30.448+00:00"
           }
