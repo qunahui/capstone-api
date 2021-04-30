@@ -1050,7 +1050,7 @@ module.exports.searchOrder = async (req, res) =>{
     const apiPath=  '/orders/get'
     const appSecret = process.env.LAZADA_APP_SECRET
     const appKey = process.env.LAZADA_APP_KEY
-    const accessToken =  "500005000282pCawUSfbySlxELBNZvxde1hVjqrd1c60dd3csukWdjU9syzPtBwi" // goi db
+    const accessToken =  req.accessToken // goi db
     const timestamp = Date.now()
     const commonRequestParams = {
         "app_key": appKey,
@@ -1058,29 +1058,27 @@ module.exports.searchOrder = async (req, res) =>{
         "sign_method": "sha256",
         "access_token":accessToken,
     }
-    const created_after = req.query.created_after
-    //const status = req.query.status
-    const sign = signRequest(appSecret, apiPath, {...commonRequestParams, created_after})
-    const encodeCreateAfter = encodeURIComponent(created_after)
+    const query = req.query
+
+    const sign = signRequest(appSecret, apiPath, {...commonRequestParams, ...query})
+
     try {
         var options = {
             'method': 'GET',
             'url': apiUrl+apiPath+
-            '?created_after='+encodeCreateAfter+
-            //'&status='+status+
-            '&app_key='+appKey+
+            '?app_key='+appKey+
             '&sign_method=sha256&timestamp='+timestamp+
             '&access_token='+accessToken+
-            '&sign='+sign,
-            'headers': {
-            }
+            '&sign='+sign
         };
-        console.log(options)
+        for (const [key, value] of Object.entries(query)) {
+            options.url += '&'+ key + '=' + encodeURIComponent(value)
+          }
         request(options, function (error, response) {
             //if (error) throw new Error(error);
             //console.log(response.body);
             const orders = JSON.parse(response.body)
-            res.send(orders)
+            res.status(response.statusCode).send(orders)
         });
     } catch (e) {
         res.status(500).send(Error(e));
