@@ -89,7 +89,7 @@ const checkLinkedVariants = async (variant, mongoToken) => {
   try {
     await rp({ 
       method: 'POST',
-      url: `{process.env.API_URL}/variants/push-api`,
+      url: `${process.env.API_URL}/variants/push-api`,
       json: true,
       body: {
         variant
@@ -283,7 +283,7 @@ module.exports.createSendoOrder = async (req,res) => {
   // const regionId = item.sales_order.ship_to_region_id
   // var region= await rp({
   //   method: 'GET',
-  //   url:`{process.env.API_URL}/api/sendo/region/`+regionId,
+  //   url:`${process.env.API_URL}/api/sendo/region/`+regionId,
   //   headers: {
   //     'Authorization': 'Bearer ' + req.mongoToken,
   //     'Platform-Token': req.accessToken

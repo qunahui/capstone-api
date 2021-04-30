@@ -174,7 +174,7 @@ module.exports.syncProducts = async (req, res) => {
   try { 
     newCredential = await rp({
       method: 'POST',
-      url: `{process.env.API_URL}/api/lazada/login`,
+      url: `${process.env.API_URL}/api/lazada/login`,
       headers: {
         'Authorization': 'Bearer ' + req.mongoToken,
         'Platform-Token': payload.access_token
@@ -200,7 +200,7 @@ module.exports.syncProducts = async (req, res) => {
   if(newCredential.lastSync) {
     const options = {
       method: 'POST',
-      url: `{process.env.API_URL}/lazada/products/fetch-deleted`,
+      url: `${process.env.API_URL}/lazada/products/fetch-deleted`,
       headers: {
         'Authorization': 'Bearer ' + req.mongoToken,
         'Platform-Token': newCredential.access_token
@@ -227,7 +227,7 @@ module.exports.syncProducts = async (req, res) => {
   try {
     const options = {
       method: 'POST',
-      url: `{process.env.API_URL}/lazada/products/fetch`,
+      url: `${process.env.API_URL}/lazada/products/fetch`,
       headers: {
         'Authorization': 'Bearer ' + req.mongoToken,
         'Platform-Token': newCredential.access_token

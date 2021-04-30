@@ -58,7 +58,7 @@ module.exports.authorizeCredential = async (req, res) => {
         }
 
         const result = await rp.get({
-            uri: `{process.env.API_URL}/api/lazada/seller`,
+            uri: `${process.env.API_URL}/api/lazada/seller`,
             headers:{ 
               "Authorization": 'Bearer ' + req.mongoToken,
               "Platform-Token": response.access_token
@@ -67,6 +67,8 @@ module.exports.authorizeCredential = async (req, res) => {
         })
         .then(res => res.data)
         .catch(e => e.message)
+
+        console.log("Resulltttt: ", result)
 
         const { name, seller_id } = result 
         insertCredential.store_name = name
@@ -121,7 +123,7 @@ module.exports.getAccessToken = async (req, res) => {
     try {
       const newCredential = await rp({
         method: 'POST',
-        url: `{process.env.API_URL}/api/lazada/refresh-token`,
+        url: `${process.env.API_URL}/api/lazada/refresh-token`,
         headers: {
           "Authorization": "Bearer " + req.mongoToken
         },

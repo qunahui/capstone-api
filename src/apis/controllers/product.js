@@ -14,7 +14,7 @@ module.exports.createMultiPlatform = async (req, res) => {
         if(item.platform_name === 'lazada') {
             const lazRes = await rp({
               method: 'POST',
-              url: `{process.env.API_URL}/api/lazada/products`,
+              url: `${process.env.API_URL}/api/lazada/products`,
               body: {
                 Request: item.Request
               },
@@ -29,7 +29,7 @@ module.exports.createMultiPlatform = async (req, res) => {
 
           await rp({
             method: 'POST',
-            url: `{process.env.API_URL}/lazada/products/fetch`,
+            url: `${process.env.API_URL}/lazada/products/fetch`,
             headers: {
               'Authorization': 'Bearer ' + req.mongoToken,
               'Platform-Token': item.access_token
@@ -44,7 +44,7 @@ module.exports.createMultiPlatform = async (req, res) => {
         } else if(item.platform_name === 'sendo') {
           await rp({
             method: 'POST',
-            url: `{process.env.API_URL}/api/sendo/products`,
+            url: `${process.env.API_URL}/api/sendo/products`,
             body: item,
             json: true,
             headers: {
@@ -55,7 +55,7 @@ module.exports.createMultiPlatform = async (req, res) => {
 
           await rp({
             method: 'POST',
-            url: `{process.env.API_URL}/sendo/products/fetch`,
+            url: `${process.env.API_URL}/sendo/products/fetch`,
             headers: {
               'Authorization': 'Bearer ' + req.mongoToken,
               'Platform-Token': item.access_token
@@ -69,7 +69,7 @@ module.exports.createMultiPlatform = async (req, res) => {
         } else if(item.platform_name === 'system') {
           await rp({
             method: 'POST',
-            url: `{process.env.API_URL}/products`,
+            url: `${process.env.API_URL}/products`,
             body: {
               ...item,
               sellable: true,
@@ -143,7 +143,7 @@ module.exports.createMMSProduct = async (req, res) => {
       try {
         await rp({
           method: 'POST',
-          url: `{process.env.API_URL}/purchase-orders/init`,
+          url: `${process.env.API_URL}/purchase-orders/init`,
           json: true,
           body: {
             code: `KHỞI_TẠO_${req.body.sku.toUpperCase()}_${new Date().toLocaleDateString()}`,

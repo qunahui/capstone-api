@@ -60,9 +60,9 @@ module.exports.createLazadaOrderByPing = async (req, res) => {
   const wardId = item.ship_to_ward_id
   const districtId = item.ship_to_district_id
   const regionId = item.ship_to_region_id
-  const ward = await rp(`{process.env.API_URL}/api/sendo/ward/`+wardId)
-  const district = await rp(`{process.env.API_URL}/api/sendo/district/`+districtId)
-  const region = await rp(`{process.env.API_URL}/api/sendo/region/`+regionId)
+  const ward = await rp(`${process.env.API_URL}/api/sendo/ward/`+wardId)
+  const district = await rp(`${process.env.API_URL}/api/sendo/district/`+districtId)
+  const region = await rp(`${process.env.API_URL}/api/sendo/region/`+regionId)
   const order = new LazadaOrder({
     store_id: item.store_id,
     order_number: item.order_number,
@@ -101,8 +101,8 @@ module.exports.createLazadaOrderByPing = async (req, res) => {
 //   const created_at = new Date(item.sales_order.created_date_time_stamp * 1000)
 //   const districtId = item.sales_order.ship_to_district_id
 //   const regionId = item.sales_order.ship_to_region_id
-//   var district= await rp(`{process.env.API_URL}/api/sendo/district/`+districtId)
-//   var region= await rp(`{process.env.API_URL}/api/sendo/region/`+regionId)
+//   var district= await rp(`${process.env.API_URL}/api/sendo/district/`+districtId)
+//   var region= await rp(`${process.env.API_URL}/api/sendo/region/`+regionId)
 //   const order = new LazadaOrder({
 //     store_id: item.store_id,
 //     order_number: item.sales_order.order_number,

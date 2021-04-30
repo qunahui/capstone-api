@@ -32,7 +32,7 @@ router.get('/:categoryId', async (req, res) => {
     // find in lazada api if not exists
     const apiAttrs = await rp({ 
       method: 'GET',
-      url: `{process.env.API_URL}/api/lazada/attribute/` + categoryId,
+      url: `${process.env.API_URL}/api/lazada/attribute/` + categoryId,
       json: true,
     })
 

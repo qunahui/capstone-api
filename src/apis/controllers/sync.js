@@ -11,7 +11,7 @@ module.exports.syncDataFromChosenCres = async (req, res) => {
         //call sendo api to fetch product
         await rp({
           method: 'POST',
-          uri: `{process.env.API_URL}/sendo/products/fetch`,
+          uri: `${process.env.API_URL}/sendo/products/fetch`,
           headers: {
             'Authorization': 'Bearer ' + req.mongoToken,
             'Platform-Token': credential.access_token
@@ -26,7 +26,7 @@ module.exports.syncDataFromChosenCres = async (req, res) => {
         //call lazada api to fetch product
         await rp({
           method: 'POST',
-          uri: `{process.env.API_URL}/lazada/products/fetch`,
+          uri: `${process.env.API_URL}/lazada/products/fetch`,
           headers: {
             'Authorization': 'Bearer ' + req.mongoToken,
             'Platform-Token': credential.access_token
