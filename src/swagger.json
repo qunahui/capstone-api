@@ -3727,10 +3727,90 @@
           {
             "in": "query",
             "name": "created_after",
-            "required": true,
+            "required": false,
             "schema": {
               "type": "string",
               "example": "2017-02-10T09:00:00+08:00"
+            },
+            "description": ""
+          },
+          {
+            "in": "query",
+            "name": "created_before",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "example": "2017-02-10T09:00:00+08:00"
+            },
+            "description": ""
+          },
+          {
+            "in": "query",
+            "name": "update_after",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "example": "2017-02-10T09:00:00+08:00"
+            },
+            "description": ""
+          },
+          {
+            "in": "query",
+            "name": "update_before",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "example": "2017-02-10T09:00:00+08:00"
+            },
+            "description": ""
+          },
+          {
+            "in": "query",
+            "name": "sort_by",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "example": "updated_at"
+            },
+            "description": ""
+          },
+          {
+            "in": "query",
+            "name": "sort_direction",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "example": "DESC"
+            },
+            "description": ""
+          },
+          {
+            "in": "query",
+            "name": "offset",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "example": "0"
+            },
+            "description": ""
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "example": "10"
+            },
+            "description": ""
+          },
+          {
+            "in": "query",
+            "name": "status",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "example": "canceled"
             },
             "description": ""
           }
