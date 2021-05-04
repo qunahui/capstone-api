@@ -27,7 +27,7 @@ module.exports.checkComplete = checkComplete
 
 module.exports.createReceipt = async (req,res) => {
   try {
-    const { lineItems } = req.body
+    const { lineItems, init } = req.body
 
     const purchaseOrder = await PurchaseOrder.findOne({ _id: req.params._id })
     
@@ -35,9 +35,11 @@ module.exports.createReceipt = async (req,res) => {
       const variantId = item._id
       const mongoVariant = await Variant.findOne({ _id : variantId })
 
-      const newStock = mongoVariant.inventories.initStock + item.quantity
+      if(!init) {
+        mongoVariant.inventories.onHand += item.quantity
+        mongoVariant.inventories.incoming -= item.quantity
+      }
 
-      mongoVariant.inventories.initStock = newStock;
       await mongoVariant.save();
 
       const inventory = new Inventory({
@@ -47,7 +49,7 @@ module.exports.createReceipt = async (req,res) => {
           amount: item.quantity,
           type: 'Tăng'
         },
-        instock: newStock,
+        instock: mongoVariant.inventories.onHand,
         reference: purchaseOrder.code,
         price: item.price,
       })
@@ -111,7 +113,7 @@ module.exports.createInitialPurchaseOrder = async (req,res) => {
     
     await rp({
       method: 'POST',
-      url: 'http://localhost:5000/purchase-orders/receipt/' + purchaseOrder._id,
+      url: `{process.env.API_URL}/purchase-orders/receipt/` + purchaseOrder._id,
       json: true,
       body: {
         ...req.body
@@ -131,34 +133,43 @@ module.exports.createInitialPurchaseOrder = async (req,res) => {
 module.exports.createPurchaseOrder = async (req,res) => {
   try {
     const step = [
-    {
-      name: 'Đặt hàng và duyệt',
-      isCreated: true,
-      createdAt: Date.now()
-    },
-    {
-      name: 'Nhập kho',
-      isCreated: false,
-    },
-    {
-      name: 'Hoàn thành',
-      isCreated: false,
-    },
-    {
-      name: 'Đã hoàn trả',
-      isCreated: false,
-    },
-    {
-      name: 'Đã hủy',
-      isCreated: false,
-    },
+      {
+        name: 'Đặt hàng và duyệt',
+        isCreated: true,
+        createdAt: Date.now()
+      },
+      {
+        name: 'Nhập kho',
+        isCreated: false,
+      },
+      {
+        name: 'Hoàn thành',
+        isCreated: false,
+      },
+      {
+        name: 'Đã hoàn trả',
+        isCreated: false,
+      },
+      {
+        name: 'Đã hủy',
+        isCreated: false,
+      },
     ]
+
+    const { lineItems } = req.body
+
+    await Promise.all(lineItems.map(async variant => {
+       const matchedVariant = await Variant.findOne({ _id: variant._id })
+       matchedVariant.inventories.incoming += variant.quantity
+       matchedVariant.save()
+    }))
 
     const purchaseOrder = new PurchaseOrder({...req.body, step })
     await purchaseOrder.save()
     res.send(purchaseOrder)
   } catch(e) {
-    res.status(500).send(Error('Create purchase order went wrong!'))
+    console.log(e.message)
+    res.status(500).send(Error({ message: 'Create purchase order went wrong!'}))
   }
 }
 

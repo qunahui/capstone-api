@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const auth = require("../../middlewares/auth");
+const refreshSendoToken = require("../../middlewares/refreshSendoToken")
 const controller = require("../controllers/sendoProduct");
 const util = require('util')
 
@@ -20,6 +21,8 @@ router.post('/product', controller.createProduct)
 router.get('/product/:id', controller.getProductById)
 
 router.get("/categories", auth, controller.getSendoListCategory);
+
+router.get("/categories/search", auth, controller.searchSendoCategory);
 
 router.post("/suggest-category", auth, controller.getSuggestCategory);
 

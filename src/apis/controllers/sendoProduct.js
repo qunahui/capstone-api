@@ -51,6 +51,20 @@ module.exports.getSendoListCategory = async (req,res) =>{
     
 };
 
+module.exports.searchSendoCategory = async (req,res) =>{
+ 
+  const search = req.query.search
+
+  try {
+    const categories = await SendoCategory.fuzzySearch({ query: search, minSize: 3 }).find({ leaf: true }).limit(10)
+
+    res.send(categories);
+  } catch (e) {
+    res.status(500).send(e.message);
+  }
+
+};
+
 module.exports.getSuggestCategory = async (req, res) => {
   try {
     const result = await SendoCategory.fuzzySearch(req.body.name).findOne({ leaf: true })
@@ -229,7 +243,7 @@ module.exports.fetchProducts = async (req, res) => {
         
         const fullProduct = await rp({
           method: 'GET',
-          url: 'http://localhost:5000/api/sendo/products/' + product.id + '?access_token=' + req.accessToken,
+          url: `{process.env.API_URL}/api/sendo/products/` + product.id + '?access_token=' + req.accessToken,
           headers: {
             'Authorization': 'Bearer ' + req.mongoToken,
             'Platform-Token': req.accessToken
@@ -272,7 +286,7 @@ module.exports.syncProducts = async (req, res, next) => {
   try { 
     newCredential = await rp({
       method: 'POST',
-      url: 'http://localhost:5000/api/sendo/login',
+      url: `{process.env.API_URL}/api/sendo/login`,
       headers: {
         'Authorization': 'Bearer ' + req.mongoToken,
         'Platform-Token': payload.access_token
@@ -292,7 +306,7 @@ module.exports.syncProducts = async (req, res, next) => {
   try {
     const options = {
       method: 'POST',
-      url: 'http://localhost:5000/sendo/products/fetch',
+      url: `{process.env.API_URL}/sendo/products/fetch`,
       headers: {
         'Authorization': 'Bearer ' + req.mongoToken,
         'Platform-Token': newCredential.access_token

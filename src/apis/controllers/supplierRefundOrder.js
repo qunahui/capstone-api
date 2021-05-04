@@ -35,9 +35,9 @@ module.exports.createReceipt = async (req,res) => {
         const variantId = item._id
         const mongoVariant = await Variant.findOne({ _id : variantId })
   
-        const newStock = mongoVariant.inventories.initStock - item.quantity
-  
-        mongoVariant.inventories.initStock = newStock;
+        mongoVariant.inventories.onHand -= item.quantity;
+        mongoVariant.inventories.trading -= item.quantity;
+
         await mongoVariant.save();
   
         const inventory = new Inventory({
@@ -47,7 +47,7 @@ module.exports.createReceipt = async (req,res) => {
             amount: item.quantity,
             type: 'Giảm'
           },
-          instock: newStock,
+          instock: mongoVariant.inventories.onHand,
           reference: supplierRefundOrder.code,
           price: item.price,
         })
@@ -111,6 +111,15 @@ module.exports.createSupplierRefundOrder = async (req,res) => {
     ]
 
     const supplierRefundOrder = new SupplierRefundOrder({...req.body, step })
+
+    const { lineItems } = req.body
+    
+    await Promise.all(lineItems.map(async variant => {
+      const matchedVariant = await Variant.findOne({ _id: variant._id })
+      matchedVariant.inventories.trading += variant.quantity
+      matchedVariant.save()
+    }))
+
     await supplierRefundOrder.save()
     res.send(supplierRefundOrder)
   } catch(e) {

@@ -49,11 +49,28 @@ const variantSchema = new Schema({
     initPrice: {
       type: Number,
       required: true,
+      default: 0,
     },
-    initStock: {
+    onHand: {
       type: Number,
-      required: true,
+      default: 0,
     },
+    available: {
+      type: Number,
+      default: 0,
+    },
+    incoming: {
+      type: Number,
+      default: 0,
+    },
+    onway: {
+      type: Number,
+      default: 0,
+    },
+    trading: {
+      type: Number,
+      default: 0,
+    }
   }, 
   sellable: {
     type: Boolean,
@@ -77,6 +94,16 @@ variantSchema.methods.toJSON = function () {
   
   return variantObject;
 };
+
+variantSchema.pre('save', async function (next) {
+  const variant = this;
+
+  const { onHand, trading } = variant.inventories
+
+  variant.inventories.available = onHand - trading
+
+  next();
+});
 
 
 module.exports = mongoose.model("Variant", variantSchema);

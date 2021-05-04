@@ -1,28 +1,16 @@
 const express = require("express");
-// const request = require("request-promise");
 const cors = require("cors");
-// const path = require('path');
-// const cookie = require('cookie')
-// const configSocket = require('./socket')
-// const expsession = require('express-session')
 require('dotenv').config()
 require("./connections/mongodb-atlas");
 
-// const swaggerJsDoc = require("swagger-jsdoc");
+process.env.API_URL = process.env.NODE_ENV === 'dev' ? 'http://localhost:5000/' : 'https://capstone-api-mms.herokuapp.com/'
+
 const swaggerUi = require("swagger-ui-express");
 const swaggerDocument = require("./swagger.json");
 
-// require("./connections/mongodb-local");
 const app = express();
 const port = process.env.PORT || 5000;
 const configRoute = require("./apis/index");
-
-// initialize session middleware
-// const sessionMiddleware = expsession({
-//   secret: 'random secret',
-//   saveUninitialized: true,
-//   resave: true
-// });
 
 app.use(express.json());
 app.use(cors());

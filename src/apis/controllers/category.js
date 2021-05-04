@@ -38,7 +38,7 @@ module.exports.getListCategory = async (req,res) =>{
   const idpath = req.query.idpath ? req.query.idpath.map(i => parseInt(i)) : [];
     if(idpath.length == 0) {
       try {
-        const categories = await Category.find({idpath:{ $size: 1}}, {name: 1, category_id: 1, leaf: 1, idpath:1});
+        const categories = await Category.find({idpath:{ $size: 1}}, {name: 1, category_id: 1, leaf: 1, idpath:1, namepath: 1});
         res.send(categories);
       } catch (e) {
         res.status(500).send(e.message);
@@ -57,16 +57,17 @@ module.exports.getListCategory = async (req,res) =>{
 module.exports.searchCategory = async (req,res) =>{
  
   const search = req.query.search
-    
-      try {
-        const categories = await Category.find({leaf: true, name: new RegExp(search, 'i')});
 
-        res.send(categories);
-      } catch (e) {
-        res.status(500).send(e.message);
-      }
-    
-    
+  try {
+    const categories = await Category.fuzzySearch({ query: search, minSize: 3 }).find({ leaf: true }).limit(10)
+
+    console.log("Caaaa: ", categories)
+
+    res.send(categories);
+  } catch (e) {
+    res.status(500).send(e.message);
+  }
+
 };
 module.exports.createCategory = async (req, res) => {
   const item = req.body;

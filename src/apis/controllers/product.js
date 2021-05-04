@@ -2,6 +2,93 @@ const Product = require("../models/product");
 const Error = require("../utils/error");
 const Variant = require('../models/variant')
 const rp = require('request-promise')
+const fs = require('fs')
+
+module.exports.createMultiPlatform = async (req, res) => {
+  const products = req.body
+
+  try {
+    for(let item of products) {
+      if(item.post === true) {
+        console.log("Begin create to: ", item.store_name)
+        if(item.platform_name === 'lazada') {
+            const lazRes = await rp({
+              method: 'POST',
+              url: `{process.env.API_URL}/api/lazada/products`,
+              body: {
+                Request: item.Request
+              },
+              json: true,
+              headers: {
+                'Authorization': 'Bearer ' + req.mongoToken,
+                'Platform-Token': item.access_token
+            }
+           })
+          
+          console.log(lazRes)
+
+          await rp({
+            method: 'POST',
+            url: `{process.env.API_URL}/lazada/products/fetch`,
+            headers: {
+              'Authorization': 'Bearer ' + req.mongoToken,
+              'Platform-Token': item.access_token
+            },
+            body: {
+              store_id: item.store_id,
+              lastSync: item.lastSync
+            },
+            json: true
+          })   
+
+        } else if(item.platform_name === 'sendo') {
+          await rp({
+            method: 'POST',
+            url: `{process.env.API_URL}/api/sendo/products`,
+            body: item,
+            json: true,
+            headers: {
+              'Authorization': 'Bearer ' + req.mongoToken,
+              'Platform-Token': item.access_token
+            }
+          })
+
+          await rp({
+            method: 'POST',
+            url: `{process.env.API_URL}/sendo/products/fetch`,
+            headers: {
+              'Authorization': 'Bearer ' + req.mongoToken,
+              'Platform-Token': item.access_token
+            },
+            body: {
+              store_id: item.store_id,
+              lastSync: item.lastSync
+            },
+            json: true
+          })          
+        } else if(item.platform_name === 'system') {
+          await rp({
+            method: 'POST',
+            url: `{process.env.API_URL}/products`,
+            body: {
+              ...item,
+              sellable: true,
+            },
+            json: true,
+            headers: {
+              'Authorization': 'Bearer ' + req.mongoToken,
+            }
+          })
+        }
+      }
+    }
+
+    return res.status(200).send("Ok")
+  } catch(e) {
+    console.log("Error", e.message)
+    res.status(500).send(Error({ message: 'Có gì đó không ổn !'}))
+  }
+};
 
 module.exports.getAllProduct = async (req, res) => {
   console.log(req.user.currentStorage)
@@ -40,38 +127,23 @@ module.exports.createMMSProduct = async (req, res) => {
       let totalQuantity = 0
 
         await Promise.all(req.body.variants.map(async (variant) => {
-        totalQuantity += variant.inventories.initStock
-        const mongoVariant = new Variant({ 
-          ...variant,
-          inventories: {
-            initStock: 0,
-            initPrice: variant.inventories.initPrice
-          },
-          productId: product._id 
-        })
-        await mongoVariant.save()
-        // const inventory = new Inventory({
-        //   variantId: mongoVariant._id,
-        //   actionName: 'Khởi tạo biến thể',
-        //   change: {
-        //     amount: variant.inventories.initStock,
-        //     type: 'Tăng'
-        //   },
-        //   instock: variant.inventories.initStock,
-        //   price: variant.inventories.initPrice,
-        // })
+          totalQuantity += variant.inventories.onHand
+          const mongoVariant = new Variant({ 
+            ...variant,
+            productId: product._id 
+          })
 
-        // await inventory.save()
+          await mongoVariant.save()
 
-        return mongoVariant
-      }))
+          return mongoVariant
+        }))
 
       configVariant = await Variant.find({ productId: product._id }).lean()
 
       try {
         await rp({
           method: 'POST',
-          url: 'http://localhost:5000/purchase-orders/init',
+          url: `{process.env.API_URL}/purchase-orders/init`,
           json: true,
           body: {
             code: `KHỞI_TẠO_${req.body.sku.toUpperCase()}_${new Date().toLocaleDateString()}`,
@@ -87,13 +159,14 @@ module.exports.createMMSProduct = async (req, res) => {
             lineItems: configVariant.map((variant, index) => ({
               ...variant,
               inventories: {
-                initStock: req.body.variants[index].inventories.initStock, 
+                onHand: req.body.variants[index].inventories.onHand, 
                 initPrice: variant.inventories.initPrice
               },
               variantId: variant._id,
               price: variant.inventories.initPrice,
-              quantity: req.body.variants[index].inventories.initStock,
+              quantity: req.body.variants[index].inventories.onHand,
             })),
+            init: true,
             orderStatus: 'Đã hoàn thành',
             instockStatus: true,
             paymentStatus: 'Đã thanh toán',
@@ -113,6 +186,7 @@ module.exports.createMMSProduct = async (req, res) => {
 
     res.status(200).send(result);
   } catch (e) {
+    console.log(e.message)
     res.status(500).send(Error(e));
   }
 };
@@ -144,6 +218,8 @@ module.exports.deleteProduct = async (req, res) => {
     if (!product) {
       return res.status(404).send();
     }
+
+    await Variant.deleteMany({ productId: product._id })
 
     res.send(product);
   } catch (e) {

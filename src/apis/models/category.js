@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
+const mongooseFuzzySearching = require('mongoose-fuzzy-searching')
+
 const Schema = mongoose.Schema;
-const validator = require("validator");
 
 const CategorySchema = new Schema({
     category_id:{
@@ -22,5 +23,10 @@ const CategorySchema = new Schema({
       type: Array
     }
 })
+
+CategorySchema.plugin(mongooseFuzzySearching, { fields: [{
+  name: 'name',
+  minSize: 3
+}] })
 
 module.exports = mongoose.model("Category", CategorySchema);

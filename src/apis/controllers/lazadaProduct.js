@@ -74,7 +74,7 @@ const createLazadaProduct = async (item, additionalData) => {
       }, options);
     })
   } catch(e) {
-    console.log(e.message)
+    console.log("dwqdwqwq", e.message)
   }
 };
 
@@ -132,16 +132,17 @@ module.exports.fetchProducts = async (req, res) =>{
   const appSecret = process.env.LAZADA_APP_SECRET 
   const appKey = process.env.LAZADA_APP_KEY 
   const accessToken =  req.accessToken
-  const lazFormatDate = lastSync.split('.')[0].concat('+0700')
+  // const lazFormatDate = lastSync.split('.')[0].concat('+0700')
     
   try {
     const client = new LazadaClient(apiUrl, appKey, appSecret)
     const request = new LazadaRequest(apiPath, 'GET');
-    request.addApiParam("filter", "live"); // http method default is post
+    request.addApiParam("filter", "live"); 
     // request.addApiParam("update_after", lazFormatDate);
     const response = await client.execute(request, accessToken);
     const products = response.data.data.products || []
     await Promise.all(products.map(async product => {
+      console.log(product)
       const lazadaProduct = await LazadaProduct.findOne({ id: product.item_id, store_id })
       if(lazadaProduct) {
         const secondDiff = timeDiff(new Date(parseInt(product.updated_time)), new Date(lazadaProduct.updated_date_timestamp)).secondsDifference
@@ -173,7 +174,7 @@ module.exports.syncProducts = async (req, res) => {
   try { 
     newCredential = await rp({
       method: 'POST',
-      url: 'http://localhost:5000/api/lazada/login',
+      url: `{process.env.API_URL}/api/lazada/login`,
       headers: {
         'Authorization': 'Bearer ' + req.mongoToken,
         'Platform-Token': payload.access_token
@@ -199,7 +200,7 @@ module.exports.syncProducts = async (req, res) => {
   if(newCredential.lastSync) {
     const options = {
       method: 'POST',
-      url: 'http://localhost:5000/lazada/products/fetch-deleted',
+      url: `{process.env.API_URL}/lazada/products/fetch-deleted`,
       headers: {
         'Authorization': 'Bearer ' + req.mongoToken,
         'Platform-Token': newCredential.access_token
@@ -226,7 +227,7 @@ module.exports.syncProducts = async (req, res) => {
   try {
     const options = {
       method: 'POST',
-      url: 'http://localhost:5000/lazada/products/fetch',
+      url: `{process.env.API_URL}/lazada/products/fetch`,
       headers: {
         'Authorization': 'Bearer ' + req.mongoToken,
         'Platform-Token': newCredential.access_token

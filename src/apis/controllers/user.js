@@ -12,6 +12,8 @@ const option = {
   }
 };
 
+console.log(process.env.API_URL)
+
 
 module.exports.getCurrentUser = async (req, res) => {
   res.status(200).send({ user: req.user });

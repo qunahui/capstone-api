@@ -8,11 +8,12 @@ const { createLazadaProduct } = require('./lazadaProduct');
 const LazadaProduct = require('../models/lazadaProduct');
 const Error = require('../utils/error')
 const timeDiff = require('../utils/timeDiff')
+const util = require('util')
 
 const { LazadaRequest, LazadaClient } = require('lazada-sdk-client');
 
 
-var options = {compact: true, ignoreComment: true, spaces: 4};
+var options = {compact: true, ignoreComment: true, spaces: 0};
 
 module.exports.authorizeCredential = async (req, res) => {
   try {
@@ -57,7 +58,7 @@ module.exports.authorizeCredential = async (req, res) => {
         }
 
         const result = await rp.get({
-            uri: 'http://localhost:5000/api/lazada/seller',
+            uri: `{process.env.API_URL}/api/lazada/seller`,
             headers:{ 
               "Authorization": 'Bearer ' + req.mongoToken,
               "Platform-Token": response.access_token
@@ -120,7 +121,7 @@ module.exports.getAccessToken = async (req, res) => {
     try {
       const newCredential = await rp({
         method: 'POST',
-        url: 'http://localhost:5000/api/lazada/refresh-token',
+        url: `{process.env.API_URL}/api/lazada/refresh-token`,
         headers: {
           "Authorization": "Bearer " + req.mongoToken
         },
@@ -626,7 +627,7 @@ module.exports.uploadImage = async (req, res) =>{
 //             }
 //         }
 //     }
-//     const payload = '<?xml version="1.0" encoding="UTF-8" ?>'+ convert.js2xml(data, {compact: true, ignoreComment: true, spaces: 4})
+//     const payload = '<?xml version="1.0" encoding="UTF-8" ?>'+ convert.js2xml(data, {compact: true, ignoreComment: true, spaces: 0})
     
 //     const commonRequestParams = {
 //         "app_key": appKey,
@@ -682,11 +683,13 @@ module.exports.updateProduct = async (req, res) =>{
         });
     }
 
+    delete lazadaproduct.attributes.description
+
     let updateFormatProduct = {
         "Request":{
           "Product":{
             "ItemId": lazadaproduct.id,
-            "Attributes": lazadaproduct.attributes,
+            // "Attributes": lazadaproduct.attributes,
             "Skus":{
               "Sku": lazadaproduct.variants
             }
@@ -694,7 +697,7 @@ module.exports.updateProduct = async (req, res) =>{
         }
       }
 
-    const payload = '<?xml version="1.0" encoding="UTF-8"?>'+ convert.js2xml(updateFormatProduct, {compact: true, ignoreComment: true, spaces: 4})
+    const payload = '<?xml version="1.0" encoding="UTF-8"?>'+ convert.js2xml(updateFormatProduct, {compact: true, ignoreComment: true, spaces: 0})
     
     const commonRequestParams = {
         "app_key": appKey,
@@ -702,6 +705,7 @@ module.exports.updateProduct = async (req, res) =>{
         "sign_method": "sha256",
         "access_token":accessToken
     }
+
     const sign = signRequest(appSecret, apiPath, {...commonRequestParams, payload})
     const encodePayload = encodeURIComponent(payload)
     try {
@@ -716,7 +720,7 @@ module.exports.updateProduct = async (req, res) =>{
             'headers': {
             }
         };
-        //console.log(options)
+        console.log(util.inspect(updateFormatProduct, {showHidden: false, depth: null}))
         request(options, function (error, response) {
             if (error) throw new Error(error);
             
@@ -727,6 +731,79 @@ module.exports.updateProduct = async (req, res) =>{
     }
     
 }
+
+module.exports.updatePriceQuantity = async (req, res) =>{
+  const apiUrl = 'https://api.lazada.vn/rest' 
+  const apiPath=  '/product/update'
+  const appSecret = process.env.LAZADA_APP_SECRET
+  const appKey = process.env.LAZADA_APP_KEY
+  const accessToken =  req.accessToken 
+  const timestamp = Date.now()
+  const { lazadaProduct, variantId } = req.body // full product in db
+  // forrmat Product
+  if(lazadaProduct.variants){
+      lazadaProduct.variants.forEach(variant => {
+          variant.SellerSku = variant.sku // đổi tên
+  
+          delete variant["_id"]
+          delete variant["sku"]
+          delete variant["ShopSku"]
+          delete variant["productId"]
+          delete variant["variant_attributes"]
+          delete variant["__v"]
+          delete variant["special_price"]
+      });
+  }
+
+  delete lazadaProduct.attributes.description
+
+  let updateFormatProduct = {
+      "Request":{
+        "Product":{
+          "ItemId": lazadaProduct.id,
+          // "Attributes": lazadaProduct.attributes,
+          "Skus":{
+            "Sku": [lazadaProduct.variants.find(matchedVariant => matchedVariant.SkuId === variantId)]
+          }
+        }
+      }
+    }
+
+  const payload = '<?xml version="1.0" encoding="UTF-8"?>'+ convert.js2xml(updateFormatProduct, {compact: true, ignoreComment: true, spaces: 0})
+  
+  const commonRequestParams = {
+      "app_key": appKey,
+      "timestamp": timestamp,
+      "sign_method": "sha256",
+      "access_token":accessToken
+  }
+
+  const sign = signRequest(appSecret, apiPath, {...commonRequestParams, payload})
+  const encodePayload = encodeURIComponent(payload)
+  try {
+      var options = {
+          'method': 'POST',
+          'url': apiUrl+apiPath+
+          '?payload='+encodePayload+
+          '&app_key='+appKey+
+          '&sign_method=sha256&timestamp='+timestamp+
+          '&access_token='+accessToken+
+          '&sign='+sign,
+          'headers': {
+          }
+      };
+      console.log(util.inspect(updateFormatProduct, {showHidden: false, depth: null}))
+      request(options, function (error, response) {
+          if (error) throw new Error(error);
+          
+          res.status(response.statusCode).send(response.body)
+      });
+  } catch (e) {
+      res.status(500).send(Error(e));
+  }
+}
+
+
 module.exports.createProductOnLazada = async (req, res) =>{
     const apiUrl = 'https://api.lazada.vn/rest' 
     const apiPath=  '/product/create'
@@ -735,8 +812,9 @@ module.exports.createProductOnLazada = async (req, res) =>{
     const accessToken =  req.accessToken // goi db
     const timestamp = Date.now()
     const data = req.body
-    const payload = '<?xml version="1.0" encoding="UTF-8" ?>'+ convert.js2xml(data, {compact: true, ignoreComment: true, spaces: 4})
+    const payload = '<?xml version="1.0" encoding="UTF-8" ?>'+ convert.js2xml(data, {compact: true, ignoreComment: true, spaces: 0})
     
+    //res.send(payload)
     const commonRequestParams = {
         "app_key": appKey,
         "timestamp": timestamp,
@@ -744,7 +822,8 @@ module.exports.createProductOnLazada = async (req, res) =>{
         "access_token":accessToken
     }
     const sign = signRequest(appSecret, apiPath, {...commonRequestParams, payload})
-    const encodePayload = encodeURI(payload)
+    const encodePayload = encodeURIComponent(payload)
+    
     try {
         var options = {
             'method': 'POST',
@@ -757,13 +836,17 @@ module.exports.createProductOnLazada = async (req, res) =>{
             'headers': {
             }
         };
-        //console.log(options)
+
+        console.log(options)
         request(options, function (error, response) {
-            if (error) throw new Error(error);
+            if (error) {
+              throw new Error(error);
+            }
             
             res.status(response.statusCode).send(response.body)
         });
     } catch (e) {
+        console.log("Error: ", e.message)
         res.status(500).send(Error(e));
     }
     
@@ -890,7 +973,7 @@ module.exports.updateSellerEmail = async (req, res) =>{
     const accessToken =  req.accessToken
     const timestamp = Date.now()
     const data = req.body
-    const payload = '<?xml version="1.0" encoding="UTF-8" ?>'+ convert.js2xml(data, {compact: true, ignoreComment: true, spaces: 4})
+    const payload = '<?xml version="1.0" encoding="UTF-8" ?>'+ convert.js2xml(data, {compact: true, ignoreComment: true, spaces: 0})
     console.log(payload)
     const commonRequestParams = {
         "app_key": appKey,
@@ -967,7 +1050,7 @@ module.exports.searchOrder = async (req, res) =>{
     const apiPath=  '/orders/get'
     const appSecret = process.env.LAZADA_APP_SECRET
     const appKey = process.env.LAZADA_APP_KEY
-    const accessToken =  "500005000282pCawUSfbySlxELBNZvxde1hVjqrd1c60dd3csukWdjU9syzPtBwi" // goi db
+    const accessToken =  req.accessToken // goi db
     const timestamp = Date.now()
     const commonRequestParams = {
         "app_key": appKey,
@@ -975,29 +1058,27 @@ module.exports.searchOrder = async (req, res) =>{
         "sign_method": "sha256",
         "access_token":accessToken,
     }
-    const created_after = req.query.created_after
-    //const status = req.query.status
-    const sign = this.signRequest(appSecret, apiPath, {...commonRequestParams, created_after})
-    const encodeCreateAfter = encodeURIComponent(created_after)
+    const query = req.query
+
+    const sign = signRequest(appSecret, apiPath, {...commonRequestParams, ...query})
+
     try {
         var options = {
             'method': 'GET',
             'url': apiUrl+apiPath+
-            '?created_after='+encodeCreateAfter+
-            //'&status='+status+
-            '&app_key='+appKey+
+            '?app_key='+appKey+
             '&sign_method=sha256&timestamp='+timestamp+
             '&access_token='+accessToken+
-            '&sign='+sign,
-            'headers': {
-            }
+            '&sign='+sign
         };
-        console.log(options)
+        for (const [key, value] of Object.entries(query)) {
+            options.url += '&'+ key + '=' + encodeURIComponent(value)
+          }
         request(options, function (error, response) {
             //if (error) throw new Error(error);
             //console.log(response.body);
             const orders = JSON.parse(response.body)
-            res.send(orders)
+            res.status(response.statusCode).send(orders)
         });
     } catch (e) {
         res.status(500).send(Error(e));
@@ -1074,7 +1155,7 @@ module.exports.getOrderItems = async (req, res) =>{
             const listItem = JSON.parse(response.body).data
             listItem.forEach(item => {
                 item.quantity = 1
-                item.store_sku = item.sku
+                item.price = item.item_price
             });
             var i,m =0
             for(i =1;i < listItem.length;i++)
