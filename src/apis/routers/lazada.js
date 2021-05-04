@@ -49,10 +49,13 @@ router.delete('/products/:sellerSku', auth, controller.deleteProduct)
 
 router.get('/cancel-reason', auth, controller.getCancelReason)
 
+router.get('/orders/document', controller.getDocument)
+
 router.get('/orders', controller.searchOrder)
 router.get('/orders/:id', auth, controller.getOrderByIdOnLazada)
 router.post('/orders/cancel/:id', auth, controller.cancelOrderOnLazada)
-
+router.post('/orders/pack/', controller.setStatusToPackedByMarketplace)
+router.post('/orders/rts/', controller.setStatusToReadyToShip)
 router.get('/orders/items/:id', auth, controller.getOrderItems)
 
 module.exports = router;

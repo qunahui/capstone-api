@@ -3878,6 +3878,160 @@
         }
       }
     },
+    "/api/lazada/orders/document": {
+      "get": {
+        "tags": [
+          "lazadaAPI"
+        ],
+        "summary": "get document on lazada",
+        "operationId": "getDocument",
+        "security": [
+          {
+            "bearerAuth": [],
+            "ApiKeyAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "doc_type",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "shippingLabel"
+            },
+            "description": ""
+          },
+          {
+            "in": "query",
+            "name": "order_item_ids",
+            "required": true,
+            "schema": {
+              "type": "array",
+              "example": [279709, 279709]
+            },
+            "description": ""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful",
+            "content": {
+              "application/json": {
+                "example": {
+                  "success": true,
+                  "code": "0",
+                  "request_id": "0b1187a316117593884048180"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        }
+      }
+    },
+    "/api/lazada/orders/pack": {
+      "post": {
+        "tags": [
+          "lazadaAPI"
+        ],
+        "summary": "packing order on lazada",
+        "operationId": "packOrder",
+        "security": [
+          {
+            "bearerAuth": [],
+            "ApiKeyAuth": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+              },
+              "example":{
+                "shipping_provider": "locpro",
+                "delivery_type": "dropship",
+                "order_item_ids": [1530553,1830236]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful",
+            "content": {
+              "application/json": {
+                "example": {
+                  "success": true,
+                  "code": "0",
+                  "request_id": "0b1187a316117593884048180"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        }
+      }
+    },
+    "/api/lazada/orders/rts": {
+      "post": {
+        "tags": [
+          "lazadaAPI"
+        ],
+        "summary": "set rts order on lazada",
+        "operationId": "rstOrder",
+        "security": [
+          {
+            "bearerAuth": [],
+            "ApiKeyAuth": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+              },
+              "example":{
+                "shipment_provider": "locpro",
+                "delivery_type": "dropship",
+                "order_item_ids": [1530553,1830236],
+                "tracking_number": 12345678
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful",
+            "content": {
+              "application/json": {
+                "example": {
+                  "success": true,
+                  "code": "0",
+                  "request_id": "0b1187a316117593884048180"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        }
+      }
+    },
     "/api/lazada/orders/{order_id}": {
       "get": {
         "tags": [
