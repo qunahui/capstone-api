@@ -1821,6 +1821,47 @@
         }
       }
     },
+    "/sendo/suggest-category": {
+      "post": {
+        "tags": [
+          "sendoProducts"
+        ],
+        "summary": "suggest sendoCategory in database",
+        "operationId": "suggesSendoCategory",
+        "security": [
+          {
+            "bearerAuth": [],
+            "ApiKeyAuth": []
+          }
+        ],
+        "requestBody":{
+          "content":{
+            "application/json":{
+              "schema":{
+
+              },
+              "example":{
+                "name": "locpro"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful"
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "404": {
+            "description": "Pet not found"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        }
+      }
+    },
     "/api/sendo/products/{productId}": {
       "get": {
         "tags": [
