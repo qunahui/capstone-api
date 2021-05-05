@@ -1045,7 +1045,135 @@ module.exports.getCancelReason = async (req, res) =>{
         res.status(500).send(Error(e));
     }
 }
-
+module.exports.getDocument = async (req, res) =>{
+    const apiUrl = 'https://api.lazada.vn/rest' 
+    const apiPath=  '/order/document/get'
+    const appSecret = process.env.LAZADA_APP_SECRET
+    const appKey = process.env.LAZADA_APP_KEY
+    const accessToken =  "123"//req.accessToken // goi db
+    const timestamp = Date.now()
+    const doc_type = req.query.doc_type //Document types, including 'invoice', 'shippingLabel', or 'carrierManifest'
+    const order_item_ids = req.query.order_item_ids
+    const commonRequestParams = {
+        "app_key": appKey,
+        "timestamp": timestamp,
+        "sign_method": "sha256",
+        "access_token":accessToken
+    }
+    const sign = signRequest(appSecret, apiPath, commonRequestParams, doc_type, order_item_ids)
+    const encodeOrderIds = encodeURIComponent('['+order_item_ids+']')
+    try {
+        var options = {
+            'method': 'GET',
+            'url': apiUrl+apiPath+
+            '?app_key='+appKey+
+            '&sign_method=sha256&timestamp='+timestamp+
+            '&access_token='+accessToken+
+            '&doc_type='+doc_type+
+            '&order_item_ids='+encodeOrderIds+
+            '&sign='+sign,
+            'headers': {
+            }
+        };
+        //console.log(options)
+        res.send(options)
+        // request(options, function (error, response) {
+        //     if (error) throw new Error(error);
+            
+        //     res.status(response.statusCode).send(response.body)
+        // });
+    } catch (e) {
+        res.status(500).send(Error(e));
+    }
+}
+module.exports.setStatusToPackedByMarketplace = async (req, res) =>{
+    const apiUrl = 'https://api.lazada.vn/rest' 
+    const apiPath=  '/order/pack'
+    const appSecret = process.env.LAZADA_APP_SECRET
+    const appKey = process.env.LAZADA_APP_KEY
+    const accessToken =  "123"//req.accessToken // goi db
+    const timestamp = Date.now()
+    const shipping_provider = req.body.shipping_provider //
+    const delivery_type = req.body.delivery_type  //dropship //pickup //send_to_warehouse
+    const order_item_ids = req.body.order_item_ids
+    const commonRequestParams = {
+        "app_key": appKey,
+        "timestamp": timestamp,
+        "sign_method": "sha256",
+        "access_token":accessToken
+    }
+    const sign = signRequest(appSecret, apiPath, commonRequestParams, shipping_provider,delivery_type,order_item_ids)
+    const encodeOrderIds = encodeURIComponent('['+order_item_ids+']')
+    try {
+        var options = {
+            'method': 'GET',
+            'url': apiUrl+apiPath+
+            '?app_key='+appKey+
+            '&sign_method=sha256&timestamp='+timestamp+
+            '&access_token='+accessToken+
+            '&shipping_provider='+shipping_provider+
+            '&delivery_type='+delivery_type+
+            '&order_item_ids='+encodeOrderIds+
+            '&sign='+sign,
+            'headers': {
+            }
+        };
+        //console.log(options)
+        res.send(options)
+        // request(options, function (error, response) {
+        //     if (error) throw new Error(error);
+            
+        //     res.status(response.statusCode).send(response.body)
+        // });
+    } catch (e) {
+        res.status(500).send(Error(e));
+    }
+}
+module.exports.setStatusToReadyToShip = async (req, res) =>{
+    const apiUrl = 'https://api.lazada.vn/rest' 
+    const apiPath=  '/order/rts'
+    const appSecret = process.env.LAZADA_APP_SECRET
+    const appKey = process.env.LAZADA_APP_KEY
+    const accessToken =  "123"//req.accessToken // goi db
+    const timestamp = Date.now()
+    const shipment_provider = req.body.shipment_provider //
+    const delivery_type = req.body.delivery_type  //dropship //pickup //send_to_warehouse
+    const order_item_ids = req.body.order_item_ids
+    const tracking_number = req.body.tracking_number
+    const commonRequestParams = {
+        "app_key": appKey,
+        "timestamp": timestamp,
+        "sign_method": "sha256",
+        "access_token":accessToken
+    }
+    const sign = signRequest(appSecret, apiPath, commonRequestParams, shipment_provider,delivery_type,order_item_ids, tracking_number)
+    const encodeOrderIds = encodeURIComponent('['+order_item_ids+']')
+    try {
+        var options = {
+            'method': 'GET',
+            'url': apiUrl+apiPath+
+            '?app_key='+appKey+
+            '&sign_method=sha256&timestamp='+timestamp+
+            '&access_token='+accessToken+
+            '&shipment_provider='+shipment_provider+
+            '&delivery_type='+delivery_type+
+            '&order_item_ids='+encodeOrderIds+
+            '&tracking_number='+tracking_number+
+            '&sign='+sign,
+            'headers': {
+            }
+        };
+        //console.log(options)
+        res.send(options)
+        // request(options, function (error, response) {
+        //     if (error) throw new Error(error);
+            
+        //     res.status(response.statusCode).send(response.body)
+        // });
+    } catch (e) {
+        res.status(500).send(Error(e));
+    }
+}
 module.exports.searchOrder = async (req, res) =>{
     //must have created_before or created_after
     const apiUrl = 'https://api.lazada.vn/rest' 
@@ -1153,26 +1281,26 @@ module.exports.getOrderItems = async (req, res) =>{
         //console.log(options)
         request(options, function (error, response) {
             if (error) throw new Error(error);
-            //res.send(response.body)
-            const listItem = JSON.parse(response.body).data
-            listItem.forEach(item => {
-                item.quantity = 1
-                item.price = item.item_price
-            });
-            var i,m =0
-            for(i =1;i < listItem.length;i++)
-            {
-                if(listItem[m].sku === listItem[i].sku)
-                {
-                    listItem[m].quantity++
-                    listItem.splice(i,1)
-                    i--
-                }
-                else{
-                    m = i
-                }
-            }
-            res.status(200).send(listItem)
+            res.send(response.body)
+            // const listItem = JSON.parse(response.body).data
+            // listItem.forEach(item => {
+            //     item.quantity = 1
+            //     item.price = item.item_price
+            // });
+            // var i,m =0
+            // for(i =1;i < listItem.length;i++)
+            // {
+            //     if(listItem[m].sku === listItem[i].sku)
+            //     {
+            //         listItem[m].quantity++
+            //         listItem.splice(i,1)
+            //         i--
+            //     }
+            //     else{
+            //         m = i
+            //     }
+            // }
+            // res.status(200).send(listItem)
         });
     } catch (e) {
         res.status(500).send(Error(e));
