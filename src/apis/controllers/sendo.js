@@ -381,7 +381,7 @@ module.exports.searchSendoProduct = async (req, res) =>{
 }
 //req.body.filter : { sync-range}
 module.exports.syncAllProductSendo = async (req, res) => {
-  request.get({url: `{process.env.API_URL}/api/sendo/product`}, function(error, response){
+  request.get({url: `${process.env.API_URL}/api/sendo/product`}, function(error, response){
     const products = JSON.parse(response.body)
     const storeName = products[0].store_name
     products.forEach(e => {
@@ -529,7 +529,7 @@ module.exports.getOrderByIdOnSendo = async (req, res) => {
 }
 
 module.exports.syncAllOrderSendo = async (req, res) =>{
-  request.get({url: `{process.env.API_URL}/api/sendo/order`}, function(error, response){
+  request.get({url: `${process.env.API_URL}/api/sendo/order`}, function(error, response){
     const orders = JSON.parse(response.body)
     orders.forEach(e => {
       request.post({url: "http://localhost:5000/orders/sendo/create-order-sync",
@@ -598,7 +598,7 @@ module.exports.updateProduct = async (req, res) =>{
     //get full product on sendo
   const product = await rp({
       method: 'GET',
-      uri: `{process.env.API_URL}/api/sendo/products/` + id,
+      uri: `${process.env.API_URL}/api/sendo/products/` + id,
       headers: {
         'Authorization': 'Bearer ' + req.mongoToken,
         'Platform-Token': req.accessToken

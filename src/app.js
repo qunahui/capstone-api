@@ -3,7 +3,7 @@ const cors = require("cors");
 require('dotenv').config()
 require("./connections/mongodb-atlas");
 
-process.env.API_URL = process.env.NODE_ENV === 'dev' ? 'http://localhost:5000/' : 'https://capstone-api-mms.herokuapp.com/'
+process.env.API_URL = process.env.NODE_ENV === 'dev' ? 'http://localhost:5000' : 'https://capstone-api-mms.herokuapp.com'
 
 const swaggerUi = require("swagger-ui-express");
 const swaggerDocument = require("./swagger.json");
