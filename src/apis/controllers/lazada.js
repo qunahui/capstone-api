@@ -9,6 +9,8 @@ const LazadaProduct = require('../models/lazadaProduct');
 const Error = require('../utils/error')
 const timeDiff = require('../utils/timeDiff')
 const util = require('util')
+const ActivityLog = require('../models/activityLog')
+
 
 const { LazadaRequest, LazadaClient } = require('lazada-sdk-client');
 
@@ -42,6 +44,7 @@ module.exports.authorizeCredential = async (req, res) => {
             'Content-Type': 'application/json'
         }
     };
+
     const response = await rp(options).then(res => JSON.parse(res));
 
       if(response.code === '0') {
@@ -91,6 +94,14 @@ module.exports.authorizeCredential = async (req, res) => {
         }, {
           lazadaCredentials: storage.lazadaCredentials
         })
+
+        await new ActivityLog({
+          storageId: req.user.currentStorage.storageId, 
+          userId: req.user._id,
+          userName: req.user.displayName,
+          userRole: req.user.role,
+          message: 'Đồng bộ gian hàng ' + insertCredential.store_name,
+        }).save()
 
         res.status(200).send(insertCredential)
       } else {
@@ -1060,7 +1071,12 @@ module.exports.searchOrder = async (req, res) =>{
         "sign_method": "sha256",
         "access_token":accessToken,
     }
-    const query = req.query
+
+    let query = {
+      created_after: '2021-01-01T09:00:00+08:00'
+      // created_after: new Date(parseInt(1617094327733)).toISOString().replace('Z', '+07:00'),
+      // updated_after: new Date(parseInt(1617094327733)).toISOString().replace('Z', '+07:00'),
+    }
 
     const sign = signRequest(appSecret, apiPath, {...commonRequestParams, ...query})
 

@@ -1,11 +1,10 @@
 const Error = require("../utils/error");
 const request = require('request');
 const rp = require('request-promise');
-const SendoProduct = require('../models/sendoProduct')
 const Storage = require('../models/storage')
 const timeDiff = require('../utils/timeDiff')
-const Cookie = require('cookie')
 const SendoCategory = require('../models/sendoCategory')
+const ActivityLog = require('../models/activityLog')
 const util = require('util')
 
 
@@ -52,9 +51,17 @@ module.exports.authorizeCredential = async (req, res) => {
         }
       })
 
-      res.status(200).send(insertCredential)
+      await new ActivityLog({
+        storageId: req.user.currentStorage.storageId, 
+        userId: req.user._id,
+        userName: req.user.displayName,
+        userRole: req.user.role,
+        message: 'Đồng bộ gian hàng ' + insertCredential.store_name,
+      }).save()
+
+      return res.status(200).send(insertCredential)
     }).catch(e => {
-      console.log("Response: ", e.response)
+      console.log("Response: ", e.message)
       const { body } = e.response
       console.log("Error found.....", e.response.body)
       res.status(body.statusCode).send(Error({ message: body.error.message }))
@@ -162,7 +169,7 @@ module.exports.createSendoCategory = async (req, res) =>{
     'method': 'GET',
     'url':"https://open.sendo.vn/api/partner/category/0",
     'headers': {
-      'Authorization': 'bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJTdG9yZUlkIjoiODU0MjE0IiwiVXNlck5hbWUiOiIiLCJTdG9yZVN0YXR1cyI6IjIiLCJTaG9wVHlwZSI6IjEiLCJTdG9yZUxldmVsIjoiMCIsImV4cCI6MTYxNzY5ODc5OSwiaXNzIjoiODU0MjE0IiwiYXVkIjoiODU0MjE0In0.OD2auZ7MvFr6b78pSiUtTPgPsn-6o_M-X1Jo0AlAzjg'
+      'Authorization': 'bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJTdG9yZUlkIjoiODU0MjE0IiwiVXNlck5hbWUiOiIiLCJTdG9yZVN0YXR1cyI6IjIiLCJTaG9wVHlwZSI6IjEiLCJTdG9yZUxldmVsIjoiMCIsImV4cCI6MTYyMDE0NTczMiwiaXNzIjoiODU0MjE0IiwiYXVkIjoiODU0MjE0In0.5joddR9_7T99clbI5PDdmr4nr7XOGKqpxzg3olx1fj4'
     }
   })
   const listLv1 = JSON.parse(dataLv1).result
@@ -180,7 +187,7 @@ module.exports.createSendoCategory = async (req, res) =>{
         'method': 'GET',
         'url':"https://open.sendo.vn/api/partner/category/"+ itemLv1.id,
         'headers': {
-          'Authorization': 'bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJTdG9yZUlkIjoiODU0MjE0IiwiVXNlck5hbWUiOiIiLCJTdG9yZVN0YXR1cyI6IjIiLCJTaG9wVHlwZSI6IjEiLCJTdG9yZUxldmVsIjoiMCIsImV4cCI6MTYxNzY5ODc5OSwiaXNzIjoiODU0MjE0IiwiYXVkIjoiODU0MjE0In0.OD2auZ7MvFr6b78pSiUtTPgPsn-6o_M-X1Jo0AlAzjg'
+          'Authorization': 'bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJTdG9yZUlkIjoiODU0MjE0IiwiVXNlck5hbWUiOiIiLCJTdG9yZVN0YXR1cyI6IjIiLCJTaG9wVHlwZSI6IjEiLCJTdG9yZUxldmVsIjoiMCIsImV4cCI6MTYyMDE0NTczMiwiaXNzIjoiODU0MjE0IiwiYXVkIjoiODU0MjE0In0.5joddR9_7T99clbI5PDdmr4nr7XOGKqpxzg3olx1fj4'
         }
       })
       const listLv2 = JSON.parse(dataLv2).result
@@ -197,7 +204,7 @@ module.exports.createSendoCategory = async (req, res) =>{
           'method': 'GET',
           'url':"https://open.sendo.vn/api/partner/category/"+ itemLv2.id,
           'headers': {
-            'Authorization': 'bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJTdG9yZUlkIjoiODU0MjE0IiwiVXNlck5hbWUiOiIiLCJTdG9yZVN0YXR1cyI6IjIiLCJTaG9wVHlwZSI6IjEiLCJTdG9yZUxldmVsIjoiMCIsImV4cCI6MTYxNzY5ODc5OSwiaXNzIjoiODU0MjE0IiwiYXVkIjoiODU0MjE0In0.OD2auZ7MvFr6b78pSiUtTPgPsn-6o_M-X1Jo0AlAzjg'
+            'Authorization': 'bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJTdG9yZUlkIjoiODU0MjE0IiwiVXNlck5hbWUiOiIiLCJTdG9yZVN0YXR1cyI6IjIiLCJTaG9wVHlwZSI6IjEiLCJTdG9yZUxldmVsIjoiMCIsImV4cCI6MTYyMDE0NTczMiwiaXNzIjoiODU0MjE0IiwiYXVkIjoiODU0MjE0In0.5joddR9_7T99clbI5PDdmr4nr7XOGKqpxzg3olx1fj4'
           }
         })
         const listLv3 = JSON.parse(dataLv3).result

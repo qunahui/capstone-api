@@ -3,6 +3,7 @@ const Storage = require("../models/storage")
 const auth = require("../../middlewares/auth");
 const Error = require("../utils/error");
 const nodemailer = require('nodemailer');
+const ActivityLog = require('../models/activityLog')
 
 const option = {
   service: 'gmail',
@@ -21,7 +22,10 @@ module.exports.getCurrentUser = async (req, res) => {
 
 module.exports.signUp = async (req, res) => {
   try {
-    const user = new User({ ...req.body });
+    const user = new User({ 
+      ...req.body,
+      role: 'Seller'
+     });
     const storageName = 'STORAGE_' + user._id.toString().toUpperCase()
     const linkedStorage = new Storage({ displayName: storageName })
     await linkedStorage.save();
@@ -55,6 +59,20 @@ module.exports.signIn = async (req, res) => {
     );
 
     const token = await user.generateJWT();
+
+    let now = new Date()
+
+    console.log("user: ", user)
+
+    const activityLog = new ActivityLog({
+      storageId: user.storages[0].storage.storageId,
+      userId: user._id,
+      userName: user.displayName,
+      userRole: user.role,
+      message: 'Đăng nhập vào hệ thống'
+    })
+
+    await activityLog.save()
     return res.send({ user, token });
   } catch (e) {
     res.status(401).send(Error(e));

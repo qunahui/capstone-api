@@ -47,6 +47,12 @@ const schema = new Schema({
     required: true,
     trim: true,
   },
+  lastSeen: {
+    type: Date,
+  },
+  role: {
+    type: String,
+  },
   isDeleted: {
     type: Boolean,
     default: false,

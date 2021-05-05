@@ -1,7 +1,6 @@
 const express = require("express");
 const router = express.Router();
 const auth = require("../../middlewares/auth");
-const refreshSendoToken = require("../../middlewares/refreshSendoToken")
 const controller = require("../controllers/sendoProduct");
 const util = require('util')
 

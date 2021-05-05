@@ -8,10 +8,13 @@ const auth = async (req, res, next) => {
     const mongoToken = req.header("Authorization").replace("Bearer ", "");
     const platformToken = req.header("Platform-Token");
     const decoded = jwt.verify(mongoToken, "thuongthuong");
-    const user = await User.findOne({
+    let user = await User.findOne({
       _id: decoded._id,
       "tokens.token": mongoToken,
     });
+
+    user.lastSeen = new Date()
+    await user.save()
 
     if (!user) {
       return res.status(401).send(Error({

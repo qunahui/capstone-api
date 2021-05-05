@@ -203,7 +203,7 @@ module.exports.updatePurchasePayment = async (req, res) => {
     purchaseOrder.paidHistory.push({ title: `Xác nhận thanh toán ${req.body.formattedPaidPrice}`, date: Date.now()})
     if(purchaseOrder.paidPrice === purchaseOrder.totalPrice) {
       purchaseOrder.paymentStatus = 'Đã thanh toán'
-    } else if(purchaseOrder.paidPrice >= 0 && purchaseOrder.paidPrice <= purchaseOrder.totalPrice) {
+    } else if(purchaseOrder.paidPrice >= 0 && purchaseOrder.paidPrice < purchaseOrder.totalPrice) {
       purchaseOrder.paymentStatus = 'Thanh toán một phần'
     }
 

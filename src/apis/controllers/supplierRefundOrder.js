@@ -158,7 +158,7 @@ module.exports.updateRefundPayment = async (req, res) => {
       supplierRefundOrder.paidHistory.push({ title: `Xác nhận thanh toán ${req.body.formattedPaidPrice}`, date: Date.now()})
       if(supplierRefundOrder.paidPrice === supplierRefundOrder.totalPrice) {
         supplierRefundOrder.paymentStatus = 'Đã thanh toán'
-      } else if(supplierRefundOrder.paidPrice >= 0 && supplierRefundOrder.paidPrice <= supplierRefundOrder.totalPrice) {
+      } else if(supplierRefundOrder.paidPrice >= 0 && supplierRefundOrder.paidPrice < supplierRefundOrder.totalPrice) {
         supplierRefundOrder.paymentStatus = 'Thanh toán một phần'
       }
   
