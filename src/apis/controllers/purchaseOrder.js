@@ -113,7 +113,7 @@ module.exports.createInitialPurchaseOrder = async (req,res) => {
     
     await rp({
       method: 'POST',
-      url: `{process.env.API_URL}/purchase-orders/receipt/` + purchaseOrder._id,
+      url: `${process.env.API_URL}/purchase-orders/receipt/` + purchaseOrder._id,
       json: true,
       body: {
         ...req.body
