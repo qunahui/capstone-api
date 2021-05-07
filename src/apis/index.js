@@ -19,6 +19,7 @@ const customerRoutes = require('./routers/customer')
 const inventoryRoutes = require('./routers/inventory')
 const lazadaAttributeRoutes = require('./routers/lazadaAttribute')
 const brandRoutes = require('./routers/brand')
+var cron = require('node-cron');
 
 module.exports = (app) => {
   app.use("/products", productRoutes);
@@ -43,3 +44,7 @@ module.exports = (app) => {
   app.use("/lazada-attribute", lazadaAttributeRoutes);
   app.use("/brand", brandRoutes);
 };
+
+// cron.schedule('*/10 * * * * *', () => {
+//   console.log('running a task every 10 second');
+// });

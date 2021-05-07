@@ -2442,6 +2442,47 @@
         }
       }
     },
+    "/api/sendo/print-bill/{order_number}": {
+      "get": {
+        "tags": [
+          "sendoAPI"
+        ],
+        "summary": "print bill sendo",
+        "operationId": "printBill",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "order_number",
+            "required": true,
+            "description": "",
+            "schema": {
+              "type": "integer",
+              "example": 142873645695
+            }
+          }
+        ],
+        "security": [
+          {
+            "bearerAuth": [],
+            "ApiKeyAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful"
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "404": {
+            "description": "Pet not found"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        }
+      }
+    },
     "/api/sendo/orders/": {
       "post": {
         "tags": [

@@ -30,6 +30,8 @@ router.get('/orders/:id', auth, controller.getOrderByIdOnSendo)
 router.put('/orders/:id', auth, controller.updateOrderStatus) 
 router.patch('/products/', auth, controller.updateProduct) 
 router.delete("/products/:id", auth, controller.deleteProductOnSendo);
+
+router.get('/print-bill/:order_number', controller.printBill) 
 module.exports = router;
 
 /*

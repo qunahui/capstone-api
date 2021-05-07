@@ -460,6 +460,27 @@ module.exports.getCancelReason =  async (req, res) =>{
   }
 }
 
+module.exports.printBill=  async (req, res) =>{
+  const order_number = req.params.order_number
+  try {
+    const options = {
+        'method': 'GET',
+        'url': ' https://open.sendo.vn/api/partner/salesorder/bill/'+order_number,
+        'headers': {
+          'Authorization': 'bearer '+ req.accessToken
+        }
+      };
+      res.send(options)
+      // request(options, function (error, response) {
+      //   if (error) throw new Error(error);
+      //   //console.log(response.body);
+      //   res.status(response.statusCode).send(response.body)
+      // });
+  } catch (e) {
+    res.status(500).send(Error(e));
+  }
+}
+
 module.exports.updateOrderStatus = async (req, res) => {
   // order status
   // 3: confirm order (be careful, dont use)
