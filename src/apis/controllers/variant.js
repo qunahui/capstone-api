@@ -107,6 +107,8 @@ module.exports.pushUpdatedToApi = async (req, res) => {
 
 module.exports.linkVariant = async (req, res) => {
   const { variant, platformVariant } = req.body;
+  console.log("Variant: ", variant)
+  console.log("PVariant: ", platformVariant)
   let updatedPlatVariant = {}
   console.clear()
   try {
@@ -124,6 +126,7 @@ module.exports.linkVariant = async (req, res) => {
           _id: platformVariant._id
         }).populate('linkedDetails').lean()
       } else if(!platformVariant.productId) {
+        console.log("link to sendo product instead", variant)
         await SendoProduct.updateOne({
           _id: platformVariant._id,
         }, {
@@ -175,7 +178,7 @@ module.exports.linkVariant = async (req, res) => {
     return res.status(400).send(Error({ message: 'Có gì đó sai sai !'}))
   } catch(e) {
     console.log("Liên kết thất bại: ", e.message)
-    res.status(400).send("Liên kết thất bại")
+    res.status(400).send(Error({ message: "Liên kết thất bại" }))
   }
 }
 

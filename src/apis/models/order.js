@@ -43,6 +43,16 @@ const orderSchema = new Schema({
     type: String,
     default: 'web'
   },
+  store_id: {
+    type: String,
+  },
+  store_name: {
+    type: String,
+  },
+  pricePolicy: { 
+    type: String,
+    default: 'retailPrice'
+  },
   userId: {
     type: mongoose.Schema.Types.ObjectId
   },
@@ -57,10 +67,14 @@ const orderSchema = new Schema({
     type: String
   },
   deliveryInfo:{
-    type: String
+    type: String,
+  },
+  deliveryStatus: {
+    type: Boolean,
+    default: false,
   },
   totalPrice: {
-    type: String,
+    type: Number,
   },
   paidPrice: {
     type: Number,

@@ -6,6 +6,7 @@ const rp = require('request-promise');
 const Variant = require('../models/variant')
 const timeDiff = require("../utils/timeDiff");
 const LazadaVariant = require("../models/lazadaVariant");
+const Category = require('../models/category')
 const Storage = require("../models/storage");
 
 
@@ -32,12 +33,15 @@ const createLazadaProduct = async (item, additionalData) => {
 
     });
 
+    const itemCategoryName = await Category.findOne({ category_id: parseInt(item.primary_category) })
+
     let query = { store_id: additionalData.store_id, id: item.item_id },
         update = {
           avatar: variants.length > 0 && variants[0].Images[0],
           store_id: additionalData.store_id,
           id: item.item_id,
           primary_category: item.primary_category,
+          primary_category_name: itemCategoryName.namepath.join(' > '),
           attributes: item.attributes,
           updated_date_timestamp: new Date(parseInt(item.updated_time)),
           created_date_timestamp: new Date(parseInt(item.created_time))

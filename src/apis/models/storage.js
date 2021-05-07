@@ -38,6 +38,18 @@ const sendoCredentialSchema = new Schema({
     required: true,
     default: 'not connected yet'
   },
+  priceSync: {
+    type: Boolean,
+    default: true,
+  },
+  quantitySync: {
+    type: Boolean,
+    default: true,
+  },
+  pricePolicy: {
+    type: String,
+    default: 'retailPrice'
+  },
   expires: { 
     type: Date,
     required: true,
@@ -83,6 +95,18 @@ const lazadaCredentialSchema = new Schema({
     required: true,
     default: 'not connected yet'
   },
+  priceSync: {
+    type: Boolean,
+    default: true,
+  },
+  quantitySync: {
+    type: Boolean,
+    default: true,
+  },
+  pricePolicy: {
+    type: String,
+    default: 'retailPrice'
+  },  
   expires: { 
     type: Date,
     required: true,

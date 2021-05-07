@@ -184,6 +184,23 @@ module.exports.createMMSProduct = async (req, res) => {
     const result = await Product.findOne({ _id: product._id }).lean()
     result.variants = configVariant
 
+    if(req.body.autoLink) {
+      await Promise.all(configVariant.map(async (item, index) => {
+        await rp({
+          method: 'POST',
+          url: `${process.env.API_URL}/variants/link`, 
+          body: {
+            variant: item,
+            platformVariant: req.body.platformVariants[index]
+          },
+          json: true,
+          headers: {
+            'Authorization': 'Bearer ' + req.mongoToken
+          }
+        })
+      }))
+    }
+
     res.status(200).send(result);
   } catch (e) {
     console.log(e.message)

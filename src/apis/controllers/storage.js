@@ -1,4 +1,8 @@
 const Storage = require("../models/storage")
+const SendoProduct = require("../models/sendoProduct")
+const SendoVariant = require("../models/sendoVariant")
+const ActivityLog = require("../models/activityLog")
+const { Order } = require('../models/order')
 const rp = require('request-promise')
 
 module.exports.getStorages = async (req, res) => {
@@ -10,6 +14,47 @@ module.exports.getStorages = async (req, res) => {
   res.status(200).send({ storage })
   // update token
 };
+
+module.exports.getActivities = async (req, res) => {
+  try {
+    const activityLog = await ActivityLog.find({
+      storageId: req.user.currentStorage.storageId
+    }).sort([['createdAt', 'descending']])
+
+    console.log(activityLog)
+
+    res.status(200).send(activityLog)
+  } catch(e) {
+    console.log("Get activity failed: ", e.message)
+    res.status(500).send(Error({ message: 'Có gì đó sai sai !'}))
+  }
+}
+
+module.exports.disconnectStore = async (req, res) => {
+  const store = req.body
+  const storage = await Storage.findById(req.user.currentStorage.storageId)
+
+  if(store.platform_name === 'sendo') {
+    storage.sendoCredentials = storage.sendoCredentials.filter(i => i.store_id !== store.store_id)
+    const sendoProduct = await SendoProduct.find({ store_id: store.store_id })
+
+    console.log(sendoProduct)
+    
+    await Order.deleteMany({ store_id: store.store_id })
+
+    await Promise.all(sendoProduct.map(async prod => {
+      await SendoVariant.deleteMany({ productId: prod._id })
+    }))
+
+    await SendoProduct.deleteMany({ store_id: store.store_id })
+  } else if(store.platform_name === 'lazada') {
+    storage.lazadaCredentials = storage.lazadaCredentials.filter(i => i.store_id !== store.store_id)
+  }
+
+  await storage.save()
+
+  res.status(200).send(storage)
+}
 
 module.exports.fetchShops = async (req, res) => {
 };

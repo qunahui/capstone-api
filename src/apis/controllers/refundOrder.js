@@ -57,8 +57,9 @@ module.exports.createReceipt = async (req,res) => {
         await inventory.save()
         
         const matchedSalesOrder = await Order.findOne({ _id: refundOrder.reference.id })
-        matchedSalesOrder.step[4] = {
-          name: matchedSalesOrder.step[4].name,
+        const index = matchedSalesOrder.step.findIndex(i => i.name === 'Đã hoàn trả')
+        matchedSalesOrder.step[index] = {
+          name: matchedSalesOrder.step[index].name,
           isCreated: true,
           createdAt: new Date()
         }
@@ -164,7 +165,7 @@ module.exports.updateRefundPayment = async (req, res) => {
       refundOrder.paidHistory.push({ title: `Xác nhận thanh toán ${req.body.formattedPaidPrice}`, date: Date.now()})
       if(refundOrder.paidPrice === refundOrder.totalPrice) {
         refundOrder.paymentStatus = 'Đã thanh toán'
-      } else if(refundOrder.paidPrice >= 0 && refundOrder.paidPrice <= refundOrder.totalPrice) {
+      } else if(refundOrder.paidPrice >= 0 && refundOrder.paidPrice < refundOrder.totalPrice) {
         refundOrder.paymentStatus = 'Thanh toán một phần'
       }
 

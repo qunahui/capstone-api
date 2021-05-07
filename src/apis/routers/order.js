@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const auth = require("../../middlewares/auth");
+const refreshAllPlatform = require("../../middlewares/refreshAllPlatform");
 const orderController = require("../controllers/order");
 const RefundOrder = require("../models/order")
 const Order  = require("../models/order") 
@@ -22,9 +23,13 @@ function stoplogName(){
 }
 router.get("/", auth, orderController.getAllOrder)
 
+router.get("/marketplace", auth, orderController.getAllMarketplaceOrder)
+
+router.get("/fetch", auth, refreshAllPlatform, orderController.fetchApiOrders)
+
 router.get("/:id", auth, orderController.getOrderById)
 
-router.post("/", auth, orderController.createOrder)
+router.post("/", auth, orderController.createMMSOrder)
 
 router.post("/lazada", auth, orderController.createLazadaOrder)
 
@@ -52,4 +57,7 @@ router.delete("/cron/stop", async (req,res)=>{
 
     res.send("stop") 
 })
+
+router.post("/delivery/:_id", auth, orderController.confirmDelivery)
+
 module.exports = router;

@@ -9,6 +9,8 @@ const LazadaProduct = require('../models/lazadaProduct');
 const Error = require('../utils/error')
 const timeDiff = require('../utils/timeDiff')
 const util = require('util')
+const ActivityLog = require('../models/activityLog')
+
 
 const { LazadaRequest, LazadaClient } = require('lazada-sdk-client');
 
@@ -42,6 +44,7 @@ module.exports.authorizeCredential = async (req, res) => {
             'Content-Type': 'application/json'
         }
     };
+
     const response = await rp(options).then(res => JSON.parse(res));
 
       if(response.code === '0') {
@@ -92,6 +95,14 @@ module.exports.authorizeCredential = async (req, res) => {
           lazadaCredentials: storage.lazadaCredentials
         })
 
+        await new ActivityLog({
+          storageId: req.user.currentStorage.storageId, 
+          userId: req.user._id,
+          userName: req.user.displayName,
+          userRole: req.user.role,
+          message: 'Đồng bộ gian hàng ' + insertCredential.store_name,
+        }).save()
+
         res.status(200).send(insertCredential)
       } else {
         // error return from lazada
@@ -111,6 +122,7 @@ module.exports.getAccessToken = async (req, res) => {
       const isTokenAvailable = timeDifference.hoursDifference <= 0
   
       if(isTokenAvailable === true) {
+        console.log("using old lazada token")
         return res.status(200).send({
           ...credential,
           isCredentialRefreshed: false
@@ -1188,7 +1200,12 @@ module.exports.searchOrder = async (req, res) =>{
         "sign_method": "sha256",
         "access_token":accessToken,
     }
-    const query = req.query
+
+    let query = {
+      created_after: '2021-01-01T09:00:00+08:00'
+      // created_after: new Date(parseInt(1617094327733)).toISOString().replace('Z', '+07:00'),
+      // updated_after: new Date(parseInt(1617094327733)).toISOString().replace('Z', '+07:00'),
+    }
 
     const sign = signRequest(appSecret, apiPath, {...commonRequestParams, ...query})
 
@@ -1205,13 +1222,11 @@ module.exports.searchOrder = async (req, res) =>{
             options.url += '&'+ key + '=' + encodeURIComponent(value)
           }
         request(options, function (error, response) {
-            //if (error) throw new Error(error);
-            //console.log(response.body);
             const orders = JSON.parse(response.body)
             res.status(response.statusCode).send(orders)
         });
     } catch (e) {
-        res.status(500).send(Error(e));
+      res.status(500).send(Error(e));
     }
 }
 module.exports.getOrderByIdOnLazada = async (req, res) =>{

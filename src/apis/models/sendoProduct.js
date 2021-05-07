@@ -11,6 +11,12 @@ const schema = new Schema({
     store_id:{
         type: String
     },
+    category_4_name: {
+      type: String
+    },
+    cat_4_id: {
+      type: Number
+    },
     id:{
         type: String,
         unique: true
@@ -20,6 +26,9 @@ const schema = new Schema({
     },
     name:{
         type: String
+    },
+    description: {
+      type: String,
     },
     sku:{
         type: String
