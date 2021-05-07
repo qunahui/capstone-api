@@ -17,7 +17,10 @@ const schema = new Schema({
       type: String
     },
     primary_category:{
-        type: String
+      type: String
+    },
+    primary_category_name: {
+      type: String
     },
     attributes:{
         type: Object

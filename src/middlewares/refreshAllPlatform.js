@@ -14,7 +14,7 @@ const auth = async (req, res, next) => {
     creds = creds.concat(storage.sendoCredentials).concat(storage.lazadaCredentials)
     
     await Promise.all(creds.map(async cred => {
-      let newCred = await rp({
+      await rp({
         method: 'POST',
         url: `http://localhost:5000/api/${cred.platform_name}/login`,
         headers: {
@@ -26,8 +26,6 @@ const auth = async (req, res, next) => {
         },
         json: true
       })
-
-      console.log("refresh: ", newCred.store_name)
     }))
 
     next()

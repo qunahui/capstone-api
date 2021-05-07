@@ -7,6 +7,8 @@ const RefundOrder = require("../models/order")
 
 router.get("/", auth, orderController.getAllOrder)
 
+router.get("/marketplace", auth, orderController.getAllMarketplaceOrder)
+
 router.get("/fetch", auth, refreshAllPlatform, orderController.fetchApiOrders)
 
 router.get("/:id", auth, orderController.getOrderById)

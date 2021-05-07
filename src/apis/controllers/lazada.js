@@ -122,6 +122,7 @@ module.exports.getAccessToken = async (req, res) => {
       const isTokenAvailable = timeDifference.hoursDifference <= 0
   
       if(isTokenAvailable === true) {
+        console.log("using old lazada token")
         return res.status(200).send({
           ...credential,
           isCredentialRefreshed: false
@@ -1221,13 +1222,11 @@ module.exports.searchOrder = async (req, res) =>{
             options.url += '&'+ key + '=' + encodeURIComponent(value)
           }
         request(options, function (error, response) {
-            //if (error) throw new Error(error);
-            //console.log(response.body);
             const orders = JSON.parse(response.body)
             res.status(response.statusCode).send(orders)
         });
     } catch (e) {
-        res.status(500).send(Error(e));
+      res.status(500).send(Error(e));
     }
 }
 module.exports.getOrderByIdOnLazada = async (req, res) =>{

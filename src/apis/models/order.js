@@ -49,6 +49,10 @@ const orderSchema = new Schema({
   store_name: {
     type: String,
   },
+  pricePolicy: { 
+    type: String,
+    default: 'retailPrice'
+  },
   userId: {
     type: mongoose.Schema.Types.ObjectId
   },

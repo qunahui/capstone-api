@@ -108,6 +108,8 @@ const createSendoProduct = async (item, { store_id }) => {
 
     });
 
+    console.log("item: ", item)
+
     let query = { store_id: store_id, id: item.id },
         update = {
           ...item,
@@ -218,7 +220,6 @@ module.exports.fetchProducts = async (req, res) => {
         body: JSON.stringify({"page_size":100,"product_name":"","date_from": sendoFormatDate || "2021-01-01","date_to":"9999-10-28","token":"", "status": sendoFormatDate && -1,})
     };
     const response = await rp(options)
-    console.log(JSON.parse(response).result)
     const products = JSON.parse(response).result.data // product đã xóa, product ko update,  product update
     await Promise.all(products.map(async product => {
       // xóa product trong db

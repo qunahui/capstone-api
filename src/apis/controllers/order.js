@@ -357,7 +357,19 @@ module.exports.createSendoOrder = async (req,res) => {
     e.name = e.product_name
   });
 
-  const mappingStep = { 2: 'Đặt hàng', 3: 'Duyệt', 6: 'Xuất kho', 7: 'Đã giao hàng', 8: 'Hoàn thành', 10: 'Hoàn thành', 13: 'Đã hủy' }
+  const mappingStep = { 2: { index: 0, name: 'Đặt hàng' }, 3: { index: 1, name: 'Duyệt'}, 6: { index: 2, name: 'Xuất kho'}, 7: { index: 3, name: 'Đã giao hàng'}, 8: { index: 4, name: 'Hoàn thành'}, 10: { index: 5, name: 'Hoàn thành'}, 13: { index: 7, name: 'Đã hủy'} }
+  const completeStep = item.sales_order.order_status
+  let configStep = step.map((st, index) => {
+    if(index <= mappingStep[completeStep].index && index !== 6) { //6 = hoàn trả
+      return {
+        name: st.name,
+        createdAt: new Date(),
+        isCreated: true
+      }
+    } else {
+      return st
+    }
+  })
 
   const order = new Order({
     source: "sendo",
@@ -385,7 +397,7 @@ module.exports.createSendoOrder = async (req,res) => {
     lineItems: item.sku_details, 
     createdAt: created_at,
     updatedAt: updated_at,
-    step: step
+    step: configStep
   })
   try {
     await order.save();
@@ -398,7 +410,19 @@ module.exports.createSendoOrder = async (req,res) => {
 module.exports.getAllOrder = async (req, res) => {
   try {
     
-    const orders = await Order.find({ userId: req.user._id })
+    const orders = await Order.find({ userId: req.user._id, source: 'web' })
+    
+    res.send(orders)
+  } catch (e) {
+    res.status(500).send(Error(e));
+  }
+
+};
+
+module.exports.getAllMarketplaceOrder = async (req, res) => {
+  try {
+    
+    const orders = await Order.find({ userId: req.user._id, source: { $ne: 'web' } })
     
     res.send(orders)
   } catch (e) {
@@ -454,6 +478,12 @@ module.exports.cancelOrder = async (req, res) => {
       isCreated: true,
       createdAt: new Date()
     }
+
+    await Promise.all(order.lineItems.map(async lineItem => {
+      const variant = await Variant.findOne({ _id: lineItem._id })
+      variant.inventories.trading -= lineItem.quantity
+      await variant.save()
+    }))
 
     await order.save()
 
