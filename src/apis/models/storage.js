@@ -140,6 +140,10 @@ const storageSchema = new Schema({
     type: Number,
     default: 0,
   },
+  autoSync: {
+    type: Boolean,
+    default: false
+  },
   isActivated: {
     type: Boolean,
     default: true,

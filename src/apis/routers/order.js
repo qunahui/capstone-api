@@ -3,24 +3,42 @@ const router = express.Router();
 const auth = require("../../middlewares/auth");
 const refreshAllPlatform = require("../../middlewares/refreshAllPlatform");
 const orderController = require("../controllers/order");
-const RefundOrder = require("../models/order")
-const Order  = require("../models/order") 
+const rp = require("request-promise")
+const User = require('../models/user')
 const Storage = require("../models/storage")
 var cron = require('node-cron');
 var task 
-function logName(name){
-    task = cron.schedule('*/10 * * * * *', async() => {
-        const storages = await Storage.find()
-        console.log(storages)
-      },{
-        scheduled: false
-    });
 
-    task.start()
+function fetchOrderCron(){
+  let count = 1
+    task = cron.schedule('*/15 * * * * *', async () => {
+      console.log("Fetch orders cron is running....")
+      console.log("Cron index: ", count++)
+      const autoSyncStorages = await Storage.find({ autoSync: true })
+      await Promise.all(autoSyncStorages.map(async (str) => {
+        const matchedUser = await User.findOne({ 'storages.0.storage.storageId': str._id })
+        const option = {
+          method: 'GET',
+          url: `${process.env.API_URL}/orders/fetch`,
+          headers: {
+            'Authorization': 'Bearer ' + matchedUser.tokens[matchedUser.tokens.length - 1].token
+          }
+        }
+        await rp(option)
+      }))
+    },{
+      // scheduled: false
+  });
+
+  // task.start()
 }
+
+fetchOrderCron()
+
 function stoplogName(){
     task.stop()
 }
+
 router.get("/", auth, orderController.getAllOrder)
 
 router.get("/marketplace", auth, orderController.getAllMarketplaceOrder)
@@ -35,6 +53,8 @@ router.post("/lazada", auth, orderController.createLazadaOrder)
 
 router.post("/sendo", auth, orderController.createSendoOrder)
 
+router.post('/sendo/refund', auth, orderController.createSendoRefundOrder)
+
 router.get("/cancel/:_id", auth, orderController.cancelOrder)
 
 router.post("/pack/:_id", auth, orderController.createPackaging)
@@ -43,18 +63,10 @@ router.post("/receipt/:_id", auth, orderController.createReceipt)
 
 router.post("/payment/:_id", auth, orderController.updatePayment)
 
-router.get("/cron/:name", async (req,res)=>{
-    const name = req.params.name
+router.post("/print-bill/", auth, orderController.printBill)
 
-    logName(name)
-
-    res.send(name)
-})
 router.delete("/cron/stop", async (req,res)=>{
-
-
     stoplogName()
-
     res.send("stop") 
 })
 

@@ -19,7 +19,6 @@ const customerRoutes = require('./routers/customer')
 const inventoryRoutes = require('./routers/inventory')
 const lazadaAttributeRoutes = require('./routers/lazadaAttribute')
 const brandRoutes = require('./routers/brand')
-var cron = require('node-cron');
 
 module.exports = (app) => {
   app.use("/products", productRoutes);

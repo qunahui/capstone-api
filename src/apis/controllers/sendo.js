@@ -80,7 +80,6 @@ module.exports.getSendoToken = async (req, res) => {
     const isTokenAvailable = timeDifference.hoursDifference < 0 ? true : timeDifference.minutesDifference <= 0 ? true : false
 
     if(isTokenAvailable === true) {
-      console.log("using old sendo token")
       return res.status(200).send({
         ...credential,
         isCredentialRefreshed: false
@@ -432,7 +431,6 @@ module.exports.searchOrderOnSendo =  async (req, res) =>{
       };
       request(options, function (error, response) {
         if (error) throw new Error(error);
-        //console.log(response.body);
         res.status(response.statusCode).send(response.body)
       });
 } catch (e) {
@@ -460,7 +458,7 @@ module.exports.getCancelReason =  async (req, res) =>{
   }
 }
 
-module.exports.printBill=  async (req, res) =>{
+module.exports.printBill = async (req, res) =>{
   const order_number = req.params.order_number
   try {
     const options = {
@@ -470,13 +468,17 @@ module.exports.printBill=  async (req, res) =>{
           'Authorization': 'bearer '+ req.accessToken
         }
       };
-      res.send(options)
+
+      const response = await rp(options)
+
+      return res.status(200).send(JSON.parse(response).result)
       // request(options, function (error, response) {
       //   if (error) throw new Error(error);
       //   //console.log(response.body);
       //   res.status(response.statusCode).send(response.body)
       // });
   } catch (e) {
+    console.log("print bill failed: ", e.message)
     res.status(500).send(Error(e));
   }
 }

@@ -153,7 +153,7 @@ module.exports.createMMSProduct = async (req, res) => {
             supplierId: req.user._id,
             supplierPhone: 'Mặc định',
             supplierEmail: req.user.email,
-            totalPrice: 0,
+            subTotal: 0,
             totalQuantity,
             userId: req.user._id,
             lineItems: configVariant.map((variant, index) => ({

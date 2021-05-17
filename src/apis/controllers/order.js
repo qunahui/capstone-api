@@ -1,10 +1,11 @@
 const Error = require("../utils/error");
-const { Order } = require("../models/order")
+const { Order, RefundOrder } = require("../models/order")
 const Storage = require('../models/storage')
 const Inventory = require("../models/inventory")
 const Variant = require("../models/variant")
-const Product = require('../models/product')
 const rp = require('request-promise')
+const timeDiff = require('../utils/timeDiff')
+
 
 const payment_method ={
   "1": "COD",
@@ -13,26 +14,26 @@ const payment_method ={
   "5": "PayLater"
 }
 const payment_status = {
-  "1": "NotPaid",
+  "1": "Chưa thanh toán",
   "2": "CODCarrier",
-  "3": "Paid",
-  "4": "Completed",
-  "5": "Refund",
-  "6": "Waiting",
-  "7": "Reject",
-  "14": "PartialPaid",
-  "15": "PartialRefund"
+  "3": "Đã thanh toán",
+  "4": "Đã hoàn thành",
+  "5": "Hoàn trả",
+  "6": "Đang chờ",
+  "7": "Từ chối",
+  "14": "Thanh toán một phần",
+  "15": "Hoàn trả một phần"
 }
 const order_status = {
-  "2": "New",
-  "3": "Proccessing",
-  "6": "Shipping",
+  "2": "Đặt hàng",
+  "3": "Đang xử lý",
+  "6": "Đang giao hàng",
   "7": "POD",
-  "8": "Completed",
-  "10": "Closed",
+  "8": "Đã hoàn thành",
+  "10": "Đã đóng",
   "11": "Delaying",
   "12": "Delay",
-  "13": "Cancelled",
+  "13": "Đã hủy",
   "14": "Splitting",
   "15": "Splitted",
   "19": "Merging",
@@ -40,6 +41,39 @@ const order_status = {
   "22": "Returned",
   "23": "WaitingSendo",
 }
+const sendo_cancel_reason = {
+  "CBS1": "Hết hàng",
+  "CBS100": "Người bán tự vận chuyển",
+  "CBS101": "Không liên lạc được với người mua",
+  "CBS102": "Người mua đặt nhầm, trùng sản phẩm",
+  "CBS103": "Người mua không đồng ý hoãn thời gian giao hàng",
+  "CBS104": "Người bán đăng sai giá sản phẩm ",
+  "CBS105": "Người bán thay đổi thông tin kho hàng",
+  "CBS106": "Người nhận không phải người đặt hàng",
+  "CBS107": "Người mua không muốn mua nữa",
+  "CBS108": "Người mua thay đổi chi tiết đơn hàng (màu sắc, kích thước, số lượng...)",
+  "CBS109": "Người mua nhập địa chỉ không rõ ràng, số điện thoại không chính xác",
+  "CBS110": "Người bán giao hàng gấp theo yêu cầu của người mua",
+  "CBS111": "Nhà vận chuyển không tiếp nhận đơn hàng/không đến lấy hàng"
+}
+const sendo_delivery_status = { 
+  '9': "Chưa tạo vận đơn",
+  '1': "Mới",
+  '2': "Đang xử lý",
+  '3': "Đang lấy hàng",
+  '4': "Đang xếp hàng",
+  '5': "Đang giao hàng",
+  '6': "Đã giao hàng",
+  '8': "Trả hàng cho người bán",
+  '10': "Người bán đã nhận lại hàng",
+  '11': "Đã đổi hàng",
+  '12': "Đang trả hàng",
+  '13': "Đổi trả thành công",
+  '14': "Lấy hàng thành công",
+  '15': "Bàn giao thành công LM",
+  '16': "Mất hàng",
+}
+
 const step = [
   {
     name: 'Đặt hàng',
@@ -55,7 +89,7 @@ const step = [
     isCreated: false,
   },
   {
-    name: 'Xuất kho',
+    name: 'Xuất kho/Đang giao hàng',
     isCreated: false,
   },
   {
@@ -67,11 +101,15 @@ const step = [
     isCreated: false,
   },
   {
-    name: 'Đã hoàn trả',
+    name: 'Đã hủy',
     isCreated: false,
   },
   {
-    name: 'Đã hủy',
+    name: 'Đang hoàn trả',
+    isCreated: false,
+  },
+  {
+    name: 'Đã hoàn trả',
     isCreated: false,
   },
 ]
@@ -80,7 +118,7 @@ const checkComplete = async (_id) => {
   try {
     const order = await Order.findOne({ _id })
     const { paymentStatus, deliveryStatus } = order
-    if(paymentStatus === 'Đã thanh toán' && deliveryStatus === true) {
+    if(paymentStatus === 'Đã thanh toán' && deliveryStatus === 'Đã giao hàng') {
       const index = order.step.findIndex(i => i.name === 'Hoàn thành')
       order.step[index] = {
         name: order.step[index].name,
@@ -151,7 +189,7 @@ module.exports.createReceipt = async (req,res) => {
       }
     }))
 
-    const index = order.step.findIndex(i => i.name === 'Xuất kho')
+    const index = order.step.findIndex(i => i.name === 'Xuất kho/Đang giao hàng')
     order.step[index] = {
       name: order.step[index].name,
       isCreated: true,
@@ -219,7 +257,7 @@ module.exports.confirmDelivery = async (req, res) => {
       createdAt: new Date()
     }
 
-    order.deliveryStatus = true
+    order.deliveryStatus = 'Đã giao hàng'
 
     await order.save()
     await checkComplete(req.params._id)
@@ -249,7 +287,7 @@ module.exports.createMMSOrder = async (req,res) => {
       isCreated: false,
     },
     {
-      name: 'Xuất kho',
+      name: 'Xuất kho/Đang giao hàng',
       isCreated: false,
     },
     {
@@ -261,11 +299,15 @@ module.exports.createMMSOrder = async (req,res) => {
       isCreated: false,
     },
     {
-      name: 'Đã hoàn trả',
+      name: 'Đã hủy',
       isCreated: false,
     },
     {
-      name: 'Đã hủy',
+      name: 'Đang hoàn trả',
+      isCreated: false,
+    },
+    {
+      name: 'Đã hoàn trả',
       isCreated: false,
     },
     ]
@@ -295,7 +337,7 @@ module.exports.createMMSOrder = async (req,res) => {
 }
 
 module.exports.createLazadaOrder = async (req,res) => {
-  const item = req.body;
+  const { item, cred } = req.body;
   const listItem = await rp({
     method: 'GET',
     url:"http://localhost:5000/api/lazada/orders/items/"+ item.order_number,
@@ -306,13 +348,13 @@ module.exports.createLazadaOrder = async (req,res) => {
     json: true
   })
 
-  console.log(listItem)
-
-  const order = new Order({
+  const orderInformation = {
     source: "lazada",
+    store_id: cred.store_id,
+    store_name: cred.store_name,
     orderStatus: item.statuses[0],
     code: item.order_number,
-    totalPrice: item.price,
+    subTotal: item.price,
     totalQuantity: item.items_count,
     //order infomation
     paymentMethod: item.payment_method,
@@ -337,9 +379,11 @@ module.exports.createLazadaOrder = async (req,res) => {
     createdAt: item.created_at,
     updatedAt: item.updated_at,
     step: step
-  })
+  }
+
+  const order = await Order.findOneAndUpdate({ code: item.order_number }, orderInformation, { upsert: true, timestamps: false, runValidators: true })
+  
   try {
-    await order.save();
     res.send(order);
   } catch (e) {
     res.status(500).send(Error(e));
@@ -348,61 +392,109 @@ module.exports.createLazadaOrder = async (req,res) => {
 module.exports.createSendoOrder = async (req,res) => {
   const { item, cred } = req.body;
 
-  console.log("item: ", item)
-
-  const created_at = new Date(item.sales_order.created_date_time_stamp * 1000)
-  const updated_at = new Date(item.sales_order.updated_date_time_stamp * 1000)
+  const created_at = new Date(item.sales_order.created_date_time_stamp*1000).setHours(new Date(item.sales_order.created_date_time_stamp*1000).getHours() - 7)
+  const updated_at = new Date(item.sales_order.updated_date_time_stamp*1000).setHours(new Date(item.sales_order.updated_date_time_stamp*1000).getHours() - 7)
 
   item.sku_details.forEach(e => {
     e.name = e.product_name
   });
 
-  const mappingStep = { 2: { index: 0, name: 'Đặt hàng' }, 3: { index: 1, name: 'Duyệt'}, 6: { index: 2, name: 'Xuất kho'}, 7: { index: 3, name: 'Đã giao hàng'}, 8: { index: 4, name: 'Hoàn thành'}, 10: { index: 5, name: 'Hoàn thành'}, 13: { index: 7, name: 'Đã hủy'} }
+  const mappingStep = { 2: { index: 0, name: 'Đặt hàng' }, 3: { index: 1, name: 'Duyệt'}, 4: { index: 2, name: 'Đóng gói'} , 6: { index: 3, name: 'Xuất kho/Đang giao hàng'}, 7: { index: 4, name: 'Đã giao hàng'}, 8: { index: 5, name: 'Hoàn thành'}, 10: { index: 6, name: 'Hoàn thành'}, 13: { index: 7, name: 'Đã hủy'}, 21: { index: 8, name: 'Đang hoàn trả'}, 22: { index: 9, name: 'Đã hoàn trả'} }
   const completeStep = item.sales_order.order_status
   let configStep = step.map((st, index) => {
-    if(index <= mappingStep[completeStep].index && index !== 6) { //6 = hoàn trả
+    if(index <= mappingStep[completeStep].index) { 
       return {
         name: st.name,
-        createdAt: new Date(),
+        createdAt: index === 0 ? created_at : index === mappingStep[completeStep].index ? updated_at : null,
         isCreated: true
       }
     } else {
       return st
     }
   })
-
-  const order = new Order({
-    source: "sendo",
-    store_id: cred.store_id,
-    store_name: cred.store_name,
-    code: item.sales_order.order_number,
-    orderStatus: order_status[`${item.sales_order.order_status}`],
-    //order infomation
-    paymentMethod: payment_method[`${item.sales_order.payment_method}`],
-    discount: item.sales_order.voucher_value,
-    paymentStatus: payment_status[`${item.sales_order.payment_status}`],
-    note: item.sales_order.note,
-    //shipping infomation
-    deliveryInfo: item.sales_order.carrier_name,
-    trackingNumber: item.sales_order.tracking_number,
-    shippingFee: item.sales_order.shipping_fee,
-    //customer overview
-    customerName: item.sales_order.receiver_name,
-    customerEmail: item.sales_order.receiver_email,
-    customerPhone: item.sales_order.shipping_contact_phone,
-    customerAddress: item.sales_order.ship_to_address,
-    //+", "+region.result.name,
-    
-    //list item
-    lineItems: item.sku_details, 
-    createdAt: created_at,
-    updatedAt: updated_at,
-    step: configStep
-  })
   try {
-    await order.save();
+    const orderInformation = {
+      source: "sendo",
+      store_id: cred.store_id,
+      store_name: cred.store_name,
+      code: item.sales_order.order_number,
+      orderStatus: order_status[`${item.sales_order.order_status}`],
+      packStatus: item.sales_order.order_status >= 3,
+      //order infomation
+      paymentMethod: payment_method[`${item.sales_order.payment_method}`],
+      discount: item.sales_order.voucher_value,
+      paymentStatus: payment_status[`${item.sales_order.payment_status}`],
+      note: item.sales_order.note,
+      //shipping infomation
+      deliveryInfo: item.sales_order.carrier_name,
+      deliveryStatus: sendo_delivery_status[item.sales_order.delivery_status],
+      trackingNumber: item.sales_order.tracking_number,
+      shippingFee: item.sales_order.shipping_fee,
+      //customer overview
+      customerName: item.sales_order.receiver_name,
+      customerEmail: item.sales_order.receiver_email,
+      customerPhone: item.sales_order.shipping_contact_phone,
+      customerAddress: item.sales_order.ship_to_address,
+      //+", "+region.result.name,
+      userId: req.user._id,
+      subTotal: item.sales_order.sub_total,
+      totalPrice: item.sales_order.total_amount_buyer,
+      totalAmount: item.sales_order.total_amount,
+      totalQuantity: item.sku_details.reduce((acc, i) => acc += i.quantity, 0),
+      shippingVoucher: item.sales_order.shipping_voucher_amount,
+      platformFee: item.sales_order.shop_program_amount || 0,
+      //list item
+      lineItems: item.sku_details, 
+      createdAt: created_at,
+      updatedAt: updated_at,
+      //cancel-delay
+      cancelReason: item.sales_order.reason_cancel,
+      cancelCode: item.sales_order.reason_cancel_code,
+      delayReason: item.sales_order.reason_delay,
+      delayDateFrom: item.sales_order.delay_date_time_stamp,
+      delayDateTo: item.sales_order.delay_to_date_time_stamp,
+      step: configStep
+    }
+
+    const order = await Order.findOneAndUpdate({ code: item.sales_order.order_number }, orderInformation, { upsert: true, timestamps: false, runValidators: true })
+
     res.send(order);
+
+    //create refund 
+    const { delivery_status } = item.sales_order
+    if(delivery_status === 8 || delivery_status === 10) {
+      const matchedRefundOrder = await RefundOrder.findOne({
+        code: item.sales_order.order_number,
+      })
+      
+      if(!matchedRefundOrder) {
+        await RefundOrder.findOneAndUpdate({ code: item.sales_order.order_number }, {
+          ...orderInformation,
+          step: [
+            {
+              name: 'Duyệt đơn hoàn',
+              isCreated: true,
+              createdAt: updated_at
+            },
+            {
+              name: 'Nhập kho',
+              isCreated: delivery_status === 10 ? true : false,
+              createdAt: delivery_status === 10 ? updated_at : null,
+            },
+            {
+              name: 'Hoàn thành',
+              isCreated: delivery_status === 10 ? true : false,
+              createdAt: delivery_status === 10 ? updated_at : null,
+            },
+          ],
+          orderStatus: delivery_status === 10 ? 'Đã hoàn trả' : 'Đang hoàn trả',
+          packStatus: true,
+          instockStatus: delivery_status === 10
+        }, { upsert: true, timestamps: false, runValidators: true })
+      }
+    }    
   } catch (e) {
+    console.log(e.message)
     res.status(500).send(Error(e));
   }
 }
@@ -504,8 +596,10 @@ module.exports.fetchApiOrders = async (req, res) => {
   try { 
     await Promise.all(allCreds.map(async (cred, index) => {
       if(cred.platform_name === 'lazada') {
+        let now = new Date()
         const response = await rp({
-          url: `${process.env.API_URL}/api/lazada/orders?lastSync=${new Date(cred.lastSync).getTime()}`,
+          // url: `${process.env.API_URL}/api/lazada/orders?lastSync=${new Date(cred.lastSync).getTime()}`,
+          url: `${process.env.API_URL}/api/lazada/orders`,
           method: 'GET',
           headers: {
             'Authorization': 'Bearer ' + req.mongoToken,
@@ -514,8 +608,23 @@ module.exports.fetchApiOrders = async (req, res) => {
         })
   
         const lazOrders = JSON.parse(response).data.orders || []
-  
+
+        console.log("lax order: ", lazOrders)
+
         await Promise.all(lazOrders.map(async order => {
+          const mongoMatchedOrder = await Order.findOne({ code: order.order_number.toString() })
+          // console.log(new Date(order.updated_at).toLocaleString())
+          // console.log(new Date(order.created_at).toLocaleString())
+          
+          if(mongoMatchedOrder) {
+            const secondDiff = timeDiff(new Date(mongoMatchedOrder.updatedAt), new Date(new Date(order.created_at))).secondsDifference
+            if(secondDiff === 0) {
+              // console.log("Do nothing")
+              return order;
+            }
+            
+          }
+
           try {
             await rp({
               method: 'POST',
@@ -525,7 +634,10 @@ module.exports.fetchApiOrders = async (req, res) => {
                 'Platform-Token': cred.access_token
               },
               json: true,
-              body: order
+              body: {
+                item: order,
+                cred
+              }
             })
           } catch(e) {
             console.log(e.message)
@@ -544,7 +656,7 @@ module.exports.fetchApiOrders = async (req, res) => {
           body: {
             "page_size": 10,
             // "order_status": 2,
-            "order_date_from": cred.lastSync ? new Date(cred.lastSync).toISOString().split('T')[0] : new Date(now.setDate(now.getDate() - 360)).toISOString().split('T')[0],
+            "order_date_from": cred.lastSync ? new Date(cred.lastSync).toISOString().split('T')[0] : new Date(now.setDate(now.getDate() - 14)).toISOString().split('T')[0],
             "order_date_to": new Date().toISOString().split('T')[0],
             "order_status_date_from": null,
             "order_status_date_to": null,
@@ -555,7 +667,6 @@ module.exports.fetchApiOrders = async (req, res) => {
         const senOrders = response.result.data
         
         await Promise.all(senOrders.map(async order => {
-          console.log(order)
           const opt = {
             method: 'GET',
             url: `${process.env.API_URL}/api/sendo/orders/${order.sales_order.order_number}`,
@@ -564,14 +675,32 @@ module.exports.fetchApiOrders = async (req, res) => {
               'Platform-Token': cred.access_token
             }
           }
-  
-          const fullDetailOrder = await rp(opt)
-  
+          const fullDetailOrderResponse = await rp(opt)
+          const fullDetailOrder = JSON.parse(fullDetailOrderResponse).result
+
+          // console.log(fullDetailOrder)
+
+          const mongoMatchedOrder = await Order.findOne({ code: fullDetailOrder.sales_order.order_number })
+          
+          if(mongoMatchedOrder) {
+            // console.log("Sendo: ", new Date(fullDetailOrder.sales_order.updated_date_time_stamp * 1000).toLocaleString())
+            // console.log("Mongo: ", new Date(mongoMatchedOrder.updatedAt).toLocaleString())
+            const secondDiff = timeDiff(new Date(mongoMatchedOrder.updatedAt), new Date(new Date(fullDetailOrder.sales_order.updated_date_time_stamp*1000).setHours(new Date(fullDetailOrder.sales_order.updated_date_time_stamp*1000).getHours() - 7))).secondsDifference
+            // console.log("Second diff", secondDiff)
+            if(secondDiff === 0) {
+              // console.log("Do nothing")
+              return order;
+            }
+            
+          }
+
+          // console.log("Create new order")
+
           await rp({
             method: 'POST',
             url: `${process.env.API_URL}/orders/sendo`,
             body: {
-              item: JSON.parse(fullDetailOrder).result,
+              item: fullDetailOrder,
               cred
             },
             json: true,
@@ -581,7 +710,7 @@ module.exports.fetchApiOrders = async (req, res) => {
           })
         }))
   
-        matchedStorage.sendoCredentials[index].lastSync = new Date().getTime()
+        // matchedStorage.sendoCredentials[index].lastSync = new Date().getTime()
       }
     }))
 
@@ -589,8 +718,46 @@ module.exports.fetchApiOrders = async (req, res) => {
 
     res.send("ok")
   } catch(e) {
-    console.log(e.message)
+    console.log("Fetch failed: ", e.message)
     res.status(500).send(Error({ message: 'Có gì đó sai sai: , ' + e.message }))
   }
+
+}
+
+module.exports.printBill = async (req, res) => {
+  const order = req.body
+  const mongoOrder = await Order.findOne({ _id: order._id })
+  if(mongoOrder.bill) { 
+    const htmlContent = await rp.get(mongoOrder.bill)
+    return res.send({ bill: htmlContent })
+  }
+
+  const currentStorage = await Storage.findOne({ _id: req.user.currentStorage.storageId })
+  try { 
+    if(order.source === 'sendo') {
+      const response = await rp({
+        method: 'GET',
+        url: `${process.env.API_URL}/api/sendo/print-bill/${order.code}`,
+        headers: {
+          'Authorization': 'Bearer ' + req.mongoToken, 
+          'Platform-Token': currentStorage.sendoCredentials.find(i => i.store_id === order.store_id).access_token
+        },
+      })
+
+      await Order.findByIdAndUpdate(order._id, {
+        bill: response
+      })
+
+      const htmlContent = await rp.get(response)
+
+      return res.status(200).send({ bill: htmlContent })
+    } else if(order.source === 'lazada') {}
+  } catch(e) {
+    console.log("print bill failed: ", e.message)
+    res.status(500).send(Error({ message: "Có gì đó sai sai !"}))
+  }
+}
+
+module.exports.createSendoRefundOrder = async (req, res) => {
 
 }

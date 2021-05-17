@@ -61,7 +61,12 @@ const orderSchema = new Schema({
     default: ''
   },
   shippingFee:{
-    type: Number
+    type: Number,
+    default: 0,
+  },
+  shippingVoucher: {
+    type: Number,
+    default: 0,
   },
   trackingNumber:{
     type: String
@@ -69,12 +74,36 @@ const orderSchema = new Schema({
   deliveryInfo:{
     type: String,
   },
+  platformFee: {
+    type: Number,
+    default: 0,
+  },
   deliveryStatus: {
-    type: Boolean,
-    default: false,
+    type: String,
   },
   totalPrice: {
     type: Number,
+  },
+  totalAmount: {
+    type: Number,
+  },
+  subTotal: {
+    type: Number,
+  },
+  cancelCode: {
+    type: String,
+  },
+  cancelReason: {
+    type: String,
+  },
+  delayReason: {
+    type: String,
+  },
+  delayDateFrom: {
+    type: Date,
+  },
+  delayDateTo: {
+    type: Date,
   },
   paidPrice: {
     type: Number,
@@ -119,6 +148,9 @@ const orderSchema = new Schema({
     type: Date,
   },
   lineItems: [lineItemSchema],
+  bill: {
+    type: String,
+  },
   step: {
     type: [stepSchema],
   }
@@ -177,6 +209,7 @@ salesOrderSchema.add({
     default: false
   },
 })
+
 const refundOrderSchema = orderSchema.clone();
 refundOrderSchema.add({
   customerId: {

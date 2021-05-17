@@ -2165,13 +2165,11 @@
             "ApiKeyAuth": []
           }
         ],
-        "requestBody":{
-          "content":{
-            "application/json":{
-              "schema":{
-
-              },
-              "example":{
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {},
+              "example": {
                 "name": "locpro"
               }
             }
@@ -3949,7 +3947,10 @@
             "required": true,
             "schema": {
               "type": "array",
-              "example": [279709, 279709]
+              "example": [
+                279709,
+                279709
+              ]
             },
             "description": ""
           }
@@ -3992,12 +3993,14 @@
         "requestBody": {
           "content": {
             "application/json": {
-              "schema": {
-              },
-              "example":{
+              "schema": {},
+              "example": {
                 "shipping_provider": "locpro",
                 "delivery_type": "dropship",
-                "order_item_ids": [1530553,1830236]
+                "order_item_ids": [
+                  1530553,
+                  1830236
+                ]
               }
             }
           }
@@ -4040,12 +4043,14 @@
         "requestBody": {
           "content": {
             "application/json": {
-              "schema": {
-              },
-              "example":{
+              "schema": {},
+              "example": {
                 "shipment_provider": "locpro",
                 "delivery_type": "dropship",
-                "order_item_ids": [1530553,1830236],
+                "order_item_ids": [
+                  1530553,
+                  1830236
+                ],
                 "tracking_number": 12345678
               }
             }
@@ -4992,7 +4997,7 @@
               }
             }
           },
-          "totalPrice": {
+          "subTotal": {
             "type": "number",
             "exmaple": 15000000
           },
@@ -5139,7 +5144,7 @@
               }
             }
           },
-          "totalPrice": {
+          "subTotal": {
             "type": "number",
             "exmaple": 15000000
           },
@@ -5283,7 +5288,7 @@
               }
             }
           },
-          "totalPrice": {
+          "subTotal": {
             "type": "number",
             "exmaple": 15000000
           },

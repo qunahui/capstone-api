@@ -35,13 +35,6 @@ app.get("/*", (req, res, next) => {
 });
 
 configRoute(app);
-// configSocket();
-
-// app.get('/socket/test', function(req, res) {
-//   const session = req.session;
-//   io.sockets.connected[session.socketio].emit('show', 'hello');
-//   res.json({greeting: "hello"});
-// })
 
 app.use("/", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
