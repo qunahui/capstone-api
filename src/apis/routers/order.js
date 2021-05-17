@@ -1,18 +1,75 @@
 const express = require("express");
 const router = express.Router();
 const auth = require("../../middlewares/auth");
-const controller = require("../controllers/order");
-const order = require("../models/order");
+const refreshAllPlatform = require("../../middlewares/refreshAllPlatform");
+const orderController = require("../controllers/order");
+const rp = require("request-promise")
+const User = require('../models/user')
+const Storage = require("../models/storage")
+var cron = require('node-cron');
+var task 
 
-router.get("/", controller.getAllOrder);
-router.get("/:orderNumber", controller.getOrderById);
+function fetchOrderCron(){
+  let count = 1
+    task = cron.schedule('*/15 * * * * *', async () => {
+      console.log("Fetch orders cron is running....")
+      console.log("Cron index: ", count++)
+      const autoSyncStorages = await Storage.find({ autoSync: true })
+      await Promise.all(autoSyncStorages.map(async (str) => {
+        const matchedUser = await User.findOne({ 'storages.0.storage.storageId': str._id })
+        const option = {
+          method: 'GET',
+          url: `${process.env.API_URL}/orders/fetch`,
+          headers: {
+            'Authorization': 'Bearer ' + matchedUser.tokens[matchedUser.tokens.length - 1].token
+          }
+        }
+        await rp(option)
+      }))
+    },{
+      // scheduled: false
+  });
 
-router.post("/create-order-ping", controller.createOrderByPing);
-router.post("/create-order-sync-sendo", controller.createOrderBySyncSendo);
-router.post("/create-order-sync-lazada", controller.createOrderBySyncLazada);
-//router.post("/create-order", controller.createOrderByPing);
-//router.patch("/:id", controller.updateSendoOrder); update what? 
+  // task.start()
+}
 
-//router.delete("/:id", controller.deleteSendoOrder); isDelete=true?
+fetchOrderCron()
+
+function stoplogName(){
+    task.stop()
+}
+
+router.get("/", auth, orderController.getAllOrder)
+
+router.get("/marketplace", auth, orderController.getAllMarketplaceOrder)
+
+router.get("/fetch", auth, refreshAllPlatform, orderController.fetchApiOrders)
+
+router.get("/:id", auth, orderController.getOrderById)
+
+router.post("/", auth, orderController.createMMSOrder)
+
+router.post("/lazada", auth, orderController.createLazadaOrder)
+
+router.post("/sendo", auth, orderController.createSendoOrder)
+
+router.post('/sendo/refund', auth, orderController.createSendoRefundOrder)
+
+router.get("/cancel/:_id", auth, orderController.cancelOrder)
+
+router.post("/pack/:_id", auth, orderController.createPackaging)
+
+router.post("/receipt/:_id", auth, orderController.createReceipt)
+
+router.post("/payment/:_id", auth, orderController.updatePayment)
+
+router.post("/print-bill/", auth, orderController.printBill)
+
+router.delete("/cron/stop", async (req,res)=>{
+    stoplogName()
+    res.send("stop") 
+})
+
+router.post("/delivery/:_id", auth, orderController.confirmDelivery)
 
 module.exports = router;

@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 const validator = require("validator");
 
-const lazadaProductSchema = new Schema({
+const schema = new Schema({
     id: {
         type: String,
         required: true,
@@ -13,21 +13,30 @@ const lazadaProductSchema = new Schema({
         type: String,
         require: true,
     },
-    variants:{
-        type: Array
+    avatar: {
+      type: String
     },
     primary_category:{
-        type: String
+      type: String
+    },
+    primary_category_name: {
+      type: String
     },
     attributes:{
         type: Object
     },
+    updated_date_timestamp: {
+      type: Date,
+    },
+    created_date_timestamp: {
+      type: Date,
+    },
 });
 
-// schema.virtual("productDetails",{
-//   ref:"productDetail",
-//   localField: "_id",
-//   foreignField: "productID"
-// })
+schema.virtual("variants",{
+  ref:"LazadaVariant",
+  localField: "_id",
+  foreignField: "productId"
+})
 
-module.exports = mongoose.model("lazadaProduct", lazadaProductSchema);
+module.exports = mongoose.model("LazadaProduct", schema);

@@ -5,38 +5,44 @@ const validator = require("validator");
 
 
 const inventorySchema = new Schema({
-    id: {
-      type: mongoose.Schema.Types.ObjectId,
-      required: true,
+  variantId: {
+    type: mongoose.Schema.Types.ObjectId,
+    required: true
+  },
+  actionName: {
+    type: String,
+    required: true
+  },
+  change: {
+    amount: {
+      type: String
     },
-    shopID: {
-      type: String,
-    },
-    importOrderInfoID: {
-      type: mongoose.Schema.Types.ObjectId,
-      required: true
-    },
-    currentStock: {
-      type: Number,
-      required: true
+    type: {
+      type: String //tăng, giảm
     }
+  },
+  instock: {
+    type: Number
+  },
+  reference: {
+    type: String,
+  },
+  price: {
+    type: Number
+  },
+  department: {
+    type: String,
+    default: 'Chi nhánh mặc định'
+  },
+  createdAt: {
+    type: Date,
+  },
+}, {
+  timestamps: {
+    createdAt: 'createdAt',
+    // updatedAt: 'updatedAt',
+  }
 });
 
-inventorySchema.pre("validate",async function (next) {
-    const inventory = this;
-
-    try {
-      inventory.id = inventory._id 
-      next();
-    } catch(e) {
-      console.log(e)
-    }
-});
-
-// schema.virtual("productDetails",{
-//   ref:"productDetail",
-//   localField: "_id",
-//   foreignField: "productID"
-// })
 
 module.exports = mongoose.model("Inventory", inventorySchema);

@@ -1,30 +1,28 @@
 const express = require("express");
-const request = require("request-promise");
 const cors = require("cors");
-const path = require('path');
-const Inventory = require('./apis/models/inventory')
-const ImportOrderInfoID = require('./apis/models/importOrderInfoID')
 require('dotenv').config()
+require("./connections/mongodb-atlas");
 
-// const swaggerJsDoc = require("swagger-jsdoc");
+process.env.API_URL = process.env.NODE_ENV === 'dev' ? 'http://localhost:5000' : 'https://capstone-api-mms.herokuapp.com'
+
 const swaggerUi = require("swagger-ui-express");
 const swaggerDocument = require("./swagger.json");
-// require("./connections/mongodb-local");
-require("./connections/mongodb-atlas");
-const configRoute = require("./apis/index");
 
 const app = express();
-const server = require('http').createServer();
 const port = process.env.PORT || 5000;
+const configRoute = require("./apis/index");
 
 app.use(express.json());
 app.use(cors());
-
+// hook up session for express routes
+// app.use(sessionMiddleware);
+// hook up the session for socket.io connections
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+  res.header('Access-Control-Allow-Headers', 'Content-Type');
   next();
 });
-
 
 app.get("/*", (req, res, next) => {
   res.set({
@@ -38,33 +36,10 @@ app.get("/*", (req, res, next) => {
 
 configRoute(app);
 
-const io = require('socket.io')(server, {
-  path: '/test',
-  serveClient: false,
-  // below are engine.IO options
-  pingInterval: 10000,
-  pingTimeout: 5000,
-  cookie: false,
-  cors: {
-    origin: "https://localhost:3000",
-    methods: ["GET", "POST", "PUT", "PATCH", "DELETE"]
-  }
-});
-
-io.on('connection', socket => {
-  console.log("Connection created")
-})
-
-module.exports.getIO = function(){
-  return io;
-}
-
-server.listen(5050);
-
 app.use("/", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 app.listen(port, () => {
-  console.log(`Server is up in port + ${port} 🐳`);
+  console.log(`Server is up in port + ${port}`);
 });
 
 /*

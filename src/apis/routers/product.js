@@ -4,26 +4,18 @@ const auth = require("../../middlewares/auth");
 const productController = require("../controllers/product");
 const Product = require("../models/product");
 
-router.get("/", productController.getAllProduct);
+router.get("/check-sku", auth, productController.checkSku);
 
-// test route
-router.get("/unpopulatedProducts", async (req, res) => {
-  try {
-    const products = await Product.find({});
+router.get("/", auth, productController.getAllProduct);
 
-    res.send(products);
-  } catch (e) {
-    res.status(500).send(e.message);
-  }
-});
+router.get("/:id", auth, productController.getMMSProductById);
 
-router.get("/:id", productController.getProductById);
+router.post("/", auth, productController.createMMSProduct);
 
-router.post("/create-product-ping", productController.createProductByPing);
-router.post("/create-product-sync-sendo", productController.createProductBySyncSendo);
-router.post("/create-product-sync-lazada", productController.createProductBySyncLazada);
-router.patch("/:id", productController.updateProduct);
+router.patch("/:id", auth, productController.updateProduct);
 
-router.delete("/:id", productController.deleteProduct);
+router.delete("/:id", auth, productController.deleteProduct);
+
+router.post('/create-multi-platform', auth, productController.createMultiPlatform)
 
 module.exports = router;

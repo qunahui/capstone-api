@@ -4,17 +4,33 @@ const Schema = mongoose.Schema;
 const validator = require("validator");
 
 const schema = new Schema({
+    linkedId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Variant'
+    },
     store_id:{
         type: String
+    },
+    category_4_name: {
+      type: String
+    },
+    cat_4_id: {
+      type: Number
     },
     id:{
         type: String,
         unique: true
     },
+    price: {
+        type: Number,
+    },
     name:{
         type: String
     },
-    store_sku:{
+    description: {
+      type: String,
+    },
+    sku:{
         type: String
     },
     weight:{
@@ -22,6 +38,9 @@ const schema = new Schema({
     },
     stock_quantity:{
         type: Number
+    },
+    stock_availability:{
+        type: Boolean
     },
     status:{
         type: String
@@ -38,25 +57,29 @@ const schema = new Schema({
     unit:{
         type: String
     },
+    unitId: {
+        type: Number
+    },
     avatar:{
         type: String
     },
-    variants:{
-        type: Array
-    },
-    // attributes:{
-    //     type: Array
-    // },
     voucher:{
         type: Object
     },
   }
 );
 
-// schema.virtual("productDetails",{
-//   ref:"productDetail",
-//   localField: "_id",
-//   foreignField: "productID"
-// })
+schema.virtual("variants",{
+  ref: "SendoVariant",
+  localField: "_id",
+  foreignField: "productId"
+})
+
+schema.virtual("linkedDetails",{
+  ref: "Variant",
+  localField: "linkedId",
+  foreignField: "_id",
+  justOne : true
+})
 
 module.exports = mongoose.model("sendoProduct", schema);

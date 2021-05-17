@@ -1,17 +1,100 @@
-const auth = require("../../middlewares/auth");
 const Product = require("../models/product");
 const Error = require("../utils/error");
-const sendo = require('./sendo')
-const request = require('request');
-const util = require('util');
-const { time } = require("console");
-const rp = require('request-promise');
+const Variant = require('../models/variant')
+const rp = require('request-promise')
+const fs = require('fs')
+
+module.exports.createMultiPlatform = async (req, res) => {
+  const products = req.body
+
+  try {
+    for(let item of products) {
+      if(item.post === true) {
+        console.log("Begin create to: ", item.store_name)
+        if(item.platform_name === 'lazada') {
+            const lazRes = await rp({
+              method: 'POST',
+              url: `${process.env.API_URL}/api/lazada/products`,
+              body: {
+                Request: item.Request
+              },
+              json: true,
+              headers: {
+                'Authorization': 'Bearer ' + req.mongoToken,
+                'Platform-Token': item.access_token
+            }
+           })
+          
+          console.log(lazRes)
+
+          await rp({
+            method: 'POST',
+            url: `${process.env.API_URL}/lazada/products/fetch`,
+            headers: {
+              'Authorization': 'Bearer ' + req.mongoToken,
+              'Platform-Token': item.access_token
+            },
+            body: {
+              store_id: item.store_id,
+              lastSync: item.lastSync
+            },
+            json: true
+          })   
+
+        } else if(item.platform_name === 'sendo') {
+          await rp({
+            method: 'POST',
+            url: `${process.env.API_URL}/api/sendo/products`,
+            body: item,
+            json: true,
+            headers: {
+              'Authorization': 'Bearer ' + req.mongoToken,
+              'Platform-Token': item.access_token
+            }
+          })
+
+          await rp({
+            method: 'POST',
+            url: `${process.env.API_URL}/sendo/products/fetch`,
+            headers: {
+              'Authorization': 'Bearer ' + req.mongoToken,
+              'Platform-Token': item.access_token
+            },
+            body: {
+              store_id: item.store_id,
+              lastSync: item.lastSync
+            },
+            json: true
+          })          
+        } else if(item.platform_name === 'system') {
+          await rp({
+            method: 'POST',
+            url: `${process.env.API_URL}/products`,
+            body: {
+              ...item,
+              sellable: true,
+            },
+            json: true,
+            headers: {
+              'Authorization': 'Bearer ' + req.mongoToken,
+            }
+          })
+        }
+      }
+    }
+
+    return res.status(200).send("Ok")
+  } catch(e) {
+    console.log("Error", e.message)
+    res.status(500).send(Error({ message: 'Có gì đó không ổn !'}))
+  }
+};
 
 module.exports.getAllProduct = async (req, res) => {
+  console.log(req.user.currentStorage)
   try {
-    
-    const products = await Product.find({})
-    
+    const products = await Product.find({ storageId: req.user.currentStorage.storageId }).populate('variants').lean()
+
     res.send(products)
   } catch (e) {
     res.status(500).send(Error(e));
@@ -19,203 +102,152 @@ module.exports.getAllProduct = async (req, res) => {
 
 };
 
-module.exports.getProductById = async function (req, res) {
+module.exports.getMMSProductById = async function (req, res) {
   try {
     const productId = req.params.id;
-    const product = await Product.find({id: productId})
-    
+    const product = await Product.find({ _id: productId }).populate('variants').lean()
+
     res.send(product)
   } catch (e) {
     res.status(500).send(Error(e));
   }
 };
 
-module.exports.createProductByPing = async (req, res) => {
-  console.log("received data")
-  const item = req.body;
-  //util.inspect(item, false, null, true /* enable colors */)
-  //console.log(item)
-  const update_at = new Date(item.data.updated_date_timestamp*1000)
-  const create_at = new Date(item.data.created_date_timestamp*1000)
-  const attributes = item.attributes
-  attributes.forEach(element => {
-    var arr = element.attribute_values.filter((child) => {
-      return child.is_selected === true
-    });
-    element.attribute_values = arr
-  }); 
-  const variants = item.data.variants
-  
-
-  variants.forEach( e => {
-    e.variant_attributes.forEach(e1 => {
-      const attribute = attributes.find((attribute)=>{
-        return attribute.attribute_id === e1.attribute_id
-    });
-      e1.attribute_name = attribute.attribute_name
-    })
-  });
-
-    
-  const product = new Product({
-    store_ids: [item.store_id],
-    sendo_product_id: item.data.id,
-    name: item.data.name,
-    sku: item.data.store_sku,
-    price: item.data.price,
-    sendo_product_weight: item.data.weight,
-    sendo_stock_quantity: item.data.stock_quantity,
-    sendo_product_status: item.data.product_status,    
-    updated_date_timestamp: update_at,
-    created_date_timestamp: create_at,
-    sendo_product_link: item.data.product_link,       
-    unit_id: item.data.unit_id,
-    avatar: item.data.product_image,
-    variants: variants,
-    attributes: attributes,
-    voucher: item.data.voucher
-  });
-
+module.exports.createMMSProduct = async (req, res) => {
   try {
+    const product = new Product({
+      ...req.body,
+      storageId: req.user.currentStorage.storageId
+    });
+
+    let configVariant = []
     await product.save();
-    res.send(product);
+
+    if(req.body.isConfigInventory === true) {
+      let totalQuantity = 0
+
+        await Promise.all(req.body.variants.map(async (variant) => {
+          totalQuantity += variant.inventories.onHand
+          const mongoVariant = new Variant({ 
+            ...variant,
+            productId: product._id 
+          })
+
+          await mongoVariant.save()
+
+          return mongoVariant
+        }))
+
+      configVariant = await Variant.find({ productId: product._id }).lean()
+
+      try {
+        await rp({
+          method: 'POST',
+          url: `${process.env.API_URL}/purchase-orders/init`,
+          json: true,
+          body: {
+            code: `KHỞI_TẠO_${req.body.sku.toUpperCase()}_${new Date().toLocaleDateString()}`,
+            note: 'Khởi tạo ban đầu',
+            supplierAddress: 'Chi nhánh mặc định',
+            supplierName: req.user.displayName,
+            supplierId: req.user._id,
+            supplierPhone: 'Mặc định',
+            supplierEmail: req.user.email,
+            subTotal: 0,
+            totalQuantity,
+            userId: req.user._id,
+            lineItems: configVariant.map((variant, index) => ({
+              ...variant,
+              inventories: {
+                onHand: req.body.variants[index].inventories.onHand, 
+                initPrice: variant.inventories.initPrice
+              },
+              variantId: variant._id,
+              price: variant.inventories.initPrice,
+              quantity: req.body.variants[index].inventories.onHand,
+            })),
+            init: true,
+            orderStatus: 'Đã hoàn thành',
+            instockStatus: true,
+            paymentStatus: 'Đã thanh toán',
+          },
+          headers: {
+            'Authorization': 'Bearer ' + req.mongoToken
+          }
+        })
+      } catch (e) {
+        console.log("Create init purchase order failed: ", e.message)
+        return res.status(500).send(Error({ message: 'Có gì đó sai sai! '}))
+      }
+    }
+
+    const result = await Product.findOne({ _id: product._id }).lean()
+    result.variants = configVariant
+
+    if(req.body.autoLink) {
+      await Promise.all(configVariant.map(async (item, index) => {
+        await rp({
+          method: 'POST',
+          url: `${process.env.API_URL}/variants/link`, 
+          body: {
+            variant: item,
+            platformVariant: req.body.platformVariants[index]
+          },
+          json: true,
+          headers: {
+            'Authorization': 'Bearer ' + req.mongoToken
+          }
+        })
+      }))
+    }
+
+    res.status(200).send(result);
   } catch (e) {
+    console.log(e.message)
     res.status(500).send(Error(e));
   }
 };
-module.exports.createProductBySyncSendo = async (req, res) => {
-  console.log("received data")
-  const item = req.body;
-  //util.inspect(item, false, null, true /* enable colors */)
-  //console.log(item)
-  const update_at = new Date(item.updated_date_timestamp*1000)
-  const create_at = new Date(item.created_date_timestamp*1000)
-  const attributes = item.attributes
 
-  attributes.forEach(element => {
-    var arr = element.attribute_values.filter((child) => {
-      return child.is_selected === true
-    });
-    element.attribute_values = arr
-  });
-  const variants = item.variants
-  
-  variants.forEach( e => {
-    e.variant_attributes.forEach(e1 => {
-      const attribute = attributes.find((attribute)=>{
-        return attribute.attribute_id === e1.attribute_id
-      });
-      const attribute_value = attribute.attribute_values.find((value)=>{
-        return value.id === e1.option_id
-      })
-      e1.attribute_name = attribute.attribute_name
-      e1.option_value = attribute_value.value
-    })
-  });
-  const product = new Product({
-    store_ids: [req.shop_key],
-    store_name: item.store_name,
-    sendo_product_id: item.id,
-    lazada_product_id: "-1",
-    name: item.name,
-    sendo_sku: item.sku,
-    sendo_product_weight: item.weight,
-    sendo_stock_availability: item.stock_availability,
-    sendo_stock_quantity: item.stock_quantity,
-    sendo_product_status: item.status,
-    updated_date_timestamp: update_at,
-    created_date_timestamp: create_at,
-    
-    sendo_product_link: item.product_link,
-   
-    unit_id: item.unit_id,
-    avatar: item.picture,
-   
-    variants: variants,
-    voucher: item.voucher
-   
-
-  });
-
-  try {
-    await product.save();
-    res.send(product);
-  } catch (e) {
-    res.status(500).send(Error(e));
-  }
-};
-module.exports.createProductBySyncLazada = async (req, res) => {
-  const item = req.body;
-  //util.inspect(item, false, null, true /* enable colors */)
-  //console.log(item)
-
-  const stringAttributes = await rp("http://localhost:5000/api/lazada/attribute/"+ item.primary_category)
-  const attributes = JSON.parse(stringAttributes)
-  const variants = item.skus
-  const attribute_sale_props = attributes.filter((attribute)=>{
-    return attribute.is_sale_prop === 1
-})
-  variants.forEach(variant => {
-    const variant_attribute = []
-    attribute_sale_props.forEach(prop => {
-      const attribute_name = prop.name
-      const attribute_value = variant[`${attribute_name}`]
-      variant_attribute.push({
-        "attribute_name": attribute_name,
-        "attribute_value": attribute_value
-      })
-      delete variant[`${attribute_name}`]
-    });
-    variant.variant_attribute = variant_attribute
-
-  });
- 
-  const product = new Product({
-    store_ids: [req.shop_key],
-    sendo_product_id: -1,
-    lazada_product_id: item.item_id,
-    name: item.attributes.name,
-    variants: variants
-  });
-  try {
-    await product.save();
-    res.send(product);
-  } catch (e) {
-    res.status(500).send(Error(e));
-  }
-};
 module.exports.updateProduct = async (req, res) => {
-  console.log("Received ping update: ")
-  //console.log(req.body)
-  // const properties = Object.keys(req.body);
+  
+  const properties = Object.keys(req.body);
+  
+  try {
+    const product = await Product.findOne({ id: req.body.id });
+    if (!product) {
+      res.status(404).send(product);
+    }
 
+    properties.forEach((prop) => (product[prop] = req.body[prop]));
 
-  // try {
-  //   const product = await Product.findById(req.body.data.id);
+    product.save();
 
-  //   if (!product) {
-  //     res.status(404).send(product);
-  //   }
-
-  //   properties.forEach((prop) => (product[prop] = req.body[prop]));
-  //   product.save();
-
-  //   res.send(product);
-  // } catch (e) {
-  //   res.status(404).send(Error(e));
-  // }
+    res.send(product);
+  } catch (e) {
+    res.status(404).send(Error(e));
+  }
 };
 
 module.exports.deleteProduct = async (req, res) => {
   try {
-    const product = await Product.findOneAndDelete(req.params.id);
+    const product = await Product.findOneAndDelete({ _id: req.params.id });
 
     if (!product) {
       return res.status(404).send();
     }
 
-    res.send(product).send();
+    await Variant.deleteMany({ productId: product._id })
+
+    res.send(product);
   } catch (e) {
     res.status(500).send(Error(e));
   }
 };
+
+module.exports.checkSku = async (req,res) => {
+  const { sku } = req.query
+  const matchedProductSku = await Product.findOne({ sku })
+  res.status(200).send({
+    isSkuExists: !!matchedProductSku
+  })
+}

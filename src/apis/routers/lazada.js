@@ -2,8 +2,10 @@ const express = require("express");
 const request = require("request")
 const router = express.Router();
 const controller = require("../controllers/lazada");
+const auth = require("../../middlewares/auth");
 var multer  = require('multer')
-const path = require('path')
+const path = require('path');
+const { check2, check1 } = require("../../middlewares/check");
 
 //const upload = multer ({ dest: path.join(__dirname, '../../temp/')})
 
@@ -21,35 +23,38 @@ var upload = multer({
 })
 
 // router.get('/first-connect', controller.authorizeCredential)
-router.get('/authorize', controller.authorizeCredential)
-router.get('/token', controller.getAccessToken)
-router.get('/products', controller.getAllProducts)
+router.get('/authorize', auth, controller.authorizeCredential)
+router.post('/login', auth, controller.getAccessToken)  // t4 fix cùng hui
 //router.post('/sign', controller.createSign)
 
-router.get('/refresh-token/:refresh_token', controller.refreshToken)
-router.post('/fetch-products', controller.fetchProducts)
-router.get('/products/:id', controller.getProductById)
+router.post('/refresh-token/',auth, controller.refreshToken)
 
-router.get('/category-tree', controller.getCategoryTree) // dont use :)
+router.get('/products/:id', auth, controller.getProductById)
+router.get('/products/seller-sku/:id', auth, controller.getProductBySellerSku)
+router.get('/category-tree', auth, controller.getCategoryTree) // dont use :)
 router.get('/attribute/:id', controller.getAttributes)
-router.get('/brands', controller.getBrands) //dont know what it use for
-router.get('/suggestion', controller.getCategorySuggestion) // it can be useful
-router.get('/qc-status', controller.getQcStatus)
+router.get('/brands', auth, controller.getBrands) //dont know what it use for
+router.get('/suggestion', auth, controller.getCategorySuggestion) // it can be useful // stop working
+router.post('/qc-status', auth, controller.getQcStatus)
 
-router.post('/seller', controller.getSellerInfo)
-router.get('/seller-metrics', controller.getSellerMetrics)
-router.post('/update-seller-email', controller.updateSellerEmail)
-router.post('/upload-image', upload.single('image') ,controller.uploadImage)
-router.post('/update-product', controller.updateProduct)
-router.post('/create-product', controller.createProduct)
-router.post('/remove-product', controller.removeProduct)
+router.get('/seller', auth, controller.getSellerInfo)
+router.get('/seller-metrics', auth, controller.getSellerMetrics)
+router.post('/update-seller-email', auth, controller.updateSellerEmail) //not working
+router.post('/upload-image', upload.single('image') ,auth , controller.uploadImage)
+//router.patch('/products/:sellerSku',auth, controller.updateProduct)  //api cua laz thay doi
+router.patch('/products/',auth, controller.updateProduct)
+router.patch('/products/price_quantity',auth, controller.updatePriceQuantity)
+router.post('/products', auth, controller.createProductOnLazada)
+router.delete('/products/:sellerSku', auth, controller.deleteProduct)
 
-router.get('/cancel-reason', controller.getCancelReason)
+router.get('/cancel-reason', auth, controller.getCancelReason)
 
-router.get('/order', controller.searchOrder)
-router.get('/order/:id', controller.getOrderById)
-router.post('/cancel-order', controller.cancelOrder)
-
-router.get('/order-item/:id', controller.getOrderItem)
+router.get('/orders/document', auth, controller.getDocument)
+router.get('/orders', auth, controller.searchOrder)
+router.get('/orders/:id', auth, controller.getOrderByIdOnLazada)
+router.post('/orders/cancel/:id', auth, controller.cancelOrderOnLazada)
+router.post('/orders/pack/', controller.setStatusToPackedByMarketplace)
+router.post('/orders/rts/', controller.setStatusToReadyToShip)
+router.get('/orders/items/:id', auth, controller.getOrderItems)
 
 module.exports = router;

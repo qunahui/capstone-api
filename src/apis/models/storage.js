@@ -4,7 +4,7 @@ const validator = require("validator");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
-const sendoCredentialSchema = {
+const sendoCredentialSchema = new Schema({
   app_key: {
     type: String,
     required: true
@@ -31,16 +31,41 @@ const sendoCredentialSchema = {
   },
   access_token: {
     type: String,
-    expires: '28800'
+    expires: '10'
   },
   status: {
     type: String,
     required: true,
     default: 'not connected yet'
+  },
+  priceSync: {
+    type: Boolean,
+    default: true,
+  },
+  quantitySync: {
+    type: Boolean,
+    default: true,
+  },
+  pricePolicy: {
+    type: String,
+    default: 'retailPrice'
+  },
+  expires: { 
+    type: Date,
+    required: true,
+  },
+  lastSync: {
+    type: Date,
+    default: null
   }
-}
+}, {
+  timestamps: {
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  }
+})
 
-const lazadaCredentialSchema = {
+const lazadaCredentialSchema = new Schema({
   store_name: {
     type: String,
   },
@@ -64,8 +89,37 @@ const lazadaCredentialSchema = {
   access_token: {
     type: String,
     expires: '604800'
+  },
+  status: {
+    type: String,
+    required: true,
+    default: 'not connected yet'
+  },
+  priceSync: {
+    type: Boolean,
+    default: true,
+  },
+  quantitySync: {
+    type: Boolean,
+    default: true,
+  },
+  pricePolicy: {
+    type: String,
+    default: 'retailPrice'
+  },  
+  expires: { 
+    type: Date,
+    required: true,
+  },
+  refresh_expires: {
+    type: Date,
+    required: true
+  },
+  lastSync: {
+    type: Date,
+    default: null
   }
-}
+})
 
 const storageSchema = new Schema({
   id: {
@@ -86,10 +140,18 @@ const storageSchema = new Schema({
     type: Number,
     default: 0,
   },
+  autoSync: {
+    type: Boolean,
+    default: false
+  },
   isActivated: {
     type: Boolean,
     default: true,
   },
+  lastSync: {
+    type: Date,
+    default: null
+  }
 });
 
 storageSchema.pre("validate",async function (next) {

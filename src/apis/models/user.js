@@ -24,10 +24,34 @@ const platformCredentialSchema = new Schema({
 })
 
 const schema = new Schema({
-  uid: {
+  email: {
+    type: String,
+    unique: true,
+    required: true,
+    trim: true,
+    lowercase: true,
+    validate(value) {
+      if (!validator.isEmail(value)) {
+        throw new Error("Email is invalid");
+      }
+    },
+  },
+  password: {
+    type: String,
+    minlength: 6,
+    required: true,
+    trim: true,
+  },
+  displayName: {
     type: String,
     required: true,
-    unique: true
+    trim: true,
+  },
+  lastSeen: {
+    type: Date,
+  },
+  role: {
+    type: String,
   },
   isDeleted: {
     type: Boolean,
@@ -37,7 +61,7 @@ const schema = new Schema({
     {
       storage: {
         storageId: {
-          type: String,
+          type: mongoose.Schema.Types.ObjectId,
         },
         storageName: {
           type: String
@@ -54,18 +78,16 @@ const schema = new Schema({
   ],
 });
 
-// schema.virtual("platformTokens", {
-//   ref: "platformToken",
-//   localField: "uid",
-//   foreignField: "uid"
-// })
-
 schema.methods.toJSON = function () {
   const user = this;
   const userObject = user.toObject();
-  delete userObject.tokens;
-  delete userObject._id;
-  delete userObject.isDeleted;
+  const currentStorage = userObject.storages[0].storage
+
+  userObject.currentStorage = currentStorage
+  delete userObject.storages
+  delete userObject.tokens
+  delete userObject.password
+  delete userObject.isDeleted
   
   return userObject;
 };
@@ -73,7 +95,10 @@ schema.methods.toJSON = function () {
 // generate jwt
 schema.methods.generateJWT = async function () {
   const user = this;
-  const token = jwt.sign({ uid: user.uid.toString() }, "thuongthuong", {
+  const token = jwt.sign({ 
+    _id: user._id.toString(),
+    currentStorage: user.storages[0].storage
+  }, "thuongthuong", {
     expiresIn: '30d'
   });
 
@@ -84,26 +109,33 @@ schema.methods.generateJWT = async function () {
 };
 
 // check login
-schema.statics.findByCredentials = async (uid) => {
-  var user = await User.findOne({ uid });
-  
+schema.statics.findByCredentials = async (email, password) => {
+  console.log(email)
+  const user = await User.findOne({ email });
   if (!user) {
     throw new Error("Unable to login!");
   }
-  
+
+  const isMatch = await bcrypt.compare(password, user.password);
+
+
+  if (!isMatch) {
+    throw new Error("Unable to login");
+  }
+
   return user;
 };
 
-// // hash the password before saving
-// schema.pre("save", async function (next) {
-//   const user = this;
+// hash the password before saving
+schema.pre("save", async function (next) {
+  const user = this;
 
-//   if (user.isModified("password")) {
-//     user.password = await bcrypt.hash(user.password, 8);
-//   }
+  if (user.isModified("password")) {
+    user.password = await bcrypt.hash(user.password, 8);
+  }
 
-//   next();
-// });
+  next();
+});
 
 const User = mongoose.model("User", schema);
 
