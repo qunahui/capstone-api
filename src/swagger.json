@@ -1,0 +1,6251 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Swagger MMS",
+    "description": "locpro's magic",
+    "termsOfService": "",
+    "contact": {
+      "email": "nhoxloctran125@gmail.com"
+    },
+    "license": {
+      "name": "No license",
+      "url": ""
+    },
+    "version": "1.0.0"
+  },
+  "externalDocs": {
+    "description": "Find out more about Swagger",
+    "url": "http://localhost:5000/"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:5000/",
+      "description": "localhost"
+    },
+    {
+      "url": "https://capstone-api-mms.herokuapp.com/",
+      "description": "Heroku app"
+    }
+  ],
+  "tags": [
+    {
+      "name": "users",
+      "description": "Everything about your Users",
+      "externalDocs": {
+        "description": "Find out more",
+        "url": ""
+      }
+    },
+    {
+      "name": "products",
+      "description": "Everything about your Products",
+      "externalDocs": {
+        "description": "Find out more",
+        "url": ""
+      }
+    },
+    {
+      "name": "orders",
+      "description": "Everything about your Orders",
+      "externalDocs": {
+        "description": "Find out more",
+        "url": ""
+      }
+    },
+    {
+      "name": "purchaseOrders",
+      "description": "Everything about your purchaseOrders",
+      "externalDocs": {
+        "description": "Find out more",
+        "url": ""
+      }
+    },
+    {
+      "name": "refundOrders",
+      "description": "Everything about your refundOrders",
+      "externalDocs": {
+        "description": "Find out more",
+        "url": ""
+      }
+    },
+    {
+      "name": "sendoAPI",
+      "description": "Access to Sendo API"
+    },
+    {
+      "name": "lazadaAPI",
+      "description": "Access to Lazada API"
+    },
+    {
+      "name": "sendoProducts",
+      "description": "Access to Sendo products in Database"
+    },
+    {
+      "name": "lazadaProducts",
+      "description": "Access to Lazada products in Database"
+    },
+    {
+      "name": "categories",
+      "description": "Access to Categories in Database"
+    },
+    {
+      "name": "inventory",
+      "description": "Access to Inventory in Database"
+    },
+    {
+      "name": "provinces",
+      "description": "Access to province in Database"
+    },
+    {
+      "name": "districts",
+      "description": "Access to district in Database"
+    },
+    {
+      "name": "wards",
+      "description": "Access to ward in Database"
+    }
+  ],
+  "paths": {
+    "/users/sign-up": {
+      "post": {
+        "tags": [
+          "users"
+        ],
+        "summary": "Sign up the app",
+        "operationId": "signUp",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {},
+              "example": {
+                "email": "mrlocpro@gmail.com",
+                "password": "locpro",
+                "displayName": "locpro"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful",
+            "content": {
+              "application/json": {
+                "example": {
+                  "user": {
+                    "_id": "603e3eb9486b9112e0183ecf",
+                    "displayName": "huyhuy",
+                    "email": "hui1@gmail.com",
+                    "__v": 16,
+                    "currentStorage": {
+                      "storageId": "603e3eb9486b9112e0183ed0",
+                      "storageName": "STORAGE_603E3EB9486B9112E0183ECF"
+                    }
+                  },
+                  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MDNlM2ViOTQ4NmI5MTEyZTAxODNlY2YiLCJjdXJyZW50U3RvcmFnZSI6eyJzdG9yYWdlSWQiOiI2MDNlM2ViOTQ4NmI5MTEyZTAxODNlZDAiLCJzdG9yYWdlTmFtZSI6IlNUT1JBR0VfNjAzRTNFQjk0ODZCOTExMkUwMTgzRUNGIn0sImlhdCI6MTYxNTE4NzgyNCwiZXhwIjoxNjE3Nzc5ODI0fQ.mbqF8C5CI4oLRUA53MNRI7EjAAViWSSbjjCx0oQrMK4"
+                }
+              }
+            }
+          },
+          "405": {
+            "description": "Invalid input"
+          },
+          "500": {
+            "description": "Error: Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "petstore_auth": [
+              "write:pets",
+              "read:pets"
+            ]
+          }
+        ]
+      }
+    },
+    "/users/sign-in": {
+      "post": {
+        "tags": [
+          "users"
+        ],
+        "summary": "Sign in the app",
+        "operationId": "signIn",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {},
+              "example": {
+                "email": "mrlocpro@gmail.com",
+                "password": "locpro"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful",
+            "content": {
+              "application/json": {
+                "example": {
+                  "user": {
+                    "_id": "603e3eb9486b9112e0183ecf",
+                    "displayName": "huyhuy",
+                    "email": "hui1@gmail.com",
+                    "__v": 16,
+                    "currentStorage": {
+                      "storageId": "603e3eb9486b9112e0183ed0",
+                      "storageName": "STORAGE_603E3EB9486B9112E0183ECF"
+                    }
+                  },
+                  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MDNlM2ViOTQ4NmI5MTEyZTAxODNlY2YiLCJjdXJyZW50U3RvcmFnZSI6eyJzdG9yYWdlSWQiOiI2MDNlM2ViOTQ4NmI5MTEyZTAxODNlZDAiLCJzdG9yYWdlTmFtZSI6IlNUT1JBR0VfNjAzRTNFQjk0ODZCOTExMkUwMTgzRUNGIn0sImlhdCI6MTYxNTE4NzgyNCwiZXhwIjoxNjE3Nzc5ODI0fQ.mbqF8C5CI4oLRUA53MNRI7EjAAViWSSbjjCx0oQrMK4"
+                }
+              }
+            }
+          },
+          "405": {
+            "description": "Invalid input"
+          },
+          "500": {
+            "description": "Error: Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "petstore_auth": [
+              "write:pets",
+              "read:pets"
+            ]
+          }
+        ]
+      }
+    },
+    "/users/sign-out": {
+      "get": {
+        "tags": [
+          "users"
+        ],
+        "summary": "Sign out the current user",
+        "operationId": "signOut",
+        "responses": {
+          "200": {
+            "description": "Successful",
+            "content": {
+              "application/json": {
+                "example": " "
+              }
+            }
+          },
+          "405": {
+            "description": "Invalid input"
+          },
+          "500": {
+            "description": "Error: Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": [],
+            "ApiKeyAuth": []
+          }
+        ]
+      }
+    },
+    "/users/me": {
+      "get": {
+        "tags": [
+          "users"
+        ],
+        "summary": "Get the current user",
+        "operationId": "getCurrentUser",
+        "security": [
+          {
+            "bearerAuth": [],
+            "ApiKeyAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful",
+            "content": {
+              "application/json": {
+                "example": " "
+              }
+            }
+          },
+          "405": {
+            "description": "Invalid input"
+          },
+          "500": {
+            "description": "Error: Internal Server Error"
+          }
+        }
+      }
+    },
+    "/users/logout-all": {
+      "post": {
+        "tags": [
+          "users"
+        ],
+        "summary": "Sign out all user",
+        "operationId": "signOutAll",
+        "security": [
+          {
+            "bearerAuth": [],
+            "ApiKeyAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful",
+            "content": {
+              "application/json": {
+                "example": " "
+              }
+            }
+          },
+          "405": {
+            "description": "Invalid input"
+          },
+          "500": {
+            "description": "Error: Internal Server Error"
+          }
+        }
+      }
+    },
+    "/users/update": {
+      "patch": {
+        "tags": [
+          "users"
+        ],
+        "summary": "update current user",
+        "operationId": "updateUser",
+        "security": [
+          {
+            "bearerAuth": [],
+            "ApiKeyAuth": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {},
+              "example": {
+                "displayName": "huihui1"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful",
+            "content": {
+              "application/json": {
+                "example": " "
+              }
+            }
+          },
+          "405": {
+            "description": "Invalid input"
+          },
+          "500": {
+            "description": "Error: Internal Server Error"
+          }
+        }
+      }
+    },
+    "/users/delete": {
+      "delete": {
+        "tags": [
+          "users"
+        ],
+        "summary": "delete user",
+        "operationId": "deleteUser",
+        "security": [
+          {
+            "bearerAuth": [],
+            "ApiKeyAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful",
+            "content": {
+              "application/json": {
+                "example": " "
+              }
+            }
+          },
+          "405": {
+            "description": "Invalid input"
+          },
+          "500": {
+            "description": "Error: Internal Server Error"
+          }
+        }
+      }
+    },
+    "/products": {
+      "post": {
+        "tags": [
+          "products"
+        ],
+        "summary": "Add a new MMS product to the store",
+        "operationId": "addProduct",
+        "requestBody": {
+          "$ref": "#/components/requestBodies/Product"
+        },
+        "responses": {
+          "200": {
+            "description": "Successful"
+          },
+          "405": {
+            "description": "Invalid input"
+          },
+          "500": {
+            "description": "Error: Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": [],
+            "ApiKeyAuth": []
+          }
+        ]
+      },
+      "get": {
+        "tags": [
+          "products"
+        ],
+        "summary": "Get all product",
+        "operationId": "getAllProduct",
+        "responses": {
+          "200": {
+            "description": "Successful"
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "404": {
+            "description": "Pet not found"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": [],
+            "ApiKeyAuth": []
+          }
+        ]
+      }
+    },
+    "/products/check-sku": {
+      "get": {
+        "tags": [
+          "products"
+        ],
+        "summary": "check sku in database",
+        "operationId": "checkSku",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "sku",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "aophong"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful"
+          },
+          "405": {
+            "description": "Invalid input"
+          },
+          "500": {
+            "description": "Error: Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": [],
+            "ApiKeyAuth": []
+          }
+        ]
+      }
+    },
+    "/products/{productId}": {
+      "get": {
+        "tags": [
+          "products"
+        ],
+        "summary": "Get an existing product by id",
+        "operationId": "getProduct",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "productId",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "605feaf9d8706444f4e006f7"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful"
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "404": {
+            "description": "Pet not found"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": [],
+            "ApiKeyAuth": []
+          }
+        ]
+      },
+      "patch": {
+        "tags": [
+          "products"
+        ],
+        "summary": "Update an existing product",
+        "operationId": "updateProduct",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "productId",
+            "schema": {
+              "type": "string",
+              "example": "605feaf9d8706444f4e006f7"
+            },
+            "required": true,
+            "description": "Numeric ID of the product to update"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "anyOf": [
+                  {
+                    "$ref": "#/components/schemas/Product"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful"
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "404": {
+            "description": "Pet not found"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": [],
+            "ApiKeyAuth": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "products"
+        ],
+        "summary": "Delete an existing product",
+        "operationId": "deleteProduct",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "productId",
+            "schema": {
+              "type": "string",
+              "example": "605feaf9d8706444f4e006f7"
+            },
+            "required": true,
+            "description": "Numeric ID of the product to delete"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful"
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "404": {
+            "description": "Pet not found"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": [],
+            "ApiKeyAuth": []
+          }
+        ]
+      }
+    },
+    "/orders": {
+      "post": {
+        "tags": [
+          "orders"
+        ],
+        "summary": "Add a new MMS product to the store",
+        "operationId": "addProduct",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "anyOf": [
+                  {
+                    "$ref": "#/components/schemas/Order"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful"
+          },
+          "405": {
+            "description": "Invalid input"
+          },
+          "500": {
+            "description": "Error: Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": [],
+            "ApiKeyAuth": []
+          }
+        ]
+      },
+      "get": {
+        "tags": [
+          "orders"
+        ],
+        "summary": "Get all order",
+        "operationId": "getAllOrder",
+        "responses": {
+          "200": {
+            "description": "Successful"
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "404": {
+            "description": "Pet not found"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": [],
+            "ApiKeyAuth": []
+          }
+        ]
+      }
+    },
+    "/orders/lazada": {
+      "post": {
+        "tags": [
+          "orders"
+        ],
+        "summary": "Add a new Lazada product to the store",
+        "operationId": "addLazadaOrder",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {},
+              "example": {
+                "voucher_platform": 0,
+                "voucher": 0,
+                "warehouse_code": "dropshipping",
+                "order_number": 267078668313259,
+                "voucher_seller": 0,
+                "created_at": "2020-12-19 09:34:17 +0700",
+                "voucher_code": "",
+                "gift_option": false,
+                "shipping_fee_discount_platform": 0,
+                "customer_last_name": "",
+                "updated_at": "2020-12-19 09:37:02 +0700",
+                "promised_shipping_times": "",
+                "price": "700,000.00",
+                "national_registration_number": "",
+                "shipping_fee_original": 9900,
+                "payment_method": "COD",
+                "customer_first_name": "L******* ",
+                "shipping_fee_discount_seller": 0,
+                "shipping_fee": 9900,
+                "items_count": 1,
+                "delivery_info": "",
+                "statuses": [
+                  "canceled"
+                ],
+                "address_billing": {
+                  "country": "Vietnam",
+                  "address3": "H*********h",
+                  "phone": "84********98",
+                  "address2": "",
+                  "city": "Quận 12",
+                  "address1": "2******3",
+                  "post_code": "",
+                  "phone2": "",
+                  "last_name": "",
+                  "address5": "P********************n",
+                  "address4": "Q*****2",
+                  "first_name": "Trần Vũ Lộc"
+                },
+                "extra_attributes": "{\"TaxInvoiceRequested\":false}",
+                "order_id": 267078668313259,
+                "gift_message": "",
+                "remarks": "",
+                "address_shipping": {
+                  "country": "Vietnam",
+                  "address3": "H*********h",
+                  "phone": "84********98",
+                  "address2": "",
+                  "city": "Quận 12",
+                  "address1": "2******3",
+                  "post_code": "",
+                  "phone2": "",
+                  "last_name": "",
+                  "address5": "P********************n",
+                  "address4": "Q*****2",
+                  "first_name": "Trần Vũ Lộc"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful"
+          },
+          "405": {
+            "description": "Invalid input"
+          },
+          "500": {
+            "description": "Error: Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": [],
+            "ApiKeyAuth": []
+          }
+        ]
+      },
+      "get": {
+        "tags": [
+          "orders"
+        ],
+        "summary": "Get all order",
+        "operationId": "getAllOrder",
+        "responses": {
+          "200": {
+            "description": "Successful"
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "404": {
+            "description": "Pet not found"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": [],
+            "ApiKeyAuth": []
+          }
+        ]
+      }
+    },
+    "/orders/sendo": {
+      "post": {
+        "tags": [
+          "orders"
+        ],
+        "summary": "Add a new Sendo product to the store",
+        "operationId": "addSendoOrder",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {},
+              "example": {
+                "sales_order": {
+                  "order_number": "14678191438",
+                  "order_status": 13,
+                  "delivery_status": 0,
+                  "payment_status": 1,
+                  "tracking_number": "",
+                  "carrier_name": "Chuyển phát tiêu chuẩn",
+                  "carrier_code": "ecom_shipping_dispatch_cptc_sc",
+                  "carrier_phone": "",
+                  "sort_code": "",
+                  "buyer_phone": "0914350100",
+                  "buyer_address": "269 Đường Liên Phường, Phường Phước Long B, Quận 9",
+                  "buyer_region_id": 1,
+                  "buyer_district_id": 9,
+                  "buyer_region": "",
+                  "buyer_district": "",
+                  "buyer_ward": "",
+                  "sales_order_merges": "",
+                  "is_shop_voucher": false,
+                  "is_delivery_failed": false,
+                  "warning_status": 0,
+                  "is_merge": false,
+                  "mobile_discount_amount": 0.0,
+                  "allow_check": false,
+                  "is_self_shipping": false,
+                  "bank_name": "",
+                  "is_installment": false,
+                  "is_first_order": false,
+                  "installment_fee": 0.0,
+                  "sendo_support_fee_to_buyer": 0.0,
+                  "reason_cancel_code": "CBS",
+                  "voucher_value": 0.0,
+                  "region_name": "269 Đường Liên Phường, Phường Phước Long B, Quận 9, Phường Phước Long B, Quận 9, Hồ Chí Minh",
+                  "seller_shipping_fee": 0.0,
+                  "senpay_free_shipping": 0.0,
+                  "sendo_support_fee": 0.0,
+                  "parent_order_number": "",
+                  "child_order_number": "",
+                  "transferred_amount": 0.0,
+                  "affiliate_from_source": "",
+                  "affiliate_name": "",
+                  "affiliate_total_amount": 0.0,
+                  "receiver_address": "",
+                  "receiver_ward": "",
+                  "receiver_district": "",
+                  "receiver_region": "",
+                  "bank_code": "",
+                  "installment_bank_fee": 0.0,
+                  "payment_period": "",
+                  "percent_installment": 0.0,
+                  "transportation_type": "",
+                  "receiver_email": "",
+                  "tracking_link": "",
+                  "payment_status_name": "Chưa nhận tiền",
+                  "senpay_fee": 0.0,
+                  "store_picking_address": "269 Đường Liên Phườn, Phường Phước Long B, Quận 9, Hồ Chí Minh",
+                  "is_declare_value": false,
+                  "declare_value_fee": 0.0,
+                  "cod_fee": 0.0,
+                  "is_post_office": false,
+                  "post_offices_fee": 0.0,
+                  "sales_order_type": 1,
+                  "sales_promotion_amount": 0.0,
+                  "types_of_sales_promotion": 0,
+                  "is_printed": false,
+                  "sales_product_type": 1,
+                  "payment_type": 0,
+                  "ship_from_region_id": 1,
+                  "ship_from_country_code": "",
+                  "receiver_name": "Đặng Quang Huy",
+                  "ship_to_address": "269 Đường Liên Phường, Phường Phước Long B, Quận 9",
+                  "ship_to_ward": "Phường Phước Long B",
+                  "ship_from_district_id": 9,
+                  "ship_to_district_id": 9,
+                  "ship_to_country_code": "",
+                  "ship_to_zipcode": "",
+                  "shipping_contact_phone": "0914350100",
+                  "ship_to_region_id": 1,
+                  "ship_from_ward": "Phường Phước Long B",
+                  "shipping_type": 1,
+                  "shipping_fee": 14000.0,
+                  "ship_from_address": "269 Đường Liên Phườn",
+                  "total_amount": 100000.0,
+                  "weight": 1000.0,
+                  "actual_weight": 1000.0,
+                  "payment_method": 1,
+                  "note": "",
+                  "reason_delay": "",
+                  "reason_cancel": "Người bán quá hạn xác nhận tình trạng hàng",
+                  "canceled_by": "",
+                  "refund_to_buyer_amount": 0.0,
+                  "transfer_to_seller_amount": 0.0,
+                  "refund_trans": null,
+                  "is_disputing": false,
+                  "sub_total": 100000.0,
+                  "stage": 10,
+                  "process_refund_amount": 0.0,
+                  "can_action": true,
+                  "order_date_time_stamp": 1609839040.0,
+                  "ticket_use_date_time_stamp": 0.0,
+                  "payment_status_date_time_stamp": 1609839040.0,
+                  "delay_date_time_stamp": null,
+                  "delay_to_date_time_stamp": null,
+                  "submit_date_time_stamp": null,
+                  "pod_date_time_stamp": null,
+                  "canceled_date_time_stamp": 1610012100.0,
+                  "created_date_time_stamp": 1609839040.0,
+                  "updated_date_time_stamp": 1610012096.0,
+                  "expected_delivery_date_time_stamp": null,
+                  "order_status_date_time_stamp": 1610012100.0,
+                  "delivery_status_date_time_stamp": null,
+                  "total_amount_buyer": 100000.0,
+                  "payment_type1": 0,
+                  "payment_status1": 0,
+                  "payment_type1_amount": 0.0,
+                  "payment_type2": 0,
+                  "payment_status2": 0,
+                  "payment_type2_amount": 0.0,
+                  "fds_expired_time": 0,
+                  "shop_program_name": "",
+                  "shop_program_amount": 0.0,
+                  "shipping_voucher_amount": 14000.0,
+                  "seller_pay_later_fee": 0.0,
+                  "shop_voucher_amount": 0.0,
+                  "sendo_voucher_amount": 0.0
+                },
+                "sku_details": [
+                  {
+                    "product_variant_id": 39297530,
+                    "product_name": "dao làm bếp",
+                    "sku": "123456789-123456789",
+                    "quantity": 1,
+                    "size": "",
+                    "color": "",
+                    "price": 100000.0,
+                    "sub_total": 100000.0,
+                    "weight": 1000.0,
+                    "product_image": "https://media3.scdn.vn/img4/2021/01_04/xooWI9JHZXqREjFIeQTB.png",
+                    "description": "Màu sắc: Xám ",
+                    "unit_id": 0,
+                    "attribute_hash": "613",
+                    "shop_program_percent": 0.0,
+                    "shop_program_amount": 0.0,
+                    "is_flash_sales": false,
+                    "flash_sale_amount": 0.0,
+                    "flash_deal_type_names": [],
+                    "is_combo_discount": false,
+                    "combo_parent_product_id": 0
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful"
+          },
+          "405": {
+            "description": "Invalid input"
+          },
+          "500": {
+            "description": "Error: Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": [],
+            "ApiKeyAuth": []
+          }
+        ]
+      },
+      "get": {
+        "tags": [
+          "orders"
+        ],
+        "summary": "Get all order",
+        "operationId": "getAllOrder",
+        "responses": {
+          "200": {
+            "description": "Successful"
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "404": {
+            "description": "Pet not found"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": [],
+            "ApiKeyAuth": []
+          }
+        ]
+      }
+    },
+    "/orders/{orderId}": {
+      "get": {
+        "tags": [
+          "orders"
+        ],
+        "summary": "Get an existing order by id",
+        "operationId": "getOrder",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "orderId",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "606152d8300e76563c5fe6d4"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful"
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "404": {
+            "description": "Pet not found"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": [],
+            "ApiKeyAuth": []
+          }
+        ]
+      }
+    },
+    "/orders/cancel/{_id}": {
+      "get": {
+        "tags": [
+          "orders"
+        ],
+        "summary": "Cancel order by _id",
+        "operationId": "cancelOrder",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "_id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "606152d8300e76563c5fe6d4"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful"
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "404": {
+            "description": "Pet not found"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": [],
+            "ApiKeyAuth": []
+          }
+        ]
+      }
+    },
+    "/orders/pack/{_id}": {
+      "post": {
+        "tags": [
+          "orders"
+        ],
+        "summary": "Pack order by _id",
+        "operationId": "packOrder",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "_id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "606152d8300e76563c5fe6d4"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful"
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "404": {
+            "description": "Pet not found"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": [],
+            "ApiKeyAuth": []
+          }
+        ]
+      }
+    },
+    "/orders/receipt/{_id}": {
+      "post": {
+        "tags": [
+          "orders"
+        ],
+        "summary": "Receipt order by _id",
+        "operationId": "receiptOrder",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "_id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "606152d8300e76563c5fe6d4"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {},
+              "example": {
+                "lineItems": [
+                  {
+                    "_id": "605feaf9d8706444f4e006fb",
+                    "name": "Áo phông EAGLES - 8 - nâu - gỗ",
+                    "sku": "aophong-8-nau-go",
+                    "productId": "605feaf9d8706444f4e006f7",
+                    "price": 150000,
+                    "quantity": 78
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful"
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "404": {
+            "description": "Pet not found"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": [],
+            "ApiKeyAuth": []
+          }
+        ]
+      }
+    },
+    "/orders/payment/{_id}": {
+      "post": {
+        "tags": [
+          "orders"
+        ],
+        "summary": "payment order by _id",
+        "operationId": "paymentOrder",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "_id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "606152d8300e76563c5fe6d4"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {},
+              "example": {
+                "paidPrice": 10000,
+                "formattedPaidPrice": "10,000"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful"
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "404": {
+            "description": "Pet not found"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": [],
+            "ApiKeyAuth": []
+          }
+        ]
+      }
+    },
+    "/purchase-orders": {
+      "post": {
+        "tags": [
+          "purchaseOrders"
+        ],
+        "summary": "Add a new purchase order to the store",
+        "operationId": "addPurchaseOrder",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "anyOf": [
+                  {
+                    "$ref": "#/components/schemas/PurchaseOrder"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful"
+          },
+          "405": {
+            "description": "Invalid input"
+          },
+          "500": {
+            "description": "Error: Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": [],
+            "ApiKeyAuth": []
+          }
+        ]
+      },
+      "get": {
+        "tags": [
+          "purchaseOrders"
+        ],
+        "summary": "Get all purchaseOrder",
+        "operationId": "getAllOrder",
+        "responses": {
+          "200": {
+            "description": "Successful"
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "404": {
+            "description": "Pet not found"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": [],
+            "ApiKeyAuth": []
+          }
+        ]
+      }
+    },
+    "/purchase-orders/{_id}": {
+      "get": {
+        "tags": [
+          "purchaseOrders"
+        ],
+        "summary": "Get an existing purchase order by id",
+        "operationId": "getpurchaseOrder",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "_id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "606158fa52045c5588eef074"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful"
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "404": {
+            "description": "Pet not found"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": [],
+            "ApiKeyAuth": []
+          }
+        ]
+      }
+    },
+    "/purchase-orders/cancel/{_id}": {
+      "get": {
+        "tags": [
+          "purchaseOrders"
+        ],
+        "summary": "Cancel purchase order by _id",
+        "operationId": "cancelPurchaseOrder",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "_id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "606158fa52045c5588eef074"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful"
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "404": {
+            "description": "Pet not found"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": [],
+            "ApiKeyAuth": []
+          }
+        ]
+      }
+    },
+    "/purchase-orders/receipt/{_id}": {
+      "post": {
+        "tags": [
+          "purchaseOrders"
+        ],
+        "summary": "Receipt purchase order by _id",
+        "operationId": "receiptPurchaseOrder",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "_id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "606158fa52045c5588eef074"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {},
+              "example": {
+                "lineItems": [
+                  {
+                    "_id": "605feaf9d8706444f4e006fb",
+                    "name": "Áo phông EAGLES - 8 - nâu - gỗ",
+                    "sku": "aophong-8-nau-go",
+                    "productId": "605feaf9d8706444f4e006f7",
+                    "price": 150000,
+                    "quantity": 78
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful"
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "404": {
+            "description": "Pet not found"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": [],
+            "ApiKeyAuth": []
+          }
+        ]
+      }
+    },
+    "/purchase-orders/payment/{_id}": {
+      "post": {
+        "tags": [
+          "purchaseOrders"
+        ],
+        "summary": "payment purchase order by _id",
+        "operationId": "paymentPurchaseOrder",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "_id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "606158fa52045c5588eef074"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {},
+              "example": {
+                "paidPrice": 10000,
+                "formattedPaidPrice": "10,000"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful"
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "404": {
+            "description": "Pet not found"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": [],
+            "ApiKeyAuth": []
+          }
+        ]
+      }
+    },
+    "/api/sendo/ward/{wardId}": {
+      "get": {
+        "tags": [
+          "sendoAPI"
+        ],
+        "security": [
+          {
+            "bearerAuth": [],
+            "ApiKeyAuth": []
+          }
+        ],
+        "summary": "Get ward by wardId",
+        "operationId": "getWard",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "wardId",
+            "required": true,
+            "description": "Numeric ID of ward to get",
+            "schema": {
+              "type": "integer",
+              "example": 26734
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful",
+            "content": {
+              "application/json": {
+                "example": "Phường Tân Định"
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "401": {
+            "description": "Pet not found",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Bad token; invalid JSON"
+                }
+              }
+            }
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        }
+      }
+    },
+    "/api/sendo/district/{districtId}": {
+      "get": {
+        "tags": [
+          "sendoAPI"
+        ],
+        "summary": "Get district by districtId",
+        "operationId": "getDistrict",
+        "security": [
+          {
+            "bearerAuth": [],
+            "ApiKeyAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "districtId",
+            "required": true,
+            "description": "Numeric ID of district to get",
+            "schema": {
+              "type": "integer",
+              "example": "2"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful",
+            "content": {
+              "application/json": {
+                "example": "Quận 2"
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid ID supplied",
+            "content": {
+              "application/json": {
+                "example": "Invalid id"
+              }
+            }
+          },
+          "401": {
+            "description": "Pet not found",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Bad token; invalid JSON"
+                }
+              }
+            }
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        }
+      }
+    },
+    "/api/sendo/region/{regionId}": {
+      "get": {
+        "tags": [
+          "sendoAPI"
+        ],
+        "summary": "Get region by regionId",
+        "operationId": "getRegion",
+        "security": [
+          {
+            "bearerAuth": [],
+            "ApiKeyAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "regionId",
+            "required": true,
+            "description": "Numeric ID of region to get",
+            "schema": {
+              "type": "integer",
+              "example": "2"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful",
+            "content": {
+              "application/json": {
+                "example": "Hà nội"
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid ID supplied",
+            "content": {
+              "application/json": {
+                "example": "Invalid id"
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Bad token; invalid JSON"
+                }
+              }
+            }
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        }
+      }
+    },
+    "/api/sendo/products": {
+      "post": {
+        "tags": [
+          "sendoAPI"
+        ],
+        "summary": "create product on Sendo",
+        "operationId": "createProduct",
+        "security": [
+          {
+            "bearerAuth": [],
+            "ApiKeyAuth": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {},
+              "example": {
+                "name": "đầm đầm đầm ",
+                "sku": "lp132435",
+                "price": 690000.0,
+                "weight": 20.0,
+                "stock_availability": true,
+                "description": "sạkfasjkhfkdjahfjkdshfjkdhskjfhsdjkhfsdjkhfkjsdhfkdshfjksdkfhsdjkfhdsjkhfsdkjhfsdkjfhksdjfhjksdfhjkdsfhjkds",
+                "cat_4_id": 699,
+                "tags": "đầm,đầm 2 dây suông,đầm trắng 2 dây,đầm hoa 2 dây,đầm body 2 dây",
+                "height": 20.0,
+                "length": 20.0,
+                "width": 20.0,
+                "unit_id": 2,
+                "stock_quantity": 2,
+                "avatar": {
+                  "picture_url": "http://media3.scdn.vn/img4/2021/01_05/ZcTCLs865UkFoBjyQhl2.jpg"
+                },
+                "pictures": [
+                  {
+                    "picture_url": "http://media3.scdn.vn/img4/2021/01_05/ZcTCLs865UkFoBjyQhl2.jpg"
+                  }
+                ],
+                "extended_shipping_package": {
+                  "is_using_instant": false,
+                  "is_using_in_day": false,
+                  "is_self_shipping": false,
+                  "is_using_standard": true,
+                  "is_using_eco": false
+                },
+                "is_promotion": false,
+                "attributes": [
+                  {
+                    "attribute_id": 298,
+                    "attribute_type": 2,
+                    "attribute_name": "Kích thước",
+                    "attribute_is_required": true,
+                    "attribute_code": "kich_thuoc_1",
+                    "attribute_is_custom": false,
+                    "attribute_is_checkout": true,
+                    "attribute_is_image": false,
+                    "attribute_values": [
+                      {
+                        "id": 25304,
+                        "value": "27",
+                        "attribute_img": null,
+                        "is_selected": true,
+                        "is_custom": false
+                      }
+                    ]
+                  },
+                  {
+                    "attribute_id": 284,
+                    "attribute_type": 1,
+                    "attribute_name": "Màu sắc",
+                    "attribute_is_required": true,
+                    "attribute_code": "mau_sac",
+                    "attribute_is_custom": false,
+                    "attribute_is_checkout": true,
+                    "attribute_is_image": true,
+                    "attribute_values": [
+                      {
+                        "id": 602,
+                        "value": "Nâu",
+                        "attribute_img": null,
+                        "is_selected": true,
+                        "is_custom": false
+                      }
+                    ]
+                  },
+                  {
+                    "attribute_id": 1495,
+                    "attribute_type": 3,
+                    "attribute_name": "Chất vải",
+                    "attribute_is_required": false,
+                    "attribute_code": "chat_vai",
+                    "attribute_is_custom": false,
+                    "attribute_is_checkout": false,
+                    "attribute_is_image": false,
+                    "attribute_values": [
+                      {
+                        "id": 25068,
+                        "value": "Ren",
+                        "attribute_img": null,
+                        "is_selected": true,
+                        "is_custom": false
+                      }
+                    ]
+                  },
+                  {
+                    "attribute_id": 1485,
+                    "attribute_type": 3,
+                    "attribute_name": "Chiều dài váy",
+                    "attribute_is_required": false,
+                    "attribute_code": "chieu_dai_vay",
+                    "attribute_is_custom": false,
+                    "attribute_is_checkout": false,
+                    "attribute_is_image": false,
+                    "attribute_values": [
+                      {
+                        "id": 24968,
+                        "value": "Trên gối",
+                        "attribute_img": null,
+                        "is_selected": true,
+                        "is_custom": false
+                      }
+                    ]
+                  },
+                  {
+                    "attribute_id": 1488,
+                    "attribute_type": 3,
+                    "attribute_name": "Chiều dài tay áo",
+                    "attribute_is_required": false,
+                    "attribute_code": "chieu_dai_tay_ao",
+                    "attribute_is_custom": false,
+                    "attribute_is_checkout": false,
+                    "attribute_is_image": false,
+                    "attribute_values": [
+                      {
+                        "id": 24982,
+                        "value": "Không tay",
+                        "attribute_img": null,
+                        "is_selected": true,
+                        "is_custom": false
+                      }
+                    ]
+                  },
+                  {
+                    "attribute_id": 1489,
+                    "attribute_type": 3,
+                    "attribute_name": "Kiểu cổ áo",
+                    "attribute_is_required": false,
+                    "attribute_code": "kieu_co_ao_1_2_3",
+                    "attribute_is_custom": false,
+                    "attribute_is_checkout": false,
+                    "attribute_is_image": false,
+                    "attribute_values": [
+                      {
+                        "id": 24986,
+                        "value": "Cổ V",
+                        "attribute_img": null,
+                        "is_selected": true,
+                        "is_custom": false
+                      }
+                    ]
+                  },
+                  {
+                    "attribute_id": 1490,
+                    "attribute_type": 3,
+                    "attribute_name": "Họa tiết",
+                    "attribute_is_required": false,
+                    "attribute_code": "hoa_tiet",
+                    "attribute_is_custom": false,
+                    "attribute_is_checkout": false,
+                    "attribute_is_image": false,
+                    "attribute_values": [
+                      {
+                        "id": 25006,
+                        "value": "Hoa lá",
+                        "attribute_img": null,
+                        "is_selected": true,
+                        "is_custom": false
+                      }
+                    ]
+                  },
+                  {
+                    "attribute_id": 1491,
+                    "attribute_type": 3,
+                    "attribute_name": "Phong cách",
+                    "attribute_is_required": false,
+                    "attribute_code": "phong_cach",
+                    "attribute_is_custom": false,
+                    "attribute_is_checkout": false,
+                    "attribute_is_image": false,
+                    "attribute_values": [
+                      {
+                        "id": 25023,
+                        "value": "Dễ thương",
+                        "attribute_img": null,
+                        "is_selected": true,
+                        "is_custom": false
+                      }
+                    ]
+                  }
+                ],
+                "is_config_variant": true,
+                "variants": [
+                  {
+                    "variant_attributes": [
+                      {
+                        "attribute_id": 298,
+                        "attribute_code": "kich_thuoc_1",
+                        "option_id": 25304
+                      },
+                      {
+                        "attribute_id": 284,
+                        "attribute_code": "mau_sac",
+                        "option_id": 602
+                      }
+                    ],
+                    "variant_is_promotion": 0,
+                    "variant_sku": "12hfdeebd",
+                    "variant_price": 213435.0,
+                    "variant_special_price": 0.0,
+                    "variant_quantity": 122,
+                    "variant_promotion_start_date_timestamp": null,
+                    "variant_promotion_end_date_timestamp": null,
+                    "variant_is_flash_sales": null,
+                    "variant_campaign_status": null,
+                    "variant_attribute_hash": "602_25304",
+                    "message": null
+                  }
+                ],
+                "voucher": {
+                  "product_type": 1
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful",
+            "content": {
+              "application/json": {
+                "example": {
+                  "result": 40182940,
+                  "success": true,
+                  "error": null,
+                  "status_code": 200
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid ID supplied",
+            "content": {
+              "application/json": {
+                "example": {
+                  "result": null,
+                  "success": false,
+                  "error": {
+                    "message": "Mã sản phẩm đã tồn tại",
+                    "details": null,
+                    "error_details": null
+                  },
+                  "status_code": 400
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Pet not found",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Bad token; invalid JSON"
+                }
+              }
+            }
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "sendoAPI"
+        ],
+        "summary": "update product on sendo",
+        "operationId": "updateMultiProduct",
+        "security": [
+          {
+            "bearerAuth": [],
+            "ApiKeyAuth": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {},
+              "example": {
+                "_id": "6061c3fb50e0dd47185ac487",
+                "id": "39297530",
+                "store_id": "d63aecd314b4463abc2204aa6a340c6b",
+                "__v": 0,
+                "avatar": "https://media3.scdn.vn/img4/2021/01_04/xooWI9JHZXqREjFIeQTB.png",
+                "created_date_timestamp": "2021-01-04T12:55:43.000Z",
+                "link": "https://www.sendo.vn/locpro223423423432432432-39297530.html",
+                "name": "locpro223423423432432432",
+                "price": 120000,
+                "sku": "12345678",
+                "status": "2",
+                "stock_availability": true,
+                "stock_quantity": 456,
+                "unit": "Cái",
+                "unitId": 1,
+                "updated_date_timestamp": "2021-03-25T06:39:11.000Z",
+                "voucher": {
+                  "product_type": 1,
+                  "start_date": null,
+                  "end_date": null,
+                  "is_check_date": null
+                },
+                "weight": 1000,
+                "variants": [
+                  {
+                    "_id": "6061c3fb50e0dd47185ac489",
+                    "productId": "6061c3fb50e0dd47185ac487",
+                    "sku": "123456789123",
+                    "Status": "inactive",
+                    "__v": 0,
+                    "avatar": [
+                      "https://media3.scdn.vn/img4/2021/03_21/NpSb4jBlmliQLbEypOHv_simg_02d57e_50x50_maxb.jpg"
+                    ],
+                    "price": 120000,
+                    "quantity": 0,
+                    "special_price": 0,
+                    "variant_attribute_hash": "603",
+                    "variant_attributes": [
+                      {
+                        "attribute_id": 284,
+                        "attribute_code": "mau_sac",
+                        "option_id": 603,
+                        "attribute_name": "Màu sắc",
+                        "option_value": "Vàng",
+                        "attribute_img": "https://media3.scdn.vn/img4/2021/03_21/NpSb4jBlmliQLbEypOHv_simg_02d57e_50x50_maxb.jpg"
+                      }
+                    ],
+                    "variant_campaign_status": null,
+                    "variant_is_flash_sales": null,
+                    "variant_is_promotion": false,
+                    "variant_promotion_end_date_timestamp": null,
+                    "variant_promotion_start_date_timestamp": null,
+                    "linkedId": null
+                  },
+                  {
+                    "_id": "6061c3fb50e0dd47185ac48a",
+                    "productId": "6061c3fb50e0dd47185ac487",
+                    "sku": "123456789",
+                    "Status": "inactive",
+                    "__v": 0,
+                    "avatar": [
+                      "https://media3.scdn.vn/img4/2021/03_20/pRNRPvr1ZoL7oKDYDi9Q_simg_02d57e_50x50_maxb.png"
+                    ],
+                    "price": 120000,
+                    "quantity": 234,
+                    "special_price": 0,
+                    "variant_attribute_hash": "613",
+                    "variant_attributes": [
+                      {
+                        "attribute_id": 284,
+                        "attribute_code": "mau_sac",
+                        "option_id": 613,
+                        "attribute_name": "Màu sắc",
+                        "option_value": "Xám",
+                        "attribute_img": "https://media3.scdn.vn/img4/2021/03_20/pRNRPvr1ZoL7oKDYDi9Q_simg_02d57e_50x50_maxb.png"
+                      }
+                    ],
+                    "variant_campaign_status": null,
+                    "variant_is_flash_sales": null,
+                    "variant_is_promotion": false,
+                    "variant_promotion_end_date_timestamp": null,
+                    "variant_promotion_start_date_timestamp": null,
+                    "linkedId": null
+                  },
+                  {
+                    "_id": "6061c3fb50e0dd47185ac488",
+                    "productId": "6061c3fb50e0dd47185ac487",
+                    "sku": "xanh",
+                    "Status": "inactive",
+                    "__v": 0,
+                    "avatar": [
+                      "https://media3.scdn.vn/img4/2021/01_04/xooWI9JHZXqREjFIeQTB_simg_02d57e_50x50_maxb.png"
+                    ],
+                    "price": 120000,
+                    "quantity": 123,
+                    "special_price": 0,
+                    "variant_attribute_hash": "608",
+                    "variant_attributes": [
+                      {
+                        "attribute_id": 284,
+                        "attribute_code": "mau_sac",
+                        "option_id": 608,
+                        "attribute_name": "Màu sắc",
+                        "option_value": "Xanh nước biển",
+                        "attribute_img": "https://media3.scdn.vn/img4/2021/01_04/xooWI9JHZXqREjFIeQTB_simg_02d57e_50x50_maxb.png"
+                      }
+                    ],
+                    "variant_campaign_status": null,
+                    "variant_is_flash_sales": null,
+                    "variant_is_promotion": false,
+                    "variant_promotion_end_date_timestamp": null,
+                    "variant_promotion_start_date_timestamp": null
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful",
+            "content": {
+              "application/json": {
+                "schema": {},
+                "example": {
+                  "result": [
+                    {
+                      "product_id": 39508091
+                    }
+                  ],
+                  "success": true,
+                  "error": null,
+                  "status_code": 200,
+                  "total_records": null,
+                  "params": null
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "404": {
+            "description": "Pet not found"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        }
+      }
+    },
+    "/sendo/products": {
+      "get": {
+        "tags": [
+          "sendoProducts"
+        ],
+        "summary": "Get all sendoProduct in database",
+        "operationId": "getAllSendoProduct",
+        "security": [
+          {
+            "bearerAuth": [],
+            "ApiKeyAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "storeIds[]",
+            "required": false,
+            "description": "array of storeIds",
+            "schema": {
+              "type": "array",
+              "items": [
+                "d63aecd314b4463abc2204aa6a340c6b"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful"
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "404": {
+            "description": "Pet not found"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        }
+      }
+    },
+    "/sendo/suggest-category": {
+      "post": {
+        "tags": [
+          "sendoProducts"
+        ],
+        "summary": "suggest sendoCategory in database",
+        "operationId": "suggesSendoCategory",
+        "security": [
+          {
+            "bearerAuth": [],
+            "ApiKeyAuth": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {},
+              "example": {
+                "name": "locpro"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful"
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "404": {
+            "description": "Pet not found"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        }
+      }
+    },
+    "/api/sendo/products/{productId}": {
+      "get": {
+        "tags": [
+          "sendoAPI"
+        ],
+        "summary": "Get product by productId on sendo",
+        "operationId": "getProduct",
+        "security": [
+          {
+            "bearerAuth": [],
+            "ApiKeyAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "productId",
+            "required": true,
+            "description": "Numeric ID of product to get",
+            "schema": {
+              "type": "integer",
+              "example": 39107134
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful"
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "404": {
+            "description": "Pet not found"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "sendoAPI"
+        ],
+        "summary": "Delete product by Id on sendo",
+        "operationId": "deleteProduct",
+        "security": [
+          {
+            "bearerAuth": [],
+            "ApiKeyAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "productId",
+            "required": true,
+            "description": "Numeric ID of product to get",
+            "schema": {
+              "type": "integer",
+              "example": 40205805
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful",
+            "content": {
+              "application/json": {
+                "schema": {},
+                "example": {
+                  "result": [
+                    {
+                      "product_id": 39508541
+                    }
+                  ],
+                  "success": true,
+                  "error": null,
+                  "status_code": 200,
+                  "total_records": null,
+                  "params": null
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "404": {
+            "description": "Pet not found"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        }
+      }
+    },
+    "/api/sendo/category/{categoryId}": {
+      "get": {
+        "tags": [
+          "sendoAPI"
+        ],
+        "summary": "Get category by categoryId",
+        "operationId": "getCategory",
+        "security": [
+          {
+            "bearerAuth": [],
+            "ApiKeyAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "categoryId",
+            "required": true,
+            "description": "Numeric ID of category to get",
+            "schema": {
+              "type": "integer",
+              "example": 1485
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful"
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "404": {
+            "description": "Pet not found"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        }
+      }
+    },
+    "/api/sendo/category/": {
+      "get": {
+        "tags": [
+          "sendoAPI"
+        ],
+        "summary": "Search category by lazada categoryName",
+        "operationId": "searchCategory",
+        "security": [
+          {
+            "bearerAuth": [],
+            "ApiKeyAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "search",
+            "required": true,
+            "description": "string of category to search",
+            "schema": {
+              "type": "string",
+              "example": "Áo khoác Denim nam"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful"
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "404": {
+            "description": "Pet not found"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        }
+      }
+    },
+    "/api/sendo/attribute/{attributeId}": {
+      "get": {
+        "tags": [
+          "sendoAPI"
+        ],
+        "summary": "Get attribute by attributeId",
+        "operationId": "getAttribute",
+        "security": [
+          {
+            "bearerAuth": [],
+            "ApiKeyAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "attributeId",
+            "required": true,
+            "description": "Numeric ID of attribute to get",
+            "schema": {
+              "type": "integer",
+              "example": 1485
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful"
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "404": {
+            "description": "Pet not found"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        }
+      }
+    },
+    "/api/sendo/cancel-reason/": {
+      "get": {
+        "tags": [
+          "sendoAPI"
+        ],
+        "summary": "Get cancel reason",
+        "operationId": "getCancelReason",
+        "security": [
+          {
+            "bearerAuth": [],
+            "ApiKeyAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful"
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "404": {
+            "description": "Pet not found"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        }
+      }
+    },
+    "/api/sendo/print-bill/{order_number}": {
+      "get": {
+        "tags": [
+          "sendoAPI"
+        ],
+        "summary": "print bill sendo",
+        "operationId": "printBill",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "order_number",
+            "required": true,
+            "description": "",
+            "schema": {
+              "type": "integer",
+              "example": 142873645695
+            }
+          }
+        ],
+        "security": [
+          {
+            "bearerAuth": [],
+            "ApiKeyAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful"
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "404": {
+            "description": "Pet not found"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        }
+      }
+    },
+    "/api/sendo/orders/": {
+      "post": {
+        "tags": [
+          "sendoAPI"
+        ],
+        "summary": "search order",
+        "operationId": "searchOrder",
+        "security": [
+          {
+            "bearerAuth": [],
+            "ApiKeyAuth": []
+          }
+        ],
+        "requestBody": {
+          "description": "page_size: min 10, max 50, date: yyyy/MM/dd",
+          "content": {
+            "application/json": {
+              "schema": {},
+              "example": {
+                "page_size": 10,
+                "order_status": 2,
+                "order_date_from": "2020-05-01",
+                "order_date_to": "2020-05-07",
+                "order_status_date_from": null,
+                "order_status_date_to": null,
+                "token": null
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful"
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "404": {
+            "description": "Pet not found"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        }
+      }
+    },
+    "/api/sendo/orders/{orderNumber}": {
+      "get": {
+        "tags": [
+          "sendoAPI"
+        ],
+        "summary": "Get order by orderNumber on Sendo",
+        "operationId": "getOrder",
+        "security": [
+          {
+            "bearerAuth": [],
+            "ApiKeyAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "orderNumber",
+            "required": true,
+            "description": "Numeric of order to get",
+            "schema": {
+              "type": "integer",
+              "example": 14674394696
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful"
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "404": {
+            "description": "Pet not found"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "sendoAPI"
+        ],
+        "summary": "Update order status by orderNumber on Sendo",
+        "operationId": "updateOrder",
+        "security": [
+          {
+            "bearerAuth": [],
+            "ApiKeyAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "orderNumber",
+            "required": true,
+            "description": "Numeric of order to update",
+            "schema": {
+              "type": "integer",
+              "example": 14674394696
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {},
+              "example": {
+                "orđerStatus": "13",
+                "cancelReason": "CBS100"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful"
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "404": {
+            "description": "Pet not found"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        }
+      }
+    },
+    "/api/sendo/authorize": {
+      "post": {
+        "tags": [
+          "sendoAPI"
+        ],
+        "summary": "authorize",
+        "operationId": "authorize",
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {},
+              "example": {
+                "app_key": "d63aecd314b4463abc2204aa6a340c6b",
+                "app_secret": "a6919d8125cc437c87f004ea2bc87959",
+                "storageId": "5ffac838ba04401744309345"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful"
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "404": {
+            "description": "Pet not found"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        }
+      }
+    },
+    "/sendo/products/fetch": {
+      "post": {
+        "tags": [
+          "sendoProducts"
+        ],
+        "summary": "fetch sendo products",
+        "operationId": "fetchSendoProducts",
+        "security": [
+          {
+            "bearerAuth": [],
+            "ApiKeyAuth": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {},
+              "example": {
+                "store_id": "d63aecd314b4463abc2204aa6a340c6b",
+                "storageId": "5ffac838ba04401744309345"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful"
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "404": {
+            "description": "Pet not found"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        }
+      }
+    },
+    "/lazada/products/fetch": {
+      "post": {
+        "tags": [
+          "lazadaProducts"
+        ],
+        "summary": "fetch lazada products",
+        "operationId": "fetchLazadaProducts",
+        "security": [
+          {
+            "bearerAuth": [],
+            "ApiKeyAuth": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {},
+              "example": {
+                "store_id": "d63aecd314b4463abc2204aa6a340c6b",
+                "storageId": "5ffac838ba04401744309345"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful"
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "404": {
+            "description": "Pet not found"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        }
+      }
+    },
+    "/lazada/products": {
+      "get": {
+        "tags": [
+          "lazadaProducts"
+        ],
+        "summary": "Get all lazadaProduct in database",
+        "operationId": "getAllLazadaProduct",
+        "security": [
+          {
+            "bearerAuth": [],
+            "ApiKeyAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "storeIds[]",
+            "required": false,
+            "description": "array of storeIds",
+            "schema": {
+              "type": "array",
+              "items": [
+                {
+                  "type": "string",
+                  "example": "200163939035"
+                }
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful"
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "404": {
+            "description": "Pet not found"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        }
+      }
+    },
+    "/api/lazada/token": {
+      "get": {
+        "tags": [
+          "lazadaAPI"
+        ],
+        "summary": "get accessToken on lazada",
+        "operationId": "getAccessToken",
+        "security": [
+          {
+            "bearerAuth": [],
+            "ApiKeyAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "code",
+            "required": true,
+            "description": "code receive from lazada",
+            "schema": {
+              "type": "string",
+              "example": ""
+            }
+          },
+          {
+            "in": "query",
+            "name": "state",
+            "required": true,
+            "description": "state ",
+            "schema": {
+              "type": "string",
+              "example": ""
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful",
+            "content": {
+              "application/json": {
+                "example": {
+                  "code": "0",
+                  "request_id": "0b0e02a716117470077826212"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "404": {
+            "description": "Pet not found"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        }
+      }
+    },
+    "/api/lazada/products/{sellerSku}": {
+      "delete": {
+        "tags": [
+          "lazadaAPI"
+        ],
+        "summary": "delete product by sellerSku on lazada",
+        "operationId": "deleteProduct",
+        "security": [
+          {
+            "bearerAuth": [],
+            "ApiKeyAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "sellerSku",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "124324"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful",
+            "content": {
+              "application/json": {
+                "example": {
+                  "code": "0",
+                  "request_id": "0b0e02a716117470077826212"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "404": {
+            "description": "Pet not found"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        }
+      }
+    },
+    "/api/lazada/products/{productId}": {
+      "get": {
+        "tags": [
+          "lazadaAPI"
+        ],
+        "summary": "get product by Id on lazada",
+        "operationId": "getProduct",
+        "security": [
+          {
+            "bearerAuth": [],
+            "ApiKeyAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "productId",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "1201180724"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful"
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "404": {
+            "description": "Pet not found"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        }
+      }
+    },
+    "/api/lazada/products/seller-sku/{sellerSku}": {
+      "get": {
+        "tags": [
+          "lazadaAPI"
+        ],
+        "summary": "get product by seller_sku on lazada",
+        "operationId": "getProductSku",
+        "security": [
+          {
+            "bearerAuth": [],
+            "ApiKeyAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "sellerSku",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "859984666-1601101496431-0"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful"
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "404": {
+            "description": "Pet not found"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        }
+      }
+    },
+    "/api/lazada/products/": {
+      "post": {
+        "tags": [
+          "lazadaAPI"
+        ],
+        "summary": "create product on lazada",
+        "operationId": "createProduct",
+        "security": [
+          {
+            "bearerAuth": [],
+            "ApiKeyAuth": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {},
+              "example": {
+                "Request": {
+                  "Product": {
+                    "PrimaryCategory": "13010",
+                    "Attributes": {
+                      "name": "api create product test sample",
+                      "short_description": "This is a nice product",
+                      "brand": "Remark",
+                      "model": "asdf",
+                      "kid_years": "Kids (6-10yrs)",
+                      "delivery_option_sof": "No"
+                    },
+                    "Skus": {
+                      "Sku": {
+                        "SellerSku": "api-create-test-1",
+                        "color_family": "Green",
+                        "size": "40",
+                        "quantity": "1",
+                        "price": "600000.0",
+                        "package_length": "11",
+                        "package_height": "22",
+                        "package_weight": "33",
+                        "package_width": "44",
+                        "package_content": "this is what's in the box",
+                        "Images": {
+                          "Image": [
+                            "http://sg.s.alibaba.lzd.co/original/59046bec4d53e74f8ad38d19399205e6.jpg",
+                            "http://sg.s.alibaba.lzd.co/original/179715d3de39a1918b19eec3279dd482.jpg"
+                          ]
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful",
+            "content": {
+              "application/json": {
+                "data": {
+                  "item_id": 1136164711,
+                  "sku_list": [
+                    {
+                      "shop_sku": "1136164711_VNAMZ-4026616019",
+                      "seller_sku": "api-create-test-1",
+                      "sku_id": 4026616019
+                    }
+                  ]
+                },
+                "code": "0",
+                "request_id": "0be6f7a716117479900025246"
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "404": {
+            "description": "Pet not found"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "lazadaAPI"
+        ],
+        "summary": "update product on lazada",
+        "operationId": "updateProduct",
+        "security": [
+          {
+            "bearerAuth": [],
+            "ApiKeyAuth": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {},
+              "example": {
+                "_id": "606555bed3ec056743f5cf88",
+                "id": "1252566024",
+                "store_id": "200163939035",
+                "__v": 0,
+                "attributes": {
+                  "name": "dffdưe323r32",
+                  "description": "<p style=\"margin: 0;padding: 8.0px 0;white-space: pre-wrap;\"><span style=\"font-family: none;\"></span></p>",
+                  "brand": "No Brand",
+                  "warranty_type": "Warranty Stamp",
+                  "source": "asc"
+                },
+                "avatar": null,
+                "created_date_timestamp": "2021-03-31T08:31:25.000Z",
+                "primary_category": "10100182",
+                "updated_date_timestamp": "2021-03-31T08:31:25.000Z",
+                "variants": [
+                  {
+                    "_id": "606555bed3ec056743f5cfa2",
+                    "ShopSku": "1252566024_VNAMZ-4669792705",
+                    "productId": "606555bed3ec056743f5cf88",
+                    "SkuId": 4669792705,
+                    "Status": "active",
+                    "Url": "https://www.lazada.vn/-i1252566024-s4669792705.html",
+                    "__v": 0,
+                    "avatar": [],
+                    "multiWarehouseInventories": [
+                      {
+                        "quantity": 234,
+                        "warehouseCode": "dropshipping"
+                      }
+                    ],
+                    "package_height": "32.00",
+                    "package_length": "32.00",
+                    "package_weight": "32",
+                    "package_width": "23.00",
+                    "price": 23432,
+                    "quantity": 234,
+                    "sku": "324324",
+                    "special_price": 0,
+                    "variant_attributes": [
+                      {
+                        "attribute_name": "color_family",
+                        "option_value": "Cherry"
+                      }
+                    ]
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful",
+            "content": {
+              "application/json": {
+                "data": {
+                  "item_id": 1136164711,
+                  "sku_list": [
+                    {
+                      "shop_sku": "1136164711_VNAMZ-4026616019",
+                      "seller_sku": "api-create-test-1",
+                      "sku_id": 4026616019
+                    }
+                  ]
+                },
+                "code": "0",
+                "request_id": "0be6f7a716117479900025246"
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "404": {
+            "description": "Pet not found"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        }
+      }
+    },
+    "/api/lazada/attribute/{categoryId}": {
+      "get": {
+        "tags": [
+          "lazadaAPI"
+        ],
+        "summary": "get Attributes by categoryId on lazada",
+        "operationId": "getAttributes",
+        "security": [
+          {
+            "bearerAuth": [],
+            "ApiKeyAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "categoryId",
+            "required": true,
+            "schema": {
+              "type": "number",
+              "example": 10100183
+            },
+            "description": "categoryId must be primary category"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful"
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "404": {
+            "description": "Attributes not found",
+            "content": {
+              "application/json": {
+                "example": {
+                  "code": "601",
+                  "type": "ISP",
+                  "message": "E601: Requested category not exists",
+                  "request_id": "0b1195dd16111364977805848"
+                }
+              }
+            }
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        }
+      }
+    },
+    "/api/lazada/qc-status": {
+      "post": {
+        "tags": [
+          "lazadaAPI"
+        ],
+        "summary": "get QcStatus by seller_sku on lazada",
+        "operationId": "getQcStatus",
+        "security": [
+          {
+            "bearerAuth": [],
+            "ApiKeyAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "limit",
+            "required": true,
+            "schema": {
+              "type": "number",
+              "enum": [
+                100
+              ]
+            },
+            "description": ""
+          },
+          {
+            "in": "query",
+            "name": "offset",
+            "required": true,
+            "schema": {
+              "type": "number",
+              "enum": [
+                0
+              ]
+            },
+            "description": ""
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {},
+              "example": {
+                "seller_skus": [
+                  "12432456",
+                  "124324"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful",
+            "content": {
+              "application/json": {
+                "example": {
+                  "data": [
+                    {
+                      "seller_sku": "124324",
+                      "status": "rejected"
+                    },
+                    {
+                      "data_changed": "1",
+                      "seller_sku": "12432456",
+                      "status": "approved"
+                    }
+                  ],
+                  "code": "0",
+                  "request_id": "0b1195dd16111401783978066"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "404": {
+            "description": "Attributes not found",
+            "content": {
+              "application/json": {
+                "example": {
+                  "code": "1006",
+                  "type": "ISP",
+                  "message": "E1006: SellerSku Not Exist",
+                  "request_id": "0b1187a316111405293796914"
+                }
+              }
+            }
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        }
+      }
+    },
+    "/api/lazada/cancel-reason": {
+      "get": {
+        "tags": [
+          "lazadaAPI"
+        ],
+        "summary": "get Cancel Reason on lazada",
+        "operationId": "getCancelReason",
+        "security": [
+          {
+            "bearerAuth": [],
+            "ApiKeyAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful",
+            "content": {
+              "application/json": {
+                "example": {
+                  "data": [
+                    {
+                      "name": "Out of Stock",
+                      "type": "canceled",
+                      "reason_id": 15
+                    },
+                    {
+                      "name": "Wrong Price or Pricing Error",
+                      "type": "canceled",
+                      "reason_id": 21
+                    }
+                  ],
+                  "code": "0",
+                  "request_id": "0b0e02a716117568792665768"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "404": {
+            "description": "Attributes not found",
+            "content": {
+              "application/json": {
+                "example": {
+                  "code": "1006",
+                  "type": "ISP",
+                  "message": "E1006: SellerSku Not Exist",
+                  "request_id": "0b1187a316111405293796914"
+                }
+              }
+            }
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        }
+      }
+    },
+    "/api/lazada/seller-metrics": {
+      "get": {
+        "tags": [
+          "lazadaAPI"
+        ],
+        "summary": "get Seller Metrics by seller_sku on lazada",
+        "operationId": "getSellerMetrics",
+        "security": [
+          {
+            "bearerAuth": [],
+            "ApiKeyAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful",
+            "content": {
+              "application/json": {
+                "example": {
+                  "data": {
+                    "ship_on_time": "0.0",
+                    "response_time": "null",
+                    "seller_id": 200163939035,
+                    "response_rate": "null"
+                  },
+                  "code": "0",
+                  "request_id": "0b1195ad16111533718203524"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "404": {
+            "description": "Attributes not found",
+            "content": {
+              "application/json": {
+                "example": {}
+              }
+            }
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        }
+      }
+    },
+    "/api/lazada/suggestion": {
+      "get": {
+        "tags": [
+          "lazadaAPI"
+        ],
+        "summary": "get category suggestion on lazada",
+        "operationId": "getSuggestion",
+        "security": [
+          {
+            "bearerAuth": [],
+            "ApiKeyAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "name",
+            "required": false,
+            "schema": {
+              "type": "String",
+              "example": "áo thun"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful",
+            "content": {
+              "application/json": {
+                "example": {
+                  "data": {
+                    "ship_on_time": "0.0",
+                    "response_time": "null",
+                    "seller_id": 200163939035,
+                    "response_rate": "null"
+                  },
+                  "code": "0",
+                  "request_id": "0b1195ad16111533718203524"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "404": {
+            "description": "Attributes not found",
+            "content": {
+              "application/json": {
+                "example": {}
+              }
+            }
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        }
+      }
+    },
+    "/categories": {
+      "get": {
+        "tags": [
+          "categories"
+        ],
+        "summary": "get list categories in database",
+        "operationId": "getListCategories",
+        "security": [
+          {
+            "bearerAuth": [],
+            "ApiKeyAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "idpath[]",
+            "required": false,
+            "schema": {
+              "type": "array",
+              "items": []
+            },
+            "description": "categoryId must be primary category"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful"
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "categories"
+        ],
+        "summary": "create category in database",
+        "operationId": "createCategory",
+        "security": [
+          {
+            "bearerAuth": [],
+            "ApiKeyAuth": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {},
+              "example": {
+                "idpath": [],
+                "namepath": [],
+                "category_id": 99999,
+                "var": false,
+                "name": "locpro",
+                "leaf": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful"
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        }
+      }
+    },
+    "/categories/{categoryId}": {
+      "get": {
+        "tags": [
+          "categories"
+        ],
+        "summary": "get category by id in database",
+        "operationId": "getCategoryById",
+        "security": [
+          {
+            "bearerAuth": [],
+            "ApiKeyAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "categoryId",
+            "required": true,
+            "schema": {
+              "type": "number",
+              "example": 10100180
+            },
+            "description": "categoryId must be primary category"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful"
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "categories"
+        ],
+        "summary": "update category in database",
+        "operationId": "updateCategory",
+        "security": [
+          {
+            "bearerAuth": [],
+            "ApiKeyAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "categoryId",
+            "required": true,
+            "schema": {
+              "type": "number",
+              "example": "99999"
+            },
+            "description": ""
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {},
+              "example": {
+                "idpath": [],
+                "namepath": [],
+                "var": false,
+                "name": "locpro1",
+                "leaf": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful"
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "categories"
+        ],
+        "summary": "delete category by id in database",
+        "operationId": "deleteCategory",
+        "security": [
+          {
+            "bearerAuth": [],
+            "ApiKeyAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "categoryId",
+            "required": true,
+            "schema": {
+              "type": "number",
+              "example": "99999"
+            },
+            "description": ""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful"
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        }
+      }
+    },
+    "/categories/search": {
+      "get": {
+        "tags": [
+          "categories"
+        ],
+        "summary": "searching primary categories in database",
+        "operationId": "getCategories",
+        "security": [
+          {
+            "bearerAuth": [],
+            "ApiKeyAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "search",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "áo th"
+            },
+            "description": ""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful"
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        }
+      }
+    },
+    "/api/lazada/refresh-token": {
+      "get": {
+        "tags": [
+          "lazadaAPI"
+        ],
+        "summary": "refresh token and save into database",
+        "operationId": "refreshToken",
+        "security": [
+          {
+            "bearerAuth": [],
+            "ApiKeyAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful"
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        }
+      }
+    },
+    "/api/lazada/orders/cancel/{order_item_id}": {
+      "post": {
+        "tags": [
+          "lazadaAPI"
+        ],
+        "summary": "cacel order item on lazada",
+        "operationId": "cancelOrderItem",
+        "security": [
+          {
+            "bearerAuth": [],
+            "ApiKeyAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "order_item_id",
+            "required": true,
+            "schema": {
+              "type": "number",
+              "example": 267078668413259
+            },
+            "description": ""
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {},
+              "example": {
+                "reason_id": 21,
+                "reason_detail": ""
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful",
+            "content": {
+              "application/json": {
+                "example": {
+                  "success": true,
+                  "code": "0",
+                  "request_id": "0b1187a316117593884048180"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        }
+      }
+    },
+    "/api/lazada/orders/": {
+      "get": {
+        "tags": [
+          "lazadaAPI"
+        ],
+        "summary": "search order on lazada",
+        "operationId": "searchOrder",
+        "security": [
+          {
+            "bearerAuth": [],
+            "ApiKeyAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "created_after",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "example": "2017-02-10T09:00:00+08:00"
+            },
+            "description": ""
+          },
+          {
+            "in": "query",
+            "name": "created_before",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "example": "2017-02-10T09:00:00+08:00"
+            },
+            "description": ""
+          },
+          {
+            "in": "query",
+            "name": "update_after",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "example": "2017-02-10T09:00:00+08:00"
+            },
+            "description": ""
+          },
+          {
+            "in": "query",
+            "name": "update_before",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "example": "2017-02-10T09:00:00+08:00"
+            },
+            "description": ""
+          },
+          {
+            "in": "query",
+            "name": "sort_by",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "example": "updated_at"
+            },
+            "description": ""
+          },
+          {
+            "in": "query",
+            "name": "sort_direction",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "example": "DESC"
+            },
+            "description": ""
+          },
+          {
+            "in": "query",
+            "name": "offset",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "example": "0"
+            },
+            "description": ""
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "example": "10"
+            },
+            "description": ""
+          },
+          {
+            "in": "query",
+            "name": "status",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "example": "canceled"
+            },
+            "description": ""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful",
+            "content": {
+              "application/json": {
+                "example": {
+                  "success": true,
+                  "code": "0",
+                  "request_id": "0b1187a316117593884048180"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        }
+      }
+    },
+    "/api/lazada/orders/document": {
+      "get": {
+        "tags": [
+          "lazadaAPI"
+        ],
+        "summary": "get document on lazada",
+        "operationId": "getDocument",
+        "security": [
+          {
+            "bearerAuth": [],
+            "ApiKeyAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "doc_type",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "shippingLabel"
+            },
+            "description": ""
+          },
+          {
+            "in": "query",
+            "name": "order_item_ids",
+            "required": true,
+            "schema": {
+              "type": "array",
+              "example": [
+                279709,
+                279709
+              ]
+            },
+            "description": ""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful",
+            "content": {
+              "application/json": {
+                "example": {
+                  "success": true,
+                  "code": "0",
+                  "request_id": "0b1187a316117593884048180"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        }
+      }
+    },
+    "/api/lazada/orders/pack": {
+      "post": {
+        "tags": [
+          "lazadaAPI"
+        ],
+        "summary": "packing order on lazada",
+        "operationId": "packOrder",
+        "security": [
+          {
+            "bearerAuth": [],
+            "ApiKeyAuth": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {},
+              "example": {
+                "shipping_provider": "locpro",
+                "delivery_type": "dropship",
+                "order_item_ids": [
+                  1530553,
+                  1830236
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful",
+            "content": {
+              "application/json": {
+                "example": {
+                  "success": true,
+                  "code": "0",
+                  "request_id": "0b1187a316117593884048180"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        }
+      }
+    },
+    "/api/lazada/orders/rts": {
+      "post": {
+        "tags": [
+          "lazadaAPI"
+        ],
+        "summary": "set rts order on lazada",
+        "operationId": "rstOrder",
+        "security": [
+          {
+            "bearerAuth": [],
+            "ApiKeyAuth": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {},
+              "example": {
+                "shipment_provider": "locpro",
+                "delivery_type": "dropship",
+                "order_item_ids": [
+                  1530553,
+                  1830236
+                ],
+                "tracking_number": 12345678
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful",
+            "content": {
+              "application/json": {
+                "example": {
+                  "success": true,
+                  "code": "0",
+                  "request_id": "0b1187a316117593884048180"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        }
+      }
+    },
+    "/api/lazada/orders/{order_id}": {
+      "get": {
+        "tags": [
+          "lazadaAPI"
+        ],
+        "summary": "Get order by id on lazada",
+        "operationId": "getOrder",
+        "security": [
+          {
+            "bearerAuth": [],
+            "ApiKeyAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "order_id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "267078668313259"
+            },
+            "description": ""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful"
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        }
+      }
+    },
+    "/api/lazada/orders/items/{order_id}": {
+      "get": {
+        "tags": [
+          "lazadaAPI"
+        ],
+        "summary": "Get order items by id on lazada",
+        "operationId": "getOrderItems",
+        "security": [
+          {
+            "bearerAuth": [],
+            "ApiKeyAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "order_id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "267078668313259"
+            },
+            "description": ""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful"
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        }
+      }
+    },
+    "/api/lazada/upload-image": {
+      "post": {
+        "tags": [
+          "lazadaAPI"
+        ],
+        "summary": "upload image on lazada",
+        "operationId": "uploadImage",
+        "security": [
+          {
+            "bearerAuth": [],
+            "ApiKeyAuth": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "image": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful",
+            "content": {
+              "application/json": {
+                "example": {
+                  "data": {
+                    "image": {
+                      "hash_code": "eeaca3c5adf96292ee5c5087787140a1",
+                      "url": "https://vn-live-02.slatic.net/p/eeaca3c5adf96292ee5c5087787140a1.jpg"
+                    }
+                  },
+                  "code": "0",
+                  "request_id": "0be6f7a716116562977934279"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        }
+      }
+    },
+    "/api/lazada/seller": {
+      "get": {
+        "tags": [
+          "lazadaAPI"
+        ],
+        "summary": "get seller info on lazada",
+        "operationId": "getSellerInfo",
+        "security": [
+          {
+            "bearerAuth": [],
+            "ApiKeyAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful",
+            "content": {
+              "application/json": {
+                "example": {
+                  "data": {
+                    "image": {
+                      "hash_code": "eeaca3c5adf96292ee5c5087787140a1",
+                      "url": "https://vn-live-02.slatic.net/p/eeaca3c5adf96292ee5c5087787140a1.jpg"
+                    }
+                  },
+                  "code": "0",
+                  "request_id": "0be6f7a716116562977934279"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        }
+      }
+    },
+    "/address/provinces": {
+      "get": {
+        "tags": [
+          "provinces"
+        ],
+        "summary": "get all provinces in database",
+        "operationId": "getAllProvinces",
+        "security": [
+          {
+            "bearerAuth": [],
+            "ApiKeyAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful"
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "provinces"
+        ],
+        "summary": "create province in database",
+        "operationId": "createProvinces",
+        "security": [
+          {
+            "bearerAuth": [],
+            "ApiKeyAuth": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {},
+              "example": {
+                "id": "9999",
+                "name": "locpro",
+                "type": "Tỉnh"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful"
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        }
+      }
+    },
+    "/address/provinces/{provinceId}": {
+      "get": {
+        "tags": [
+          "provinces"
+        ],
+        "summary": "get province by id in database",
+        "operationId": "getProvinceById",
+        "security": [
+          {
+            "bearerAuth": [],
+            "ApiKeyAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "provinceId",
+            "required": true,
+            "schema": {
+              "type": "number",
+              "example": "22"
+            },
+            "description": ""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful"
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "provinces"
+        ],
+        "summary": "update province by id in database",
+        "operationId": "updateProvinceById",
+        "security": [
+          {
+            "bearerAuth": [],
+            "ApiKeyAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "provinceId",
+            "required": true,
+            "schema": {
+              "type": "number",
+              "example": "9999"
+            },
+            "description": ""
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {},
+              "example": {
+                "name": "locpro1",
+                "type": "Tỉnh"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful"
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "provinces"
+        ],
+        "summary": "delete province by id in database",
+        "operationId": "deleteProvinceById",
+        "security": [
+          {
+            "bearerAuth": [],
+            "ApiKeyAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "provinceId",
+            "required": true,
+            "schema": {
+              "type": "number",
+              "example": "9999"
+            },
+            "description": ""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful"
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        }
+      }
+    },
+    "/address/districts": {
+      "get": {
+        "tags": [
+          "districts"
+        ],
+        "summary": "get all districts in database",
+        "operationId": "getAllDistricts",
+        "security": [
+          {
+            "bearerAuth": [],
+            "ApiKeyAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful"
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "districts"
+        ],
+        "summary": "create district in database",
+        "operationId": "createDistricts",
+        "security": [
+          {
+            "bearerAuth": [],
+            "ApiKeyAuth": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {},
+              "example": {
+                "id": "9999",
+                "name": "locpro",
+                "type": "Huyện"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful"
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        }
+      }
+    },
+    "/address/districts/{districtId}": {
+      "get": {
+        "tags": [
+          "districts"
+        ],
+        "summary": "get district by id in database",
+        "operationId": "getdistrictById",
+        "security": [
+          {
+            "bearerAuth": [],
+            "ApiKeyAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "districtId",
+            "required": true,
+            "schema": {
+              "type": "number",
+              "example": "9999"
+            },
+            "description": ""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful"
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "districts"
+        ],
+        "summary": "update district by id in database",
+        "operationId": "updateDistrictById",
+        "security": [
+          {
+            "bearerAuth": [],
+            "ApiKeyAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "districtId",
+            "required": true,
+            "schema": {
+              "type": "number",
+              "example": "9999"
+            },
+            "description": ""
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {},
+              "example": {
+                "name": "locpro1",
+                "type": "Huyện"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful"
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "districts"
+        ],
+        "summary": "delete district by id in database",
+        "operationId": "deleteDistrictById",
+        "security": [
+          {
+            "bearerAuth": [],
+            "ApiKeyAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "districtId",
+            "required": true,
+            "schema": {
+              "type": "number",
+              "example": "9999"
+            },
+            "description": ""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful"
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        }
+      }
+    },
+    "/address/province-districts/{provinceId}": {
+      "get": {
+        "tags": [
+          "districts"
+        ],
+        "summary": "get all districts by provinceId in database",
+        "operationId": "getAllDistricts",
+        "security": [
+          {
+            "bearerAuth": [],
+            "ApiKeyAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "provinceId",
+            "type": "string",
+            "example": "79"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful"
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        }
+      }
+    },
+    "/address/wards": {
+      "get": {
+        "tags": [
+          "wards"
+        ],
+        "summary": "get all wards in database",
+        "operationId": "getAllWards",
+        "security": [
+          {
+            "bearerAuth": [],
+            "ApiKeyAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful"
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "wards"
+        ],
+        "summary": "create ward in database",
+        "operationId": "createWards",
+        "security": [
+          {
+            "bearerAuth": [],
+            "ApiKeyAuth": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {},
+              "example": {
+                "id": "9999",
+                "name": "locpro",
+                "type": "Phường"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful"
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        }
+      }
+    },
+    "/address/wards/{wardId}": {
+      "get": {
+        "tags": [
+          "wards"
+        ],
+        "summary": "get ward by id in database",
+        "operationId": "getwardById",
+        "security": [
+          {
+            "bearerAuth": [],
+            "ApiKeyAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "wardId",
+            "required": true,
+            "schema": {
+              "type": "number",
+              "example": "22"
+            },
+            "description": ""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful"
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "wards"
+        ],
+        "summary": "update ward by id in database",
+        "operationId": "updateWardById",
+        "security": [
+          {
+            "bearerAuth": [],
+            "ApiKeyAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "wardId",
+            "required": true,
+            "schema": {
+              "type": "number",
+              "example": "9999"
+            },
+            "description": ""
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {},
+              "example": {
+                "name": "locpro1",
+                "type": "Phường"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful"
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "wards"
+        ],
+        "summary": "delete ward by id in database",
+        "operationId": "deleteWardById",
+        "security": [
+          {
+            "bearerAuth": [],
+            "ApiKeyAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "wardId",
+            "required": true,
+            "schema": {
+              "type": "number",
+              "example": "9999"
+            },
+            "description": ""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful"
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        }
+      }
+    },
+    "/address/district-wards/{districtId}": {
+      "get": {
+        "tags": [
+          "wards"
+        ],
+        "summary": "get all wards by districtId in database",
+        "operationId": "getAllWards",
+        "security": [
+          {
+            "bearerAuth": [],
+            "ApiKeyAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "districtId",
+            "type": "string",
+            "example": "761"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful"
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        }
+      }
+    },
+    "/inventory/{id}": {
+      "get": {
+        "tags": [
+          "inventory"
+        ],
+        "summary": "get all inventory by variantId in database",
+        "operationId": "getAllInventoryByVariantId",
+        "security": [
+          {
+            "bearerAuth": [],
+            "ApiKeyAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "type": "string",
+            "example": "605feaf9d8706444f4e006ff"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful"
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Order": {
+        "type": "object",
+        "properties": {
+          "source": {
+            "type": "string",
+            "exmaple": "web"
+          },
+          "paidPrice": {
+            "type": "integer",
+            "exmaple": 0
+          },
+          "orderStatus": {
+            "type": "string",
+            "exmaple": "Đang giao dịch"
+          },
+          "outstockStatus": {
+            "type": "boolean",
+            "exmaple": true
+          },
+          "paymentStatus": {
+            "type": "string",
+            "description": "Payment Status",
+            "enum": [
+              "Chưa thanh toán"
+            ]
+          },
+          "packStatus": {
+            "type": "boolean",
+            "exmaple": true
+          },
+          "code": {
+            "type": "string",
+            "exmaple": "customer_1603"
+          },
+          "note": {
+            "type": "string",
+            "exmaple": "asd"
+          },
+          "customerId": {
+            "type": "objectId",
+            "exmaple": "605eab1ee89fe93770eaf930"
+          },
+          "customerName": {
+            "type": "string",
+            "exmaple": "customer 1"
+          },
+          "customerAddress": {
+            "type": "string",
+            "exmaple": "address random 0.7420040912769941"
+          },
+          "customerPhone": {
+            "type": "string",
+            "exmaple": "0987654321"
+          },
+          "customerEmail": {
+            "type": "string",
+            "exmaple": "cus@gmail.com"
+          },
+          "userId": {
+            "type": "objectId",
+            "exmaple": "605ea6bbe89fe93770eaf8ea"
+          },
+          "lineItems": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "_id": {
+                  "type": "objectId",
+                  "exmaple": "605ea7e0e89fe93770eaf902"
+                },
+                "name": {
+                  "type": "string",
+                  "exmaple": "Áo phông EAGLES - 8 - vàng - gỗ"
+                },
+                "sku": {
+                  "type": "string",
+                  "exmaple": "aophong-8-vang-go"
+                },
+                "productId": {
+                  "type": "objectId",
+                  "exmaple": "605ea7dfe89fe93770eaf8f6"
+                },
+                "price": {
+                  "type": "number",
+                  "exmaple": 150000
+                },
+                "quantity": {
+                  "type": "number",
+                  "exmaple": 50
+                }
+              }
+            }
+          },
+          "subTotal": {
+            "type": "number",
+            "exmaple": 15000000
+          },
+          "totalQuantity": {
+            "type": "number",
+            "exmaple": 100
+          },
+          "step": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "_id": {
+                  "type": "objectId",
+                  "exmaple": "605ea7e0e89fe93770eaf902"
+                },
+                "name": {
+                  "type": "string",
+                  "exmaple": "Đặt hàng và duyệt"
+                },
+                "createdAt": {
+                  "type": "Date",
+                  "exmaple": "2021-03-27T03:50:51.340+00:00"
+                },
+                "isCreated": {
+                  "type": "boolean",
+                  "exmaple": true
+                }
+              }
+            }
+          },
+          "paidHistory": {
+            "type": "array",
+            "exmaple": []
+          },
+          "createdAt": {
+            "type": "Date",
+            "exmaple": "2021-03-27T03:50:51.342+00:00"
+          },
+          "updatedAt": {
+            "type": "Date",
+            "exmaple": "2021-03-27T03:51:15.497+00:00"
+          }
+        },
+        "xml": {
+          "name": "Order"
+        }
+      },
+      "PurchaseOrder": {
+        "type": "object",
+        "properties": {
+          "source": {
+            "type": "string",
+            "exmaple": "web"
+          },
+          "paidPrice": {
+            "type": "integer",
+            "exmaple": 0
+          },
+          "orderStatus": {
+            "type": "string",
+            "exmaple": "Hoàn thành"
+          },
+          "instockStatus": {
+            "type": "boolean",
+            "exmaple": true
+          },
+          "paymentStatus": {
+            "type": "string",
+            "description": "Payment Status",
+            "enum": [
+              "Đã thanh toán"
+            ]
+          },
+          "packStatus": {
+            "type": "boolean",
+            "exmaple": true
+          },
+          "code": {
+            "type": "string",
+            "exmaple": "KHỞI_TẠO_3/27/2021"
+          },
+          "note": {
+            "type": "string",
+            "exmaple": "Khởi tạo ban đầu"
+          },
+          "supplierId": {
+            "type": "objectId",
+            "exmaple": "605eab1ee89fe93770eaf930"
+          },
+          "supplierName": {
+            "type": "string",
+            "exmaple": "quang huy"
+          },
+          "supplierAddress": {
+            "type": "string",
+            "exmaple": "Chi nhánh mặc định"
+          },
+          "supplierPhone": {
+            "type": "string",
+            "exmaple": "Mặc định"
+          },
+          "supplierEmail": {
+            "type": "string",
+            "exmaple": "huy1@gmail.com"
+          },
+          "userId": {
+            "type": "objectId",
+            "exmaple": "605ea6bbe89fe93770eaf8ea"
+          },
+          "lineItems": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "_id": {
+                  "type": "objectId",
+                  "exmaple": "605ea7e0e89fe93770eaf902"
+                },
+                "name": {
+                  "type": "string",
+                  "exmaple": "Áo phông EAGLES - 8 - vàng - gỗ"
+                },
+                "sku": {
+                  "type": "string",
+                  "exmaple": "aophong-8-vang-go"
+                },
+                "productId": {
+                  "type": "objectId",
+                  "exmaple": "605ea7dfe89fe93770eaf8f6"
+                },
+                "variantId": {
+                  "type": "objectId",
+                  "exmaple": "605f00a3fd30851d20c638b2"
+                },
+                "price": {
+                  "type": "number",
+                  "exmaple": 150000
+                },
+                "quantity": {
+                  "type": "number",
+                  "exmaple": 50
+                }
+              }
+            }
+          },
+          "subTotal": {
+            "type": "number",
+            "exmaple": 15000000
+          },
+          "totalQuantity": {
+            "type": "number",
+            "exmaple": 100
+          },
+          "step": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "_id": {
+                  "type": "objectId",
+                  "exmaple": "605ea7e0e89fe93770eaf902"
+                },
+                "name": {
+                  "type": "string",
+                  "exmaple": "Đặt hàng và duyệt"
+                },
+                "createdAt": {
+                  "type": "Date",
+                  "exmaple": "2021-03-27T03:50:51.340+00:00"
+                },
+                "isCreated": {
+                  "type": "boolean",
+                  "exmaple": true
+                }
+              }
+            }
+          },
+          "paidHistory": {
+            "type": "array",
+            "exmaple": []
+          },
+          "createdAt": {
+            "type": "Date",
+            "exmaple": "2021-03-27T03:50:51.342+00:00"
+          },
+          "updatedAt": {
+            "type": "Date",
+            "exmaple": "2021-03-27T03:51:15.497+00:00"
+          }
+        }
+      },
+      "RefundOrder": {
+        "type": "object",
+        "properties": {
+          "source": {
+            "type": "string",
+            "exmaple": "web"
+          },
+          "paidPrice": {
+            "type": "integer",
+            "exmaple": 0
+          },
+          "orderStatus": {
+            "type": "string",
+            "exmaple": "Hoàn thành"
+          },
+          "instockStatus": {
+            "type": "boolean",
+            "exmaple": true
+          },
+          "paymentStatus": {
+            "type": "string",
+            "description": "Payment Status",
+            "enum": [
+              "Đã thanh toán"
+            ]
+          },
+          "packStatus": {
+            "type": "boolean",
+            "exmaple": true
+          },
+          "code": {
+            "type": "string",
+            "exmaple": "KHỞI_TẠO_AOPHONG_3/28/2021"
+          },
+          "note": {
+            "type": "string",
+            "exmaple": "Khởi tạo ban đầu"
+          },
+          "supplierId": {
+            "type": "objectId",
+            "exmaple": "605eab1ee89fe93770eaf930"
+          },
+          "supplierName": {
+            "type": "string",
+            "exmaple": "quang huy"
+          },
+          "supplierAddress": {
+            "type": "string",
+            "exmaple": "Chi nhánh mặc định"
+          },
+          "supplierPhone": {
+            "type": "string",
+            "exmaple": "Mặc định"
+          },
+          "supplierEmail": {
+            "type": "string",
+            "exmaple": "huy1@gmail.com"
+          },
+          "userId": {
+            "type": "objectId",
+            "exmaple": "605ea6bbe89fe93770eaf8ea"
+          },
+          "lineItems": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "_id": {
+                  "type": "objectId",
+                  "exmaple": "605ea7e0e89fe93770eaf902"
+                },
+                "name": {
+                  "type": "string",
+                  "exmaple": "Áo phông EAGLES - 8 - vàng - gỗ"
+                },
+                "sku": {
+                  "type": "string",
+                  "exmaple": "aophong-8-vang-go"
+                },
+                "productId": {
+                  "type": "objectId",
+                  "exmaple": "605ea7dfe89fe93770eaf8f6"
+                },
+                "variantId": {
+                  "type": "objectId",
+                  "exmaple": "605f00a3fd30851d20c638b2"
+                },
+                "price": {
+                  "type": "number",
+                  "exmaple": 150000
+                },
+                "quantity": {
+                  "type": "number",
+                  "exmaple": 50
+                }
+              }
+            }
+          },
+          "subTotal": {
+            "type": "number",
+            "exmaple": 15000000
+          },
+          "totalQuantity": {
+            "type": "number",
+            "exmaple": 100
+          },
+          "step": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "_id": {
+                  "type": "objectId",
+                  "exmaple": "605ea7e0e89fe93770eaf902"
+                },
+                "name": {
+                  "type": "string",
+                  "exmaple": "Đặt hàng và duyệt"
+                },
+                "createdAt": {
+                  "type": "Date",
+                  "exmaple": "2021-03-27T03:50:51.340+00:00"
+                },
+                "isCreated": {
+                  "type": "boolean",
+                  "exmaple": true
+                }
+              }
+            }
+          },
+          "paidHistory": {
+            "type": "array",
+            "exmaple": []
+          },
+          "createdAt": {
+            "type": "Date",
+            "exmaple": "2021-03-27T03:50:51.342+00:00"
+          },
+          "updatedAt": {
+            "type": "Date",
+            "exmaple": "2021-03-27T03:51:15.497+00:00"
+          }
+        }
+      },
+      "Product": {
+        "required": [],
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "dao1"
+          },
+          "avatar": {
+            "type": "array",
+            "example": [
+              "url"
+            ]
+          },
+          "sku": {
+            "type": "string",
+            "example": "ao phong"
+          },
+          "categoryId": {
+            "type": "string",
+            "example": "7930"
+          },
+          "categoryName": {
+            "type": "string",
+            "example": "Giày dép & Quần áo nam > Quần áo nam > Áo thun & Áo không tay > Áo thun nam"
+          },
+          "description": {
+            "type": "string",
+            "example": "..."
+          },
+          "weightValue": {
+            "type": "number",
+            "example": 100
+          },
+          "weightUnit": {
+            "type": "string",
+            "example": "g"
+          },
+          "unit": {
+            "type": "string",
+            "example": "Cái"
+          },
+          "brand": {
+            "type": "string",
+            "example": "No Brand"
+          },
+          "productType": {
+            "type": "string",
+            "example": "normal"
+          },
+          "tags": {
+            "type": "array",
+            "example": [
+              "áo",
+              "áo thun"
+            ]
+          },
+          "options": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "optionName": {
+                  "type": "string",
+                  "exmaple": "Kích thước "
+                },
+                "optionValue": {
+                  "type": "array",
+                  "exmaple": [
+                    "27",
+                    "8"
+                  ]
+                }
+              }
+            }
+          },
+          "sellable": {
+            "type": "boolean",
+            "example": true
+          },
+          "createdAt": {
+            "type": "Date",
+            "example": "2021-03-25T08:40:56.007+00:00"
+          },
+          "updatedAt": {
+            "type": "Date",
+            "example": "2021-03-25T08:40:56.007+00:00"
+          }
+        },
+        "xml": {
+          "name": "Product"
+        }
+      },
+      "Variant": {
+        "required": [
+          "id"
+        ],
+        "type": "object",
+        "properties": {
+          "linkedIds": {
+            "type": "array",
+            "exmaple": [
+              "605c4ca09d0e5315f41e742f"
+            ]
+          },
+          "avatar": {
+            "type": "string",
+            "exmaple": "605c4ca09d0e5315f41e742f"
+          },
+          "name": {
+            "type": "string",
+            "example": "Áo phông EAGLES - 8 - nâu - gỗ"
+          },
+          "sku": {
+            "type": "string",
+            "example": "aophong-8-nau-go"
+          },
+          "importPrice": {
+            "type": "number",
+            "example": 3243242
+          },
+          "wholeSalePrice": {
+            "type": "number",
+            "example": 3243242
+          },
+          "retailPrice": {
+            "type": "number",
+            "example": 3243242
+          },
+          "weightValue": {
+            "type": "number",
+            "example": 100
+          },
+          "weightUnit": {
+            "type": "string",
+            "example": "g"
+          },
+          "quantity": {
+            "type": "number",
+            "example": "2"
+          },
+          "inventories": {
+            "type": "object",
+            "properties": {
+              "initStock": {
+                "type": "number",
+                "example": 100
+              },
+              "initPrice": {
+                "type": "number",
+                "exmaple": 0
+              }
+            }
+          },
+          "productId": {
+            "type": "objectId",
+            "example": "605c4c979d0e5315f41e7403"
+          },
+          "sellable": {
+            "type": "boolean",
+            "example": true
+          }
+        },
+        "xml": {
+          "name": "Pet"
+        }
+      },
+      "User": {
+        "required": [
+          "displayName",
+          "email",
+          "password"
+        ],
+        "type": "object",
+        "properties": {
+          "isDeleted": {
+            "type": "boolean",
+            "example": false
+          },
+          "displayName": {
+            "type": "string",
+            "example": "huy"
+          },
+          "email": {
+            "type": "string",
+            "example": "huy1@gmail.com"
+          },
+          "password": {
+            "type": "string",
+            "example": "huyhuy"
+          },
+          "storages": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "storage": {
+                  "type": "object",
+                  "properties": {
+                    "storageId": {
+                      "type": "string",
+                      "exmaple": "6051909070939103d011db8a"
+                    },
+                    "storageName": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "token": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "token": {
+                  "type": "string",
+                  "exmaple": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9"
+                }
+              }
+            }
+          }
+        },
+        "xml": {
+          "name": "User"
+        }
+      },
+      "Storage": {
+        "required": [],
+        "type": "object",
+        "properties": {
+          "totalMoney": {
+            "type": "number",
+            "example": 0
+          },
+          "isActivated": {
+            "type": "boolean",
+            "example": true
+          },
+          "displayName": {
+            "type": "string",
+            "example": "STORAGE_605D865EEEC3381E501F6EDA"
+          },
+          "sendoCredentials": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "_id": {
+                  "type": "objectId",
+                  "exmaple": "605eb33fe89fe93770eaf951"
+                },
+                "isActivated": {
+                  "type": "boolean",
+                  "example": true
+                },
+                "status": {
+                  "type": "string",
+                  "example": "connected"
+                },
+                "app_key": {
+                  "type": "string",
+                  "exmaple": "d63aecd314b4463abc2204aa6a340c6b"
+                },
+                "app_secret": {
+                  "type": "string",
+                  "exmaple": "a6919d8125cc437c87f004ea2bc87959"
+                },
+                "store_id": {
+                  "type": "string",
+                  "exmaple": "d63aecd314b4463abc2204aa6a340c6b"
+                },
+                "store_name": {
+                  "type": "string",
+                  "exmaple": "SENDO-1"
+                },
+                "platform_name": {
+                  "type": "string",
+                  "exmaple": "sendo"
+                },
+                "access_token": {
+                  "type": "string",
+                  "exmaple": "sdsadsa"
+                },
+                "expires": {
+                  "type": "Date",
+                  "exmaple": "2021-03-27T12:23:30.856+00:00"
+                }
+              }
+            }
+          },
+          "lazadaCredentials": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "_id": {
+                  "type": "objectId",
+                  "exmaple": "605eb33fe89fe93770eaf951"
+                },
+                "isActivated": {
+                  "type": "boolean",
+                  "example": true
+                },
+                "status": {
+                  "type": "string",
+                  "example": "connected"
+                },
+                "app_key": {
+                  "type": "string",
+                  "exmaple": "d63aecd314b4463abc2204aa6a340c6b"
+                },
+                "app_secret": {
+                  "type": "string",
+                  "exmaple": "a6919d8125cc437c87f004ea2bc87959"
+                },
+                "store_id": {
+                  "type": "string",
+                  "exmaple": "200163939035"
+                },
+                "store_name": {
+                  "type": "string",
+                  "exmaple": "Orihss"
+                },
+                "platform_name": {
+                  "type": "string",
+                  "exmaple": "sendo"
+                },
+                "access_token": {
+                  "type": "string",
+                  "exmaple": "sdsadsa"
+                },
+                "refresh_token": {
+                  "type": "string",
+                  "exmaple": "sdsadsa"
+                },
+                "expires": {
+                  "type": "Date",
+                  "exmaple": "2021-03-27T12:23:30.856+00:00"
+                },
+                "refresh_expires": {
+                  "type": "Date",
+                  "exmaple": "2021-03-27T12:23:30.856+00:00"
+                }
+              }
+            }
+          },
+          "id": {
+            "type": "string",
+            "exmaple": "605eb33fe89fe93770eaf951"
+          }
+        },
+        "xml": {
+          "name": "Supplier"
+        }
+      },
+      "Supplier": {
+        "required": [
+          "name",
+          "email",
+          "phone",
+          "address"
+        ],
+        "type": "object",
+        "properties": {
+          "group": {
+            "type": "string",
+            "example": "Normal"
+          },
+          "name": {
+            "type": "string",
+            "example": "Supplier 1"
+          },
+          "email": {
+            "type": "string",
+            "example": "sup@gmail.com"
+          },
+          "phone": {
+            "type": "string",
+            "example": "0987654321"
+          },
+          "address": {
+            "type": "string",
+            "example": "1234567890"
+          },
+          "userId": {
+            "type": "objectId",
+            "example": "6049de8d057b130514ffc4b0"
+          }
+        },
+        "xml": {
+          "name": "Supplier"
+        }
+      },
+      "Customer": {
+        "required": [
+          "name",
+          "email",
+          "phone",
+          "address"
+        ],
+        "type": "object",
+        "properties": {
+          "group": {
+            "type": "string",
+            "example": "Normal"
+          },
+          "name": {
+            "type": "string",
+            "example": "Customer 1"
+          },
+          "email": {
+            "type": "string",
+            "example": "cus@gmail.com"
+          },
+          "phone": {
+            "type": "string",
+            "example": "0987654321"
+          },
+          "address": {
+            "type": "string",
+            "example": "address random 0.6330979062156514"
+          },
+          "userId": {
+            "type": "objectId",
+            "example": "6049de8d057b130514ffc4b0"
+          }
+        }
+      },
+      "Category": {
+        "required": [],
+        "type": "object",
+        "properties": {
+          "idpath": {
+            "type": "array",
+            "example": [
+              12648,
+              10100180,
+              10100183
+            ]
+          },
+          "namepath": {
+            "type": "array",
+            "example": [
+              "Bếp & Phòng ăn",
+              "Dùng một lần",
+              "Bộ đồ uống dùng một lần "
+            ]
+          },
+          "category_id": {
+            "type": "number",
+            "example": 10100183
+          },
+          "var": {
+            "type": "boolean",
+            "example": false
+          },
+          "name": {
+            "type": "string",
+            "example": "Bộ đồ uống dùng một lần"
+          },
+          "leaf": {
+            "type": "boolean",
+            "example": true
+          }
+        },
+        "xml": {
+          "name": "Category"
+        }
+      },
+      "SendoProduct": {
+        "required": [],
+        "type": "object",
+        "properties": {
+          "avatar": {
+            "type": "string",
+            "example": "https://vn-live.slatic.net/p.jpg"
+          },
+          "link": {
+            "type": "string",
+            "example": "https://www.sendo.vn/tivi-mr-locpro-125-41616795.html"
+          },
+          "id": {
+            "type": "string",
+            "example": "41616795"
+          },
+          "store_id": {
+            "type": "string",
+            "example": "d63aecd314b4463abc2204aa6a340c6b"
+          },
+          "name": {
+            "type": "string",
+            "example": "tivi mr locpro 125"
+          },
+          "price": {
+            "type": "number",
+            "example": 12122132
+          },
+          "sku": {
+            "type": "string",
+            "example": "mrlocpro125"
+          },
+          "status": {
+            "type": "string",
+            "example": "2"
+          },
+          "stock_quantity": {
+            "type": "number",
+            "example": 0
+          },
+          "stock_availability": {
+            "type": "boolean",
+            "example": true
+          },
+          "unit": {
+            "type": "string",
+            "example": "Cái"
+          },
+          "unit_id": {
+            "type": "number",
+            "example": 1
+          },
+          "voucher": {
+            "type": "object",
+            "properties": {
+              "product_type": {
+                "type": "number",
+                "exmaple": 1
+              },
+              "start_date": {
+                "type": "date",
+                "exmaple": "2021-03-27T03:50:51.340+00:00"
+              },
+              "end_date": {
+                "type": "date",
+                "exmaple": "2021-03-27T03:50:51.340+00:00"
+              },
+              "is_check_date": {
+                "type": "boolean",
+                "exmaple": null
+              }
+            }
+          },
+          "weight": {
+            "type": "number",
+            "example": null
+          },
+          "created_date_timestamp": {
+            "type": "Date",
+            "example": "2021-03-25T08:40:56.007+00:00"
+          },
+          "updated_date_timestamp": {
+            "type": "Date",
+            "example": "2021-03-25T08:40:56.007+00:00"
+          }
+        }
+      },
+      "SendoVariant": {
+        "required": [],
+        "type": "object",
+        "properties": {
+          "productId": {
+            "type": "objectId",
+            "example": "605c362fb172bb40c429cb87"
+          },
+          "linkedId": {
+            "type": "objectId",
+            "example": "605c362fb172bb40c429cb87"
+          },
+          "sku": {
+            "type": "string",
+            "example": "123456789123"
+          },
+          "Status": {
+            "type": "string",
+            "example": "active"
+          },
+          "avatar": {
+            "type": "Array",
+            "example": [
+              "https://media3.scdn.vn/img4/2021/03_21/NpSb4jBlmliQLbEypOHv_simg_02d57e_50x50_maxb.jpg"
+            ]
+          },
+          "price": {
+            "type": "number",
+            "example": 120000
+          },
+          "quantity": {
+            "type": "number",
+            "example": 12
+          },
+          "special_price": {
+            "type": "number",
+            "example": 129754
+          },
+          "variant_attribute_hash": {
+            "type": "string",
+            "example": "603"
+          },
+          "variant_attributes": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "attribute_id": {
+                  "type": "number",
+                  "exmaple": 284
+                },
+                "attribute_code": {
+                  "type": "string",
+                  "exmaple": "mau_sac"
+                },
+                "option_id": {
+                  "type": "number",
+                  "exmaple": 603
+                },
+                "attribute_name": {
+                  "type": "string",
+                  "exmaple": "màu sắc"
+                },
+                "option_value": {
+                  "type": "string",
+                  "exmaple": "Vàng"
+                },
+                "attribute_img": {
+                  "type": "string",
+                  "exmaple": "https://media3.scdn.vn/img4/2021/03_21/NpSb4jBlmliQLbEypOHv_simg_02d57e_50x50_maxb.jpg"
+                }
+              }
+            }
+          },
+          "variant_campaign_status": {
+            "type": "string",
+            "example": null
+          },
+          "variant_is_flash_sales": {
+            "type": "boolean",
+            "example": null
+          },
+          "variant_is_promotion": {
+            "type": "boolean",
+            "example": null
+          },
+          "variant_promotion_end_date_timestamp": {
+            "type": "timestamp",
+            "example": null
+          },
+          "variant_promotion_start_date_timestamp": {
+            "type": "timestamp",
+            "example": null
+          }
+        }
+      },
+      "LazadaProduct": {
+        "required": [],
+        "type": "object",
+        "properties": {
+          "avatar": {
+            "type": "string",
+            "example": "https://vn-live.slatic.net/p/75ce11c88e3bd778cb66f4d8c7e7d7c4.jpg"
+          },
+          "id": {
+            "type": "string",
+            "example": "1088960258"
+          },
+          "store_id": {
+            "type": "string",
+            "example": "200163939035"
+          },
+          "primary_category": {
+            "type": "string",
+            "example": "13099"
+          },
+          "attributes": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "example": "dao"
+                },
+                "description": {
+                  "type": "string",
+                  "example": "áđasa"
+                },
+                "brand": {
+                  "type": "string",
+                  "example": "No brand"
+                },
+                "source": {
+                  "type": "string",
+                  "example": "asc"
+                }
+              }
+            }
+          },
+          "created_date_timestamp": {
+            "type": "Date",
+            "example": "2021-03-25T08:40:56.007+00:00"
+          },
+          "updated_date_timestamp": {
+            "type": "Date",
+            "example": "2021-03-25T08:40:56.007+00:00"
+          }
+        }
+      },
+      "LazadaVariant": {
+        "required": [],
+        "type": "object",
+        "properties": {
+          "productId": {
+            "type": "objectId",
+            "example": "605c362fb172bb40c429cb87"
+          },
+          "linkedId": {
+            "type": "objectId",
+            "example": "605c362fb172bb40c429cb87"
+          },
+          "sku": {
+            "type": "string",
+            "example": "123456789123"
+          },
+          "ShopSku": {
+            "type": "string",
+            "example": "859984666_VNAMZ-3713018288"
+          },
+          "SkuId": {
+            "type": "number",
+            "example": 3713018288
+          },
+          "Status": {
+            "type": "string",
+            "example": "active"
+          },
+          "Url": {
+            "type": "string",
+            "example": "https://www.lazada.vn/-i859984666-s3713018288.html"
+          },
+          "avatar": {
+            "type": "Array",
+            "example": [
+              "https://vn-live.slatic.net/p/eeaca3c5adf96292ee5c5087787140a1.jpg"
+            ]
+          },
+          "multiWarehouseInventories": {
+            "type": "Array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "quantity": {
+                  "type": "number",
+                  "exmaple": 284
+                },
+                "warehouseCode": {
+                  "type": "string",
+                  "exmaple": "dropshipping"
+                }
+              }
+            }
+          },
+          "package_height": {
+            "type": "string",
+            "example": "2.00"
+          },
+          "package_length": {
+            "type": "string",
+            "example": "12.00"
+          },
+          "package_weight": {
+            "type": "string",
+            "example": "0.2"
+          },
+          "package_width": {
+            "type": "string",
+            "example": "5.00"
+          },
+          "price": {
+            "type": "number",
+            "example": 150000
+          },
+          "quantity": {
+            "type": "number",
+            "example": 12
+          },
+          "special_price": {
+            "type": "number",
+            "example": 129754
+          },
+          "variant_attribute_hash": {
+            "type": "string",
+            "example": "603"
+          },
+          "variant_attributes": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "attribute_name": {
+                  "type": "string",
+                  "exmaple": "color_family"
+                },
+                "option_value": {
+                  "type": "string",
+                  "exmaple": "Galaxy"
+                }
+              }
+            }
+          }
+        }
+      },
+      "Inventory": {
+        "required": [],
+        "type": "object",
+        "properties": {
+          "department": {
+            "type": "string",
+            "example": "chi nhánh mặc định"
+          },
+          "variantId": {
+            "type": "objectId",
+            "example": "605feaf9d8706444f4e006ff"
+          },
+          "actionName": {
+            "type": "string",
+            "example": "Nhập hàng vào kho"
+          },
+          "change": {
+            "type": "object",
+            "properties": {
+              "amount": {
+                "type": "string",
+                "exmaple": "100"
+              },
+              "type": {
+                "type": "string",
+                "example": "Tăng"
+              }
+            }
+          },
+          "inStock": {
+            "type": "number",
+            "exmaple": 100
+          },
+          "reference": {
+            "type": "string",
+            "exmaple": "KHỞI_TẠO_AOPHONG_3/28/2021"
+          },
+          "price": {
+            "type": "number",
+            "exmaple": 150000
+          },
+          "createdAt": {
+            "type": "date",
+            "exmaple": "2021-03-28T02:33:30.448+00:00"
+          },
+          "updatedAt": {
+            "type": "date",
+            "exmaple": "2021-03-28T02:33:30.448+00:00"
+          }
+        },
+        "xml": {
+          "name": "Category"
+        }
+      }
+    },
+    "requestBodies": {
+      "Product": {
+        "description": "MMS Product object that needs to be added to the store",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Product"
+            }
+          }
+        },
+        "required": true
+      },
+      "UserArray": {
+        "description": "List of user object",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/User"
+              }
+            }
+          }
+        },
+        "required": true
+      }
+    },
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "in": "header",
+        "name": "Authorization",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      },
+      "ApiKeyAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "Platform-Token"
+      }
+    }
+  },
+  "security": [
+    {
+      "bearerAuth": []
+    }
+  ]
+}

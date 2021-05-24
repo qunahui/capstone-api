@@ -1,0 +1,9 @@
+/build
+/node_modules
+/admin-b2834-firebase-adminsdk-wv5ci-b54987cffd.json
+/.env
+/package-lock.json
+/yarn.error.log
+/yarn.lock
+/src/temp
+/src/assets
