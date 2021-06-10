@@ -7,7 +7,7 @@ const rp = require('request-promise')
 const timeDiff = require('../utils/timeDiff');
 
 
-const payment_method ={
+const payment_method = {
   "1": "COD",
   "2": "Senpay",
   "4": "Compine",
@@ -56,7 +56,7 @@ const sendo_cancel_reason = {
   "CBS110": "Người bán giao hàng gấp theo yêu cầu của người mua",
   "CBS111": "Nhà vận chuyển không tiếp nhận đơn hàng/không đến lấy hàng"
 }
-const sendo_delivery_status = { 
+const sendo_delivery_status = {
   '9': "Chưa tạo vận đơn",
   '1': "Mới",
   '2': "Đang xử lý",
@@ -73,7 +73,7 @@ const sendo_delivery_status = {
   '15': "Bàn giao thành công LM",
   '16': "Mất hàng",
 }
-
+//locpro
 const lazada_order_status = {
   'unpaid': 'Đang chờ xác nhận thanh toán', // khách chưa config delivery info
   'pending': 'Đang xử lý / Chờ xác nhận',
@@ -179,7 +179,7 @@ const checkComplete = async (_id) => {
   try {
     const order = await Order.findOne({ _id })
     const { paymentStatus, deliveryStatus } = order
-    if(paymentStatus === 'Đã thanh toán' && deliveryStatus === 'Đã giao hàng') {
+    if (paymentStatus === 'Đã thanh toán' && deliveryStatus === 'Đã giao hàng') {
       const index = order.step.findIndex(i => i.name === 'Hoàn thành')
       order.step[index] = {
         name: order.step[index].name,
@@ -187,45 +187,45 @@ const checkComplete = async (_id) => {
         createdAt: new Date()
       }
       order.orderStatus = 'Hoàn thành'
-  
+
       await order.save()
-    } 
-  } catch(e) {
+    }
+  } catch (e) {
     console.log(e.message)
   }
 }
 
 const checkLinkedVariants = async (variant, mongoToken) => {
   try {
-    await rp({ 
+    await rp({
       method: 'POST',
       url: `${process.env.API_URL}/variants/push-api`,
       json: true,
       body: {
         variant
       },
-      headers: { 
-        'Authorization' : 'Bearer ' + mongoToken
+      headers: {
+        'Authorization': 'Bearer ' + mongoToken
       }
     })
-  } catch(e) {
+  } catch (e) {
     console.log(e.message)
   }
 }
 
 module.exports.checkComplete = checkComplete
 
-module.exports.createReceipt = async (req,res) => {
+module.exports.createReceipt = async (req, res) => {
   try {
     const { lineItems } = req.body
 
     const order = await Order.findOne({ _id: req.params._id })
-    
+
     await Promise.all(lineItems.map(async (item) => {
       const variantId = item._id
-      const mongoVariant = await Variant.findOne({ _id : variantId })
+      const mongoVariant = await Variant.findOne({ _id: variantId })
       // const newStock = mongoVariant.inventories.onHand - item.quantity
-      
+
       mongoVariant.inventories.onHand -= item.quantity;
       mongoVariant.inventories.trading -= item.quantity;
 
@@ -245,7 +245,7 @@ module.exports.createReceipt = async (req,res) => {
 
       await inventory.save()
 
-      if(mongoVariant.linkedIds.length > 0) {
+      if (mongoVariant.linkedIds.length > 0) {
         await checkLinkedVariants(mongoVariant, req.mongoToken)
       }
     }))
@@ -262,14 +262,14 @@ module.exports.createReceipt = async (req,res) => {
     await order.save()
 
     res.status(200).send(order)
-  } catch(e) {
+  } catch (e) {
     console.log(e)
-    res.status(500).send(Error({ message: 'Create order receipt went wrong!'}))
+    res.status(500).send(Error({ message: 'Create order receipt went wrong!' }))
   }
 }
 
 module.exports.createPackaging = async (req, res) => {
-  try { 
+  try {
     const order = await Order.findOne({ _id: req.params._id })
     const index = order.step.findIndex(i => i.name === 'Đóng gói')
     order.step[index] = {
@@ -283,14 +283,14 @@ module.exports.createPackaging = async (req, res) => {
     await order.save()
 
     res.status(200).send(order)
-  } catch(e) {
+  } catch (e) {
     console.log(e.message)
     res.send(500).send(Error({ message: 'Đóng gói đơn hàng thất bại !' }))
   }
 }
 
 module.exports.confirmOrder = async (req, res) => {
-  try { 
+  try {
     const order = await Order.findOne({ _id: req.params._id })
     const index = order.step.findIndex(i => i.name === 'Duyệt')
     order.step[index] = {
@@ -302,14 +302,14 @@ module.exports.confirmOrder = async (req, res) => {
     await order.save()
 
     res.status(200).send(order)
-  } catch(e) {
+  } catch (e) {
     console.log(e.message)
     res.send(500).send(Error({ message: 'Đóng gói đơn hàng thất bại !' }))
   }
 }
 
 module.exports.confirmDelivery = async (req, res) => {
-  try { 
+  try {
     const order = await Order.findOne({ _id: req.params._id })
     const index = order.step.findIndex(i => i.name === 'Đã giao hàng')
     order.step[index] = {
@@ -324,65 +324,65 @@ module.exports.confirmDelivery = async (req, res) => {
     await checkComplete(req.params._id)
 
     res.status(200).send(order)
-  } catch(e) {
+  } catch (e) {
     console.log(e.message)
     res.send(500).send(Error({ message: 'Đóng gói đơn hàng thất bại !' }))
   }
 }
 
-module.exports.createMMSOrder = async (req,res) => {
+module.exports.createMMSOrder = async (req, res) => {
   try {
     const step = [
-    {
-      name: 'Đặt hàng',
-      isCreated: true,
-      createdAt: Date.now()
-    },
-    {
-      name: 'Duyệt',
-      isCreated: true,
-      createdAt: Date.now()
-    },
-    {
-      name: 'Đóng gói',
-      isCreated: false,
-    },
-    {
-      name: 'Xuất kho/Đang giao hàng',
-      isCreated: false,
-    },
-    {
-      name: 'Đã giao hàng',
-      isCreated: false,
-    },
-    {
-      name: 'Hoàn thành',
-      isCreated: false,
-    },
-    {
-      name: 'Đã hủy',
-      isCreated: false,
-    },
-    {
-      name: 'Đang hoàn trả',
-      isCreated: false,
-    },
-    {
-      name: 'Đã hoàn trả',
-      isCreated: false,
-    },
+      {
+        name: 'Đặt hàng',
+        isCreated: true,
+        createdAt: Date.now()
+      },
+      {
+        name: 'Duyệt',
+        isCreated: true,
+        createdAt: Date.now()
+      },
+      {
+        name: 'Đóng gói',
+        isCreated: false,
+      },
+      {
+        name: 'Xuất kho/Đang giao hàng',
+        isCreated: false,
+      },
+      {
+        name: 'Đã giao hàng',
+        isCreated: false,
+      },
+      {
+        name: 'Hoàn thành',
+        isCreated: false,
+      },
+      {
+        name: 'Đã hủy',
+        isCreated: false,
+      },
+      {
+        name: 'Đang hoàn trả',
+        isCreated: false,
+      },
+      {
+        name: 'Đã hoàn trả',
+        isCreated: false,
+      },
     ]
 
-    const { storageId, storageName } = req.user.currentStorage 
+    const { storageId, storageName } = req.user.currentStorage
     const order = new Order({
-      ...req.body, 
+      ...req.body,
       step,
       store_id: storageId,
       store_name: storageName
     })
 
     const { lineItems } = req.body
-    
+
     await Promise.all(lineItems.map(async variant => {
       const matchedVariant = await Variant.findOne({ _id: variant._id })
       matchedVariant.inventories.trading += variant.quantity
@@ -391,25 +391,23 @@ module.exports.createMMSOrder = async (req,res) => {
 
     await order.save()
     res.send(order)
-  } catch(e) {
+  } catch (e) {
     console.log(e.message)
-    res.status(500).send(Error({ message: 'Create order went wrong!'}))
+    res.status(500).send(Error({ message: 'Create order went wrong!' }))
   }
 }
 
-module.exports.createLazadaOrder = async (req,res) => {
+module.exports.createLazadaOrder = async (req, res) => {
   const { item, cred } = req.body;
   const listItem = await rp({
     method: 'GET',
-    url:"http://localhost:5000/api/lazada/orders/items/"+ item.order_number,
+    url: "http://localhost:5000/api/lazada/orders/items/" + item.order_number,
     headers: {
       'Authorization': 'Bearer ' + req.mongoToken,
       'Platform-Token': req.accessToken
     },
     json: true
   })
-
-  console.log(listItem.data[0])
   
   const mappingStep = {
     'unpaid': {
@@ -471,7 +469,7 @@ module.exports.createLazadaOrder = async (req,res) => {
 
   let completeStep = mappingStep[item.statuses[0]].step
   let configStep = step.map((st, index) => {
-    if(index <= completeStep) { 
+    if (index <= completeStep) {
       return {
         name: st.name,
         createdAt: index === 0 ? item.created_at : index === completeStep ? item.updated_at : null,
@@ -481,7 +479,7 @@ module.exports.createLazadaOrder = async (req,res) => {
       return st
     }
   })
-  let platformFee = Math.round(parseFloat(2.002*(parseFloat(item.price) - parseFloat(item.voucher_seller) + parseFloat(item.shipping_fee))/100))
+  let platformFee = Math.round(parseFloat(2.002 * (parseFloat(item.price) - parseFloat(item.voucher_seller) + parseFloat(item.shipping_fee)) / 100))
   const orderInformation = {
     source: "lazada",
     store_id: cred.store_id,
@@ -501,12 +499,12 @@ module.exports.createLazadaOrder = async (req,res) => {
     customerEmail: "",
     customerPhone: item.address_shipping.phone,
     customerAddress: item.address_shipping.address1
-    //+", "+address_shipping.address2
-    +", "+item.address_shipping.address5
-    +", "+item.address_shipping.address4
-    +", "+item.address_shipping.address3,
+      //+", "+address_shipping.address2
+      + ", " + item.address_shipping.address5
+      + ", " + item.address_shipping.address4
+      + ", " + item.address_shipping.address3,
     userId: req.user._id,
-    
+
     subTotal: item.price,
     totalPrice: parseInt(item.price) + parseInt(item.shipping_fee) - parseInt(item.voucher),
     totalAmount: item.price - platformFee,
@@ -519,7 +517,7 @@ module.exports.createLazadaOrder = async (req,res) => {
     //list item
     lineItems: listItem.data.reduce((acc, i) => {
       let index = acc.findIndex(j => j.sku === i.sku)
-      if(index === -1) {
+      if (index === -1) {
         return [
           ...acc,
           {
@@ -543,27 +541,27 @@ module.exports.createLazadaOrder = async (req,res) => {
   }
 
   const order = await Order.findOneAndUpdate({ code: item.order_number }, orderInformation, { upsert: true, timestamps: false, runValidators: true })
-  
+
   try {
     res.send(order);
   } catch (e) {
     res.status(500).send(Error(e));
   }
 }
-module.exports.createSendoOrder = async (req,res) => {
+module.exports.createSendoOrder = async (req, res) => {
   const { item, cred } = req.body;
 
-  const created_at = new Date(item.sales_order.created_date_time_stamp*1000).setHours(new Date(item.sales_order.created_date_time_stamp*1000).getHours() - 7)
-  const updated_at = new Date(item.sales_order.updated_date_time_stamp*1000).setHours(new Date(item.sales_order.updated_date_time_stamp*1000).getHours() - 7)
+  const created_at = new Date(item.sales_order.created_date_time_stamp * 1000).setHours(new Date(item.sales_order.created_date_time_stamp * 1000).getHours() - 7)
+  const updated_at = new Date(item.sales_order.updated_date_time_stamp * 1000).setHours(new Date(item.sales_order.updated_date_time_stamp * 1000).getHours() - 7)
 
   item.sku_details.forEach(e => {
     e.name = e.product_name
   });
-
-  const mappingStep = { 2: { index: 0, name: 'Đặt hàng' }, 3: { index: 1, name: 'Duyệt'}, 4: { index: 2, name: 'Đóng gói'} , 6: { index: 3, name: 'Xuất kho/Đang giao hàng'}, 7: { index: 4, name: 'Đã giao hàng'}, 8: { index: 5, name: 'Hoàn thành'}, 10: { index: 5, name: 'Hoàn thành'}, 13: { index: 6, name: 'Đã hủy'} }
+  
+  const mappingStep = { 2: { index: 0, name: 'Đặt hàng' }, 3: { index: 1, name: 'Duyệt' }, 4: { index: 2, name: 'Đóng gói' }, 6: { index: 3, name: 'Xuất kho/Đang giao hàng' }, 7: { index: 4, name: 'Đã giao hàng' }, 8: { index: 5, name: 'Hoàn thành' }, 10: { index: 6, name: 'Hoàn thành' }, 13: { index: 7, name: 'Đã hủy' }, 21: { index: 8, name: 'Đang hoàn trả' }, 22: { index: 9, name: 'Đã hoàn trả' } }
   const completeStep = item.sales_order.order_status
   let configStep = step.map((st, index) => {
-    if(index <= mappingStep[completeStep].index) { 
+    if (index <= mappingStep[completeStep].index) {
       return {
         name: st.name,
         createdAt: index === 0 ? created_at : index === mappingStep[completeStep].index ? updated_at : null,
@@ -628,7 +626,7 @@ module.exports.createSendoOrder = async (req,res) => {
       shippingVoucher: item.sales_order.shipping_voucher_amount,
       platformFee: item.sales_order.shop_program_amount || 0,
       //list item
-      lineItems: item.sku_details.map(i => ({ ...i, avatar: i.product_image })), 
+      lineItems: item.sku_details.map(i => ({ ...i, avatar: i.product_image })),
       createdAt: created_at,
       updatedAt: updated_at,
       //cancel-delay
@@ -646,12 +644,12 @@ module.exports.createSendoOrder = async (req,res) => {
 
     //create refund 
     const { delivery_status } = item.sales_order
-    if(delivery_status === 8 || delivery_status === 10) {
+    if (delivery_status === 8 || delivery_status === 10) {
       const matchedRefundOrder = await RefundOrder.findOne({
         code: item.sales_order.order_number,
       })
-      
-      if(!matchedRefundOrder) {
+
+      if (!matchedRefundOrder) {
         await RefundOrder.findOneAndUpdate({ code: item.sales_order.order_number }, {
           ...orderInformation,
           step: [
@@ -676,7 +674,7 @@ module.exports.createSendoOrder = async (req,res) => {
           instockStatus: delivery_status === 10
         }, { upsert: true, timestamps: false, runValidators: true })
       }
-    }    
+    }
   } catch (e) {
     console.log(e.message)
     res.status(500).send(Error(e));
@@ -687,7 +685,7 @@ module.exports.getAllOrder = async (req, res) => {
   try {
 
     const orders = await Order.find({ userId: req.user._id, source: 'web' })
-    
+
     res.send(orders)
   } catch (e) {
     res.status(500).send(Error(e));
@@ -779,7 +777,6 @@ module.exports.getAllMarketplaceOrder = async (req, res) => {
       return res.send(orders)
     }
     // console.log("filter: ", req.query)
-    
   } catch (e) {
     console.log(e.message)
     res.status(500).send(Error(e));
@@ -813,9 +810,9 @@ module.exports.updatePayment = async (req, res) => {
     await checkComplete(req.params._id)
 
     res.status(200).send(order)
-  } catch(e) {
+  } catch (e) {
     console.log(e.message)
-    res.status(400).send(Error({ message: 'update purchase payment went wrong !!!'}))
+    res.status(400).send(Error({ message: 'update purchase payment went wrong !!!' }))
   }
 }
 
@@ -845,8 +842,8 @@ module.exports.cancelOrder = async (req, res) => {
 
     res.status(200).send(order)
 
-  } catch(e) {
-    res.status(400).send(Error({ message: 'Hủy đơn hàng thất bại!'}))
+  } catch (e) {
+    res.status(400).send(Error({ message: 'Hủy đơn hàng thất bại!' }))
   }
 }
 
@@ -857,9 +854,9 @@ module.exports.fetchApiOrders = async (req, res) => {
 
   let allCreds = [].concat(matchedStorage.sendoCredentials).concat(matchedStorage.lazadaCredentials)
 
-  try { 
+  try {
     await Promise.all(allCreds.map(async (cred, index) => {
-      if(cred.platform_name === 'lazada') {
+      if (cred.platform_name === 'lazada') {
         let now = new Date()
         const response = await rp({
           // url: `${process.env.API_URL}/api/lazada/orders?lastSync=${new Date(cred.lastSync).getTime()}`,
@@ -870,7 +867,7 @@ module.exports.fetchApiOrders = async (req, res) => {
             'Platform-Token': cred.access_token
           }
         })
-  
+
         const lazOrders = JSON.parse(response).data.orders || []
 
         console.log("laz: ", lazOrders)
@@ -879,20 +876,20 @@ module.exports.fetchApiOrders = async (req, res) => {
           const mongoMatchedOrder = await Order.findOne({ code: order.order_number.toString() })
           // console.log(new Date(order.updated_at).toLocaleString())
           // console.log(new Date(order.created_at).toLocaleString())
-          
-          if(mongoMatchedOrder) {
+
+          if (mongoMatchedOrder) {
             const secondDiff = timeDiff(new Date(mongoMatchedOrder.updatedAt), new Date(new Date(order.created_at))).secondsDifference
-            if(secondDiff === 0) {
+            if (secondDiff === 0) {
               // console.log("Do nothing")
               return order;
             }
-            
+
           }
 
           try {
             await rp({
               method: 'POST',
-              url:"http://localhost:5000/orders/lazada",
+              url: "http://localhost:5000/orders/lazada",
               headers: {
                 'Authorization': 'Bearer ' + req.mongoToken,
                 'Platform-Token': cred.access_token
@@ -903,11 +900,11 @@ module.exports.fetchApiOrders = async (req, res) => {
                 cred
               }
             })
-          } catch(e) {
+          } catch (e) {
             console.log(e.message)
           }
         }))
-      } else if(cred.platform_name === 'sendo') {
+      } else if (cred.platform_name === 'sendo') {
         let now = new Date()
         const response = await rp({
           url: `${process.env.API_URL}/api/sendo/orders`,
@@ -927,9 +924,9 @@ module.exports.fetchApiOrders = async (req, res) => {
             "token": null
           }
         })
-  
+
         const senOrders = response.result.data
-        console.log(senOrders)
+        
         await Promise.all(senOrders.map(async order => {
           const opt = {
             method: 'GET',
@@ -945,17 +942,17 @@ module.exports.fetchApiOrders = async (req, res) => {
           // console.log(fullDetailOrder)
 
           const mongoMatchedOrder = await Order.findOne({ code: fullDetailOrder.sales_order.order_number })
-          
-          if(mongoMatchedOrder) {
+
+          if (mongoMatchedOrder) {
             // console.log("Sendo: ", new Date(fullDetailOrder.sales_order.updated_date_time_stamp * 1000).toLocaleString())
             // console.log("Mongo: ", new Date(mongoMatchedOrder.updatedAt).toLocaleString())
-            const secondDiff = timeDiff(new Date(mongoMatchedOrder.updatedAt), new Date(new Date(fullDetailOrder.sales_order.updated_date_time_stamp*1000).setHours(new Date(fullDetailOrder.sales_order.updated_date_time_stamp*1000).getHours() - 7))).secondsDifference
+            const secondDiff = timeDiff(new Date(mongoMatchedOrder.updatedAt), new Date(new Date(fullDetailOrder.sales_order.updated_date_time_stamp * 1000).setHours(new Date(fullDetailOrder.sales_order.updated_date_time_stamp * 1000).getHours() - 7))).secondsDifference
             // console.log("Second diff", secondDiff)
-            if(secondDiff === 0) {
+            if (secondDiff === 0) {
               // console.log("Do nothing")
               return order;
             }
-            
+
           }
 
           // console.log("Create new order")
@@ -973,7 +970,7 @@ module.exports.fetchApiOrders = async (req, res) => {
             }
           })
         }))
-  
+
         // matchedStorage.sendoCredentials[index].lastSync = new Date().getTime()
       }
     }))
@@ -981,7 +978,7 @@ module.exports.fetchApiOrders = async (req, res) => {
     matchedStorage.save()
 
     res.send("ok")
-  } catch(e) {
+  } catch (e) {
     console.log("Fetch failed: ", e.message)
     res.status(500).send(Error({ message: 'Có gì đó sai sai: , ' + e.message }))
   }
@@ -991,19 +988,19 @@ module.exports.fetchApiOrders = async (req, res) => {
 module.exports.printBill = async (req, res) => {
   const order = req.body
   const mongoOrder = await Order.findOne({ _id: order._id })
-  if(mongoOrder.bill) { 
+  if (mongoOrder.bill) {
     const htmlContent = await rp.get(mongoOrder.bill)
     return res.send({ bill: htmlContent })
   }
 
   const currentStorage = await Storage.findOne({ _id: req.user.currentStorage.storageId })
-  try { 
-    if(order.source === 'sendo') {
+  try {
+    if (order.source === 'sendo') {
       const response = await rp({
         method: 'GET',
         url: `${process.env.API_URL}/api/sendo/print-bill/${order.code}`,
         headers: {
-          'Authorization': 'Bearer ' + req.mongoToken, 
+          'Authorization': 'Bearer ' + req.mongoToken,
           'Platform-Token': currentStorage.sendoCredentials.find(i => i.store_id === order.store_id).access_token
         },
       })
@@ -1015,10 +1012,10 @@ module.exports.printBill = async (req, res) => {
       const htmlContent = await rp.get(response)
 
       return res.status(200).send({ bill: htmlContent })
-    } else if(order.source === 'lazada') {}
-  } catch(e) {
+    } else if (order.source === 'lazada') { }
+  } catch (e) {
     console.log("print bill failed: ", e.message)
-    res.status(500).send(Error({ message: "Có gì đó sai sai !"}))
+    res.status(500).send(Error({ message: "Có gì đó sai sai !" }))
   }
 }
 
@@ -1030,8 +1027,8 @@ module.exports.createSendoRefundOrder = async (req, res) => {
 module.exports.confirmPlatformOrder = async (req, res) => {
   const { order } = req.body
 
-  try { 
-    if(order.source === 'sendo') {
+  try {
+    if (order.source === 'sendo') {
       await rp({
         method: 'PUT',
         url: `${process.env.API_URL}/api/sendo/orders/${order.code}`,
@@ -1054,13 +1051,13 @@ module.exports.confirmPlatformOrder = async (req, res) => {
 
       console.log(fixedStep)
 
-      await Order.findByIdAndUpdate(order._id, { 
+      await Order.findByIdAndUpdate(order._id, {
         step: fixedStep
       })
 
       return res.status(200).send("Ok")
     }
-  } catch(e) {
+  } catch (e) {
     console.log(e.message)
     res.status(e.statusCode).send(Error({ message: 'Xác nhận còn hàng thất bại: ' + e.message }))
   }

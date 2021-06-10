@@ -421,12 +421,12 @@ module.exports.searchOrderOnSendo =  async (req, res) =>{
           'cache-control': 'no-cache'
         },
         body: JSON.stringify({
-          "page_size":req.body.page_size,
           "order_status":req.body.order_status,
           "order_date_from":req.body.order_date_from,
           "order_date_to":req.body.order_date_to,
           "order_status_date_from":req.body.order_status_date_from,
           "order_status_date_to":req.body.order_status_date_to,
+          "page_size":req.body.page_size,
           "token":req.body.token})
       };
       request(options, function (error, response) {
