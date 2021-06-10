@@ -5,7 +5,6 @@ const Inventory = require("../models/inventory")
 const Variant = require("../models/variant")
 const rp = require('request-promise')
 const timeDiff = require('../utils/timeDiff');
-const { filter } = require("bluebird");
 
 
 const payment_method = {
@@ -26,11 +25,11 @@ const payment_status = {
   "15": "Hoàn trả một phần"
 }
 const order_status = {
-  "2": "Đặt hàng",
+  "2": "Chờ xác nhận",
   "3": "Đang xử lý",
   "6": "Đang giao hàng",
-  "7": "POD",
-  "8": "Đã hoàn thành",
+  "7": "Đã giao hàng",
+  "8": "Đã hoàn tất",
   "10": "Đã đóng",
   "11": "Delaying",
   "12": "Delay",
@@ -38,8 +37,8 @@ const order_status = {
   "14": "Splitting",
   "15": "Splitted",
   "19": "Merging",
-  "21": "Returning",
-  "22": "Returned",
+  "21": "Đang đổi trả",
+  "22": "Đã đổi trả",
   "23": "WaitingSendo",
 }
 const sendo_cancel_reason = {
@@ -77,11 +76,11 @@ const sendo_delivery_status = {
 //locpro
 const lazada_order_status = {
   'unpaid': 'Đang chờ xác nhận thanh toán', // khách chưa config delivery info
-  'pending': 'Đang chờ xử lý',
-  'toship': 'Chờ giao hàng',
-  'packed': 'Đã đóng gói',
-  'ready_to_ship': 'Sẵn sàng giao hàng',
-  'shipped': 'Đã giao hàng',
+  'pending': 'Đang xử lý / Chờ xác nhận',
+  // 'toship': 'Chờ giao hàng', 
+  'packed': 'Đang xử lý / Đã đóng gói',
+  'ready_to_ship': 'Đang xử lý / Sẵn sàng giao hàng',
+  'shipped': 'Đang giao hàng',
   'delivered': 'Đã giao hàng',
   'canceled': 'Đã hủy',
   'returned': 'Đã hoàn trả',
@@ -96,7 +95,7 @@ const lazada_order_status_index = {
   }, // khách chưa config delivery info
   'pending': {
     index: 1,
-    name: 'Đang chờ xử lý'
+    name: 'Đang xử lý'
   },
   'packed': {
     index: 2,
@@ -409,9 +408,7 @@ module.exports.createLazadaOrder = async (req, res) => {
     },
     json: true
   })
-
-  console.log(item)
-
+  
   const mappingStep = {
     'unpaid': {
       index: 0,
@@ -421,7 +418,7 @@ module.exports.createLazadaOrder = async (req, res) => {
     'pending': {
       index: 1,
       step: 1,
-      name: 'Đang chờ xử lý'
+      name: 'Đang xử lý'
     },
     'packed': {
       index: 2,
@@ -513,6 +510,8 @@ module.exports.createLazadaOrder = async (req, res) => {
     totalAmount: item.price - platformFee,
     shippingVoucher: item.shipping_fee_discount_platform + item.shipping_fee_discount_seller,
     shippingFee: item.shipping_fee_original,
+    trackingNumber: listItem.data[0].tracking_code,
+    outstockStatus: !!listItem.data[0].tracking_code,
     // outstockStatus: lazada_order_status_index[item.statuses[0]].index >= 3,
     platformFee,
     //list item
@@ -558,7 +557,7 @@ module.exports.createSendoOrder = async (req, res) => {
   item.sku_details.forEach(e => {
     e.name = e.product_name
   });
-
+  
   const mappingStep = { 2: { index: 0, name: 'Đặt hàng' }, 3: { index: 1, name: 'Duyệt' }, 4: { index: 2, name: 'Đóng gói' }, 6: { index: 3, name: 'Xuất kho/Đang giao hàng' }, 7: { index: 4, name: 'Đã giao hàng' }, 8: { index: 5, name: 'Hoàn thành' }, 10: { index: 6, name: 'Hoàn thành' }, 13: { index: 7, name: 'Đã hủy' }, 21: { index: 8, name: 'Đang hoàn trả' }, 22: { index: 9, name: 'Đã hoàn trả' } }
   const completeStep = item.sales_order.order_status
   let configStep = step.map((st, index) => {
@@ -572,6 +571,27 @@ module.exports.createSendoOrder = async (req, res) => {
       return st
     }
   })
+  // xu ly mapping hoan tra status
+  if(completeStep === 13) {
+    if(item.sales_order.delivery_status === 8) {
+      configStep[7] = {
+        name: 'Đang hoàn trả',
+        createdAt: updated_at,
+        isCreated: true
+      }
+    } else if(item.sales_order.delivery_status === 10) {
+        configStep[7] = {
+          name: 'Đang hoàn trả',
+          isCreated: true
+        }
+        configStep[8] = {
+          name: 'Đã hoàn trả',
+          createdAt: updated_at,
+          isCreated: true
+        }
+    }
+  }
+  // xu ly mapping hoan tra status
   try {
     const orderInformation = {
       source: "sendo",
@@ -675,11 +695,90 @@ module.exports.getAllOrder = async (req, res) => {
 
 module.exports.getAllMarketplaceOrder = async (req, res) => {
   try {
-
-    const orders = await Order.find({ userId: req.user._id, source: { $ne: 'web' } })
-
-    res.send(orders)
+    const filter = req.query
+    console.log("order filter: ", filter)
+    const dateFrom = new Date(parseFloat(filter.dateFrom)).toISOString()
+    const dateTo = new Date(parseFloat(filter.dateTo)).toISOString()
+    if(filter.orderStatus === 'Chờ xác nhận') {
+      //default query
+      const orders = await Order.find({ 
+        userId: req.user._id, 
+        updatedAt: { $gte: dateFrom, $lte: dateTo },
+        $or: [
+          {
+            source: 'sendo',
+            orderStatus: 'Chờ xác nhận'
+          }, 
+          {
+            source: 'lazada',
+            orderStatus: 'Đang xử lý / Chờ xác nhận'
+          }
+        ]
+      })
+      return res.send(orders)
+    } else if(filter.orderStatus === 'Đang xử lý'){
+      const orders = await Order.find({ 
+        userId: req.user._id, 
+        updatedAt: { $gte: dateFrom, $lte: dateTo },
+        $or: [
+          {
+            source: 'sendo',
+            orderStatus: 'Đang xử lý',
+            deliveryStatus: 'Đang xử lý'
+          }, 
+          {
+            source: 'sendo',
+            orderStatus: 'Đang xử lý',
+            deliveryStatus: 'Đang lấy hàng'
+          },  
+          {
+            source: 'sendo',
+            orderStatus: 'Đang xử lý',
+            deliveryStatus: 'Đang xếp hàng'
+          }, 
+          {
+            source: 'lazada',
+            orderStatus: 'Đang xử lý / Chờ xác nhận',
+          }, 
+          {
+            source: 'lazada',
+            orderStatus: 'Đang xử lý / Đã đóng gói',
+          }, 
+          {
+            source: 'lazada',
+            orderStatus: 'Đang xử lý / Sẵn sàng giao hàng',
+          }, 
+        ],
+      })
+      return res.send(orders)
+    } else if(filter.orderStatus === 'Đang hoàn trả' || filter.orderStatus === 'Đã hoàn trả') {
+      const orders = await Order.find({ 
+        userId: req.user._id, 
+        updatedAt: { $gte: dateFrom, $lte: dateTo },
+        $or: [
+          {
+            source: 'sendo',
+            orderStatus: 'Đã hủy',
+            deliveryStatus: filter.orderStatus === 'Đang hoàn trả' ? "Trả hàng cho người bán" : "Người bán đã nhận lại hàng",
+          }, 
+          {
+            source: 'lazada',
+            orderStatus: filter.orderStatus
+          }
+        ]
+      })
+      return res.send(orders)
+    } else {
+      const orders = await Order.find({ 
+        userId: req.user._id, 
+        orderStatus: filter.orderStatus,
+        updatedAt: { $gte: dateFrom, $lte: dateTo }
+      })
+      return res.send(orders)
+    }
+    // console.log("filter: ", req.query)
   } catch (e) {
+    console.log(e.message)
     res.status(500).send(Error(e));
   }
 
@@ -700,10 +799,10 @@ module.exports.updatePayment = async (req, res) => {
     const order = await Order.findOne({ _id: req.params._id, userId: req.user._id })
 
     order.paidPrice += req.body.paidPrice
-    order.paidHistory.push({ title: `Xác nhận thanh toán ${req.body.formattedPaidPrice}`, date: Date.now() })
-    if (order.paidPrice === order.totalPrice) {
+    order.paidHistory.push({ title: `Xác nhận thanh toán ${req.body.formattedPaidPrice}`, date: Date.now()})
+    if(order.paidPrice === order.totalAmount) {
       order.paymentStatus = 'Đã thanh toán'
-    } else if (order.paidPrice >= 0 && order.paidPrice < order.totalPrice) {
+    } else if(order.paidPrice >= 0 && order.paidPrice < order.totalAmount) {
       order.paymentStatus = 'Thanh toán một phần'
     }
 
@@ -818,7 +917,7 @@ module.exports.fetchApiOrders = async (req, res) => {
           body: {
             "page_size": 10,
             // "order_status": 2,
-            "order_date_from": cred.lastSync ? new Date(cred.lastSync).toISOString().split('T')[0] : new Date(now.setDate(now.getDate() - 14)).toISOString().split('T')[0],
+            "order_date_from": cred.lastSync ? new Date(cred.lastSync).toISOString().split('T')[0] : new Date(now.setDate(now.getDate() - 364)).toISOString().split('T')[0],
             "order_date_to": new Date().toISOString().split('T')[0],
             "order_status_date_from": null,
             "order_status_date_to": null,
@@ -827,7 +926,7 @@ module.exports.fetchApiOrders = async (req, res) => {
         })
 
         const senOrders = response.result.data
-
+        
         await Promise.all(senOrders.map(async order => {
           const opt = {
             method: 'GET',

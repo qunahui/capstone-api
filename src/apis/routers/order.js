@@ -11,7 +11,7 @@ var task
 
 function fetchOrderCron(){
   let count = 1
-    task = cron.schedule('*/15 * * * * *', async () => {
+    task = cron.schedule('*/10 * * * * *', async () => {
       console.log("Fetch orders cron is running....")
       console.log("Cron index: ", count++)
       const autoSyncStorages = await Storage.find({ autoSync: true })
