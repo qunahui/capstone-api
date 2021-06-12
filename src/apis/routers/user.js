@@ -20,6 +20,6 @@ router.patch("/update", auth, controller.editProfile);
 
 router.delete("/delete", auth, controller.deleteProfile);
 
-router.get("/reset", controller.sendMailResetPW);
-
+router.patch("/change-password", controller.changePassword);
+router.get("/reset-password", controller.resetPassword);
 module.exports = router;
