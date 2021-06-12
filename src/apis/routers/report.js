@@ -3,6 +3,7 @@ const router = express.Router();
 const auth = require("../../middlewares/auth");
 const controller = require("../controllers/report");
 
-router.get("/sendo", auth, controller.getSendoSalesReport);
+router.get("/", auth, controller.getSalesReport);
+
 
 module.exports = router;
