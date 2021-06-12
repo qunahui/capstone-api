@@ -106,7 +106,7 @@ module.exports.authorizeCredential = async (req, res) => {
         res.status(200).send(insertCredential)
       } else {
         // error return from lazada
-        res.status(500).send(Error({ message: JSON.stringify(response) }))
+        res.status(500).send(Error({ message: JSON.stringify({ response, options}) }))
       }
   } catch (e) {
     console.log("authorize lazada failed: ", e.message)
