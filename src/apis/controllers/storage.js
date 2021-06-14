@@ -21,8 +21,6 @@ module.exports.getActivities = async (req, res) => {
       storageId: req.user.currentStorage.storageId
     }).sort([['createdAt', 'descending']])
 
-    console.log(activityLog)
-
     res.status(200).send(activityLog)
   } catch(e) {
     console.log("Get activity failed: ", e.message)
