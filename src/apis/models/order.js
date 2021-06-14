@@ -52,6 +52,9 @@ const orderSchema = new Schema({
   store_id: {
     type: String,
   },
+  storageId: {
+    type: mongoose.Schema.Types.ObjectId,
+  },
   store_name: {
     type: String,
   },
