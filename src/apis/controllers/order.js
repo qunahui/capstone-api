@@ -373,7 +373,7 @@ module.exports.createMMSOrder = async (req, res) => {
       },
     ]
 
-    const { storageId, storageName } = req.user.currentStorage.storageId
+    const { storageId, storageName } = req.user.currentStorage
     const order = new Order({
       ...req.body,
       step,
@@ -687,8 +687,8 @@ module.exports.createSendoOrder = async (req, res) => {
 module.exports.getAllOrder = async (req, res) => {
   try {
 
+    console.log(req.user.currentStorage.storageId)
     const orders = await Order.find({ storageId: req.user.currentStorage.storageId, source: 'web' })
-
     res.send(orders)
   } catch (e) {
     res.status(500).send(Error(e));
