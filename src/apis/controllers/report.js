@@ -6,45 +6,46 @@ const {Order} = require("../models/order")
 
 module.exports.getSalesReport = async (req, res) => {
     try {
-        const store_id = "dd206b84824147e9ad3f650111051563"
+        const store_id = req.query.store_id 
+        const storageId = req.user.currentStorage.storageId
         const period = req.query.period
-        const dateRange = req.query.dateRange != undefined ? req.query.dateRange.split("|") : ["",""]
+        const dateFrom = req.query.dateFrom
+        const dateTo = req.query.dateTo
+        let date1 =0, date2 =0, date3 =0, date4 = 0
         let completeOrders1 = 0, revenue1 = 0, avgRevenue1 = 0, salesProductNumber1 = 0, totalOrders1 = 0 //so don hoan thanh, doanh thu, doanh thu trung binh tren 1 don, so san pham ban duoc
         let completeOrders2 = 0, revenue2 = 0, avgRevenue2 = 0, salesProductNumber2 = 0, totalOrders2 = 0
         if(period == "last7days"){
-            date1 = new Date().valueOf() - 1000*60*60*24*7
-            date2 = new Date().valueOf() - 1000*60*60*24
+            date1 = new Date().setHours(0,0,0,0) - 1000*60*60*24*7
+            date2 = new Date().setHours(23,59,59,999) - 1000*60*60*24
 
-            date3 = new Date().valueOf() - 1000*60*60*24*15
-            date4 = new Date().valueOf() - 1000*60*60*24*8
+            date3 = new Date().setHours(0,0,0,0) - 1000*60*60*24*15
+            date4 = new Date().setHours(23,59,59,999) - 1000*60*60*24*8
         }else if(period == "last30days"){
-            date1 = new Date().valueOf() - 1000*60*60*24*30
-            date2 = new Date().valueOf() - 1000*60*60*24
+            date1 = new Date().setHours(0,0,0,0) - 1000*60*60*24*30
+            date2 = new Date().setHours(23,59,59,999) - 1000*60*60*24
 
-            date3 = new Date().valueOf() - 1000*60*60*24*60
-            date4 = new Date().valueOf() - 1000*60*60*24*31
+            date3 = new Date().setHours(0,0,0,0) - 1000*60*60*24*60
+            date4 = new Date().setHours(23,59,59,999) - 1000*60*60*24*31
         }else if(period ==  "week"){
-            date1 = dateRange[0] 
-            date2 = dateRange[1] 
+            date1 = parseFloat(dateFrom) 
+            date2 = parseFloat(dateTo) 
 
-            date3 = new Date(date1).valueOf()- 1000*60*60*24*7
-            date4 = new Date(date1).valueOf()- 1000*60*60*24
+            date3 = dateFrom - 1000*60*60*24*7
+            date4 = dateTo - 1000*60*60*24
         }else if(period ==  "month"){
             
-            date1 = dateRange[0]
-            date2 = dateRange[1]
+            date1 = parseFloat(dateFrom)
+            date2 = parseFloat(dateTo)
             
-            date4 = new Date((new Date(date1)).valueOf()- 1000*60*60*24).toISOString().split("T")[0]
-            date3 = date4.split("-")
-            date3.pop()
-            date3 = date3.concat(["01"]).join("-")
+            date4 = dateFrom- 1000*60*60*24
+            date3 = new Date(date4).setDate(1)
         }
         
         const list1 = await Order.find(
             {
-                createdAt: {"$gte": new Date(date1).toLocaleDateString(), "$lte": new Date(date2).toLocaleDateString()},
+                createdAt: {$gte: date1, $lte: date2},
                 store_id: store_id,
-                userId: req.user._id
+                storageId: storageId
             },{ 
                 _id: 0,
                 totalAmount: 1, 
@@ -64,9 +65,9 @@ module.exports.getSalesReport = async (req, res) => {
         }
         const list2 = await Order.aggregate([{
             $match:{
-                createdAt: {"$gte": new Date(date3).toLocaleDateString(), "$lte": new Date(date4).toLocaleDateString()},
+                createdAt: {"$gte": date3, "$lte": date4},
                 store_id: store_id,
-                userId: req.user._id
+                storageId: storageId
             }},{ 
             $project:{ 
                 _id: 0,

@@ -686,10 +686,28 @@ module.exports.createSendoOrder = async (req, res) => {
 
 module.exports.getAllOrder = async (req, res) => {
   try {
-
+    const filter = req.query
+    console.log("order filter: ", filter)
     console.log(req.user.currentStorage.storageId)
-    const orders = await Order.find({ storageId: req.user.currentStorage.storageId, source: 'web' })
-    res.send(orders)
+    const dateFrom = new Date(parseFloat(filter.dateFrom)).toISOString()
+    const dateTo = new Date(parseFloat(filter.dateTo)).toISOString()
+    if(filter.orderStatus === 'Tất cả') {
+      //default query
+      const orders = await Order.find({ 
+        storageId: req.user.currentStorage.storageId,
+        updatedAt: { $gte: dateFrom, $lte: dateTo },
+        source: 'web'
+      })
+      return res.send(orders)
+    }else{
+      const orders = await Order.find({ 
+        storageId: req.user.currentStorage.storageId,
+        updatedAt: { $gte: dateFrom, $lte: dateTo },
+        source: 'web',
+        orderStatus: filter.orderStatus
+      })
+      return res.send(orders)
+    }
   } catch (e) {
     res.status(500).send(Error(e));
   }
