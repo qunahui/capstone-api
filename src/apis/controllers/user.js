@@ -252,10 +252,10 @@ module.exports.changePassword = async (req, res) => {
     if(passToken.type === "change-pass" ){
         if(Date.now() >= passToken.exp * 1000){
           const user = await User.findOne({_id: passToken.userId})
-          user.password = password
 
           await User.findOneAndUpdate({ _id: passToken.userId }, {
-            changePassToken: null
+            changePassToken: null,
+            password
           })
           res.status(200).send("Ok")
         } else {
