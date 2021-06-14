@@ -82,8 +82,11 @@ const schema = new Schema({
     },
     roleAccess: {
       type: [String]
-    }
-  }]
+    },
+  }],
+  changePassToken: {
+    type: String
+  }
 });
 
 schema.methods.toJSON = function () {
