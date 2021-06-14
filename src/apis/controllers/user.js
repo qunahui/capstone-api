@@ -4,7 +4,6 @@ const auth = require("../../middlewares/auth");
 const Error = require("../utils/error");
 const nodemailer = require('nodemailer');
 const ActivityLog = require('../models/activityLog')
-
 const sellerAccess = [
   'marketplaceProduct.create',
   'marketplaceProduct.read',
@@ -237,15 +236,81 @@ module.exports.sendMailResetPW = async (req, res) => {
   
 };
 
-module.exports.resetPassword = async (req, res) => {
-  const token = req.body.token
-  const password = req.body.password
+module.exports.changePassword = async (req, res) => {
   
-  //so sánh token
-
   try {
-    //findOneAndUpdate
+    const token = req.body.token
+    const password = req.body.password
+  
+    
+    const passToken = jwt.decode(token)
+    
+    if(passToken.type === "change-pass" ){
+        if(passToken.exp*1000 >= new Date().valueOf()){
+          console.log("còn thời hạn")
+        // const user = await User.findOne({_id: passToken.userId})
+        // user.password = password
+
+        // await user.save()
+        // res.send("done")
+        }else{
+          console.log("hết thời hạn")
+        }
+    }else{
+      console.log("type invalid")
+    }
+    
   } catch (e) {
+    res.status(404).send(Error(e));
+  }
+};
+
+module.exports.resetPassword = async (req, res) => {
+  try {
+      const email = req.query.email
+      const user = await User.findOne({email: email})
+      if(!user){
+        res.send("user không tồn tại trong hệ thống!")
+        return
+      }
+      const passToken = jwt.sign({ 
+        userId: user._id.toString(),
+        type: "change-pass"
+      }, "thuongthuong", {
+        expiresIn: '600'
+      })
+
+      const transporter = nodemailer.createTransport(option);
+      transporter.verify(function(error, success) {
+        // Nếu có lỗi.
+        if (error) {
+            console.log(error);
+        } else { //Nếu thành công.
+            console.log('Kết nối thành công!');
+    
+            const mail = {
+              from: 'clonelocpro1@gmail.com', // Địa chỉ email của người gửi
+              to: email, // Địa chỉ email của người gửi
+              subject: 'Reset Password', // Tiêu đề mail
+              text: 'bố reset pw cho lần này thôi nhé! https://frontend/forgot?token=' + passToken, // Nội dung mail dạng text
+              //html :  url: localhost:3000/.... + token
+            };
+          
+            transporter.sendMail(mail, function(error, info) {
+              if (error) { // nếu có lỗi
+                  console.log(error);
+              } else { //nếu thành công
+                  console.log('Email sent: ' + info.response);
+                  res.send("done")
+              }
+            });
+        }
+    
+      });
+      
+  
+  } catch (e) {
+    console.log(e)
     res.status(404).send(Error(e));
   }
 };

@@ -39,21 +39,20 @@ module.exports.getSalesReport = async (req, res) => {
             date3.pop()
             date3 = date3.concat(["01"]).join("-")
         }
-
-        const list1 = await Order.aggregate([{
-            $match:{
-                createdAt: {"$gte": new Date(date1), "$lte": new Date(date2)},
+        
+        const list1 = await Order.find(
+            {
+                createdAt: {"$gte": new Date(date1).toLocaleDateString(), "$lte": new Date(date2).toLocaleDateString()},
                 store_id: store_id,
                 userId: req.user._id
-            }},{ 
-            $project:{ 
+            },{ 
                 _id: 0,
                 totalAmount: 1, 
                 totalQuantity: 1,
                 orderStatus:1,
                 createdAt:1
-            }}
-        ])
+            }
+        )
         if(list1.length != 0){
             list1.forEach(order => {
                 if(order.orderStatus == "Đã hoàn tất"){
@@ -65,7 +64,7 @@ module.exports.getSalesReport = async (req, res) => {
         }
         const list2 = await Order.aggregate([{
             $match:{
-                createdAt: {"$gte": new Date(date3), "$lte": new Date(date4)},
+                createdAt: {"$gte": new Date(date3).toLocaleDateString(), "$lte": new Date(date4).toLocaleDateString()},
                 store_id: store_id,
                 userId: req.user._id
             }},{ 
