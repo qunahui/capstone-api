@@ -22,5 +22,6 @@ router.get("/change-default/:id", auth, controller.changeDefaultStorage)
 router.delete("/delete", auth, controller.deleteProfile);
 
 router.patch("/change-password", controller.changePassword);
+
 router.get("/reset-password", controller.resetPassword);
 module.exports = router;
