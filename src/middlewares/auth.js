@@ -29,9 +29,7 @@ const auth = async (req, res, next) => {
       }));
     }
 
-    user.currentStorage = user.storages[0].storage
-    delete user.storages
-    
+    user.currentStorage = user.storages.find(i => i.storage.current === true).storage
     
     req.user = user
     req.accessToken = platformToken

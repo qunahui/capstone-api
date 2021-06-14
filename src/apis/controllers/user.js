@@ -4,8 +4,49 @@ const auth = require("../../middlewares/auth");
 const Error = require("../utils/error");
 const nodemailer = require('nodemailer');
 const ActivityLog = require('../models/activityLog')
-const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
+const sellerAccess = [
+  'marketplaceProduct.create',
+  'marketplaceProduct.read',
+  'marketplaceProduct.update',
+  'marketplaceProduct.delete',
+  'marketplaceOrder.create',
+  'marketplaceOrder.read',
+  'marketplaceOrder.update',
+  'marketplaceOrder.delete',
+  'product.create',
+  'product.read',
+  'product.update',
+  'product.delete',
+  'order.create',
+  'order.read',
+  'order.update',
+  'order.delete',
+  'refundOrder.create',
+  'refundOrder.read',
+  'refundOrder.update',
+  'refundOrder.delete',
+  'purcharseOrder.create',
+  'purcharseOrder.read',
+  'purcharseOrder.update',
+  'purcharseOrder.delete',
+  'supplierRefundOrder.create',
+  'supplierRefundOrder.read',
+  'supplierRefundOrder.update',
+  'supplierRefundOrder.delete',
+  'config.create',
+  'config.read',
+  'config.update',
+  'config.delete',
+  'channel.create',
+  'channel.read',
+  'channel.update',
+  'channel.delete',
+  'report.create',
+  'report.read',
+  'report.update',
+  'report.delete',
+]
+
 const option = {
   service: 'gmail',
   auth: {
@@ -14,8 +55,32 @@ const option = {
   }
 };
 
-console.log(process.env.API_URL)
+module.exports.changeDefaultStorage = async (req, res) => {
+  const { id } = req.params;
 
+  try {
+    const newStorages = req.user.storages.map(i => {
+      if(i.storage.current === true) {
+        i.storage.current = false
+      }
+  
+      if(i.storage.storageId.equals(id)) {
+        i.storage.current = true
+      }
+
+      return i
+    })
+  
+    await User.findOneAndUpdate({ _id: req.user._id}, {
+      storages: newStorages
+    })
+
+    return res.status(200).send("ok")
+  } catch (e) {
+    console.log(e.message)
+    return res.status(400).send(Error({ message: 'Đổi kho thất bại. Vui lòng thử lại sau! '}))
+  }
+}
 
 module.exports.getCurrentUser = async (req, res) => {
   res.status(200).send({ user: req.user });
@@ -25,12 +90,19 @@ module.exports.signUp = async (req, res) => {
   try {
     const user = new User({ 
       ...req.body,
-      role: 'Seller'
      });
     const storageName = 'STORAGE_' + user._id.toString().toUpperCase()
     const linkedStorage = new Storage({ displayName: storageName })
     await linkedStorage.save();
-    user.storages = user.storages.concat({ storage: {storageId: linkedStorage.id, storageName: linkedStorage.displayName} });
+    user.storages = user.storages.concat({ 
+      storage: {
+        storageId: linkedStorage.id, 
+        storageName: linkedStorage.displayName,
+        role: 'Nhà bán hàng',
+        roleAccess: sellerAccess,
+        current: true
+      } 
+    });
     await user.save();
     
     const token = await user.generateJWT();
@@ -63,10 +135,8 @@ module.exports.signIn = async (req, res) => {
 
     let now = new Date()
 
-    console.log("user: ", user)
-
     const activityLog = new ActivityLog({
-      storageId: user.storages[0].storage.storageId,
+      storageId: user.storages.find(i => i.storage.current === true).storage.storageId,
       userId: user._id,
       userName: user.displayName,
       userRole: user.role,

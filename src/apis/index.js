@@ -1,4 +1,5 @@
 const userRoutes = require("./routers/user");
+const employeeRoutes = require("./routers/employee");
 const productRoutes = require("./routers/product");
 const variantRoutes = require("./routers/variant");
 const categoryRoutes =  require("./routers/category");
@@ -25,6 +26,7 @@ module.exports = (app) => {
   app.use("/products", productRoutes);
   app.use("/variants", variantRoutes)
   app.use("/users", userRoutes);
+  app.use("/employees", employeeRoutes);
   app.use("/api/storage", storageRoutes);
   app.use("/api/sendo", sendoRoutes);
   app.use("/address", addressRoutes)

@@ -378,6 +378,7 @@ module.exports.createMMSOrder = async (req, res) => {
       ...req.body,
       step,
       store_id: storageId,
+      storageId,
       store_name: storageName
     })
 
@@ -483,6 +484,7 @@ module.exports.createLazadaOrder = async (req, res) => {
   const orderInformation = {
     source: "lazada",
     store_id: cred.store_id,
+    storageId: req.user.currentStorage.storageId,
     store_name: cred.store_name,
     orderStatus: lazada_order_status[item.statuses[0]] || item.statuses[0],
     code: item.order_number,
@@ -596,6 +598,7 @@ module.exports.createSendoOrder = async (req, res) => {
     const orderInformation = {
       source: "sendo",
       store_id: cred.store_id,
+      storageId: req.user.currentStorage.storageId,
       store_name: cred.store_name,
       code: item.sales_order.order_number,
       orderStatus: order_status[`${item.sales_order.order_status}`],
@@ -684,8 +687,8 @@ module.exports.createSendoOrder = async (req, res) => {
 module.exports.getAllOrder = async (req, res) => {
   try {
 
-    const orders = await Order.find({ userId: req.user._id, source: 'web' })
-
+    console.log(req.user.currentStorage.storageId)
+    const orders = await Order.find({ storageId: req.user.currentStorage.storageId, source: 'web' })
     res.send(orders)
   } catch (e) {
     res.status(500).send(Error(e));
@@ -702,7 +705,7 @@ module.exports.getAllMarketplaceOrder = async (req, res) => {
     if(filter.orderStatus === 'Chờ xác nhận') {
       //default query
       const orders = await Order.find({ 
-        userId: req.user._id, 
+        storageId: req.user.currentStorage.storageId,
         updatedAt: { $gte: dateFrom, $lte: dateTo },
         $or: [
           {
@@ -718,7 +721,7 @@ module.exports.getAllMarketplaceOrder = async (req, res) => {
       return res.send(orders)
     } else if(filter.orderStatus === 'Đang xử lý'){
       const orders = await Order.find({ 
-        userId: req.user._id, 
+        storageId: req.user.currentStorage.storageId,
         updatedAt: { $gte: dateFrom, $lte: dateTo },
         $or: [
           {
@@ -753,7 +756,7 @@ module.exports.getAllMarketplaceOrder = async (req, res) => {
       return res.send(orders)
     } else if(filter.orderStatus === 'Đang hoàn trả' || filter.orderStatus === 'Đã hoàn trả') {
       const orders = await Order.find({ 
-        userId: req.user._id, 
+        storageId: req.user.currentStorage.storageId,
         updatedAt: { $gte: dateFrom, $lte: dateTo },
         $or: [
           {
@@ -770,7 +773,7 @@ module.exports.getAllMarketplaceOrder = async (req, res) => {
       return res.send(orders)
     } else {
       const orders = await Order.find({ 
-        userId: req.user._id, 
+        storageId: req.user.currentStorage.storageId,
         orderStatus: filter.orderStatus,
         updatedAt: { $gte: dateFrom, $lte: dateTo }
       })
@@ -796,7 +799,10 @@ module.exports.getOrderById = async function (req, res) {
 
 module.exports.updatePayment = async (req, res) => {
   try {
-    const order = await Order.findOne({ _id: req.params._id, userId: req.user._id })
+    const order = await Order.findOne({ 
+      _id: req.params._id,
+      storageId: req.user.currentStorage.storageId,
+    })
 
     order.paidPrice += req.body.paidPrice
     order.paidHistory.push({ title: `Xác nhận thanh toán ${req.body.formattedPaidPrice}`, date: Date.now()})

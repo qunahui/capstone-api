@@ -15,5 +15,4 @@ router.post("/disconnect", auth, controller.disconnectStore)
 
 router.get("/fetch-shops", auth, controller.fetchShops);
 
-
 module.exports = router;

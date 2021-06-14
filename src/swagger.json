@@ -19,12 +19,12 @@
   },
   "servers": [
     {
-      "url": "http://localhost:5000/",
-      "description": "localhost"
-    },
-    {
       "url": "https://capstone-api-mms.herokuapp.com/",
       "description": "Heroku app"
+    },
+    {
+      "url": "http://localhost:5000/",
+      "description": "localhost"
     }
   ],
   "tags": [
