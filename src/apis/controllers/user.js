@@ -252,11 +252,9 @@ module.exports.changePassword = async (req, res) => {
     if(passToken.type === "change-pass" ){
         if(Date.now() >= passToken.exp * 1000){
           const user = await User.findOne({_id: passToken.userId})
-
-          await User.findOneAndUpdate({ _id: passToken.userId }, {
-            changePassToken: null,
-            password
-          })
+          user.password = password
+          user.changePassToken = null
+          await user.save()
           res.status(200).send("Ok")
         } else {
           res.status(403).send(Error({ message: 'Token hết thời hạn. Vui lòng gửi yêu cầu quên mật khẩu mới!' }));
