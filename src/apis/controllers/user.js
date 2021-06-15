@@ -4,6 +4,9 @@ const jwt = require("jsonwebtoken");
 const Error = require("../utils/error");
 const nodemailer = require('nodemailer');
 const ActivityLog = require('../models/activityLog')
+const mailgun = require("mailgun-js");
+const DOMAIN = 'https://api.mailgun.net/v3/sandbox4700eafcf2184e7f8b5ba1391c7a7e95.mailgun.org';
+
 const sellerAccess = [
   'marketplaceProduct.create',
   'marketplaceProduct.read',
@@ -289,31 +292,24 @@ module.exports.resetPassword = async (req, res) => {
         changePassToken: passToken
       })
 
-      const transporter = nodemailer.createTransport(option);
-      transporter.verify(function(error, success) {
-        // Nếu có lỗi.
-        if (error) {
-            console.log(error);
-        } else { //Nếu thành công.
+      const mg = mailgun({ apiKey: process.env.MAILGUN_API_KEY, domain: DOMAIN});
+      const data = {
+        from: 'MMS App',
+        to: email,
+        subject: 'Đặt lại mật khẩu',
+        text: `Đường dẫn đặt lại mật khẩu: ${process.env.FRONTEND_URL}/change-password?token=${passToken}`
+      };
 
-          const mail = {
-              from: process.env.NODEMAILER_EMAIL, // Địa chỉ email của người gửi
-              to: email, // Địa chỉ email của người gửi
-              subject: 'Đặt lại mật khẩu', // Tiêu đề mail
-              text: 'Link đặt lại mật khẩu: https://mms-track.netlify.app/change-password?token=' + passToken, // Nội dung mail dạng text
-              //html :  url: localhost:3000/.... + token
-            };
-          
-            transporter.sendMail(mail, function(error, info) {
-              if (error) { // nếu có lỗi
-                  console.log(error);
-              } else { //nếu thành công
-                  console.log('Email sent: ' + info.response);
-                  return res.status(200).send("Ok")
-              }
-            });
+      mg.messages().send(data, function (error, body) {
+        console.log(error)
+        if(error) {
+          console.log(error)
+          return res.status(400).send(Error({ message: 'Không thể gửi mail. Vui lòng thử lại sau !'}))
         }
+        console.log(body);
+        return res.send("ok")
       });
+
   } catch (e) {
     console.log("Error: ", e)
     res.status(500).send(Error({ message: e.message }));
