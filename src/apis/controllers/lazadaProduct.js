@@ -12,7 +12,7 @@ const Storage = require("../models/storage");
 
 const createLazadaProduct = async (item, additionalData) => {
   try {
-    const stringAttributes = await rp("http://localhost:5000/api/lazada/attribute/"+ item.primary_category)
+    const stringAttributes = await rp(`${process.env.API_URL}/api/lazada/attribute/`+ item.primary_category)
     const attributes = JSON.parse(stringAttributes)
     const variants = item.skus
     const attribute_sale_props = attributes.filter((attribute)=>{
@@ -271,7 +271,7 @@ module.exports.syncProducts = async (req, res) => {
 module.exports.createProduct = async (req, res) => {
   try {
     const item = req.body // change this
-    const stringAttributes = await rp("http://localhost:5000/api/lazada/attribute/"+ item.primary_category)
+    const stringAttributes = await rp(`${process.env.API_URL}/api/lazada/attribute/` + item.primary_category)
     const attributes = JSON.parse(stringAttributes)
     const variants = item.skus
     const attribute_sale_props = attributes.filter((attribute)=>{

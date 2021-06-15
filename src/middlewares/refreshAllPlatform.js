@@ -16,7 +16,7 @@ const auth = async (req, res, next) => {
     await Promise.all(creds.map(async cred => {
       await rp({
         method: 'POST',
-        url: `http://localhost:5000/api/${cred.platform_name}/login`,
+        url: `${process.env.API_URL}/api/${cred.platform_name}/login`,
         headers: {
           'Authorization': 'Bearer ' + req.mongoToken,
           'Platform-Token': cred.access_token

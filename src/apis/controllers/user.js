@@ -4,8 +4,7 @@ const jwt = require("jsonwebtoken");
 const Error = require("../utils/error");
 const nodemailer = require('nodemailer');
 const ActivityLog = require('../models/activityLog')
-const mailgun = require("mailgun-js");
-const DOMAIN = 'https://api.mailgun.net/v3/sandbox4700eafcf2184e7f8b5ba1391c7a7e95.mailgun.org';
+const sendMail = require('../../utils/ses_sendemail.js')
 
 const sellerAccess = [
   'marketplaceProduct.create',
@@ -292,23 +291,10 @@ module.exports.resetPassword = async (req, res) => {
         changePassToken: passToken
       })
 
-      const mg = mailgun({ apiKey: process.env.MAILGUN_API_KEY, domain: DOMAIN});
-      const data = {
-        from: 'MMS App',
-        to: email,
-        subject: 'Đặt lại mật khẩu',
-        text: `Đường dẫn đặt lại mật khẩu: ${process.env.FRONTEND_URL}/change-password?token=${passToken}`
-      };
-
-      mg.messages().send(data, function (error, body) {
-        console.log(error)
-        if(error) {
-          console.log(error)
-          return res.status(400).send(Error({ message: 'Không thể gửi mail. Vui lòng thử lại sau !'}))
-        }
-        console.log(body);
-        return res.send("ok")
-      });
+      sendMail({
+        email,
+        token: passToken
+      })
 
   } catch (e) {
     console.log("Error: ", e)

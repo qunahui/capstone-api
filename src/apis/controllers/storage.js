@@ -70,7 +70,7 @@ module.exports.refreshAllToken = async (req, res) => {
     await Promise.all(creds.map(async cred => {
       let newCred = await rp({
         method: 'POST',
-        url: `http://localhost:5000/api/${cred.platform_name}/login`,
+        url: `${process.env.API_URL}/api/${cred.platform_name}/login`,
         headers: {
           'Authorization': 'Bearer ' + req.mongoToken,
           'Platform-Token': cred.access_token
