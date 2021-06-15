@@ -108,8 +108,9 @@ module.exports.pushUpdatedToApi = async (req, res) => {
 module.exports.autoLinkVariant = async (req, res) => {
   const { variants } = req.body;
   const currentStorageId = req.user.currentStorage.storageId
+  let success = 0, failure = 0
   try {
-    let success = 0, failure = 0
+    
     variants.map(async (variant) => {
 
         const matchSkuVariants = await Variant.find({sku: variant.sku}) //  variants co cung sku
@@ -131,13 +132,15 @@ module.exports.autoLinkVariant = async (req, res) => {
               json: true
             }).then(res =>{
               if(res.statusCode == 200){
-                success++
-                console.log("sucsess: "+ success)
+                //console.log("sucsess: "+ success)
+                return success++
+                
               }
             }).catch(error =>{
               if(error.statusCode == 400){
-                failure++
-                console.log("failure: "+ failure)
+                //console.log("failure: "+ failure)
+                return failure++
+                
               }
             })
             
@@ -145,6 +148,7 @@ module.exports.autoLinkVariant = async (req, res) => {
         }))
         
     });
+
     console.log("sucsess: "+ success)
     console.log("failure: "+ failure)
     res.send({
