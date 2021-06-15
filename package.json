@@ -26,6 +26,7 @@
     "jsonwebtoken": "^8.5.1",
     "lazada-open-platform-sdk": "^2.0.0-0",
     "lazada-sdk-client": "^1.0.2",
+    "mailgun-js": "^0.22.0",
     "mongodb": "^3.6.1",
     "mongoose": "^5.10.3",
     "mongoose-fuzzy-searching": "^2.0.2",
