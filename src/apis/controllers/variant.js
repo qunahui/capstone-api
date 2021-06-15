@@ -105,10 +105,53 @@ module.exports.pushUpdatedToApi = async (req, res) => {
   }))
 }
 
+module.exports.autoLinkVariant = async (req, res) => {
+  const { variants } = req.body;
+  let success = 0, failure = 0
+  const currentStorageId = req.user.currentStorage.storageId
+  try {
+
+    variants.forEach(async (variant) => {
+
+        const matchSkuVariants = await Variant.find({sku: variant.sku}) //  variants co cung sku
+        matchSkuVariants.forEach(async (matchSkuVariant) => {
+          const product = await Product.findOne({_id: matchSkuVariant.productId},{storageId: 1})
+          if(product.storageId.toString() == currentStorageId){  // variants thuoc storage hien tai
+            await rp({
+              method: 'POST',
+              url: `${process.env.API_URL}/variants/link`,
+              headers: {
+                'Authorization': 'Bearer ' + req.mongoToken
+              },
+              body: {
+                variant: matchSkuVariant,
+                platformVariant: variant
+                
+              },
+              json: true
+            }).then(res =>{
+              console.log(res)
+            })
+            
+          }
+        });
+    });
+    
+    res.send({
+      success: success,
+      failure: failure,
+      variants: variants
+    })
+  } catch(e) {
+    console.log("Liên kết thất bại: ", e.message)
+    res.status(400).send(Error({ message: "Liên kết thất bại" }))
+  }
+}
+
 module.exports.linkVariant = async (req, res) => {
   const { variant, platformVariant } = req.body;
-  console.log("Variant: ", variant)
-  console.log("PVariant: ", platformVariant)
+  //console.log("Variant: ", variant)
+  //console.log("PVariant: ", platformVariant)
   let updatedPlatVariant = {}
   console.clear()
   try {
@@ -126,7 +169,7 @@ module.exports.linkVariant = async (req, res) => {
           _id: platformVariant._id
         }).populate('linkedDetails').lean()
       } else if(!platformVariant.productId) {
-        console.log("link to sendo product instead", variant)
+        //console.log("link to sendo product instead", variant)
         await SendoProduct.updateOne({
           _id: platformVariant._id,
         }, {
