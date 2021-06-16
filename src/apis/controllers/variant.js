@@ -201,7 +201,8 @@ module.exports.linkVariant = async (req, res) => {
         $addToSet: {
           linkedIds: {
             id: platformVariant._id,
-            platform: 'sendo'
+            platform: 'sendo',
+            createdAt: new Date()
           }
         }
       })
@@ -220,7 +221,8 @@ module.exports.linkVariant = async (req, res) => {
         $addToSet: {
           linkedIds: {
             id: mongoose.Types.ObjectId(platformVariant._id),
-            platform: 'lazada'
+            platform: 'lazada',
+            createdAt: new Date()
           }
         }
       })
