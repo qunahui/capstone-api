@@ -111,7 +111,7 @@ module.exports.autoLinkVariant = async (req, res) => {
   let success = 0, failure = 0
   try {
     
-    variants.map(async (variant) => {
+    await Promise.all(variants.map(async (variant) => {
 
         const matchSkuVariants = await Variant.find({sku: variant.sku}) //  variants co cung sku
         await Promise.all(matchSkuVariants.map(async(matchSkuVariant)=>{
@@ -147,7 +147,7 @@ module.exports.autoLinkVariant = async (req, res) => {
           }
         }))
         
-    });
+    }));
 
     console.log("sucsess: "+ success)
     console.log("failure: "+ failure)

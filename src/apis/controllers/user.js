@@ -4,6 +4,8 @@ const auth = require("../../middlewares/auth");
 const Error = require("../utils/error");
 const nodemailer = require('nodemailer');
 const ActivityLog = require('../models/activityLog')
+const jwt = require("jsonwebtoken");
+
 const sellerAccess = [
   'marketplaceProduct.create',
   'marketplaceProduct.read',
