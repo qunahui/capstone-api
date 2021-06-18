@@ -45,8 +45,8 @@ module.exports.checkSupplierExist = async(req, res) => {
 
 module.exports.getAllSupplier = async (req, res) => {
   try {
-    const suppliers = await Supplier.find({ userId: req.user._id })
-    res.send(suppliers)
+    const suppliers = await Supplier.find({ userId: req.user._id, isDeleted: false})
+    res.status(200).send(suppliers)
   } catch (e) {
     res.status(500).send(Error(e));
   }
@@ -57,9 +57,59 @@ module.exports.getSupplierById = async (req, res) => {
   try {
     const supplier = await Supplier.findOne({ userId: req.user._id, _id: req.params._id })
     console.log("Found: ", supplier)
-    res.send(supplier)
+    res.status(200).send(supplier)
   } catch (e) {
     res.status(500).send(Error(e));
   }
 
+};
+
+module.exports.searchSupplier = async (req, res) => {
+  try {
+    const {name, group, email, phone, isDeleted} = req.query
+    const supplier = await Supplier.find({
+      userId: req.user._id,
+      $or:[
+        {phone: {$regex: `${phone}`,  $options : 'i'}},
+        {name: {$regex: `${name}`,  $options : 'i'}},
+        {group: {$regex: `${group}`,  $options : 'i'}},
+        {email: {$regex: `${email}`,  $options : 'i'}},
+        {isDeleted: isDeleted}
+      ]
+      
+    })
+    res.status(200).send(supplier)
+  } catch (e) {
+    res.status(500).send(Error(e));
+  }
+};
+
+module.exports.updateSupplier = async (req, res) => {
+  const updateField = req.body;
+  console.log(updateField)
+  try {
+    if(req.body.email){
+      const isSupplierExist = await Supplier.findOne({ email: req.body.email, userId: req.user._id, _id: {$ne: req.params._id}})
+
+      if(isSupplierExist) {
+        return res.status(409).send(Error({ message: 'Email đã tồn tại ! Không thể trùng!'}))
+      }
+    }
+    const supplier = await Supplier.findOneAndUpdate({_id: req.params._id},{...req.body},{returnOriginal: false})
+    return res.status(200).send(supplier)
+  } catch (e) {
+    res.status(500).send(Error(e));
+  }
+
+};
+
+module.exports.deleteSupplier = async (req, res) => {
+  try {
+    const supplier = await Supplier.findOneAndUpdate({_id: req.params._id},{isDeleted: true},{returnOriginal: false});
+
+    res.status(200).send(supplier)
+
+  } catch (e) {
+    res.status(500).send(Error(e));
+  }
 };

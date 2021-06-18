@@ -20,6 +20,10 @@ const schema = new Schema({
       }
     },
   },
+  isDeleted: {
+    type: Boolean,
+    default: false,
+  },
   phone: {
     type: String,
   },
