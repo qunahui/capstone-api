@@ -7,7 +7,8 @@ const rp = require("request-promise")
 const User = require('../models/user')
 const Storage = require("../models/storage")
 var cron = require('node-cron');
-var task 
+
+router.use(auth) //all requests to this router will first hit this middleware
 
 function fetchOrderCron(){
   let count = 1
@@ -37,43 +38,35 @@ function fetchOrderCron(){
 
 // fetchOrderCron()
 
-function stoplogName(){
-    task.stop()
-}
 
-router.post("/confirm-platform-order", auth, orderController.confirmPlatformOrder)
+router.post("/confirm-platform-order", orderController.confirmPlatformOrder)
 
-router.get("/", auth, orderController.getAllOrder)
+router.get("/", orderController.getAllOrder)
 
-router.get("/marketplace", auth, orderController.getAllMarketplaceOrder)
+router.get("/marketplace", orderController.getAllMarketplaceOrder)
 
-router.get("/fetch", auth, refreshAllPlatform, orderController.fetchApiOrders)
+router.get("/fetch", refreshAllPlatform, orderController.fetchApiOrders)
 
-router.get("/:id", auth, orderController.getOrderById)
+router.get("/:id", orderController.getOrderById)
 
-router.post("/", auth, orderController.createMMSOrder)
+router.post("/", orderController.createMMSOrder)
 
-router.post("/lazada", auth, orderController.createLazadaOrder)
+router.post("/lazada", orderController.createLazadaOrder)
 
-router.post("/sendo", auth, orderController.createSendoOrder)
+router.post("/sendo", orderController.createSendoOrder)
 
-router.post('/sendo/refund', auth, orderController.createSendoRefundOrder)
+router.post('/sendo/refund', orderController.createSendoRefundOrder)
 
-router.get("/cancel/:_id", auth, orderController.cancelOrder)
+router.get("/cancel/:_id", orderController.cancelOrder)
 
-router.post("/pack/:_id", auth, orderController.createPackaging)
+router.post("/pack/:_id", orderController.createPackaging)
 
-router.post("/receipt/:_id", auth, orderController.createReceipt)
+router.post("/receipt/:_id", orderController.createReceipt)
 
-router.post("/payment/:_id", auth, orderController.updatePayment)
+router.post("/payment/:_id", orderController.updatePayment)
 
-router.post("/print-bill/", auth, orderController.printBill)
+router.post("/print-bill/", orderController.printBill)
 
-router.delete("/cron/stop", async (req,res)=>{
-    stoplogName()
-    res.send("stop") 
-})
-
-router.post("/delivery/:_id", auth, orderController.confirmDelivery)
+router.post("/delivery/:_id", orderController.confirmDelivery)
 
 module.exports = router;

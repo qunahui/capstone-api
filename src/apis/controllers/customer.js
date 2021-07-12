@@ -14,7 +14,6 @@ module.exports.checkCustomerExist = async(req, res) => {
   }
 }
 
-
 module.exports.createCustomer = async (req, res) => {
   try { 
     const isCustomerExist = await Customer.findOne({ email: req.body.email, userId: req.user._id })
@@ -45,7 +44,7 @@ module.exports.createCustomer = async (req, res) => {
 module.exports.getAllCustomer = async (req, res) => {
   try {
     const customers = await Customer.find({ userId: req.user._id, isDeleted: false })
-    res.send(customers)
+    res.status(200).send(customers)
   } catch (e) {
     res.status(500).send(Error(e));
   }
@@ -60,7 +59,6 @@ module.exports.getCustomerById = async (req, res) => {
   } catch (e) {
     res.status(500).send(Error(e));
   }
-
 };
 
 module.exports.searchCustomer = async (req, res) => {
@@ -87,27 +85,24 @@ module.exports.updateCustomer = async (req, res) => {
   const updateField = req.body;
   console.log(updateField)
   try {
-    if(req.body.email){
-      const isCustomerExist = await Customer.findOne({ email: req.body.email, userId: req.user._id, _id: {$ne: req.params._id}})
+    if(updateField.email){
+      const isCustomerExist = await Customer.findOne({ email: updateField.email, userId: req.user._id, _id: {$ne: req.params._id}})
 
       if(isCustomerExist) {
         return res.status(409).send(Error({ message: 'Email đã tồn tại ! Không thể trùng!'}))
       }
     }
-    const customer = await Customer.findOneAndUpdate({_id: req.params._id},{...req.body},{returnOriginal: false})
+    const customer = await Customer.findOneAndUpdate({_id: req.params._id},{...updateField},{returnOriginal: false})
     return res.status(200).send(customer)
   } catch (e) {
     res.status(500).send(Error(e));
   }
-
 };
 
 module.exports.deleteCustomer = async (req, res) => {
   try {
     const customer = await Customer.findOneAndUpdate({_id: req.params._id},{isDeleted: true},{returnOriginal: false});
-
     res.status(200).send(customer)
-
   } catch (e) {
     res.status(500).send(Error(e));
   }

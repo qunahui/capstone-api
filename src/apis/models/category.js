@@ -14,19 +14,22 @@ const CategorySchema = new Schema({
         type: String
     },
     leaf:{
-          type: Boolean
+        type: Boolean
     },
     idpath:{
         type: Array
     },
     namepath: {
-      type: Array
+        type: Array
     }
 })
 
-CategorySchema.plugin(mongooseFuzzySearching, { fields: [{
-  name: 'name',
-  minSize: 3
-}] })
+CategorySchema.plugin(mongooseFuzzySearching, { 
+        fields: [{
+            name: 'name',
+            minSize: 3
+        }] 
+    }
+)
 
 module.exports = mongoose.model("Category", CategorySchema);

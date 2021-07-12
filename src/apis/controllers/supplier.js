@@ -5,7 +5,7 @@ module.exports.createSupplier = async (req, res) => {
   try { 
     const isSupplierExist = await Supplier.findOne({ email: req.body.email, userId: req.user._id })
     if(isSupplierExist) {
-      res.status(409).send(Error({ message: 'Nhà cung cấp đã tồn tại !'}))
+      return res.status(409).send(Error({ message: 'Nhà cung cấp đã tồn tại !'}))
     } else {
       const supplier = new Supplier({ ...req.body, userId: req.user._id }) 
       supplier.save()

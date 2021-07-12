@@ -3,18 +3,20 @@ const router = express.Router();
 const auth = require("../../middlewares/auth");
 const purchaseOrderController = require("../controllers/purchaseOrder");
 
-router.get("/", auth, purchaseOrderController.getAllPurchaseOrder)
+router.use(auth) //all requests to this router will first hit this middleware
 
-router.get("/:id", auth, purchaseOrderController.getPurchaseOrderById)
+router.get("/", purchaseOrderController.getAllPurchaseOrder)
 
-router.post("/", auth, purchaseOrderController.createPurchaseOrder)
+router.get("/:id", purchaseOrderController.getPurchaseOrderById)
 
-router.post("/init", auth, purchaseOrderController.createInitialPurchaseOrder)
+router.post("/", purchaseOrderController.createPurchaseOrder)
 
-router.get("/cancel/:_id", auth, purchaseOrderController.cancelPurchaseOrder)
+router.post("/init", purchaseOrderController.createInitialPurchaseOrder)
 
-router.post("/receipt/:_id", auth, purchaseOrderController.createReceipt)
+router.get("/cancel/:_id", purchaseOrderController.cancelPurchaseOrder)
 
-router.post("/payment/:_id", auth, purchaseOrderController.updatePurchasePayment)
+router.post("/receipt/:_id", purchaseOrderController.createReceipt)
+
+router.post("/payment/:_id", purchaseOrderController.updatePurchasePayment)
 
 module.exports = router;

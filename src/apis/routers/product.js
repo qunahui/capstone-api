@@ -4,18 +4,20 @@ const auth = require("../../middlewares/auth");
 const productController = require("../controllers/product");
 const Product = require("../models/product");
 
-router.get("/check-sku", auth, productController.checkSku);
+router.use(auth) //all requests to this router will first hit this middleware
 
-router.get("/", auth, productController.getAllProduct);
+router.get("/check-sku", productController.checkSku);
 
-router.get("/:id", auth, productController.getMMSProductById);
+router.get("/", productController.getAllProduct);
 
-router.post("/", auth, productController.createMMSProduct);
+router.get("/:id", productController.getMMSProductById);
 
-router.patch("/:id", auth, productController.updateProduct);
+router.post("/", productController.createMMSProduct);
 
-router.delete("/:id", auth, productController.deleteProduct);
+router.patch("/:id", productController.updateProduct);
 
-router.post('/create-multi-platform', auth, productController.createMultiPlatform)
+router.delete("/:id", productController.deleteProduct);
+
+router.post('/create-multi-platform', productController.createMultiPlatform)
 
 module.exports = router;

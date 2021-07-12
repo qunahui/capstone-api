@@ -1,5 +1,6 @@
 const { signRequest } = require('../utils/laz-sign-request')
 var request = require('request');
+const axios = require('axios').default;
 const rp = require('request-promise');
 var convert = require('xml-js');
 const fs = require('fs');
@@ -11,9 +12,12 @@ const timeDiff = require('../utils/timeDiff')
 const util = require('util')
 const ActivityLog = require('../models/activityLog')
 
-
 const { LazadaRequest, LazadaClient } = require('lazada-sdk-client');
 
+const apiUrl = 'https://api.lazada.vn/rest' 
+const appSecret = process.env.LAZADA_APP_SECRET 
+const appKey = process.env.LAZADA_APP_KEY
+const signMethod = 'sha256' 
 
 var options = {compact: true, ignoreComment: true, spaces: 0};
 
@@ -264,81 +268,52 @@ module.exports.fetchProducts = async (req, res) =>{
 }
 //not use yet
 module.exports.getProductById = async (req, res) =>{
-    
-    const apiUrl = 'https://api.lazada.vn/rest' 
     const apiPath=  '/product/item/get'
-    const appSecret = process.env.LAZADA_APP_SECRET
-    const appKey = process.env.LAZADA_APP_KEY 
-    let accessToken =  req.accessToken
-    
+    const accessToken =  req.accessToken
+    const item_id = req.params.id
     const timestamp = Date.now()
     const commonRequestParams = {
-        "app_key": appKey,
-        "timestamp": timestamp,
-        "sign_method": "sha256",
-        "access_token":accessToken,
+        app_key: appKey,
+        timestamp: timestamp,
+        sign_method: signMethod,
+        access_token:accessToken,
     }
-    const item_id = req.params.id
-    const sign = signRequest(appSecret, apiPath, {...commonRequestParams, item_id})
     try {
-        var options = {
-            'method': 'GET',
-            'url': apiUrl+apiPath+
-            '?item_id='+item_id+
-            '&app_key='+appKey+
-            '&sign_method=sha256&timestamp='+timestamp+
-            '&access_token='+accessToken+
-            '&sign='+sign,
-            'headers': {
-            }
+        const sign = signRequest(appSecret, apiPath, {...commonRequestParams, item_id})
+        const options = {
+                method: 'GET',
+                url: `${apiUrl}${apiPath}?item_id=${item_id}&app_key=${appKey}&sign_method=${signMethod}&timestamp=${timestamp}&access_token=${accessToken}&sign=${sign}`,
+                json: true
         };
+        
         console.log(options)
-        request(options, function (error, response) {
-            //if (error) throw new Error(error);
-            //console.log(response.body);
-            const product = JSON.parse(response.body)
-            res.send(product)
-        });
+        await rp(options).then(response=> res.status(200).send(response.data))
+        //await axios(options).then(response=> res.status(200).send(response.data.data))
     } catch (e) {
         res.status(500).send(Error(e));
     }
 }
 module.exports.getProductBySellerSku= async (req, res) =>{
-    
-    const apiUrl = 'https://api.lazada.vn/rest' 
     const apiPath=  '/product/item/get'
-    const appSecret = process.env.LAZADA_APP_SECRET
-    const appKey = process.env.LAZADA_APP_KEY 
-    let accessToken =  req.accessToken
-    
+    const seller_sku = req.params.id
+    const accessToken =  req.accessToken
     const timestamp = Date.now()
     const commonRequestParams = {
-        "app_key": appKey,
-        "timestamp": timestamp,
-        "sign_method": "sha256",
-        "access_token":accessToken,
+        app_key: appKey,
+        timestamp: timestamp,
+        sign_method: signMethod,
+        access_token: accessToken,
     }
-    const seller_sku = req.params.id
-    const sign = signRequest(appSecret, apiPath, {...commonRequestParams, seller_sku})
     try {
-        var options = {
-            'method': 'GET',
-            'url': apiUrl+apiPath+
-            '?seller_sku='+seller_sku+
-            '&app_key='+appKey+
-            '&sign_method=sha256&timestamp='+timestamp+
-            '&access_token='+accessToken+
-            '&sign='+sign,
-            'headers': {
-            }
+        const sign = signRequest(appSecret, apiPath, {...commonRequestParams, seller_sku})
+        const options = {
+            method: 'GET',
+            url: `${apiUrl}${apiPath}?seller_sku=${seller_sku}&app_key=${appKey}&sign_method=${signMethod}&timestamp=${timestamp}&access_token=${accessToken}&sign=${sign}`,
+            json: true
         };
         console.log(options)
-        request(options, function (error, response) {
-            //if (error) throw new Error(error);
-            //console.log(response.body);
-            const product = JSON.parse(response.body)
-            res.send(product)
-        });
+        await rp(options).then(response=> res.status(200).send(response.data))
+        //await axios(options).then(response=> res.status(200).send(response.data.data))
     } catch (e) {
         res.status(500).send(Error(e));
     }
@@ -470,47 +445,7 @@ module.exports.getBrands = async (req, res) =>{
         res.status(500).send(Error(e));
     }
 }
-// not working
-module.exports.getCategorySuggestion = async (req, res) =>{
-    const apiUrl = 'https://api.lazada.vn/rest' 
-    const apiPath=  '/product/category/suggestion/get'
-    const appSecret = process.env.LAZADA_APP_SECRET
-    const appKey = process.env.LAZADA_APP_KEY
-    const accessToken =  req.accessToken //acv 
-    const timestamp = Date.now()
-    const product_name = req.query.name
-    const commonRequestParams = {
-        "app_key": appKey,
-        "timestamp": timestamp,
-        "sign_method": "sha256",
-        "access_token":accessToken
-    }
-    const sign = signRequest(appSecret, apiPath, {...commonRequestParams, product_name})
-    const encodeProductName = encodeURI(product_name)
-    try {
-        var options = {
-            'method': 'GET',
-            'url': apiUrl+apiPath+
-            '?product_name='+encodeProductName+
-            '&app_key='+appKey+
-            '&sign_method=sha256&timestamp='+timestamp+
-            '&access_token='+accessToken+
-            '&sign='+sign,
-            'headers': {
-            }
-        };
-        //console.log(options)
-        request(options, function (error, response) {
-            if (error) throw new Error(error);
-            //console.log(response.body);
-            const suggestion = JSON.parse(response.body)
-            res.send(suggestion)
-        });
-    } catch (e) {
-        res.status(500).send(Error(e));
-    }
-    
-}
+
 // req: seller_sku -> res: QCstatus (approved or rejected)
 module.exports.getQcStatus = async (req, res) =>{
     const store_id = req.query.store_id 
@@ -977,48 +912,6 @@ module.exports.getSellerMetrics = async (req, res) =>{
     } catch (e) {
         res.status(500).send(Error(e));
     }
-}
-// not working
-module.exports.updateSellerEmail = async (req, res) =>{
-    const apiUrl = 'https://api.lazada.vn/rest' 
-    const apiPath=  '/seller/update'
-    const appSecret = process.env.LAZADA_APP_SECRET
-    const appKey = process.env.LAZADA_APP_KEY
-    const accessToken =  req.accessToken
-    const timestamp = Date.now()
-    const data = req.body
-    const payload = '<?xml version="1.0" encoding="UTF-8" ?>'+ convert.js2xml(data, {compact: true, ignoreComment: true, spaces: 0})
-    console.log(payload)
-    const commonRequestParams = {
-        "app_key": appKey,
-        "timestamp": timestamp,
-        "sign_method": "sha256",
-        "access_token":accessToken
-    }
-    const sign = signRequest(appSecret, apiPath, {...commonRequestParams, payload})
-    const encodePayload = encodeURI(payload)
-    try {
-        var options = {
-            'method': 'POST',
-            'url': apiUrl+apiPath+
-            '?payload='+encodePayload+
-            '&app_key='+appKey+
-            '&sign_method=sha256&timestamp='+timestamp+
-            '&access_token='+accessToken+
-            '&sign='+sign,
-            'headers': {
-            }
-        };
-        request(options, function (error, response) {
-            if (error) throw new Error(error);
-            //console.log(response.body);
-            //const res = JSON.parse(response.body)
-            res.status(response.statusCode).send(response.body)
-        });
-    } catch (e) {
-        res.status(500).send(Error(e));
-    }
-    
 }
 
 //3: lazada order API

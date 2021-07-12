@@ -3,14 +3,16 @@ const router = express.Router();
 const auth = require("../../middlewares/auth");
 const inventoryController = require("../controllers/inventory");
 
-router.get("/:id", auth, inventoryController.getAllInventoriesByVariantId)
+router.use(auth) //all requests to this router will first hit this middleware
 
-// router.get("/", auth, inventoryController.getAllPurchaseOrder)
+router.get("/:id", inventoryController.getAllInventoriesByVariantId)
 
-// router.get("/:id", auth, inventoryController.getPurchaseOrderById)
+// router.get("/", inventoryController.getAllPurchaseOrder)
 
-// router.post("/", auth, inventoryController.createPurchaseOrder)
+// router.get("/:id", inventoryController.getPurchaseOrderById)
 
-// router.post("/payment/:_id", auth, inventoryController.updatePurchasePayment)
+// router.post("/", inventoryController.createPurchaseOrder)
+
+// router.post("/payment/:_id", inventoryController.updatePurchasePayment)
 
 module.exports = router;
