@@ -7,11 +7,18 @@ const controller = require("../controllers/supplier");
 
 router.get("/check/:email", auth, controller.checkSupplierExist)
 
-router.get("/:_id", auth, controller.getSupplierById);
+router.get("/id/:_id", auth, controller.getSupplierById);
+
+router.get("/search/", auth, controller.searchSupplier);
 
 router.get("/", auth, controller.getAllSupplier);
 
 router.post("/", auth, controller.createSupplier);
+
+router.patch("/update/:_id", auth, controller.updateSupplier);
+
+router.delete("/delete/:_id", auth, controller.deleteSupplier);
+
 
 // router.get("/sign-out", auth, controller.signOut);
 

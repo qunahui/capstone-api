@@ -4,6 +4,7 @@ const jwt = require("jsonwebtoken");
 const Error = require("../utils/error");
 const nodemailer = require('nodemailer');
 const ActivityLog = require('../models/activityLog')
+const jwt = require("jsonwebtoken");
 const sendMail = require('../../utils/ses_sendemail.js')
 
 const sellerAccess = [

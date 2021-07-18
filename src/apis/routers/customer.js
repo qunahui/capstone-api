@@ -7,11 +7,17 @@ const controller = require("../controllers/customer");
 
 router.get("/check/:email", auth, controller.checkCustomerExist)
 
-router.get("/:_id", auth, controller.getCustomerById);
+router.get("/id/:_id", auth, controller.getCustomerById);
+
+router.get("/search/", auth, controller.searchCustomer);
 
 router.get("/", auth, controller.getAllCustomer);
 
 router.post("/", auth, controller.createCustomer);
+
+router.patch("/update/:_id", auth, controller.updateCustomer);
+
+router.delete("/delete/:_id", auth, controller.deleteCustomer);
 
 // router.get("/sign-out", auth, controller.signOut);
 
@@ -19,7 +25,7 @@ router.post("/", auth, controller.createCustomer);
 
 // // router.post("/sign-up", controller.signUp);
 
-// router.patch("/update", auth, controller.editProfile);
+
 
 
 // router.delete("/delete", auth, controller.deleteProfile);

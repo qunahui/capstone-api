@@ -26,6 +26,10 @@ const schema = new Schema({
   phone: {
     type: String,
   },
+  isDeleted: {
+    type: Boolean,
+    default: false,
+  },
   group: {
     type: String,
     default: 'Normal'

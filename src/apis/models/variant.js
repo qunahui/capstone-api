@@ -82,6 +82,9 @@ const variantSchema = new Schema({
     },
     platform: {
       type: String
+    },
+    createdAt:{
+      type: Date
     }
   }]
 })
