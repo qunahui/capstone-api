@@ -392,11 +392,11 @@ module.exports.syncAllProductSendo = async (req, res) => {
     const products = JSON.parse(response.body)
     const storeName = products[0].store_name
     products.forEach(e => {
-      request.get({ url: "http://localhost:5000/api/sendo/product/"+e.id}, function(error, response){
+      request.get({ url: `${process.env.API_URL}/api/sendo/product/` + e.id}, function(error, response){
         const product = JSON.parse(response.body)
         product["store_name"] = storeName
         //product["shop_key"] = shopKey
-        request.post({ url: "http://localhost:5000/products/create-product-sync-sendo", 
+        request.post({ url: `${process.env.API_URL}/products/create-product-sync-sendo`, 
         json: product })
         //console.log(response.body)
       })
@@ -543,7 +543,7 @@ module.exports.syncAllOrderSendo = async (req, res) =>{
   request.get({url: `${process.env.API_URL}/api/sendo/order`}, function(error, response){
     const orders = JSON.parse(response.body)
     orders.forEach(e => {
-      request.post({url: "http://localhost:5000/orders/sendo/create-order-sync",
+      request.post({url: `${process.env.API_URL}/orders/sendo/create-order-sync`,
                     json: e})
     });
     //console.log(storeName)

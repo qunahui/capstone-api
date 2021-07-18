@@ -402,7 +402,7 @@ module.exports.createLazadaOrder = async (req, res) => {
   const { item, cred } = req.body;
   const listItem = await rp({
     method: 'GET',
-    url: "http://localhost:5000/api/lazada/orders/items/" + item.order_number,
+    url: `${process.env.API_URL}/api/lazada/orders/items/` + item.order_number,
     headers: {
       'Authorization': 'Bearer ' + req.mongoToken,
       'Platform-Token': req.accessToken
@@ -913,7 +913,7 @@ module.exports.fetchApiOrders = async (req, res) => {
           try {
             await rp({
               method: 'POST',
-              url: "http://localhost:5000/orders/lazada",
+              url: `${process.env.API_URL}/orders/lazada`,
               headers: {
                 'Authorization': 'Bearer ' + req.mongoToken,
                 'Platform-Token': cred.access_token

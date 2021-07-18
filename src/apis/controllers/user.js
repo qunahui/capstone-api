@@ -1,10 +1,11 @@
 const User = require("../models/user");
 const Storage = require("../models/storage")
-const auth = require("../../middlewares/auth");
+const jwt = require("jsonwebtoken");
 const Error = require("../utils/error");
 const nodemailer = require('nodemailer');
 const ActivityLog = require('../models/activityLog')
 const jwt = require("jsonwebtoken");
+const sendMail = require('../../utils/ses_sendemail.js')
 
 const sellerAccess = [
   'marketplaceProduct.create',
@@ -52,8 +53,8 @@ const sellerAccess = [
 const option = {
   service: 'gmail',
   auth: {
-      user: 'clonelocpro1@gmail.com', // email hoặc username
-      pass: 'nhoxloctran!@#' // password
+      user: process.env.NODEMAILER_EMAIL, // email hoặc username
+      pass: process.env.NODEMAILER_PASSWORD // password
   }
 };
 
@@ -216,7 +217,7 @@ module.exports.sendMailResetPW = async (req, res) => {
         console.log('Kết nối thành công!');
 
         const mail = {
-          from: 'clonelocpro1@gmail.com', // Địa chỉ email của người gửi
+          from: 'capstone.project.final@gmail.com', // Địa chỉ email của người gửi
           to: email, // Địa chỉ email của người gửi
           subject: 'Thư được gửi bằng Node.js', // Tiêu đề mail
           text: 'bố reset pw cho lần này thôi nhé!', // Nội dung mail dạng text
@@ -243,23 +244,26 @@ module.exports.changePassword = async (req, res) => {
   try {
     const token = req.body.token
     const password = req.body.password
-  
-    
     const passToken = jwt.decode(token)
-    
-    if(passToken.type === "change-pass" ){
-        if(passToken.exp*1000 >= new Date().valueOf()){
-          console.log("còn thời hạn")
-        // const user = await User.findOne({_id: passToken.userId})
-        // user.password = password
 
-        // await user.save()
-        // res.send("done")
-        }else{
-          console.log("hết thời hạn")
+    const user = await User.findOne({ _id: passToken.userId })
+
+    if(!user.changePassToken || user.changePassToken !== token) {
+      return res.status(400).send(Error({ message: 'Token hết hiệu lực!' }))
+    }
+
+    if(passToken.type === "change-pass" ){
+        if(Date.now() >= passToken.exp * 1000){
+          const user = await User.findOne({_id: passToken.userId})
+          user.password = password
+          user.changePassToken = null
+          await user.save()
+          res.status(200).send("Ok")
+        } else {
+          res.status(403).send(Error({ message: 'Token hết thời hạn. Vui lòng gửi yêu cầu quên mật khẩu mới!' }));
         }
     }else{
-      console.log("type invalid")
+      res.status(400).send(Error({ message: 'Lỗi không xác định, vui lòng thử lại sau!' }));
     }
     
   } catch (e) {
@@ -270,9 +274,11 @@ module.exports.changePassword = async (req, res) => {
 module.exports.resetPassword = async (req, res) => {
   try {
       const email = req.query.email
-      const user = await User.findOne({email: email})
+      const user = await User.findOne({
+        email
+      })
       if(!user){
-        res.send("user không tồn tại trong hệ thống!")
+        res.status(400).send(Error({ message: "Tài khoản không tồn tại trong hệ thống!" }))
         return
       }
       const passToken = jwt.sign({ 
@@ -282,37 +288,17 @@ module.exports.resetPassword = async (req, res) => {
         expiresIn: '600'
       })
 
-      const transporter = nodemailer.createTransport(option);
-      transporter.verify(function(error, success) {
-        // Nếu có lỗi.
-        if (error) {
-            console.log(error);
-        } else { //Nếu thành công.
-            console.log('Kết nối thành công!');
-    
-            const mail = {
-              from: 'clonelocpro1@gmail.com', // Địa chỉ email của người gửi
-              to: email, // Địa chỉ email của người gửi
-              subject: 'Reset Password', // Tiêu đề mail
-              text: 'bố reset pw cho lần này thôi nhé! https://frontend/forgot?token=' + passToken, // Nội dung mail dạng text
-              //html :  url: localhost:3000/.... + token
-            };
-          
-            transporter.sendMail(mail, function(error, info) {
-              if (error) { // nếu có lỗi
-                  console.log(error);
-              } else { //nếu thành công
-                  console.log('Email sent: ' + info.response);
-                  res.send("done")
-              }
-            });
-        }
-    
-      });
-      
-  
+      await User.findOneAndUpdate({ email }, {
+        changePassToken: passToken
+      })
+
+      sendMail({
+        email,
+        token: passToken
+      })
+
   } catch (e) {
-    console.log(e)
-    res.status(404).send(Error(e));
+    console.log("Error: ", e)
+    res.status(500).send(Error({ message: e.message }));
   }
 };
