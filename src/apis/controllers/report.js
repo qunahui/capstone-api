@@ -1,9 +1,7 @@
-const auth = require("../../middlewares/auth");
 const Error = require("../utils/error");
 const request = require('request');
 const rp = require('request-promise');
 const {Order} = require("../models/order")
-
 module.exports.getSalesReport = async (req, res) => {
     try {
         const store_id = req.query.store_id 
@@ -120,6 +118,6 @@ module.exports.getSalesReport = async (req, res) => {
             listOrder: list1
         })
     }catch(e){
-        console.log(e.message)
+        res.status(500).send(Error(e));
     }
 };

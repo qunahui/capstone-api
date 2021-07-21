@@ -322,10 +322,8 @@ module.exports.unlinkVariant = async (req, res) => {
 
 module.exports.getAllVariant = async (req, res) => {
   try {
-    
-    const variants = await Variant.find({})
-    
-    res.send(variants)
+    const variants = await Variant.find()
+    res.status(200).send(variants)
   } catch (e) {
     res.status(500).send(Error(e));
   }
@@ -334,9 +332,12 @@ module.exports.getAllVariant = async (req, res) => {
 
 module.exports.getMMSVariantById = async function (req, res) {
   try {
-    const variantId = req.params.id;
+    const variantId = req.params._id;
     const variant = await Product.find({ _id: variantId })
-    res.send(variant)
+    if(!variant){
+      return res.sendStatus(404)
+    }
+    res.status(200).send(variant)
   } catch (e) {
     res.status(500).send(Error(e));
   }
@@ -361,7 +362,7 @@ module.exports.createMMSVariant = async (req, res) => {
 
     await inventory.save()
 
-    res.send(variant);
+    res.status(200).send(variant);
   } catch (e) {
     res.status(500).send(Error(e));
   }
@@ -373,7 +374,7 @@ module.exports.updateVariant = async (req, res) => {
   try {
     const variant = await Variant.findOne({ _id: req.body._id });
     if (!variant) {
-      res.status(404).send(variant);
+      res.sendStatus(404);
     }
 
     const priceChanged = variant['retailPrice'] !== req.body['retailPrice']
@@ -396,7 +397,7 @@ module.exports.updateVariant = async (req, res) => {
       })
     }
 
-    res.send(variant);
+    res.status(200).send(variant);
 
 
   } catch (e) {
@@ -407,13 +408,13 @@ module.exports.updateVariant = async (req, res) => {
 module.exports.deleteVariant = async (req, res) => {
   console.log(req.params)
   try {
-    const variant = await Variant.findOneAndDelete({ _id: mongoose.Types.ObjectId(req.params.id) });
+    const variant = await Variant.findOneAndDelete({ _id: mongoose.Types.ObjectId(req.params._id) });
 
     if (!variant) {
-      return res.status(404).send();
+      return res.statusStatus(404);
     }
 
-    res.send(variant);
+    res.sendStatus(200);
   } catch (e) {
     res.status(500).send(Error(e));
   }

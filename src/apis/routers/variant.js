@@ -3,23 +3,24 @@ const router = express.Router();
 const auth = require("../../middlewares/auth");
 const variantController = require("../controllers/variant");
 
+router.use(auth) //all requests to this router will first hit this middleware
 
-router.get("/", auth, variantController.getAllVariant);
+router.get("/", variantController.getAllVariant);
 
-router.get("/:id", auth, variantController.getMMSVariantById);
+router.get("/:_id", variantController.getMMSVariantById);
 
-router.post("/", auth, variantController.createMMSVariant);
+router.post("/", variantController.createMMSVariant);
 
-router.post("/auto-link", auth, variantController.autoLinkVariant);
+router.post("/auto-link", variantController.autoLinkVariant);
 
-router.post("/link", auth, variantController.linkVariant);
+router.post("/link", variantController.linkVariant);
 
-router.post("/unlink", auth, variantController.unlinkVariant);
+router.post("/unlink", variantController.unlinkVariant);
 
-router.post("/push-api", auth, variantController.pushUpdatedToApi);
+router.post("/push-api", variantController.pushUpdatedToApi);
 
-router.patch("/:id", auth, variantController.updateVariant);
+router.patch("/:id", variantController.updateVariant);
 
-router.delete("/:id", auth, variantController.deleteVariant);
+router.delete("/:_id", variantController.deleteVariant);
 
 module.exports = router;

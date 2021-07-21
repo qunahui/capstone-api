@@ -3,16 +3,18 @@ const router = express.Router();
 const auth = require("../../middlewares/auth");
 const controller = require("../controllers/storage");
 
-router.get("/", auth, controller.getStorages);
+router.use(auth) //all requests to this router will first hit this middleware
 
-router.get('/activities', auth, controller.getActivities)
+router.get("/", controller.getStorages);
 
-router.patch("/add-sendo-credentials", auth, controller.addSendoCredentials);
+router.get('/activities', controller.getActivities)
 
-router.get("/refresh-all", auth, controller.refreshAllToken)
+router.patch("/add-sendo-credentials", controller.addSendoCredentials);
 
-router.post("/disconnect", auth, controller.disconnectStore)
+router.get("/refresh-all", controller.refreshAllToken)
 
-router.get("/fetch-shops", auth, controller.fetchShops);
+router.post("/disconnect", controller.disconnectStore)
+
+router.get("/fetch-shops", controller.fetchShops);
 
 module.exports = router;

@@ -1,4 +1,3 @@
-const e = require("express");
 const jwt = require("jsonwebtoken");
 const User = require("../apis/models/user");
 const Error = require("../apis/utils/error")
@@ -40,7 +39,7 @@ const auth = async (req, res, next) => {
   } catch (e) {
     res.status(401).send(Error({
       message: "Please authenticate."
-    }));
+    }))
   }
 };
 

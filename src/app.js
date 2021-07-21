@@ -1,4 +1,5 @@
 const express = require("express");
+const logger = require('morgan')
 const cors = require("cors");
 require('dotenv').config()
 require("./connections/mongodb-atlas");
@@ -14,6 +15,7 @@ const configRoute = require("./apis/index");
 
 app.use(express.json());
 app.use(cors());
+app.use(logger('dev'))
 // hook up session for express routes
 // app.use(sessionMiddleware);
 // hook up the session for socket.io connections

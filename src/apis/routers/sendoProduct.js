@@ -4,25 +4,23 @@ const auth = require("../../middlewares/auth");
 const controller = require("../controllers/sendoProduct");
 const util = require('util')
 
+router.use(auth) //all requests to this router will first hit this middleware
+
+router.get('/', controller.getAllProducts)
+
+router.post('/fetch', controller.fetchProducts)
+
+router.post('/push', controller.pushProducts)
+
+router.post('/sync', controller.syncProducts)
+
+router.get('/:_id', controller.getProductById)
+
+//chưa có route delete sendoproduct
+//chưa có route update sendoproduct
+
+//router.post('/', controller.createProduct)
+//router.get('/products/fetch-without-auth', controller.fetchWithoutAuth)
 //router.post("/create-ping", controller.createSendoProductByPing);
-router.get('/products', controller.getAllProducts)
-
-router.get('/products/fetch-without-auth', controller.fetchWithoutAuth)
-
-router.post('/products/fetch', auth, controller.fetchProducts)
-
-router.post('/products/push', auth, controller.pushProducts)
-
-router.post('/products/sync', auth, controller.syncProducts)
-
-router.post('/product', controller.createProduct)
-
-router.get('/product/:id', controller.getProductById)
-
-router.get("/categories", auth, controller.getSendoListCategory);
-
-router.get("/categories/search", auth, controller.searchSendoCategory);
-
-router.post("/suggest-category", auth, controller.getSuggestCategory);
 
 module.exports = router;

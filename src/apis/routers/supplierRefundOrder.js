@@ -3,18 +3,20 @@ const router = express.Router();
 const auth = require("../../middlewares/auth");
 const supplierRefundOrderController = require("../controllers/supplierRefundOrder");
 
-router.get("/", auth, supplierRefundOrderController.getAllSupplierRefundOrder)
+router.use(auth) //all requests to this router will first hit this middleware
 
-router.get("/:id", auth, supplierRefundOrderController.getSupplierRefundOrderById)
+router.get("/", supplierRefundOrderController.getAllSupplierRefundOrder)
 
-router.post("/", auth, supplierRefundOrderController.createSupplierRefundOrder)
+router.get("/:id", supplierRefundOrderController.getSupplierRefundOrderById)
+
+router.post("/", supplierRefundOrderController.createSupplierRefundOrder)
+
+router.get("/cancel/:_id", supplierRefundOrderController.cancelSupplierRefundOrder)
+
+router.post("/receipt/:_id", supplierRefundOrderController.createReceipt)
+
+router.post("/payment/:_id", supplierRefundOrderController.updateRefundPayment)
 
 // router.post("/init", auth, supplierRefundOrderController.createInitialSupplierRefundOrder)
-
-router.get("/cancel/:_id", auth, supplierRefundOrderController.cancelSupplierRefundOrder)
-
-router.post("/receipt/:_id", auth, supplierRefundOrderController.createReceipt)
-
-router.post("/payment/:_id", auth, supplierRefundOrderController.updateRefundPayment)
 
 module.exports = router;

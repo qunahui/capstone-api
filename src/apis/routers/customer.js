@@ -3,31 +3,21 @@ const router = express.Router();
 const auth = require("../../middlewares/auth");
 const controller = require("../controllers/customer");
 
-// router.post("/sign-in", controller.signIn);
 
-router.get("/check/:email", auth, controller.checkCustomerExist)
+router.use(auth) //all requests to this router will first hit this middleware
 
-router.get("/id/:_id", auth, controller.getCustomerById);
+router.get("/check/:email", controller.checkCustomerExist)
 
-router.get("/search/", auth, controller.searchCustomer);
+router.get("/:_id", controller.getCustomerById);
 
-router.get("/", auth, controller.getAllCustomer);
+router.get("/search/", controller.searchCustomer);
 
-router.post("/", auth, controller.createCustomer);
+router.get("/", controller.getAllCustomer);
 
-router.patch("/update/:_id", auth, controller.updateCustomer);
+router.post("/", controller.createCustomer);
 
-router.delete("/delete/:_id", auth, controller.deleteCustomer);
+router.patch("/:_id", controller.updateCustomer);
 
-// router.get("/sign-out", auth, controller.signOut);
-
-// router.post("/logout-all", auth, controller.signOutAll);
-
-// // router.post("/sign-up", controller.signUp);
-
-
-
-
-// router.delete("/delete", auth, controller.deleteProfile);
+router.delete("/:_id", controller.deleteCustomer);
 
 module.exports = router;

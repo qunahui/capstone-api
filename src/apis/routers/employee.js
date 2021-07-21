@@ -3,12 +3,14 @@ const router = express.Router();
 const auth = require("../../middlewares/auth");
 const controller = require("../controllers/employee")
 
-router.get('/', auth, controller.getAllEmployee)
+router.use(auth) //all requests to this router will first hit this middleware
 
-router.post('/invite', auth, controller.inviteEmployee)
+router.get('/', controller.getAllEmployee)
 
-router.post('/response', auth, controller.inviteResponse)
+router.post('/invite', controller.inviteEmployee)
 
-router.delete('/:id', auth, controller.deleteEmployee)
+router.post('/response', controller.inviteResponse)
+
+router.delete('/:id', controller.deleteEmployee)
 
 module.exports = router;
