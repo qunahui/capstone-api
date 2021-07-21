@@ -598,7 +598,7 @@ module.exports.syncAllOrderSendo = async (req, res) =>{
   request.get({url: `${process.env.API_URL}/api/sendo/order`}, function(error, response){
     const orders = JSON.parse(response.body)
     orders.forEach(e => {
-      request.post({url: "http://localhost:5000/orders/sendo/create-order-sync",
+      request.post({url: `${process.env.API_URL}/orders/sendo/create-order-sync`,
                     json: e})
     });
     //console.log(storeName)

@@ -443,7 +443,7 @@ module.exports.createLazadaOrder = async (req, res) => {
   const { item, cred } = req.body;
   const listItem = await rp({
     method: 'GET',
-    url: `${process.env.API_URL}/api/lazada/orders/items/item.order_number`,
+    url: `${process.env.API_URL}/api/lazada/orders/items/` + item.order_number,
     headers: {
       Authorization: 'Bearer ' + req.mongoToken,
       'Platform-Token': req.accessToken

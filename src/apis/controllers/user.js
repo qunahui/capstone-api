@@ -1,11 +1,12 @@
 const User = require("../models/user");
 const Storage = require("../models/storage")
-const auth = require("../../middlewares/auth");
+const jwt = require("jsonwebtoken");
 const Error = require("../utils/error");
 const nodemailer = require('nodemailer');
 const ActivityLog = require('../models/activityLog')
 const jwt = require("jsonwebtoken");
 const { response } = require("express");
+const sendMail = require('../../utils/ses_sendemail.js')
 
 const sellerAccess = [
   'marketplaceProduct.create',
@@ -53,8 +54,8 @@ const sellerAccess = [
 const option = {
   service: 'gmail',
   auth: {
-      user: 'clonelocpro1@gmail.com', // email hoặc username
-      pass: 'nhoxloctran!@#' // password
+      user: process.env.NODEMAILER_EMAIL, // email hoặc username
+      pass: process.env.NODEMAILER_PASSWORD // password
   }
 };
 
@@ -245,7 +246,7 @@ module.exports.resetPassword = async (req, res) => {
       } else { //Nếu thành công.
         console.log('Kết nối thành công!');
         const mail = {
-          from: 'clonelocpro1@gmail.com', // Địa chỉ email của người gửi
+          from: 'capstone.project.final@gmail.com', // Địa chỉ email của người gửi
           to: email, // Địa chỉ email của người gửi
           subject: 'Reset Password', // Tiêu đề mail
           text: 'bố reset pw cho lần này thôi nhé! https://frontend/forgot?token=' + passToken, // Nội dung mail dạng text
