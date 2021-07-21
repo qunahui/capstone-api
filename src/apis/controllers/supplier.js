@@ -56,6 +56,9 @@ module.exports.getAllSupplier = async (req, res) => {
 module.exports.getSupplierById = async (req, res) => {
   try {
     const supplier = await Supplier.findOne({ userId: req.user._id, _id: req.params._id })
+    if(!supplier){
+      return res.sendStatus(404)
+    }
     console.log("Found: ", supplier)
     res.status(200).send(supplier)
   } catch (e) {
@@ -86,7 +89,7 @@ module.exports.searchSupplier = async (req, res) => {
 
 module.exports.updateSupplier = async (req, res) => {
   const updateField = req.body;
-  console.log(updateField)
+  //console.log(updateField)
   try {
     if(req.body.email){
       const isSupplierExist = await Supplier.findOne({ email: req.body.email, userId: req.user._id, _id: {$ne: req.params._id}})
@@ -95,7 +98,7 @@ module.exports.updateSupplier = async (req, res) => {
         return res.status(409).send(Error({ message: 'Email đã tồn tại ! Không thể trùng!'}))
       }
     }
-    const supplier = await Supplier.findOneAndUpdate({_id: req.params._id},{...req.body},{returnOriginal: false})
+    const supplier = await Supplier.findOneAndUpdate({_id: req.params._id},updateField,{returnOriginal: false})
     return res.status(200).send(supplier)
   } catch (e) {
     res.status(500).send(Error(e));
@@ -106,7 +109,9 @@ module.exports.updateSupplier = async (req, res) => {
 module.exports.deleteSupplier = async (req, res) => {
   try {
     const supplier = await Supplier.findOneAndUpdate({_id: req.params._id},{isDeleted: true},{returnOriginal: false});
-
+    if(!supplier){
+      return res.sendStatus(404)
+    }
     res.status(200).send(supplier)
 
   } catch (e) {

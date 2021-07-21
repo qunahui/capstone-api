@@ -8,23 +8,35 @@ const util = require('util')
 
 module.exports.getLazadaAttribute = async (req, res) => {
     const categoryId = parseInt(req.params.categoryId)
+    let attributes
     try {
-        const attrs = await LazadaAttribute.findOne({ categoryId })
+        attributes = await LazadaAttribute.findOne({ categoryId },{attributes: 1})
         // find in lazada api if not exists
-        const apiAttrs = await rp({ 
-            method: 'GET',
-            url: `${process.env.API_URL}/api/lazada/attribute/` + categoryId,
-            headers: {
-                'Authorization': 'Bearer ' + req.mongoToken,
-                'Platform-Token': req.accessToken
-            },
-            json: true,
-        })
-
-        return res.status(200).send({
-            api: apiAttrs,
-            db: attrs
-        })
+        if(!attributes){
+            attributes = await rp({ 
+                method: 'GET',
+                url: `${process.env.API_URL}/api/lazada/attributes/` + categoryId,
+                headers: {
+                    'Authorization': 'Bearer ' + req.mongoToken,
+                },
+                json: true,
+            })
+            attributes.map(attribute =>{
+                attribute.option_en= []
+                attribute.is_mandatory = !!attribute.is_mandatory
+                attribute.is_variant_attribute = !!attribute.is_sale_prop
+                attribute.attribute_name = attribute.name
+                attribute.name = attribute.label
+                attribute.options.map(option =>{
+                    return attribute.option_en.push(option.name)
+                })
+                delete attribute.options
+                delete attribute.is_sale_prop
+                delete attribute.label
+            })
+            return res.status(200).send({attributes: attributes})
+        }
+        return res.status(200).send(attributes)
     } catch(e) {
         console.log(e.message)
         return res.status(500).send(Error({ message: 'Something went wrong !'}))

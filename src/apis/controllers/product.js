@@ -1,48 +1,54 @@
 const Product = require("../models/product");
 const Error = require("../utils/error");
 const Variant = require('../models/variant')
+const {createLazadaProduct} = require('../controllers/lazadaProduct')
+const {createSendoProduct} = require('../controllers/sendoProduct')
 const rp = require('request-promise')
 const fs = require('fs')
+const mongoose = require("mongoose")
 
 module.exports.createMultiPlatform = async (req, res) => {
   const products = req.body
-
   try {
-    for(let item of products) {
+    products.map(async (item)=>{
       if(item.post === true) {
         console.log("Begin create to: ", item.store_name)
         if(item.platform_name === 'lazada') {
-            const lazRes = await rp({
-              method: 'POST',
-              url: `${process.env.API_URL}/api/lazada/products`,
-              body: {
-                Request: item.Request
-              },
-              json: true,
-              headers: {
-                'Authorization': 'Bearer ' + req.mongoToken,
-                'Platform-Token': item.access_token
-            }
-           })
-          
-          console.log(lazRes)
-
-          await rp({
+          const options = {
             method: 'POST',
-            url: `${process.env.API_URL}/lazada/products/fetch`,
+            url: `${process.env.API_URL}/api/lazada/products`,
+            body: {
+              Request: item.Request
+            },
             headers: {
               'Authorization': 'Bearer ' + req.mongoToken,
               'Platform-Token': item.access_token
             },
-            body: {
-              store_id: item.store_id,
-              lastSync: item.lastSync
-            },
             json: true
-          })   
-
+          }
+          await rp(options)
+          .then(async(response) =>{
+            const options = {
+              method: 'GET',
+              url: `${process.env.API_URL}/api/lazada/products/${response.item_id}`,
+              headers: {
+                'Authorization': 'Bearer ' + req.mongoToken,
+                'Platform-Token': item.access_token
+              },
+              json: true
+            }
+            await rp(options).then((response)=>{
+              createLazadaProduct(response, item.store_id )
+              return res.sendStatus(200)
+            }).catch((error)=>{
+              return res.send(error.error)
+            })
+          })
+          .catch((error)=>{
+            return res.status(500).send(Error(error))
+          })
         } else if(item.platform_name === 'sendo') {
-          await rp({
+          const options = {
             method: 'POST',
             url: `${process.env.API_URL}/api/sendo/products`,
             body: item,
@@ -51,39 +57,45 @@ module.exports.createMultiPlatform = async (req, res) => {
               'Authorization': 'Bearer ' + req.mongoToken,
               'Platform-Token': item.access_token
             }
-          })
-
-          await rp({
-            method: 'POST',
-            url: `${process.env.API_URL}/sendo/products/fetch`,
-            headers: {
-              'Authorization': 'Bearer ' + req.mongoToken,
-              'Platform-Token': item.access_token
-            },
-            body: {
-              store_id: item.store_id,
-              lastSync: item.lastSync
-            },
-            json: true
-          })          
-        } else if(item.platform_name === 'system') {
-          await rp({
-            method: 'POST',
-            url: `${process.env.API_URL}/products`,
-            body: {
-              ...item,
-              sellable: true,
-            },
-            json: true,
-            headers: {
-              'Authorization': 'Bearer ' + req.mongoToken,
+          }
+          await rp(options).then(async(response)=>{
+            const options ={
+              method: 'GET',
+              url: `${process.env.API_URL}/api/sendo/products/${response.result}`,
+              headers: {
+                'Authorization': 'Bearer ' + req.mongoToken,
+                'Platform-Token': item.access_token
+              },
+              json: true
             }
+            await rp(options).then((response)=>{
+              createSendoProduct(response, item.store_id )
+              return res.sendStatus(200)
+            }).catch((error)=>{
+              return res.send(error.error)
+            })
           })
+        } else if(item.platform_name === 'system') {
+            const options = {
+              method: 'POST',
+              url: `${process.env.API_URL}/products`,
+              body: {
+                ...item,
+                sellable: true,
+              },
+              json: true,
+              headers: {
+                'Authorization': 'Bearer ' + req.mongoToken,
+              }
+            }
+            await rp(options).then(()=>{
+              return res.sendStatus(200)
+            }).catch((error)=>{
+              return res.send(error.error)
+            })
         }
       }
-    }
-
-    return res.status(200).send("Ok")
+    })
   } catch(e) {
     console.log("Error", e.message)
     res.status(500).send(Error({ message: 'Có gì đó không ổn !'}))
@@ -94,8 +106,7 @@ module.exports.getAllProduct = async (req, res) => {
   console.log(req.user.currentStorage)
   try {
     const products = await Product.find({ storageId: req.user.currentStorage.storageId }).populate('variants').lean()
-
-    res.send(products)
+    res.status(200).send(products)
   } catch (e) {
     res.status(500).send(Error(e));
   }
@@ -104,10 +115,12 @@ module.exports.getAllProduct = async (req, res) => {
 
 module.exports.getMMSProductById = async function (req, res) {
   try {
-    const productId = req.params.id;
-    const product = await Product.find({ _id: productId }).populate('variants').lean()
-
-    res.send(product)
+    const productId = req.params._id;
+    const product = await Product.findOne({ _id: productId }).populate('variants').lean()
+    if (!product) {
+      return res.sendStatus(404);
+    }
+    res.status(200).send(product)
   } catch (e) {
     res.status(500).send(Error(e));
   }
@@ -115,31 +128,25 @@ module.exports.getMMSProductById = async function (req, res) {
 
 module.exports.createMMSProduct = async (req, res) => {
   try {
+    //console.log(req.body)
     const product = new Product({
       ...req.body,
       storageId: req.user.currentStorage.storageId
     });
-
     let configVariant = []
     await product.save();
-
     if(req.body.isConfigInventory === true) {
       let totalQuantity = 0
-
-        await Promise.all(req.body.variants.map(async (variant) => {
-          totalQuantity += variant.inventories.onHand
-          const mongoVariant = new Variant({ 
+      await Promise.all(req.body.variants.map(async (variant) => {
+        totalQuantity += variant.inventories.onHand
+        const mongoVariant = new Variant({ 
             ...variant,
             productId: product._id 
-          })
-
-          await mongoVariant.save()
-
-          return mongoVariant
-        }))
-
+        })
+        await mongoVariant.save()
+        return mongoVariant
+      }))
       configVariant = await Variant.find({ productId: product._id }).lean()
-
       try {
         await rp({
           method: 'POST',
@@ -180,10 +187,8 @@ module.exports.createMMSProduct = async (req, res) => {
         return res.status(500).send(Error({ message: 'Có gì đó sai sai! '}))
       }
     }
-
     const result = await Product.findOne({ _id: product._id }).lean()
     result.variants = configVariant
-
     if(req.body.autoLink) {
       await Promise.all(configVariant.map(async (item, index) => {
         await rp({
@@ -200,7 +205,6 @@ module.exports.createMMSProduct = async (req, res) => {
         })
       }))
     }
-
     res.status(200).send(result);
   } catch (e) {
     console.log(e.message)
@@ -209,20 +213,13 @@ module.exports.createMMSProduct = async (req, res) => {
 };
 
 module.exports.updateProduct = async (req, res) => {
-  
-  const properties = Object.keys(req.body);
-  
+  const updateField = req.body;
   try {
-    const product = await Product.findOne({ id: req.body.id });
+    const product = await Product.findOneAndUpdate({_id: req.params._id},updateField,{returnOriginal: false})
     if (!product) {
-      res.status(404).send(product);
+      res.sendStatus(404);
     }
-
-    properties.forEach((prop) => (product[prop] = req.body[prop]));
-
-    product.save();
-
-    res.send(product);
+    res.status(200).send(product);
   } catch (e) {
     res.status(404).send(Error(e));
   }
@@ -230,15 +227,12 @@ module.exports.updateProduct = async (req, res) => {
 
 module.exports.deleteProduct = async (req, res) => {
   try {
-    const product = await Product.findOneAndDelete({ _id: req.params.id });
-
+    const product = await Product.findOneAndDelete({ _id: mongoose.Types.ObjectId(req.params._id) });
     if (!product) {
-      return res.status(404).send();
+      return res.sendStatus(404);
     }
-
     await Variant.deleteMany({ productId: product._id })
-
-    res.send(product);
+    res.sendStatus(200);
   } catch (e) {
     res.status(500).send(Error(e));
   }
@@ -246,8 +240,12 @@ module.exports.deleteProduct = async (req, res) => {
 
 module.exports.checkSku = async (req,res) => {
   const { sku } = req.query
-  const matchedProductSku = await Product.findOne({ sku })
-  res.status(200).send({
+  try {
+    const matchedProductSku = await Product.findOne({ sku, storageId: req.user.currentStorage.storageId })
+    res.status(200).send({
     isSkuExists: !!matchedProductSku
-  })
+    })
+  } catch (e) {
+    res.status(500).send(Error(e));
+  }
 }

@@ -8,7 +8,7 @@ router.use(auth) //all requests to this router will first hit this middleware
 
 router.get("/check/:email", controller.checkSupplierExist)
 
-router.get("/id/:_id", controller.getSupplierById);
+router.get("/:_id", controller.getSupplierById);
 
 router.get("/search/", controller.searchSupplier);
 
@@ -16,8 +16,8 @@ router.get("/", controller.getAllSupplier);
 
 router.post("/", controller.createSupplier);
 
-router.patch("/update/:_id", controller.updateSupplier);
+router.patch("/:_id", controller.updateSupplier);
 
-router.delete("/delete/:_id", controller.deleteSupplier);
+router.delete("/:_id", controller.deleteSupplier);
 
 module.exports = router;

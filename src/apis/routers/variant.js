@@ -7,7 +7,7 @@ router.use(auth) //all requests to this router will first hit this middleware
 
 router.get("/", variantController.getAllVariant);
 
-router.get("/:id", variantController.getMMSVariantById);
+router.get("/:_id", variantController.getMMSVariantById);
 
 router.post("/", variantController.createMMSVariant);
 
@@ -21,6 +21,6 @@ router.post("/push-api", variantController.pushUpdatedToApi);
 
 router.patch("/:id", variantController.updateVariant);
 
-router.delete("/:id", variantController.deleteVariant);
+router.delete("/:_id", variantController.deleteVariant);
 
 module.exports = router;

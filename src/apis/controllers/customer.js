@@ -54,6 +54,9 @@ module.exports.getAllCustomer = async (req, res) => {
 module.exports.getCustomerById = async (req, res) => {
   try {
     const customer = await Customer.findOne({ userId: req.user._id, _id: req.params._id })
+    if(!customer){
+      return res.sendStatus(404)
+    }
     console.log("Found: ", customer)
     res.status(200).send(customer)
   } catch (e) {
@@ -102,6 +105,9 @@ module.exports.updateCustomer = async (req, res) => {
 module.exports.deleteCustomer = async (req, res) => {
   try {
     const customer = await Customer.findOneAndUpdate({_id: req.params._id},{isDeleted: true},{returnOriginal: false});
+    if(!customer){
+      return res.sendStatus(404)
+    }
     res.status(200).send(customer)
   } catch (e) {
     res.status(500).send(Error(e));

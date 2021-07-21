@@ -230,69 +230,8 @@ module.exports.createProduct = async (req, res) =>{
     json: true
   };
   try {    
-    console.log(options)
-    await rp(options).then(response=> res.status(200).send(response.result))
-    //await axios(options).then(response=> res.status(200).send(response.data.result))
-  } catch (e) {
-    res.status(500).send(Error(e));
-  }
-}
-
-module.exports.getWardById = async (req, res) =>{
-  const apiPath=  '/address/ward/'
-  const wardId = req.params.id;
-  const options = {
-    method: 'GET',
-    url: `${apiUrl}${apiPath}${wardId}`,
-    headers: {
-      Authorization: 'bearer '+ req.accessToken
-    },
-    json: true
-  };
-  try {
-    console.log(options)
-    await rp(options).then(response=> res.status(200).send(response.result))
-    //await axios(options).then(response=> res.status(200).send(response.data.result))
-  } catch (e) {
-    res.status(500).send(Error(e));
-  }
-}
-
-module.exports.getDistrictById = async (req, res) =>{
-  const apiPath=  '/address/district/'
-  const districtId = req.params.id;
-  const options = {
-    method: 'GET',
-    url: `${apiUrl}${apiPath}${districtId}`,
-    headers: {
-      Authorization: 'bearer '+ req.accessToken
-    }
-  };
-  try {
-    console.log(options)
-    await rp(options).then(response=> res.status(200).send(response.result))
-    //await axios(options).then(response=> res.status(200).send(response.data.result))
-  } catch (e) {
-    res.status(500).send(Error(e));
-  }
-}
-
-module.exports.getRegionById = async (req, res) =>{
-  const apiPath=  '/address/region/'
-  const regionId = req.params.id;
-  const options = {
-    method: 'GET',
-    url: `${apiUrl}${apiPath}${regionId}`,
-    headers: {
-      Authorization: 'bearer '+ req.accessToken
-    },
-    json: true
-  };
-  try {
-    console.log(options)
-    await rp(options)
-    .then(response=> res.status(200).send(response.result))
-    .catch(error => res.status(error.statusCode).send(error.error))
+    //console.log(options)
+    await rp(options).then(response=> res.status(200).send(response))
     //await axios(options).then(response=> res.status(200).send(response.data.result))
   } catch (e) {
     res.status(500).send(Error(e));
@@ -333,7 +272,7 @@ module.exports.getProductById = async (req, res) =>{
     json: true
   };
   try {
-    console.log(options)
+    //console.log(options)
     await rp(options)
     .then(response=> res.status(200).send(response.result))
     .catch(error => res.status(error.statusCode).send(error.error))
@@ -609,7 +548,7 @@ module.exports.deleteProduct = async (req, res) => {
       Authorization: 'bearer '+ req.accessToken,
       'Content-Type': 'application/json'
     },
-    data: JSON.stringify( //axios là data
+    body: //axios là data
       [
         {
         id: productId,
@@ -617,14 +556,19 @@ module.exports.deleteProduct = async (req, res) => {
         stock_availability: false,
         Field_Mask: ["product_status", "stock_availability"]
         }
-      ]
-    )
+      ],
+    json: true
   };
   try {
     console.log(options)
-    await axios(options)
-    .then(response => res.send(response.data))
-    .catch(error => console.log(error))
+    await rp(options)
+    .then((response) => {
+      //console.log(response.result)
+      if(response.result.success === true){
+        res.sendStatus(200)
+      }
+    })
+    .catch(error => res.status(500).send(Error(error)))
   } catch (e) {
     res.status(500).send(Error(e));
   }
@@ -661,4 +605,65 @@ module.exports.syncAllOrderSendo = async (req, res) =>{
   })
 
   res.send("done")
+}
+
+module.exports.getWardById = async (req, res) =>{
+  const apiPath=  '/address/ward/'
+  const wardId = req.params.id;
+  const options = {
+    method: 'GET',
+    url: `${apiUrl}${apiPath}${wardId}`,
+    headers: {
+      Authorization: 'bearer '+ req.accessToken
+    },
+    json: true
+  };
+  try {
+    console.log(options)
+    await rp(options).then(response=> res.status(200).send(response.result))
+    //await axios(options).then(response=> res.status(200).send(response.data.result))
+  } catch (e) {
+    res.status(500).send(Error(e));
+  }
+}
+
+module.exports.getDistrictById = async (req, res) =>{
+  const apiPath=  '/address/district/'
+  const districtId = req.params.id;
+  const options = {
+    method: 'GET',
+    url: `${apiUrl}${apiPath}${districtId}`,
+    headers: {
+      Authorization: 'bearer '+ req.accessToken
+    }
+  };
+  try {
+    console.log(options)
+    await rp(options).then(response=> res.status(200).send(response.result))
+    //await axios(options).then(response=> res.status(200).send(response.data.result))
+  } catch (e) {
+    res.status(500).send(Error(e));
+  }
+}
+
+module.exports.getRegionById = async (req, res) =>{
+  const apiPath=  '/address/region/'
+  const regionId = req.params.id;
+  const options = {
+    method: 'GET',
+    url: `${apiUrl}${apiPath}${regionId}`,
+    headers: {
+      Authorization: 'bearer '+ req.accessToken
+    },
+    json: true
+  };
+  try {
+    console.log(options)
+    await rp(options)
+    .then(response=> res.status(200).send(response.result))
+    .catch(error => res.status(error.statusCode).send(error.error))
+    //await axios(options).then(response=> res.status(200).send(response.data.result))
+  } catch (e) {
+    res.status(500).send(Error(e));
+  }
 }

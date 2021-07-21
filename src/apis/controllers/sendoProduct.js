@@ -8,14 +8,14 @@ const Variant = require("../models/variant")
 const mongoose = require("mongoose")
 const SendoCategory = require("../models/sendoCategory")
 
-const product_status ={
+const product_status = {
   "0": "Nháp",
   "1": "Chờ duyệt",
   "2": "Đã duyệt",
   "3": "Từ Chối",
   "4": "Hủy"
 }
-const product_type ={
+const product_type = {
   "1": "Sản phẩm vật lý",
   "2": "Voucher/vé giấy",
   "3": "E-voucher/Vé điện tử"
@@ -30,72 +30,26 @@ const unit = [
   "Chai",
   "Thùng"
 ]
-
-module.exports.getSendoListCategory = async (req,res) =>{
-  const idpath = req.query.idpath ? req.query.idpath.map(i => parseInt(i)) : [];
-    if(idpath.length == 0) {
-      try {
-        const categories = await SendoCategory.find({idpath:{ $size: 1}}, {name: 1, category_id: 1, leaf: 1, idpath:1});
-        res.send(categories);
-      } catch (e) {
-        res.status(500).send(e.message);
-      }
-    } else if(idpath.length != 0) {
-      try {
-        const categories = await SendoCategory.find({ idpath:{ $all:idpath ,$size: idpath.length+1 }}, {name: 1, category_id: 1, leaf: 1, idpath:1, namepath: 1});
-        res.send(categories);
-      } catch (e) {
-        res.status(500).send(e.message);
-      }
-    }
-    
-};
-
-module.exports.searchSendoCategory = async (req,res) =>{
- 
-  const search = req.query.search
-
-  try {
-    const categories = await SendoCategory.fuzzySearch({ query: search, minSize: 3 }).find({ leaf: true }).limit(10)
-
-    res.send(categories);
-  } catch (e) {
-    res.status(500).send(e.message);
-  }
-
-};
-
-module.exports.getSuggestCategory = async (req, res) => {
-  try {
-    const result = await SendoCategory.fuzzySearch(req.body.name).findOne({ leaf: true })
-
-    res.status(200).send(result)
-  } catch(e) {
-    console.log(e.message)
-    res.status(500).send(Error({ message: 'Có gì đó sai sai'}))
-  }
-}
-
 const createSendoProduct = async (item, { store_id }) => {
   try {
-    const update_at = new Date(item.updated_date_timestamp*1000)
-    const create_at = new Date(item.created_date_timestamp*1000)
+    const update_at = new Date(item.updated_date_timestamp * 1000)
+    const create_at = new Date(item.created_date_timestamp * 1000)
     const attributes = item.attributes
     const variants = item.variants
 
     attributes.forEach(element => {
-        var arr = element.attribute_values.filter((child) => {
-            return child.is_selected === true
-        });
-        element.attribute_values = arr
-    }); 
+      var arr = element.attribute_values.filter((child) => {
+        return child.is_selected === true
+      });
+      element.attribute_values = arr
+    });
     variants.forEach(e => {
       let avatar = '';
       e.variant_attributes.forEach(e1 => {
-        const attribute = attributes.find((attribute)=>{
+        const attribute = attributes.find((attribute) => {
           return attribute.attribute_id === e1.attribute_id
         });
-        const attribute_value = attribute.attribute_values.find((value)=>{
+        const attribute_value = attribute.attribute_values.find((value) => {
           return value.id === e1.option_id
         })
         e1.attribute_name = attribute.attribute_name
@@ -111,30 +65,30 @@ const createSendoProduct = async (item, { store_id }) => {
     console.log("item: ", item)
 
     let query = { store_id: store_id, id: item.id },
-        update = {
-          ...item,
-          store_id: store_id,
-          unit: unit[item.unit_id - 1],
-          unitId: item.unit_id,
-          avatar: item.avatar.picture_url,
-          updated_date_timestamp: update_at,
-          created_date_timestamp: create_at,
-          //attributes: attributes,
-        },
-        options = { upsert: true, new: true, setDefaultsOnInsert: true };
-  
+      update = {
+        ...item,
+        store_id: store_id,
+        unit: unit[item.unit_id - 1],
+        unitId: item.unit_id,
+        avatar: item.avatar.picture_url,
+        updated_date_timestamp: update_at,
+        created_date_timestamp: create_at,
+        //attributes: attributes,
+      },
+      options = { upsert: true, new: true, setDefaultsOnInsert: true };
+
     const sendoProduct = await SendoProduct.findOneAndUpdate(query, update, options)
     //find sendoVariants in db
-    const sendoVariants = await SendoVariant.find({productId: sendoProduct._id})
-    
+    const sendoVariants = await SendoVariant.find({ productId: sendoProduct._id })
+
     //remove sendoVariants not in variants
-    if(sendoVariants){
-      sendoVariants.forEach(async (sendoVariant) =>{
+    if (sendoVariants) {
+      sendoVariants.forEach(async (sendoVariant) => {
         const i = variants.findIndex(x => x.variant_attribute_hash === sendoVariant.variant_attribute_hash)
         console.log("index: ", i)
-        if(i < 0){
-          const deleted = await SendoVariant.findOneAndDelete({_id: sendoVariant._id}, { lean: true})
-          if(deleted.linkedId) {
+        if (i < 0) {
+          const deleted = await SendoVariant.findOneAndDelete({ _id: sendoVariant._id }, { lean: true })
+          if (deleted.linkedId) {
             await Variant.updateOne({
               _id: deleted.linkedId,
             }, {
@@ -147,8 +101,8 @@ const createSendoProduct = async (item, { store_id }) => {
       })
     }
     //create or update
-    variants.forEach(async (variant)=>{
-      await SendoVariant.findOneAndUpdate({ variant_attribute_hash: variant.variant_attribute_hash, productId: sendoProduct._id}, {
+    variants.forEach(async (variant) => {
+      await SendoVariant.findOneAndUpdate({ variant_attribute_hash: variant.variant_attribute_hash, productId: sendoProduct._id }, {
         ...variant,
         sku: variant.variant_sku,
         Status: item.status === '2' ? 'active' : 'inactive',
@@ -158,7 +112,7 @@ const createSendoProduct = async (item, { store_id }) => {
         productId: sendoProduct._id
       }, options)
     })
-  } catch(e) { 
+  } catch (e) {
     console.log("Error: ", e)
   }
 };
@@ -182,84 +136,91 @@ module.exports.getAllProducts = async (req, res) => {
     }))
 
     return res.status(200).send(sendoProducts)
-  } catch(e) {
+  } catch (e) {
     console.log("err: ", e.message)
-    return res.status(500).send(Error({ message: 'Something went wrong !'}))
+    return res.status(500).send(Error({ message: 'Something went wrong !' }))
   }
 }
 
-// module.exports.fetchWithoutAuth = async (req, res) => {
-//   const options = {
-//       'method': 'POST',
-//       'url': 'https://open.sendo.vn/api/partner/product/search',
-//       'headers': {
-//         'Authorization': 'bearer ' + "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJTdG9yZUlkIjoiODU0MjE0IiwiVXNlck5hbWUiOiIiLCJTdG9yZVN0YXR1cyI6IjIiLCJTaG9wVHlwZSI6IjEiLCJTdG9yZUxldmVsIjoiMCIsImV4cCI6MTYxNzE5NjI1OCwiaXNzIjoiODU0MjE0IiwiYXVkIjoiODU0MjE0In0.TY0jlpnyQaYgUx__JDZkRGqr7-4efwwLC5WnOTd8i-8",
-//         'Content-Type': 'application/json',
-//         'cache-control': 'no-cache'
-//       },
-//       body: JSON.stringify({"page_size":10,"product_name":"","date_from":"2020-05-01","date_to":"9999-10-28","token":"", "status" : -1})
-//   };
-//   const response = await rp(options)
-//   const products = JSON.parse(response).result.data
-//   res.status(200).send(products)
-// }
+module.exports.fetchWithoutAuth = async (req, res) => {
+  const options = {
+      method: 'POST',
+      url: 'https://open.sendo.vn/api/partner/product/search',
+      headers: {
+        'Authorization': 'bearer ' + "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJTdG9yZUlkIjoiODU0MjE0IiwiVXNlck5hbWUiOiIiLCJTdG9yZVN0YXR1cyI6IjIiLCJTaG9wVHlwZSI6IjEiLCJTdG9yZUxldmVsIjoiMCIsImV4cCI6MTYxNzE5NjI1OCwiaXNzIjoiODU0MjE0IiwiYXVkIjoiODU0MjE0In0.TY0jlpnyQaYgUx__JDZkRGqr7-4efwwLC5WnOTd8i-8",
+        'Content-Type': 'application/json',
+        'cache-control': 'no-cache'
+      },
+      body: JSON.stringify({"page_size":10,"product_name":"","date_from":"2020-05-01","date_to":"9999-10-28","token":"", "status" : -1})
+  };
+  const response = await rp(options)
+  const products = JSON.parse(response).result.data
+  res.status(200).send(products)
+}
 
 module.exports.fetchProducts = async (req, res) => {
   const { store_id, lastSync } = req.body
   const { storageId } = req.user.currentStorage
-  const sendoFormatDate = lastSync && lastSync.split('T')[0] 
+  const sendoFormatDate = lastSync && lastSync.split('T')[0]
   try {
     const options = {
-        'method': 'POST',
-        'url': 'https://open.sendo.vn/api/partner/product/search',
-        'headers': {
-          'Authorization': 'bearer ' + req.accessToken,
-          'Content-Type': 'application/json',
-          'cache-control': 'no-cache'
-        },
-        body: JSON.stringify({"page_size":100,"product_name":"","date_from": sendoFormatDate || "2021-01-01","date_to":"9999-10-28","token":"", "status": sendoFormatDate && -1,})
+      method: 'POST',
+      url: 'https://open.sendo.vn/api/partner/product/search',
+      headers: {
+        'Authorization': 'bearer ' + req.accessToken,
+        'Content-Type': 'application/json',
+        'cache-control': 'no-cache'
+      },
+      body: { 
+        page_size: 100, 
+        product_name: "", 
+        date_from: sendoFormatDate || "2021-01-01", 
+        date_to: "9999-10-28", 
+        token: "", 
+        status: sendoFormatDate && -1, 
+      },
+      json: true
     };
-    const response = await rp(options)
-    const products = JSON.parse(response).result.data // product đã xóa, product ko update,  product update
+    const products = await rp(options).then(res => res.result.data) // product đã xóa, product ko update,  product update
     await Promise.all(products.map(async product => {
       // xóa product trong db
-      if(product.status === 5){
-        const sendoProduct = await SendoProduct.findOneAndDelete({id: product.id, store_id}, {lean: true})
-        if(sendoProduct){
+      if (product.status === 5) {
+        const sendoProduct = await SendoProduct.findOneAndDelete({ id: product.id, store_id }, { lean: true })
+        if (sendoProduct) {
           await SendoVariant.deleteMany({ productId: sendoProduct._id })
         }
-      }else if(product.status === 2){ // update or create product
+      } else if (product.status === 2) { // update or create product
         const sendoProduct = await SendoProduct.findOne({ id: product.id, store_id })
-        if(sendoProduct) {
-          const secondDiff = timeDiff(new Date(product.updated_at_timestamp*1000), new Date(sendoProduct.updated_date_timestamp)).secondsDifference
-          if(secondDiff === 0) {  //loại bỏ các product ko có update mới
+        if (sendoProduct) {
+          const secondDiff = timeDiff(new Date(product.updated_at_timestamp * 1000), new Date(sendoProduct.updated_date_timestamp)).secondsDifference
+          if (secondDiff === 0) {  //loại bỏ các product ko có update mới
             return product;
           } else {
-            if(secondDiff < 0) {
+            if (secondDiff < 0) {
               // xu ly push len api lai
               // return;
             }
           }
         }
-        
         const fullProduct = await rp({
           method: 'GET',
-          url: `${process.env.API_URL}/api/sendo/products/` + product.id + '?access_token=' + req.accessToken,
+          url: `${process.env.API_URL}/api/sendo/products/${product.id} `,
           headers: {
             'Authorization': 'Bearer ' + req.mongoToken,
             'Platform-Token': req.accessToken
-          }
+          },
+          json: true
         })
-        const actuallyFullProduct = JSON.parse(fullProduct).result
-        await createSendoProduct(actuallyFullProduct, { store_id }) // create nếu ko có product, update nếu secondDiff > 0
+
+        await createSendoProduct(fullProduct, { store_id }) // create nếu ko có product, update nếu secondDiff > 0
       }
-     
+
     }))
 
     const sendoProducts = await SendoProduct.find({ storageId })
 
     return res.status(200).send(sendoProducts)
-  } catch(error) {
+  } catch (error) {
     if (error.response) {
       const errorSerialized = {
         code: error.response.statusCode,
@@ -284,7 +245,7 @@ module.exports.syncProducts = async (req, res, next) => {
   //check
   console.clear()
   let newCredential = null;
-  try { 
+  try {
     newCredential = await rp({
       method: 'POST',
       url: `${process.env.API_URL}/api/sendo/login`,
@@ -298,9 +259,9 @@ module.exports.syncProducts = async (req, res, next) => {
       json: true
     })
 
-  } catch(e) {
+  } catch (e) {
     console.log(e.message)
-    return res.status(400).send(Error({ message: 'Lấy sendo token thất bại !'}))
+    return res.status(400).send(Error({ message: 'Lấy sendo token thất bại !' }))
   }
 
   //fetch products
@@ -321,7 +282,7 @@ module.exports.syncProducts = async (req, res, next) => {
 
     await rp(options)
 
-    await Storage.updateOne({ 
+    await Storage.updateOne({
       _id: storageId,
       sendoCredentials: {
         $elemMatch: {
@@ -329,7 +290,7 @@ module.exports.syncProducts = async (req, res, next) => {
           store_id: newCredential.store_id
         }
       }
-    } , {
+    }, {
       $set: {
         "sendoCredentials.$.lastSync": new Date(),
       }
@@ -339,36 +300,22 @@ module.exports.syncProducts = async (req, res, next) => {
       message: "Đồng bộ sendo thành công !",
       isCredentialRefreshed: newCredential.isCredentialRefreshed
     })
-  } catch(e) {
+  } catch (e) {
     console.log("sync error: ", e.message)
-    return res.status(e.response.statusCode).send(Error({ message: e.response.statusMessage}))
+    return res.status(e.response.statusCode).send(Error({ message: e.response.statusMessage }))
   }
 
 }
 
-module.exports.createProduct = async (req, res) =>{
+module.exports.getProductById = async (req, res) => {
   try {
-    const {variants} = req.body
-    const sendoVariants = await SendoVariant.find({productId: "6062fcccbe681538acbbac81"})
-   
-    sendoVariants.forEach(async (sendoVariant) =>{
-      const i = variants.findIndex(x => x.variant_attribute_hash === sendoVariant.variant_attribute_hash)
-      if(i < 0){
-        await SendoVariant.findOneAndDelete({_id: sendoVariant._id})
-      }
-    })
-   
-    res.send("done") 
-
-  } catch(e) { 
-    console.log("Error: ", e)
+    const sendoProduct = await SendoProduct.findOne({ _id: req.params._id }).populate('variants').lean()
+    if (!sendoProduct) {
+      res.sendStatus(404)
+    }
+    res.status(200).send(sendoProduct)
+  } catch (e) {
+    res.status(500).send(Error(e));
   }
-}
-
-module.exports.getProductById = async (req, res) =>{
-  const id = req.params.id
-  const sendoproduct = await SendoProduct.findOne({_id: id}).populate('variants').lean()
-
-  res.send(sendoproduct)
 }
 

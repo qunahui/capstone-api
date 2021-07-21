@@ -25,20 +25,19 @@ const saveAllCategory  = async (Category, idpath) =>{
 
 module.exports.getListCategory = async (req,res) =>{
   const idpath = req.query.idpath ? req.query.idpath.map(i => parseInt(i)) : [];
-  if(idpath.length == 0) {
-    try {
-      const categories = await Category.find({idpath:{ $size: 1}}, {name: 1, category_id: 1, leaf: 1, idpath:1, namepath: 1});
-      res.status(200).send(categories);
-    } catch (e) {
-      res.status(500).send(e.message);
-    }
+  let query = {}
+  const projection = {name: 1, category_id: 1, leaf: 1, idpath:1, namepath: 1}
+  if (idpath.length == 0) {
+    query = {idpath:{ $size: 1}}
   } else if(idpath.length != 0) {
-    try {
-      const categories = await Category.find({ idpath:{ $all:idpath ,$size: idpath.length+1 }}, {name: 1, category_id: 1, leaf: 1, idpath:1, namepath: 1});
-      res.status(200).send(categories);
-    } catch (e) {
-      res.status(500).send(e.message);
-    }
+    query = { idpath:{ $all: idpath ,$size: idpath.length+1 }}
+  }
+
+  try {
+    const categories = await Category.find(query, projection)
+    res.status(200).send(categories)
+  } catch (e) {
+    res.status(500).send(e.message)
   }
 };
 
@@ -71,6 +70,14 @@ module.exports.createCategory = async (req, res) => {
 module.exports.getCategoryById = async (req, res) => {
   try {
     const category = await Category.find({category_id: req.params.id})
+    res.status(200).send(category)
+  } catch (e) {
+    res.status(500).send(Error(e));
+  }
+};
+module.exports.getCategoryByObjectId = async (req, res) => {
+  try {
+    const category = await Category.find({_id: req.params._id})
     res.status(200).send(category)
   } catch (e) {
     res.status(500).send(Error(e));
@@ -154,7 +161,7 @@ module.exports.playGround = async (req, res) => {
   
       addNamePath(categories)
     })
-  }
+}
 
 module.exports.addFuzzy = async (req, res) => {
   for await (const doc of Category.find().cursor()) {

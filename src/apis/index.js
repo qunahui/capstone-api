@@ -20,6 +20,7 @@ const inventoryRoutes = require('./routers/inventory')
 const lazadaAttributeRoutes = require('./routers/lazadaAttribute')
 const brandRoutes = require('./routers/brand')
 const reportRoutes = require('./routers/report')
+const sendoCategoryRoutes = require('./routers/sendoCategory')
 
 module.exports = (app) => {
   app.use("/products", productRoutes);
@@ -28,22 +29,23 @@ module.exports = (app) => {
   app.use("/employees", employeeRoutes);
   app.use("/api/storage", storageRoutes);
   app.use("/api/sendo", sendoRoutes);
+  app.use("/api/lazada", lazadaRoutes);
   app.use("/address", addressRoutes)
   app.use("/categories", categoryRoutes);
   app.use("/orders/", orderRoutes);
-  app.use("/api/lazada", lazadaRoutes);
-  app.use("/lazada/", lazadaProductRoutes);
-  app.use("/sendo/", sendoProductRoutes);
+  app.use("/lazada/products", lazadaProductRoutes);
+  app.use("/sendo/products", sendoProductRoutes);
+  app.use("/sendo/categories", sendoCategoryRoutes);
   app.use("/sync", syncRoutes);
   app.use("/purchase-orders", purchaseOrderRoutes);
   app.use("/refund-orders", refundOrderRoutes);
   app.use("/supplier-refund-orders", supplieRefundOrderRoutes);
-  app.use("/supplier", supplierRoutes);
-  app.use("/customer", customerRoutes);
+  app.use("/suppliers", supplierRoutes);
+  app.use("/customers", customerRoutes);
   app.use("/inventory", inventoryRoutes);
-  app.use("/lazada-attribute", lazadaAttributeRoutes);
-  app.use("/brand", brandRoutes);
-  app.use("/report", reportRoutes);
+  app.use("/lazada/attributes", lazadaAttributeRoutes);
+  app.use("/brands", brandRoutes);
+  app.use("/reports", reportRoutes);
 };
 
 // cron.schedule('*/10 * * * * *', () => {

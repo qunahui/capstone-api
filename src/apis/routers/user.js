@@ -7,11 +7,11 @@ router.get("/me", auth, controller.getCurrentUser);
 
 router.get("/sign-out", auth, controller.signOut);
 
+router.get("/change-default/:_id", auth, controller.changeDefaultStorage)
+
 router.post("/logout-all", auth, controller.signOutAll);
 
 router.patch("/update", auth, controller.editProfile);
-
-router.get("/change-default/:id", auth, controller.changeDefaultStorage)
 
 router.delete("/delete", auth, controller.deleteProfile);
 

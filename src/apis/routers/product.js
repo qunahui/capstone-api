@@ -10,14 +10,14 @@ router.get("/check-sku", productController.checkSku);
 
 router.get("/", productController.getAllProduct);
 
-router.get("/:id", productController.getMMSProductById);
+router.get("/:_id", productController.getMMSProductById);
 
 router.post("/", productController.createMMSProduct);
 
-router.patch("/:id", productController.updateProduct);
-
-router.delete("/:id", productController.deleteProduct);
-
 router.post('/create-multi-platform', productController.createMultiPlatform)
+
+router.patch("/:_id", productController.updateProduct);
+
+router.delete("/:_id", productController.deleteProduct);
 
 module.exports = router;

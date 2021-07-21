@@ -19,15 +19,23 @@
   },
   "servers": [
     {
-      "url": "https://capstone-api-mms.herokuapp.com/",
-      "description": "Heroku app"
-    },
-    {
       "url": "http://localhost:5000/",
       "description": "localhost"
+    },
+    {
+      "url": "https://capstone-api-mms.herokuapp.com/",
+      "description": "Heroku app"
     }
   ],
   "tags": [
+    {
+      "name": "brands",
+      "description": "Everything about your Brands",
+      "externalDocs": {
+        "description": "Find out more",
+        "url": ""
+      }
+    },
     {
       "name": "users",
       "description": "Everything about your Users",
@@ -103,9 +111,237 @@
     {
       "name": "wards",
       "description": "Access to ward in Database"
+    },
+    {
+      "name": "customers",
+      "description": "Access to customers in Database"
+    },
+    {
+      "name": "suppliers",
+      "description": "Access to suppliers in Database"
+    },
+    {
+      "name": "sendoCategories",
+      "description": "Access to suppliers in Database"
+    },
+    {
+      "name": "lazadaAttributes",
+      "description": "Access to suppliers in Database"
+    },
+    {
+      "name": "reports",
+      "description": "create reports by storeId"
     }
   ],
   "paths": {
+    "/reports": {
+      "get": {
+        "tags": [
+          "reports"
+        ],
+        "summary": "",
+        "security": [
+          {
+            "bearerAuth": [],
+            "ApiKeyAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "store_id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": ""
+            }
+          },
+          {
+            "in": "query",
+            "name": "period",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": ["last7days", "last30days", "week", "month"]
+            }
+          },
+          {
+            "in": "query",
+            "name": "dateFrom",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "example": ""
+            }
+          }, {
+            "in": "query",
+            "name": "dateTo",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "example": ""
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful"
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        }
+      }
+    },
+    "/categories": {
+      "get": {
+        "tags": [
+          "categories"
+        ],
+        "summary": "get list categories in database",
+        "operationId": "getListCategories",
+        "security": [
+          {
+            "bearerAuth": [],
+            "ApiKeyAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "idpath[]",
+            "required": false,
+            "schema": {
+              "type": "array",
+              "items": []
+            },
+            "description": "categoryId must be primary category"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful"
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        }
+      }
+    },
+    "/categories/search": {
+      "get": {
+        "tags": [
+          "categories"
+        ],
+        "summary": "searching primary categories in database",
+        "operationId": "getCategories",
+        "security": [
+          {
+            "bearerAuth": [],
+            "ApiKeyAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "search",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "áo th"
+            },
+            "description": ""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful"
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        }
+      }
+    },
+    "/brands/search/{search}": {
+      "get": {
+        "tags": [
+          "brands"
+        ],
+        "summary": "Search brands",
+        "operationId": "search",
+        "security": [
+          {
+            "bearerAuth": [],
+            "ApiKeyAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "search",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "adidas"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful",
+            "content": {
+              "application/json": {
+                "example": [
+                  {
+                    "_id": "607ac3053db57e3074ecd405",
+                    "id": "936",
+                    "name": "Adidas",
+                    "name_en": "adidas",
+                    "global_identifier": "adidas",
+                    "__v": 0,
+                    "confidenceScore": 4.2
+                  },
+                  {
+                    "_id": "607ac2c69466a33f74a17c10",
+                    "id": "56531",
+                    "name": "Thời trang adidas",
+                    "name_en": "Thời trang adidas",
+                    "global_identifier": null,
+                    "__v": 0,
+                    "confidenceScore": 4.866666666666667
+                  },
+                  {
+                    "_id": "607ac2be9466a33f74a0d81c",
+                    "id": "14559",
+                    "name": "Didakay",
+                    "name_en": "Didakay",
+                    "global_identifier": "didakay",
+                    "__v": 0,
+                    "confidenceScore": 1.1
+                  }
+                ]
+              }
+            }
+          },
+          "405": {
+            "description": "Invalid input"
+          },
+          "500": {
+            "description": "Error: Internal Server Error"
+          }
+        }
+      }
+    },
     "/users/sign-up": {
       "post": {
         "tags": [
@@ -281,6 +517,132 @@
         }
       }
     },
+    "/users/change-default/{_id}": {
+      "get": {
+        "tags": [
+          "users"
+        ],
+        "summary": "Change default storage",
+        "security": [
+          {
+            "bearerAuth": [],
+            "ApiKeyAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "_id",
+            "description":"storageId",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "íahdasiudhasdjhd"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful",
+            "content": {
+              "application/json": {
+                "example": " "
+              }
+            }
+          },
+          "405": {
+            "description": "Invalid input"
+          },
+          "500": {
+            "description": "Error: Internal Server Error"
+          }
+        }
+      }
+    },
+    "/users/reset-password": {
+      "get": {
+        "tags": [
+          "users"
+        ],
+        "summary": "Reset password",
+        "security": [
+          {
+            "bearerAuth": [],
+            "ApiKeyAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "email",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "nhoxloctran125@gmail.com"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful",
+            "content": {
+              "application/json": {
+                "example": " "
+              }
+            }
+          },
+          "405": {
+            "description": "Invalid input"
+          },
+          "500": {
+            "description": "Error: Internal Server Error"
+          }
+        }
+      }
+    },
+    "/users/change-password": {
+      "patch": {
+        "tags": [
+          "users"
+        ],
+        "summary": "Change password",
+        "security": [
+          {
+            "bearerAuth": [],
+            "ApiKeyAuth": []
+          }
+        ],
+        "requestBody":{
+          "content":{
+            "application/json":{
+              "schema":{
+
+              },
+              "example":{
+                "token": "",
+                "password": ""
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful",
+            "content": {
+              "application/json": {
+                "example": " "
+              }
+            }
+          },
+          "405": {
+            "description": "Invalid input"
+          },
+          "500": {
+            "description": "Error: Internal Server Error"
+          }
+        }
+      }
+    },
     "/users/logout-all": {
       "post": {
         "tags": [
@@ -382,6 +744,34 @@
             "description": "Error: Internal Server Error"
           }
         }
+      }
+    },
+    "/products/create-multi-platform": {
+      "post": {
+        "tags": [
+          "products"
+        ],
+        "summary": "Add multi platform product to the store",
+        "requestBody": {
+
+        },
+        "responses": {
+          "200": {
+            "description": "Successful"
+          },
+          "405": {
+            "description": "Invalid input"
+          },
+          "500": {
+            "description": "Error: Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": [],
+            "ApiKeyAuth": []
+          }
+        ]
       }
     },
     "/products": {
@@ -538,11 +928,6 @@
           "content": {
             "application/json": {
               "schema": {
-                "anyOf": [
-                  {
-                    "$ref": "#/components/schemas/Product"
-                  }
-                ]
               }
             }
           }
@@ -1490,52 +1875,42 @@
         ]
       }
     },
-    "/api/sendo/ward/{wardId}": {
+    "/sendo/products": {
       "get": {
         "tags": [
-          "sendoAPI"
+          "sendoProducts"
         ],
+        "summary": "Get all sendoProduct in database",
+        "operationId": "getAllSendoProduct",
         "security": [
           {
             "bearerAuth": [],
             "ApiKeyAuth": []
           }
         ],
-        "summary": "Get ward by wardId",
-        "operationId": "getWard",
         "parameters": [
           {
-            "in": "path",
-            "name": "wardId",
-            "required": true,
-            "description": "Numeric ID of ward to get",
+            "in": "query",
+            "name": "storeIds[]",
+            "required": false,
+            "description": "array of storeIds",
             "schema": {
-              "type": "integer",
-              "example": 26734
+              "type": "array",
+              "items": [
+                "d63aecd314b4463abc2204aa6a340c6b"
+              ]
             }
           }
         ],
         "responses": {
           "200": {
-            "description": "Successful",
-            "content": {
-              "application/json": {
-                "example": "Phường Tân Định"
-              }
-            }
+            "description": "Successful"
           },
           "400": {
             "description": "Invalid ID supplied"
           },
-          "401": {
-            "description": "Pet not found",
-            "content": {
-              "application/json": {
-                "example": {
-                  "message": "Bad token; invalid JSON"
-                }
-              }
-            }
+          "404": {
+            "description": "Pet not found"
           },
           "405": {
             "description": "Validation exception"
@@ -1543,13 +1918,12 @@
         }
       }
     },
-    "/api/sendo/district/{districtId}": {
+    "/sendo/products/{_id}": {
       "get": {
         "tags": [
-          "sendoAPI"
+          "sendoProducts"
         ],
-        "summary": "Get district by districtId",
-        "operationId": "getDistrict",
+        "summary": "Get sendoProduct by objectId in database",
         "security": [
           {
             "bearerAuth": [],
@@ -1559,41 +1933,23 @@
         "parameters": [
           {
             "in": "path",
-            "name": "districtId",
-            "required": true,
-            "description": "Numeric ID of district to get",
+            "name": "_id",
+            "required": false,
+            "description": "ObjectId",
             "schema": {
-              "type": "integer",
-              "example": "2"
-            }
+            },
+            "example": "60f16f6cc55fa60354c5321b"
           }
         ],
         "responses": {
           "200": {
-            "description": "Successful",
-            "content": {
-              "application/json": {
-                "example": "Quận 2"
-              }
-            }
+            "description": "Successful"
           },
           "400": {
-            "description": "Invalid ID supplied",
-            "content": {
-              "application/json": {
-                "example": "Invalid id"
-              }
-            }
+            "description": "Invalid ID supplied"
           },
-          "401": {
-            "description": "Pet not found",
-            "content": {
-              "application/json": {
-                "example": {
-                  "message": "Bad token; invalid JSON"
-                }
-              }
-            }
+          "404": {
+            "description": "Pet not found"
           },
           "405": {
             "description": "Validation exception"
@@ -1601,13 +1957,12 @@
         }
       }
     },
-    "/api/sendo/region/{regionId}": {
+    "/sendo/categories": {
       "get": {
         "tags": [
-          "sendoAPI"
+          "sendoCategories"
         ],
-        "summary": "Get region by regionId",
-        "operationId": "getRegion",
+        "summary": "Get list sendoCategories in database",
         "security": [
           {
             "bearerAuth": [],
@@ -1616,42 +1971,185 @@
         ],
         "parameters": [
           {
-            "in": "path",
-            "name": "regionId",
-            "required": true,
-            "description": "Numeric ID of region to get",
+            "in": "query",
+            "name": "idpath[]",
+            "required": false,
+            "description": "array of categoryId",
             "schema": {
-              "type": "integer",
-              "example": "2"
+              "type": "array",
+              "items": [
+                ""
+              ]
             }
           }
         ],
         "responses": {
           "200": {
-            "description": "Successful",
-            "content": {
-              "application/json": {
-                "example": "Hà nội"
-              }
-            }
+            "description": "Successful"
           },
           "400": {
-            "description": "Invalid ID supplied",
-            "content": {
-              "application/json": {
-                "example": "Invalid id"
-              }
-            }
+            "description": "Invalid ID supplied"
           },
-          "401": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "example": {
-                  "message": "Bad token; invalid JSON"
-                }
+          "404": {
+            "description": "Pet not found"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        }
+      }
+    },
+    "/sendo/categories/search": {
+      "get": {
+        "tags": [
+          "sendoCategories"
+        ],
+        "summary": "search sendoCategories in database",
+        "security": [
+          {
+            "bearerAuth": [],
+            "ApiKeyAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "search",
+            "required": false,
+            "description": "search",
+            "schema": {
+              "type": "string",
+              "example": ""
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful"
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "404": {
+            "description": "Pet not found"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        }
+      }
+    },
+    "/sendo/categories/suggest": {
+      "post": {
+        "tags": [
+          "sendoCategories"
+        ],
+        "summary": "suggest sendoCategory in database",
+        "operationId": "suggesSendoCategory",
+        "security": [
+          {
+            "bearerAuth": [],
+            "ApiKeyAuth": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {},
+              "example": {
+                "name": "locpro"
               }
             }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful"
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "404": {
+            "description": "Pet not found"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        }
+      }
+    },
+    "/sendo/products/fetch": {
+      "post": {
+        "tags": [
+          "sendoProducts"
+        ],
+        "summary": "fetch sendo products",
+        "operationId": "fetchSendoProducts",
+        "security": [
+          {
+            "bearerAuth": [],
+            "ApiKeyAuth": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {},
+              "example": {
+                "store_id": "d63aecd314b4463abc2204aa6a340c6b",
+                "storageId": "5ffac838ba04401744309345"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful"
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "404": {
+            "description": "Pet not found"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        }
+      }
+    },
+    "/sendo/products/sync": {
+      "post": {
+        "tags": [
+          "sendoProducts"
+        ],
+        "summary": "sync sendo products",
+        "security": [
+          {
+            "bearerAuth": [],
+            "ApiKeyAuth": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {},
+              "example": {
+                "store_id": "d63aecd314b4463abc2204aa6a340c6b",
+                "storageId": "5ffac838ba04401744309345"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful"
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "404": {
+            "description": "Pet not found"
           },
           "405": {
             "description": "Validation exception"
@@ -2109,88 +2607,6 @@
         }
       }
     },
-    "/sendo/products": {
-      "get": {
-        "tags": [
-          "sendoProducts"
-        ],
-        "summary": "Get all sendoProduct in database",
-        "operationId": "getAllSendoProduct",
-        "security": [
-          {
-            "bearerAuth": [],
-            "ApiKeyAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "in": "query",
-            "name": "storeIds[]",
-            "required": false,
-            "description": "array of storeIds",
-            "schema": {
-              "type": "array",
-              "items": [
-                "d63aecd314b4463abc2204aa6a340c6b"
-              ]
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful"
-          },
-          "400": {
-            "description": "Invalid ID supplied"
-          },
-          "404": {
-            "description": "Pet not found"
-          },
-          "405": {
-            "description": "Validation exception"
-          }
-        }
-      }
-    },
-    "/sendo/suggest-category": {
-      "post": {
-        "tags": [
-          "sendoProducts"
-        ],
-        "summary": "suggest sendoCategory in database",
-        "operationId": "suggesSendoCategory",
-        "security": [
-          {
-            "bearerAuth": [],
-            "ApiKeyAuth": []
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {},
-              "example": {
-                "name": "locpro"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Successful"
-          },
-          "400": {
-            "description": "Invalid ID supplied"
-          },
-          "404": {
-            "description": "Pet not found"
-          },
-          "405": {
-            "description": "Validation exception"
-          }
-        }
-      }
-    },
     "/api/sendo/products/{productId}": {
       "get": {
         "tags": [
@@ -2288,13 +2704,12 @@
         }
       }
     },
-    "/api/sendo/category/{categoryId}": {
+    "/api/sendo/attribute/{categoryId}": {
       "get": {
         "tags": [
           "sendoAPI"
         ],
         "summary": "Get category by categoryId",
-        "operationId": "getCategory",
         "security": [
           {
             "bearerAuth": [],
@@ -2307,88 +2722,6 @@
             "name": "categoryId",
             "required": true,
             "description": "Numeric ID of category to get",
-            "schema": {
-              "type": "integer",
-              "example": 1485
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful"
-          },
-          "400": {
-            "description": "Invalid ID supplied"
-          },
-          "404": {
-            "description": "Pet not found"
-          },
-          "405": {
-            "description": "Validation exception"
-          }
-        }
-      }
-    },
-    "/api/sendo/category/": {
-      "get": {
-        "tags": [
-          "sendoAPI"
-        ],
-        "summary": "Search category by lazada categoryName",
-        "operationId": "searchCategory",
-        "security": [
-          {
-            "bearerAuth": [],
-            "ApiKeyAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "in": "query",
-            "name": "search",
-            "required": true,
-            "description": "string of category to search",
-            "schema": {
-              "type": "string",
-              "example": "Áo khoác Denim nam"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful"
-          },
-          "400": {
-            "description": "Invalid ID supplied"
-          },
-          "404": {
-            "description": "Pet not found"
-          },
-          "405": {
-            "description": "Validation exception"
-          }
-        }
-      }
-    },
-    "/api/sendo/attribute/{attributeId}": {
-      "get": {
-        "tags": [
-          "sendoAPI"
-        ],
-        "summary": "Get attribute by attributeId",
-        "operationId": "getAttribute",
-        "security": [
-          {
-            "bearerAuth": [],
-            "ApiKeyAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "in": "path",
-            "name": "attributeId",
-            "required": true,
-            "description": "Numeric ID of attribute to get",
             "schema": {
               "type": "integer",
               "example": 1485
@@ -2481,36 +2814,30 @@
         }
       }
     },
-    "/api/sendo/orders/": {
-      "post": {
+    "/api/sendo/orders/search": {
+      "get": {
         "tags": [
           "sendoAPI"
         ],
         "summary": "search order",
-        "operationId": "searchOrder",
         "security": [
           {
             "bearerAuth": [],
             "ApiKeyAuth": []
           }
         ],
-        "requestBody": {
-          "description": "page_size: min 10, max 50, date: yyyy/MM/dd",
-          "content": {
-            "application/json": {
-              "schema": {},
-              "example": {
-                "page_size": 10,
-                "order_status": 2,
-                "order_date_from": "2020-05-01",
-                "order_date_to": "2020-05-07",
-                "order_status_date_from": null,
-                "order_status_date_to": null,
-                "token": null
-              }
+        "parameters": [
+          {
+            "in": "query",
+            "name": "order_number",
+            "required": true,
+            "description": "",
+            "schema": {
+              "type": "integer",
+              "example": 142873645695
             }
           }
-        },
+        ],
         "responses": {
           "200": {
             "description": "Successful"
@@ -2654,13 +2981,86 @@
         }
       }
     },
-    "/sendo/products/fetch": {
+    "/api/sendo/login": {
       "post": {
         "tags": [
-          "sendoProducts"
+          "sendoAPI"
         ],
-        "summary": "fetch sendo products",
-        "operationId": "fetchSendoProducts",
+        "summary": "login on Sendo",
+        "security": [
+          {
+            "bearerAuth": [],
+            "ApiKeyAuth": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {},
+              "example": {
+                "credential":{
+                  "app_key": "dd206b84824147e9ad3f650111051563",
+                  "app_secret": "90862fe0b10d4d2d82e623cf3a458161",
+                  "store_id": "dd206b84824147e9ad3f650111051563",
+                  "store_name": "SENDO-1",
+                  "platform_name": "sendo",
+                  "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJTdG9yZUlkIjoiODU4ODc2IiwiVXNlck5hbWUiOiIiLCJTdG9yZVN0YXR1cyI6IjIiLCJTaG9wVHlwZSI6IjEiLCJTdG9yZUxldmVsIjoiMCIsImV4cCI6MTYyNjU0ODE4MywiaXNzIjoiODU4ODc2IiwiYXVkIjoiODU4ODc2In0.dXw3l8Y_00wvdS4g-6yzzMFngViSsNjT1xSP4_TaZD8",
+                  "expires": "2021-07-18T01:56:23.784662+07:00",
+                  "status": "connected"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful",
+            "content": {
+              "application/json": {
+                "example": {
+                  "app_key": "dd206b84824147e9ad3f650111051563",
+                  "app_secret": "90862fe0b10d4d2d82e623cf3a458161",
+                  "store_id": "dd206b84824147e9ad3f650111051563",
+                  "store_name": "SENDO-1",
+                  "platform_name": "sendo",
+                  "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJTdG9yZUlkIjoiODU4ODc2IiwiVXNlck5hbWUiOiIiLCJTdG9yZVN0YXR1cyI6IjIiLCJTaG9wVHlwZSI6IjEiLCJTdG9yZUxldmVsIjoiMCIsImV4cCI6MTYyNjU0ODE4MywiaXNzIjoiODU4ODc2IiwiYXVkIjoiODU4ODc2In0.dXw3l8Y_00wvdS4g-6yzzMFngViSsNjT1xSP4_TaZD8",
+                  "expires": "2021-07-18T01:56:23.784662+07:00",
+                  "status": "connected",
+                  "isCredentialRefreshed": false
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid ID supplied",
+            "content": {
+              "application/json": {
+                "example": {}
+              }
+            }
+          },
+          "401": {
+            "description": "Pet not found",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Bad token; invalid JSON"
+                }
+              }
+            }
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        }
+      }
+    },
+    "/lazada/products/sync": {
+      "post": {
+        "tags": [
+          "lazadaProducts"
+        ],
+        "summary": "fetch lazada products",
         "security": [
           {
             "bearerAuth": [],
@@ -2734,6 +3134,46 @@
         }
       }
     },
+    "/lazada/products/fetch-deleted": {
+      "post": {
+        "tags": [
+          "lazadaProducts"
+        ],
+        "summary": "fetch deleted lazada products",
+        "security": [
+          {
+            "bearerAuth": [],
+            "ApiKeyAuth": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {},
+              "example": {
+                "lastSync": "2021-07-10T11:27:27.628Z",
+                "store_id": "d63aecd314b4463abc2204aa6a340c6b",
+                "storageId": "5ffac838ba04401744309345"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful"
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "404": {
+            "description": "Pet not found"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        }
+      }
+    },
     "/lazada/products": {
       "get": {
         "tags": [
@@ -2780,13 +3220,12 @@
         }
       }
     },
-    "/api/lazada/token": {
+    "/lazada/products/{_id}": {
       "get": {
         "tags": [
-          "lazadaAPI"
+          "lazadaProducts"
         ],
-        "summary": "get accessToken on lazada",
-        "operationId": "getAccessToken",
+        "summary": "Get lazadaProduct by Id in database",
         "security": [
           {
             "bearerAuth": [],
@@ -2795,20 +3234,10 @@
         ],
         "parameters": [
           {
-            "in": "query",
-            "name": "code",
-            "required": true,
-            "description": "code receive from lazada",
-            "schema": {
-              "type": "string",
-              "example": ""
-            }
-          },
-          {
-            "in": "query",
-            "name": "state",
-            "required": true,
-            "description": "state ",
+            "in": "path",
+            "name": "_id",
+            "required": false,
+            "description": "objectId",
             "schema": {
               "type": "string",
               "example": ""
@@ -2817,15 +3246,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Successful",
-            "content": {
-              "application/json": {
-                "example": {
-                  "code": "0",
-                  "request_id": "0b0e02a716117470077826212"
-                }
-              }
-            }
+            "description": "Successful"
           },
           "400": {
             "description": "Invalid ID supplied"
@@ -2839,47 +3260,104 @@
         }
       }
     },
-    "/api/lazada/products/{sellerSku}": {
-      "delete": {
+    "/api/lazada/authorize": {
+      "get": {
         "tags": [
           "lazadaAPI"
         ],
-        "summary": "delete product by sellerSku on lazada",
-        "operationId": "deleteProduct",
-        "security": [
-          {
-            "bearerAuth": [],
-            "ApiKeyAuth": []
-          }
-        ],
+        "summary": "authorize",
+        "operationId": "authorize",
         "parameters": [
           {
-            "in": "path",
-            "name": "sellerSku",
-            "required": true,
+            "in": "query",
+            "name": "code",
+            "required": false,
+            "description": "code",
             "schema": {
               "type": "string",
-              "example": "124324"
+              "example": ""
             }
           }
         ],
         "responses": {
           "200": {
-            "description": "Successful",
-            "content": {
-              "application/json": {
-                "example": {
-                  "code": "0",
-                  "request_id": "0b0e02a716117470077826212"
-                }
-              }
-            }
+            "description": "Successful"
           },
           "400": {
             "description": "Invalid ID supplied"
           },
           "404": {
             "description": "Pet not found"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        }
+      }
+    },
+    "/api/lazada/login": {
+      "post": {
+        "tags": [
+          "lazadaAPI"
+        ],
+        "summary": "login on lazada",
+        "security": [
+          {
+            "bearerAuth": [],
+            "ApiKeyAuth": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {},
+              "example": {
+                "credential":{
+                  "isActivated" : true,
+                  "status" : "connected",
+                  "priceSync" : true,
+                  "quantitySync" : true,
+                  "pricePolicy" : "retailPrice",
+                  "lastSync" : "2021-07-10T11:27:27.628Z",
+                  "_id" : "60e97889016e46250c58111a",
+                  "platform_name" : "lazada",
+                  "refresh_token" : "50001801a19kr9tpe7Git8OvXhiHQJa1f110435dU0nHXFvSDxq3vNtXwvPUUwEw",
+                  "access_token" : "50000801519b0FvdjQEzshAfEu6OyWH14cd47f1fHRKaExznFaAwuCQQwgMf9Hdr",
+                  "expires" : "2021-07-26T03:50:56.461Z",
+                  "refresh_expires" : "2021-08-09T10:38:00.618Z",
+                  "store_name" : "Board Game Minus",
+                  "store_id" : "100177436"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful",
+            "content": {
+              "application/json": {
+                "example": {}
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid ID supplied",
+            "content": {
+              "application/json": {
+                "example": {}
+              }
+            }
+          },
+          "401": {
+            "description": "Pet not found",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Bad token; invalid JSON"
+                }
+              }
+            }
           },
           "405": {
             "description": "Validation exception"
@@ -3058,7 +3536,6 @@
           "lazadaAPI"
         ],
         "summary": "update product on lazada",
-        "operationId": "updateProduct",
         "security": [
           {
             "bearerAuth": [],
@@ -3069,52 +3546,16 @@
           "content": {
             "application/json": {
               "schema": {},
-              "example": {
-                "_id": "606555bed3ec056743f5cf88",
-                "id": "1252566024",
-                "store_id": "200163939035",
-                "__v": 0,
-                "attributes": {
-                  "name": "dffdưe323r32",
-                  "description": "<p style=\"margin: 0;padding: 8.0px 0;white-space: pre-wrap;\"><span style=\"font-family: none;\"></span></p>",
-                  "brand": "No Brand",
-                  "warranty_type": "Warranty Stamp",
-                  "source": "asc"
-                },
-                "avatar": null,
-                "created_date_timestamp": "2021-03-31T08:31:25.000Z",
-                "primary_category": "10100182",
-                "updated_date_timestamp": "2021-03-31T08:31:25.000Z",
+              "example":{
+                "id": "1291776916",
+                "store_id": "100177436",
                 "variants": [
                   {
-                    "_id": "606555bed3ec056743f5cfa2",
-                    "ShopSku": "1252566024_VNAMZ-4669792705",
-                    "productId": "606555bed3ec056743f5cf88",
-                    "SkuId": 4669792705,
-                    "Status": "active",
-                    "Url": "https://www.lazada.vn/-i1252566024-s4669792705.html",
-                    "__v": 0,
-                    "avatar": [],
-                    "multiWarehouseInventories": [
-                      {
-                        "quantity": 234,
-                        "warehouseCode": "dropshipping"
-                      }
-                    ],
-                    "package_height": "32.00",
-                    "package_length": "32.00",
-                    "package_weight": "32",
-                    "package_width": "23.00",
-                    "price": 23432,
-                    "quantity": 234,
-                    "sku": "324324",
-                    "special_price": 0,
-                    "variant_attributes": [
-                      {
-                        "attribute_name": "color_family",
-                        "option_value": "Cherry"
-                      }
-                    ]
+                    "ShopSku": "1291776916_VNAMZ-4918136424",
+                    "SkuId": 4918136424,
+                    "price": 16000,
+                    "quantity": 16,
+                    "sku": "SNACK_MITOM_10"
                   }
                 ]
               }
@@ -3153,13 +3594,13 @@
         }
       }
     },
-    "/api/lazada/attribute/{categoryId}": {
-      "get": {
+    "/api/lazada/products/{sellerSku}": {
+      "delete": {
         "tags": [
           "lazadaAPI"
         ],
-        "summary": "get Attributes by categoryId on lazada",
-        "operationId": "getAttributes",
+        "summary": "delete product by sellerSku on lazada",
+        "operationId": "deleteProduct",
         "security": [
           {
             "bearerAuth": [],
@@ -3169,34 +3610,31 @@
         "parameters": [
           {
             "in": "path",
-            "name": "categoryId",
+            "name": "sellerSku",
             "required": true,
             "schema": {
-              "type": "number",
-              "example": 10100183
-            },
-            "description": "categoryId must be primary category"
+              "type": "string",
+              "example": "124324"
+            }
           }
         ],
         "responses": {
           "200": {
-            "description": "Successful"
+            "description": "Successful",
+            "content": {
+              "application/json": {
+                "example": {
+                  "code": "0",
+                  "request_id": "0b0e02a716117470077826212"
+                }
+              }
+            }
           },
           "400": {
             "description": "Invalid ID supplied"
           },
           "404": {
-            "description": "Attributes not found",
-            "content": {
-              "application/json": {
-                "example": {
-                  "code": "601",
-                  "type": "ISP",
-                  "message": "E601: Requested category not exists",
-                  "request_id": "0b1195dd16111364977805848"
-                }
-              }
-            }
+            "description": "Pet not found"
           },
           "405": {
             "description": "Validation exception"
@@ -3224,9 +3662,7 @@
             "required": true,
             "schema": {
               "type": "number",
-              "enum": [
-                100
-              ]
+              "example": 100
             },
             "description": ""
           },
@@ -3236,9 +3672,7 @@
             "required": true,
             "schema": {
               "type": "number",
-              "enum": [
-                0
-              ]
+              "example": "0"
             },
             "description": ""
           }
@@ -3275,65 +3709,6 @@
                   ],
                   "code": "0",
                   "request_id": "0b1195dd16111401783978066"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Invalid ID supplied"
-          },
-          "404": {
-            "description": "Attributes not found",
-            "content": {
-              "application/json": {
-                "example": {
-                  "code": "1006",
-                  "type": "ISP",
-                  "message": "E1006: SellerSku Not Exist",
-                  "request_id": "0b1187a316111405293796914"
-                }
-              }
-            }
-          },
-          "405": {
-            "description": "Validation exception"
-          }
-        }
-      }
-    },
-    "/api/lazada/cancel-reason": {
-      "get": {
-        "tags": [
-          "lazadaAPI"
-        ],
-        "summary": "get Cancel Reason on lazada",
-        "operationId": "getCancelReason",
-        "security": [
-          {
-            "bearerAuth": [],
-            "ApiKeyAuth": []
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful",
-            "content": {
-              "application/json": {
-                "example": {
-                  "data": [
-                    {
-                      "name": "Out of Stock",
-                      "type": "canceled",
-                      "reason_id": 15
-                    },
-                    {
-                      "name": "Wrong Price or Pricing Error",
-                      "type": "canceled",
-                      "reason_id": 21
-                    }
-                  ],
-                  "code": "0",
-                  "request_id": "0b0e02a716117568792665768"
                 }
               }
             }
@@ -3408,306 +3783,8 @@
         }
       }
     },
-    "/api/lazada/suggestion": {
-      "get": {
-        "tags": [
-          "lazadaAPI"
-        ],
-        "summary": "get category suggestion on lazada",
-        "operationId": "getSuggestion",
-        "security": [
-          {
-            "bearerAuth": [],
-            "ApiKeyAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "in": "query",
-            "name": "name",
-            "required": false,
-            "schema": {
-              "type": "String",
-              "example": "áo thun"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful",
-            "content": {
-              "application/json": {
-                "example": {
-                  "data": {
-                    "ship_on_time": "0.0",
-                    "response_time": "null",
-                    "seller_id": 200163939035,
-                    "response_rate": "null"
-                  },
-                  "code": "0",
-                  "request_id": "0b1195ad16111533718203524"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Invalid ID supplied"
-          },
-          "404": {
-            "description": "Attributes not found",
-            "content": {
-              "application/json": {
-                "example": {}
-              }
-            }
-          },
-          "405": {
-            "description": "Validation exception"
-          }
-        }
-      }
-    },
-    "/categories": {
-      "get": {
-        "tags": [
-          "categories"
-        ],
-        "summary": "get list categories in database",
-        "operationId": "getListCategories",
-        "security": [
-          {
-            "bearerAuth": [],
-            "ApiKeyAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "in": "query",
-            "name": "idpath[]",
-            "required": false,
-            "schema": {
-              "type": "array",
-              "items": []
-            },
-            "description": "categoryId must be primary category"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful"
-          },
-          "400": {
-            "description": "Invalid ID supplied"
-          },
-          "405": {
-            "description": "Validation exception"
-          }
-        }
-      },
-      "post": {
-        "tags": [
-          "categories"
-        ],
-        "summary": "create category in database",
-        "operationId": "createCategory",
-        "security": [
-          {
-            "bearerAuth": [],
-            "ApiKeyAuth": []
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {},
-              "example": {
-                "idpath": [],
-                "namepath": [],
-                "category_id": 99999,
-                "var": false,
-                "name": "locpro",
-                "leaf": false
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Successful"
-          },
-          "400": {
-            "description": "Invalid ID supplied"
-          },
-          "405": {
-            "description": "Validation exception"
-          }
-        }
-      }
-    },
-    "/categories/{categoryId}": {
-      "get": {
-        "tags": [
-          "categories"
-        ],
-        "summary": "get category by id in database",
-        "operationId": "getCategoryById",
-        "security": [
-          {
-            "bearerAuth": [],
-            "ApiKeyAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "in": "path",
-            "name": "categoryId",
-            "required": true,
-            "schema": {
-              "type": "number",
-              "example": 10100180
-            },
-            "description": "categoryId must be primary category"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful"
-          },
-          "400": {
-            "description": "Invalid ID supplied"
-          },
-          "405": {
-            "description": "Validation exception"
-          }
-        }
-      },
-      "patch": {
-        "tags": [
-          "categories"
-        ],
-        "summary": "update category in database",
-        "operationId": "updateCategory",
-        "security": [
-          {
-            "bearerAuth": [],
-            "ApiKeyAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "in": "path",
-            "name": "categoryId",
-            "required": true,
-            "schema": {
-              "type": "number",
-              "example": "99999"
-            },
-            "description": ""
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {},
-              "example": {
-                "idpath": [],
-                "namepath": [],
-                "var": false,
-                "name": "locpro1",
-                "leaf": false
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Successful"
-          },
-          "400": {
-            "description": "Invalid ID supplied"
-          },
-          "405": {
-            "description": "Validation exception"
-          }
-        }
-      },
-      "delete": {
-        "tags": [
-          "categories"
-        ],
-        "summary": "delete category by id in database",
-        "operationId": "deleteCategory",
-        "security": [
-          {
-            "bearerAuth": [],
-            "ApiKeyAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "in": "path",
-            "name": "categoryId",
-            "required": true,
-            "schema": {
-              "type": "number",
-              "example": "99999"
-            },
-            "description": ""
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful"
-          },
-          "400": {
-            "description": "Invalid ID supplied"
-          },
-          "405": {
-            "description": "Validation exception"
-          }
-        }
-      }
-    },
-    "/categories/search": {
-      "get": {
-        "tags": [
-          "categories"
-        ],
-        "summary": "searching primary categories in database",
-        "operationId": "getCategories",
-        "security": [
-          {
-            "bearerAuth": [],
-            "ApiKeyAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "in": "query",
-            "name": "search",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "example": "áo th"
-            },
-            "description": ""
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful"
-          },
-          "400": {
-            "description": "Invalid ID supplied"
-          },
-          "405": {
-            "description": "Validation exception"
-          }
-        }
-      }
-    },
     "/api/lazada/refresh-token": {
-      "get": {
+      "post": {
         "tags": [
           "lazadaAPI"
         ],
@@ -3719,6 +3796,21 @@
             "ApiKeyAuth": []
           }
         ],
+        "requestBody":{
+          "content":{
+            "application/json":{
+              "schema":{},
+              "example":{
+                "credential":{
+                  "refreshToken": "",
+                  "refreshExpires":"",
+                  "store_id": "",
+                  "_id": ""
+                }
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
             "description": "Successful"
@@ -4045,7 +4137,7 @@
             "application/json": {
               "schema": {},
               "example": {
-                "shipment_provider": "locpro",
+                "shipment_provider": "LEX VN",
                 "delivery_type": "dropship",
                 "order_item_ids": [
                   1530553,
@@ -4154,34 +4246,19 @@
         }
       }
     },
-    "/api/lazada/upload-image": {
-      "post": {
+    "/api/lazada/seller": {
+      "get": {
         "tags": [
           "lazadaAPI"
         ],
-        "summary": "upload image on lazada",
-        "operationId": "uploadImage",
+        "summary": "get seller info on lazada",
+        "operationId": "getSellerInfo",
         "security": [
           {
             "bearerAuth": [],
             "ApiKeyAuth": []
           }
         ],
-        "requestBody": {
-          "content": {
-            "multipart/form-data": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "image": {
-                    "type": "string",
-                    "format": "binary"
-                  }
-                }
-              }
-            }
-          }
-        },
         "responses": {
           "200": {
             "description": "Successful",
@@ -4209,17 +4286,27 @@
         }
       }
     },
-    "/api/lazada/seller": {
+    "/api/lazada/attributes/{categoryId}": {
       "get": {
         "tags": [
           "lazadaAPI"
         ],
-        "summary": "get seller info on lazada",
-        "operationId": "getSellerInfo",
+        "summary": "get attribute on lazada",
         "security": [
           {
-            "bearerAuth": [],
-            "ApiKeyAuth": []
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "categoryId",
+            "required": true,
+            "schema": {
+              "type": "number",
+              "example": 10100183
+            },
+            "description": ""
           }
         ],
         "responses": {
@@ -4273,346 +4360,6 @@
             "description": "Validation exception"
           }
         }
-      },
-      "post": {
-        "tags": [
-          "provinces"
-        ],
-        "summary": "create province in database",
-        "operationId": "createProvinces",
-        "security": [
-          {
-            "bearerAuth": [],
-            "ApiKeyAuth": []
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {},
-              "example": {
-                "id": "9999",
-                "name": "locpro",
-                "type": "Tỉnh"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Successful"
-          },
-          "400": {
-            "description": "Invalid ID supplied"
-          },
-          "405": {
-            "description": "Validation exception"
-          }
-        }
-      }
-    },
-    "/address/provinces/{provinceId}": {
-      "get": {
-        "tags": [
-          "provinces"
-        ],
-        "summary": "get province by id in database",
-        "operationId": "getProvinceById",
-        "security": [
-          {
-            "bearerAuth": [],
-            "ApiKeyAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "in": "path",
-            "name": "provinceId",
-            "required": true,
-            "schema": {
-              "type": "number",
-              "example": "22"
-            },
-            "description": ""
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful"
-          },
-          "400": {
-            "description": "Invalid ID supplied"
-          },
-          "405": {
-            "description": "Validation exception"
-          }
-        }
-      },
-      "patch": {
-        "tags": [
-          "provinces"
-        ],
-        "summary": "update province by id in database",
-        "operationId": "updateProvinceById",
-        "security": [
-          {
-            "bearerAuth": [],
-            "ApiKeyAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "in": "path",
-            "name": "provinceId",
-            "required": true,
-            "schema": {
-              "type": "number",
-              "example": "9999"
-            },
-            "description": ""
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {},
-              "example": {
-                "name": "locpro1",
-                "type": "Tỉnh"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Successful"
-          },
-          "400": {
-            "description": "Invalid ID supplied"
-          },
-          "405": {
-            "description": "Validation exception"
-          }
-        }
-      },
-      "delete": {
-        "tags": [
-          "provinces"
-        ],
-        "summary": "delete province by id in database",
-        "operationId": "deleteProvinceById",
-        "security": [
-          {
-            "bearerAuth": [],
-            "ApiKeyAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "in": "path",
-            "name": "provinceId",
-            "required": true,
-            "schema": {
-              "type": "number",
-              "example": "9999"
-            },
-            "description": ""
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful"
-          },
-          "400": {
-            "description": "Invalid ID supplied"
-          },
-          "405": {
-            "description": "Validation exception"
-          }
-        }
-      }
-    },
-    "/address/districts": {
-      "get": {
-        "tags": [
-          "districts"
-        ],
-        "summary": "get all districts in database",
-        "operationId": "getAllDistricts",
-        "security": [
-          {
-            "bearerAuth": [],
-            "ApiKeyAuth": []
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful"
-          },
-          "400": {
-            "description": "Invalid ID supplied"
-          },
-          "405": {
-            "description": "Validation exception"
-          }
-        }
-      },
-      "post": {
-        "tags": [
-          "districts"
-        ],
-        "summary": "create district in database",
-        "operationId": "createDistricts",
-        "security": [
-          {
-            "bearerAuth": [],
-            "ApiKeyAuth": []
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {},
-              "example": {
-                "id": "9999",
-                "name": "locpro",
-                "type": "Huyện"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Successful"
-          },
-          "400": {
-            "description": "Invalid ID supplied"
-          },
-          "405": {
-            "description": "Validation exception"
-          }
-        }
-      }
-    },
-    "/address/districts/{districtId}": {
-      "get": {
-        "tags": [
-          "districts"
-        ],
-        "summary": "get district by id in database",
-        "operationId": "getdistrictById",
-        "security": [
-          {
-            "bearerAuth": [],
-            "ApiKeyAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "in": "path",
-            "name": "districtId",
-            "required": true,
-            "schema": {
-              "type": "number",
-              "example": "9999"
-            },
-            "description": ""
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful"
-          },
-          "400": {
-            "description": "Invalid ID supplied"
-          },
-          "405": {
-            "description": "Validation exception"
-          }
-        }
-      },
-      "patch": {
-        "tags": [
-          "districts"
-        ],
-        "summary": "update district by id in database",
-        "operationId": "updateDistrictById",
-        "security": [
-          {
-            "bearerAuth": [],
-            "ApiKeyAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "in": "path",
-            "name": "districtId",
-            "required": true,
-            "schema": {
-              "type": "number",
-              "example": "9999"
-            },
-            "description": ""
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {},
-              "example": {
-                "name": "locpro1",
-                "type": "Huyện"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Successful"
-          },
-          "400": {
-            "description": "Invalid ID supplied"
-          },
-          "405": {
-            "description": "Validation exception"
-          }
-        }
-      },
-      "delete": {
-        "tags": [
-          "districts"
-        ],
-        "summary": "delete district by id in database",
-        "operationId": "deleteDistrictById",
-        "security": [
-          {
-            "bearerAuth": [],
-            "ApiKeyAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "in": "path",
-            "name": "districtId",
-            "required": true,
-            "schema": {
-              "type": "number",
-              "example": "9999"
-            },
-            "description": ""
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful"
-          },
-          "400": {
-            "description": "Invalid ID supplied"
-          },
-          "405": {
-            "description": "Validation exception"
-          }
-        }
       }
     },
     "/address/province-districts/{provinceId}": {
@@ -4634,189 +4381,6 @@
             "name": "provinceId",
             "type": "string",
             "example": "79"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful"
-          },
-          "400": {
-            "description": "Invalid ID supplied"
-          },
-          "405": {
-            "description": "Validation exception"
-          }
-        }
-      }
-    },
-    "/address/wards": {
-      "get": {
-        "tags": [
-          "wards"
-        ],
-        "summary": "get all wards in database",
-        "operationId": "getAllWards",
-        "security": [
-          {
-            "bearerAuth": [],
-            "ApiKeyAuth": []
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful"
-          },
-          "400": {
-            "description": "Invalid ID supplied"
-          },
-          "405": {
-            "description": "Validation exception"
-          }
-        }
-      },
-      "post": {
-        "tags": [
-          "wards"
-        ],
-        "summary": "create ward in database",
-        "operationId": "createWards",
-        "security": [
-          {
-            "bearerAuth": [],
-            "ApiKeyAuth": []
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {},
-              "example": {
-                "id": "9999",
-                "name": "locpro",
-                "type": "Phường"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Successful"
-          },
-          "400": {
-            "description": "Invalid ID supplied"
-          },
-          "405": {
-            "description": "Validation exception"
-          }
-        }
-      }
-    },
-    "/address/wards/{wardId}": {
-      "get": {
-        "tags": [
-          "wards"
-        ],
-        "summary": "get ward by id in database",
-        "operationId": "getwardById",
-        "security": [
-          {
-            "bearerAuth": [],
-            "ApiKeyAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "in": "path",
-            "name": "wardId",
-            "required": true,
-            "schema": {
-              "type": "number",
-              "example": "22"
-            },
-            "description": ""
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful"
-          },
-          "400": {
-            "description": "Invalid ID supplied"
-          },
-          "405": {
-            "description": "Validation exception"
-          }
-        }
-      },
-      "patch": {
-        "tags": [
-          "wards"
-        ],
-        "summary": "update ward by id in database",
-        "operationId": "updateWardById",
-        "security": [
-          {
-            "bearerAuth": [],
-            "ApiKeyAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "in": "path",
-            "name": "wardId",
-            "required": true,
-            "schema": {
-              "type": "number",
-              "example": "9999"
-            },
-            "description": ""
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {},
-              "example": {
-                "name": "locpro1",
-                "type": "Phường"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Successful"
-          },
-          "400": {
-            "description": "Invalid ID supplied"
-          },
-          "405": {
-            "description": "Validation exception"
-          }
-        }
-      },
-      "delete": {
-        "tags": [
-          "wards"
-        ],
-        "summary": "delete ward by id in database",
-        "operationId": "deleteWardById",
-        "security": [
-          {
-            "bearerAuth": [],
-            "ApiKeyAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "in": "path",
-            "name": "wardId",
-            "required": true,
-            "schema": {
-              "type": "number",
-              "example": "9999"
-            },
-            "description": ""
           }
         ],
         "responses": {
@@ -4899,7 +4463,568 @@
           }
         }
       }
+    },
+    "/customers/": {
+      "get": {
+        "tags": [
+          "customers"
+        ],
+        "summary": "get all customers in database",
+        "security": [
+          {
+            "bearerAuth": [],
+            "ApiKeyAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful"
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "customers"
+        ],
+        "summary": "create customer in database",
+        "security": [
+          {
+            "bearerAuth": [],
+            "ApiKeyAuth": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+              },
+              "example": {
+                "group": "cgroup 1",
+                "name": "locpro3",
+                "email": "nhoxloctran125@gmail.com",
+                "phone": "0987654321",
+                "address": "address random 0.5604539647259574"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful"
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        }
+      }
+    },
+    "/customers/search": {
+      "get": {
+        "tags": [
+          "customers"
+        ],
+        "summary": "search customers in database",
+        "security": [
+          {
+            "bearerAuth": [],
+            "ApiKeyAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "name",
+            "type": "string",
+            "example": "locpro"
+          },
+          {
+            "in": "query",
+            "name": "group",
+            "type": "string",
+            "example": "cgroup 1"
+          },
+          {
+            "in": "query",
+            "name": "email",
+            "type": "string",
+            "example": "nhoxloctran125@gmail.com"
+          },
+          {
+            "in": "query",
+            "name": "phone",
+            "type": "string",
+            "example": "45645654"
+          },
+          {
+            "in": "query",
+            "name": "isDeleted",
+            "type": "boolean",
+            "example": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful"
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        }
+      }
+    },
+    "/customers/check/{email}": {
+      "get": {
+        "tags": [
+          "customers"
+        ],
+        "summary": "check customers exists in database",
+        "security": [
+          {
+            "bearerAuth": [],
+            "ApiKeyAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "email",
+            "type": "string",
+            "example": "nhoxloctran125@gmail.com"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful"
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        }
+      }
+    },
+    "/customers/{_id}": {
+      "get": {
+        "tags": [
+          "customers"
+        ],
+        "summary": "check customers exists in database",
+        "security": [
+          {
+            "bearerAuth": [],
+            "ApiKeyAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "_id",
+            "type": "string",
+            "example": "60f238e4a804500888d22198"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful"
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "customers"
+        ],
+        "summary": "update customer in database",
+        "security": [
+          {
+            "bearerAuth": [],
+            "ApiKeyAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "_id",
+            "type": "string",
+            "example": "60f238e4a804500888d22198"
+          }
+        ],
+        "requestBody":{
+          "content":{
+            "application/json":{
+              "schema":{
+
+              },
+              "example": {
+                "group": "cgroup 1",
+                "name": "locpro3",
+                "email": "nhoxloctran125@gmail.com",
+                "phone": "0987654321",
+                "address": "address random 0.5604539647259574"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful"
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "customers"
+        ],
+        "summary": "check customers exists in database",
+        "security": [
+          {
+            "bearerAuth": [],
+            "ApiKeyAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "_id",
+            "type": "string",
+            "example": "60f238e4a804500888d22198"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful"
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        }
+      }
+    },
+    "/suppliers/": {
+      "get": {
+        "tags": [
+          "suppliers"
+        ],
+        "summary": "get all suppliers in database",
+        "security": [
+          {
+            "bearerAuth": [],
+            "ApiKeyAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful"
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "suppliers"
+        ],
+        "summary": "create supplier in database",
+        "security": [
+          {
+            "bearerAuth": [],
+            "ApiKeyAuth": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+              },
+              "example": {
+                "group": "cgroup 1",
+                "name": "locpro3",
+                "email": "nhoxloctran125@gmail.com",
+                "phone": "0987654321",
+                "address": "address random 0.5604539647259574"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful"
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        }
+      }
+    },
+    "/suppliers/search": {
+      "get": {
+        "tags": [
+          "suppliers"
+        ],
+        "summary": "search suppliers in database",
+        "security": [
+          {
+            "bearerAuth": [],
+            "ApiKeyAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "name",
+            "type": "string",
+            "example": "locpro"
+          },
+          {
+            "in": "query",
+            "name": "group",
+            "type": "string",
+            "example": "cgroup 1"
+          },
+          {
+            "in": "query",
+            "name": "email",
+            "type": "string",
+            "example": "nhoxloctran125@gmail.com"
+          },
+          {
+            "in": "query",
+            "name": "phone",
+            "type": "string",
+            "example": "45645654"
+          },
+          {
+            "in": "query",
+            "name": "isDeleted",
+            "type": "boolean",
+            "example": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful"
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        }
+      }
+    },
+    "/suppliers/check/{email}": {
+      "get": {
+        "tags": [
+          "suppliers"
+        ],
+        "summary": "check suppliers exists in database",
+        "security": [
+          {
+            "bearerAuth": [],
+            "ApiKeyAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "email",
+            "type": "string",
+            "example": "nhoxloctran125@gmail.com"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful"
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        }
+      }
+    },
+    "/suppliers/{_id}": {
+      "get": {
+        "tags": [
+          "suppliers"
+        ],
+        "summary": "check suppliers exists in database",
+        "security": [
+          {
+            "bearerAuth": [],
+            "ApiKeyAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "_id",
+            "type": "string",
+            "example": "60f238e4a804500888d22198"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful"
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "suppliers"
+        ],
+        "summary": "update supplier in database",
+        "security": [
+          {
+            "bearerAuth": [],
+            "ApiKeyAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "_id",
+            "type": "string",
+            "example": "60f238e4a804500888d22198"
+          }
+        ],
+        "requestBody":{
+          "content":{
+            "application/json":{
+              "schema":{
+
+              },
+              "example": {
+                "group": "cgroup 1",
+                "name": "locpro3",
+                "email": "nhoxloctran125@gmail.com",
+                "phone": "0987654321",
+                "address": "address random 0.5604539647259574"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful"
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "suppliers"
+        ],
+        "summary": "check suppliers exists in database",
+        "security": [
+          {
+            "bearerAuth": [],
+            "ApiKeyAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "_id",
+            "type": "string",
+            "example": "60f238e4a804500888d22198"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful"
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        }
+      }
+    },
+    "/lazada/attributes/{categoryId}": {
+      "get": {
+        "tags": [
+          "lazadaAttributes"
+        ],
+        "summary": "get lazadaAttributes by categoryId",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "categoryId",
+            "type": "number",
+            "example": 10100183
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful"
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        }
+      }
     }
+      
   },
   "components": {
     "schemas": {

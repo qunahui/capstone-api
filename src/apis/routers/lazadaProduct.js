@@ -5,20 +5,22 @@ const controller = require("../controllers/lazadaProduct");
 
 router.use(auth) //all requests to this router will first hit this middleware
 
-router.get('/products', controller.getAllProducts);
+router.get('/', controller.getAllProducts);
 
-router.post("/create", controller.createLazadaProduct);
+router.get("/:_id", controller.getProductById);
 
-router.post('/products/fetch', controller.fetchProducts)
+router.post('/fetch', controller.fetchProducts)
 
-router.post('/products/fetch-deleted', controller.fetchDeletedProducts)
+router.post('/fetch-deleted', controller.fetchDeletedProducts)
 
-router.post('/products/sync', controller.syncProducts)
+router.post('/sync', controller.syncProducts)
 
-router.post("/product", controller.createProduct);
+//chưa có route delete lazada product
 
-router.get("/product/:id", controller.getProductById);
+//chưa có route update lazada product
 
-//router.post('/products/push', async (req, res) => { res.sendStatus(200) })
+//router.post("/", controller.createProduct);
+
+//router.post('/push', async (req, res) => { res.sendStatus(200) })
 
 module.exports = router;
