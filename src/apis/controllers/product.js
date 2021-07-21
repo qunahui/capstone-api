@@ -103,9 +103,15 @@ module.exports.createMultiPlatform = async (req, res) => {
 };
 
 module.exports.getAllProduct = async (req, res) => {
-  console.log(req.user.currentStorage)
+  const { name, type } = req.query
+
+  const filter = { storageId: req.user.currentStorage.storageId }
+  if(type !== 'all') {
+    filter.sellable = type === 'active'
+  }
+
   try {
-    const products = await Product.find({ storageId: req.user.currentStorage.storageId }).populate('variants').lean()
+    const products = await Product.fuzzySearch({ query: name, minSize: 3 }).find(filter).populate('variants').lean()
     res.status(200).send(products)
   } catch (e) {
     res.status(500).send(Error(e));
