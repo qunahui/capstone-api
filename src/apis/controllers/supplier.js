@@ -1,6 +1,15 @@
 const Error = require('../utils/error')
 const Supplier = require('../models/supplier')
 
+module.exports.getAllSupplierGroup = async (req, res) => {
+  try {
+    const groups = await Supplier.find({ userId: req.user._id, isDeleted: false}).distinct('group')
+    res.status(200).send(groups)
+  } catch (e) {
+    res.status(500).send(Error(e));
+  }
+}
+
 module.exports.createSupplier = async (req, res) => {
   try { 
     const isSupplierExist = await Supplier.findOne({ email: req.body.email, userId: req.user._id })
@@ -9,7 +18,6 @@ module.exports.createSupplier = async (req, res) => {
     } else {
       const supplier = new Supplier({ ...req.body, userId: req.user._id }) 
       supplier.save()
-      console.log("Created: ", supplier)
       res.status(200).send(supplier)
     }
   } catch(e) {
@@ -50,7 +58,6 @@ module.exports.getAllSupplier = async (req, res) => {
   } catch (e) {
     res.status(500).send(Error(e));
   }
-
 };
 
 module.exports.getSupplierById = async (req, res) => {
