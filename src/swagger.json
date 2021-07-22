@@ -3592,9 +3592,7 @@
             "description": "Validation exception"
           }
         }
-      }
-    },
-    "/api/lazada/products/{sellerSku}": {
+      },
       "delete": {
         "tags": [
           "lazadaAPI"
@@ -3607,17 +3605,16 @@
             "ApiKeyAuth": []
           }
         ],
-        "parameters": [
-          {
-            "in": "path",
-            "name": "sellerSku",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "example": "124324"
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {},
+              "example":{
+                "sellerSkuList": [""]
+              }
             }
           }
-        ],
+        },
         "responses": {
           "200": {
             "description": "Successful",
@@ -3882,7 +3879,7 @@
         }
       }
     },
-    "/api/lazada/orders/": {
+    "/api/lazada/orders/search": {
       "get": {
         "tags": [
           "lazadaAPI"
