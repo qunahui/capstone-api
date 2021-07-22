@@ -47,7 +47,7 @@ router.get("/marketplace", orderController.getAllMarketplaceOrder)
 
 router.get("/fetch", refreshAllPlatform, orderController.fetchApiOrders)
 
-router.get("/:id", orderController.getOrderById) //objectId
+router.get("/:_id", orderController.getOrderById) //objectId
 
 router.post("/", orderController.createMMSOrder)
 

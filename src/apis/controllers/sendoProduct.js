@@ -144,14 +144,14 @@ module.exports.getAllProducts = async (req, res) => {
 
 module.exports.fetchWithoutAuth = async (req, res) => {
   const options = {
-      method: 'POST',
-      url: 'https://open.sendo.vn/api/partner/product/search',
-      headers: {
-        'Authorization': 'bearer ' + "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJTdG9yZUlkIjoiODU0MjE0IiwiVXNlck5hbWUiOiIiLCJTdG9yZVN0YXR1cyI6IjIiLCJTaG9wVHlwZSI6IjEiLCJTdG9yZUxldmVsIjoiMCIsImV4cCI6MTYxNzE5NjI1OCwiaXNzIjoiODU0MjE0IiwiYXVkIjoiODU0MjE0In0.TY0jlpnyQaYgUx__JDZkRGqr7-4efwwLC5WnOTd8i-8",
-        'Content-Type': 'application/json',
-        'cache-control': 'no-cache'
-      },
-      body: JSON.stringify({"page_size":10,"product_name":"","date_from":"2020-05-01","date_to":"9999-10-28","token":"", "status" : -1})
+    method: 'POST',
+    url: 'https://open.sendo.vn/api/partner/product/search',
+    headers: {
+      'Authorization': 'bearer ' + "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJTdG9yZUlkIjoiODU0MjE0IiwiVXNlck5hbWUiOiIiLCJTdG9yZVN0YXR1cyI6IjIiLCJTaG9wVHlwZSI6IjEiLCJTdG9yZUxldmVsIjoiMCIsImV4cCI6MTYxNzE5NjI1OCwiaXNzIjoiODU0MjE0IiwiYXVkIjoiODU0MjE0In0.TY0jlpnyQaYgUx__JDZkRGqr7-4efwwLC5WnOTd8i-8",
+      'Content-Type': 'application/json',
+      'cache-control': 'no-cache'
+    },
+    body: JSON.stringify({ "page_size": 10, "product_name": "", "date_from": "2020-05-01", "date_to": "9999-10-28", "token": "", "status": -1 })
   };
   const response = await rp(options)
   const products = JSON.parse(response).result.data
@@ -171,13 +171,13 @@ module.exports.fetchProducts = async (req, res) => {
         'Content-Type': 'application/json',
         'cache-control': 'no-cache'
       },
-      body: { 
-        page_size: 100, 
-        product_name: "", 
-        date_from: sendoFormatDate || "2021-01-01", 
-        date_to: "9999-10-28", 
-        token: "", 
-        status: sendoFormatDate && -1, 
+      body: {
+        page_size: 100,
+        product_name: "",
+        date_from: sendoFormatDate || "2021-01-01",
+        date_to: "9999-10-28",
+        token: "",
+        status: sendoFormatDate && -1,
       },
       json: true
     };
@@ -319,3 +319,67 @@ module.exports.getProductById = async (req, res) => {
   }
 }
 
+module.exports.deleteProduct = async (req, res) => {
+  const id = req.params._id
+  try {
+    const sendoProduct = await SendoProduct.findOne({ _id: id }).populate('variants').lean()
+    if (!sendoProduct) {
+      return res.sendStatus(404)
+    }
+    //delete sendoProduct on platform
+    await rp({
+      method: 'DELETE',
+      url: `${process.env.API_URL}/api/sendo/products/${sendoProduct.id}`,
+      headers: {
+        'Authorization': 'Bearer ' + req.mongoToken,
+        'Platform-Token': req.accessToken
+      },
+      json: true
+    }).then(async () => {
+      //unlink Variant
+      if (sendoProduct.linkedId) {
+        // unlink Variant
+        await Variant.updateOne({
+          _id: sendoProduct.linkedId,
+          linkedIds: {
+            $elemMatch: {
+              id: sendoProduct._id,
+            }
+          }
+        }, {
+          $pull: {
+            linkedIds: {
+              id: mongoose.Types.ObjectId(sendoProduct._id),
+              platform: 'sendo'
+            }
+          }
+        })
+      }
+      //unlink Variant
+      sendoProduct.variants.map( async (platformVariant) => {
+        await Variant.updateOne({
+          _id: platformVariant.linkedId,
+          linkedIds: {
+            $elemMatch: {
+              id: platformVariant._id,
+            }
+          }
+        }, {
+          $pull: {
+            linkedIds: {
+              id: mongoose.Types.ObjectId(platformVariant._id),
+              platform: 'sendo'
+            }
+          }
+        })
+        //delete SendoVariant
+        await SendoVariant.findOneAndDelete({ _id: platformVariant._id })
+      })
+      //delete sendoProduct
+      await SendoProduct.findByIdAndDelete({ _id: sendoProduct._id })
+    })
+    res.sendStatus(200)
+  } catch (e) {
+    res.status(500).send(Error(e));
+  }
+}

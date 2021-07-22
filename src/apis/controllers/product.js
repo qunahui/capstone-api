@@ -237,6 +237,38 @@ module.exports.deleteProduct = async (req, res) => {
     if (!product) {
       return res.sendStatus(404);
     }
+    const variants = await Variant.find({ productId: product._id })
+    variants.map(async(variant)=>{
+      // unlink platformVariant
+      variant.linkedIds.map(async(item)=>{
+        if(item.platform === 'sendo'){
+          await SendoVariant.findOneAndUpdate({
+            _id: item.id,
+          }, {
+            linkedId: null
+          })
+
+          await SendoProduct.findOneAndUpdate({
+            _id: item.id,
+          }, {
+            linkedId: null
+          })
+        } else if (item.platform === 'lazada'){
+          await LazadaVariant.findOneAndUpdate({
+            _id: item.id,
+          }, {
+            linkedId: null
+          })
+
+          await LazadaProduct.findOneAndUpdate({
+            _id: item.id,
+          }, {
+            linkedId: null
+          })
+        }
+      })
+
+    })
     await Variant.deleteMany({ productId: product._id })
     res.sendStatus(200);
   } catch (e) {

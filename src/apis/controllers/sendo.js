@@ -352,7 +352,7 @@ module.exports.searchOrder=  async (req, res) =>{
   try {
     console.log(options)
     await rp(options)
-    .then(response=> res.status(200).send(response.result))
+    .then(response=> res.status(200).send(response.result.data))
     .catch(error => res.status(error.statusCode).send(error.error))
     //await axios(options).then(response=> res.status(200).send(response.data.result))
   } catch (e) {
