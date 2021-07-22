@@ -356,7 +356,7 @@ module.exports.deleteProduct = async (req, res) => {
         })
       }
       //unlink Variant
-      sendoProduct.variants.map((platformVariant) => {
+      sendoProduct.variants.map( async (platformVariant) => {
         await Variant.updateOne({
           _id: platformVariant.linkedId,
           linkedIds: {
