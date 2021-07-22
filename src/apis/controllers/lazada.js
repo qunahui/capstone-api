@@ -37,7 +37,7 @@ module.exports.authorizeCredential = async (req, res) => {
         const sign = signRequest(appSecret, apiPath, commonRequestParams)
         let options = {
             method: 'GET',
-            url: `${apiUrl}${apiPath}?app_key=${appKey}&code=${code}&sign_method=${signMethod}&timestamp=${timestamp}&sign=${sign}`,
+            url: `https://api.lazada.com.my/rest${apiPath}?app_key=${appKey}&code=${code}&sign_method=${signMethod}&timestamp=${timestamp}&sign=${sign}`,
             headers: {
                 'Content-Type': 'application/json'
             },
