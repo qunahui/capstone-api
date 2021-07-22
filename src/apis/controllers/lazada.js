@@ -27,7 +27,7 @@ module.exports.authorizeCredential = async (req, res) => {
         const { code } = req.query
         const apiPath=  '/auth/token/create'
         const timestamp = Date.now()
-        const { storageId } =req.user.currentStorage
+        const { storageId } = req.user.currentStorage
         const commonRequestParams = {
             app_key: appKey,
             timestamp: timestamp,
@@ -65,10 +65,7 @@ module.exports.authorizeCredential = async (req, res) => {
             },
             json: true
         })
-        .then(res => res.data)
         .catch(e => e.message)
-
-        console.log("Resulltttt: ", result)
 
         const { name, seller_id } = result 
         insertCredential.store_name = name
