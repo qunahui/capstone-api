@@ -434,7 +434,7 @@ module.exports.deleteProduct = async (req, res) =>{
     const apiPath=  '/product/remove'
     const accessToken =  req.accessToken // goi db
     const timestamp = Date.now()
-    const seller_sku_list= JSON.stringify([req.params.sellerSku])
+    const seller_sku_list= JSON.stringify(req.body.sellerSkuList)
     //console.log(seller_sku_list)
     
     const commonRequestParams = {

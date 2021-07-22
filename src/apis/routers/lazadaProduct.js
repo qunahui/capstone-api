@@ -15,7 +15,7 @@ router.post('/fetch-deleted', controller.fetchDeletedProducts)
 
 router.post('/sync', controller.syncProducts)
 
-//chưa có route delete lazada product
+router.delete('/:_id', controller.deleteProduct)
 
 //chưa có route update lazada product
 

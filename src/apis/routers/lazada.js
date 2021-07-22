@@ -42,7 +42,7 @@ router.patch('/products/', controller.updateProduct)
 
 router.post('/products', controller.createProduct)
 
-router.delete('/products/:sellerSku', controller.deleteProduct)
+router.delete('/products/', controller.deleteProduct)
 
 router.get('/orders/document', controller.getDocument)
 
