@@ -667,119 +667,114 @@ module.exports.createSendoOrder = async (req, res) => {
 }
 
 module.exports.getAllOrder = async (req, res) => {
-  try {
-    const filter = req.query
-    console.log("order filter: ", filter)
-    console.log(req.user.currentStorage.storageId)
-    const dateFrom = new Date(parseFloat(filter.dateFrom)).toISOString()
-    const dateTo = new Date(parseFloat(filter.dateTo)).toISOString()
-    if(filter.orderStatus === 'Tất cả') {
-      //default query
-      const orders = await Order.find({ 
-        storageId: req.user.currentStorage.storageId,
-        updatedAt: { $gte: dateFrom, $lte: dateTo },
-        source: 'web'
-      })
-      return res.send(orders)
-    }else{
-      const orders = await Order.find({ 
-        storageId: req.user.currentStorage.storageId,
-        updatedAt: { $gte: dateFrom, $lte: dateTo },
-        source: 'web',
-        orderStatus: filter.orderStatus
-      })
-      return res.send(orders)
+  const filter = req.query
+  const dateFrom = new Date(parseFloat(filter.dateFrom)).toISOString()
+  const dateTo = new Date(parseFloat(filter.dateTo)).toISOString()
+  let query = {}
+  if(filter.orderStatus === 'Tất cả') {
+    //default query
+    query = { 
+      storageId: req.user.currentStorage.storageId,
+      updatedAt: { $gte: dateFrom, $lte: dateTo },
+      source: 'web'
     }
+  } else {
+    query = { 
+      storageId: req.user.currentStorage.storageId,
+      updatedAt: { $gte: dateFrom, $lte: dateTo },
+      source: 'web',
+      orderStatus: filter.orderStatus
+    }
+  }
+  try {
+    const orders = await Order.find(query)
+    return res.status(200).send(orders)
   } catch (e) {
     res.status(500).send(Error(e));
   }
-
 };
 
 module.exports.getAllMarketplaceOrder = async (req, res) => {
-  try {
-    const filter = req.query
-    console.log("order filter: ", filter)
-    const dateFrom = new Date(parseFloat(filter.dateFrom)).toISOString()
-    const dateTo = new Date(parseFloat(filter.dateTo)).toISOString()
-    if(filter.orderStatus === 'Chờ xác nhận') {
-      //default query
-      const orders = await Order.find({ 
-        storageId: req.user.currentStorage.storageId,
-        updatedAt: { $gte: dateFrom, $lte: dateTo },
-        $or: [
-          {
-            source: 'sendo',
-            orderStatus: 'Chờ xác nhận'
-          }, 
-          {
-            source: 'lazada',
-            orderStatus: 'Đang xử lý / Chờ xác nhận'
-          }
-        ]
-      })
-      return res.send(orders)
-    } else if(filter.orderStatus === 'Đang xử lý'){
-      const orders = await Order.find({ 
-        storageId: req.user.currentStorage.storageId,
-        updatedAt: { $gte: dateFrom, $lte: dateTo },
-        $or: [
-          {
-            source: 'sendo',
-            orderStatus: 'Đang xử lý',
-            deliveryStatus: 'Đang xử lý'
-          }, 
-          {
-            source: 'sendo',
-            orderStatus: 'Đang xử lý',
-            deliveryStatus: 'Đang lấy hàng'
-          },  
-          {
-            source: 'sendo',
-            orderStatus: 'Đang xử lý',
-            deliveryStatus: 'Đang xếp hàng'
-          }, 
-          {
-            source: 'lazada',
-            orderStatus: 'Đang xử lý / Chờ xác nhận',
-          }, 
-          {
-            source: 'lazada',
-            orderStatus: 'Đang xử lý / Đã đóng gói',
-          }, 
-          {
-            source: 'lazada',
-            orderStatus: 'Đang xử lý / Sẵn sàng giao hàng',
-          }, 
-        ],
-      })
-      return res.send(orders)
-    } else if(filter.orderStatus === 'Đang hoàn trả' || filter.orderStatus === 'Đã hoàn trả') {
-      const orders = await Order.find({ 
-        storageId: req.user.currentStorage.storageId,
-        updatedAt: { $gte: dateFrom, $lte: dateTo },
-        $or: [
-          {
-            source: 'sendo',
-            orderStatus: 'Đã hủy',
-            deliveryStatus: filter.orderStatus === 'Đang hoàn trả' ? "Trả hàng cho người bán" : "Người bán đã nhận lại hàng",
-          }, 
-          {
-            source: 'lazada',
-            orderStatus: filter.orderStatus
-          }
-        ]
-      })
-      return res.send(orders)
-    } else {
-      const orders = await Order.find({ 
-        storageId: req.user.currentStorage.storageId,
-        orderStatus: filter.orderStatus,
-        updatedAt: { $gte: dateFrom, $lte: dateTo }
-      })
-      return res.send(orders)
+  const filter = req.query
+  const dateFrom = new Date(parseFloat(filter.dateFrom)).toISOString()
+  const dateTo = new Date(parseFloat(filter.dateTo)).toISOString()
+  let  query = {}
+  if(filter.orderStatus === 'Chờ xác nhận') {
+    //default query
+    query = { 
+      storageId: req.user.currentStorage.storageId,
+      updatedAt: { $gte: dateFrom, $lte: dateTo },
+      $or: [
+        {
+          source: 'sendo',
+          orderStatus: 'Chờ xác nhận'
+        }, 
+        {
+          source: 'lazada',
+          orderStatus: 'Đang xử lý / Chờ xác nhận'
+        }
+      ]
     }
-    // console.log("filter: ", req.query)
+  } else if(filter.orderStatus === 'Đang xử lý'){
+    query = { 
+      storageId: req.user.currentStorage.storageId,
+      updatedAt: { $gte: dateFrom, $lte: dateTo },
+      $or: [
+        {
+          source: 'sendo',
+          orderStatus: 'Đang xử lý',
+          deliveryStatus: 'Đang xử lý'
+        }, 
+        {
+          source: 'sendo',
+          orderStatus: 'Đang xử lý',
+          deliveryStatus: 'Đang lấy hàng'
+        },  
+        {
+          source: 'sendo',
+          orderStatus: 'Đang xử lý',
+          deliveryStatus: 'Đang xếp hàng'
+        }, 
+        {
+          source: 'lazada',
+          orderStatus: 'Đang xử lý / Chờ xác nhận',
+        }, 
+        {
+          source: 'lazada',
+          orderStatus: 'Đang xử lý / Đã đóng gói',
+        }, 
+        {
+          source: 'lazada',
+          orderStatus: 'Đang xử lý / Sẵn sàng giao hàng',
+        }, 
+      ],
+    }
+  } else if(filter.orderStatus === 'Đang hoàn trả' || filter.orderStatus === 'Đã hoàn trả') {
+    query = { 
+      storageId: req.user.currentStorage.storageId,
+      updatedAt: { $gte: dateFrom, $lte: dateTo },
+      $or: [
+        {
+          source: 'sendo',
+          orderStatus: 'Đã hủy',
+          deliveryStatus: filter.orderStatus === 'Đang hoàn trả' ? "Trả hàng cho người bán" : "Người bán đã nhận lại hàng",
+        }, 
+        {
+          source: 'lazada',
+          orderStatus: filter.orderStatus
+        }
+      ]
+    }
+  } else {
+    query = { 
+      storageId: req.user.currentStorage.storageId,
+      orderStatus: filter.orderStatus,
+      updatedAt: { $gte: dateFrom, $lte: dateTo }
+    }
+  }
+  try {
+    const orders = await Order.find(query)
+    return res.status(200).send(orders)
   } catch (e) {
     console.log(e.message)
     res.status(500).send(Error(e));
@@ -789,9 +784,9 @@ module.exports.getAllMarketplaceOrder = async (req, res) => {
 
 module.exports.getOrderById = async function (req, res) {
   try {
-    const orderId = req.params.id;
-    const order = await Order.find({ _id: orderId })
-    res.send(order)
+    const orderId = req.params._id;
+    const order = await Order.findOne({ _id: orderId })
+    res.status(200).send(order)
   } catch (e) {
     res.status(500).send(Error(e));
   }
@@ -864,18 +859,16 @@ module.exports.fetchApiOrders = async (req, res) => {
     await Promise.all(allCreds.map(async (cred, index) => {
       if (cred.platform_name === 'lazada') {
         let now = new Date()
-        const response = await rp({
+        const lazOrders = await rp({
           // url: `${process.env.API_URL}/api/lazada/orders?lastSync=${new Date(cred.lastSync).getTime()}`,
-          url: `${process.env.API_URL}/api/lazada/orders`,
+          url: `${process.env.API_URL}/api/lazada/orders/search`,
           method: 'GET',
           headers: {
             'Authorization': 'Bearer ' + req.mongoToken,
             'Platform-Token': cred.access_token
-          }
+          },
+          json: true
         })
-
-        const lazOrders = JSON.parse(response).data.orders || []
-
         console.log("laz: ", lazOrders)
 
         await Promise.all(lazOrders.map(async order => {
@@ -889,7 +882,6 @@ module.exports.fetchApiOrders = async (req, res) => {
               // console.log("Do nothing")
               return order;
             }
-
           }
 
           try {
@@ -912,8 +904,8 @@ module.exports.fetchApiOrders = async (req, res) => {
         }))
       } else if (cred.platform_name === 'sendo') {
         let now = new Date()
-        const response = await rp({
-          url: `${process.env.API_URL}/api/sendo/orders`,
+        const senOrders = await rp({
+          url: `${process.env.API_URL}/api/sendo/orders/search`,
           method: 'POST',
           headers: {
             'Authorization': 'Bearer ' + req.mongoToken,
@@ -930,8 +922,6 @@ module.exports.fetchApiOrders = async (req, res) => {
             token: null
           }
         })
-
-        const senOrders = response.result.data
         
         await Promise.all(senOrders.map(async order => {
           const opt = {
@@ -940,10 +930,11 @@ module.exports.fetchApiOrders = async (req, res) => {
             headers: {
               'Authorization': 'Bearer ' + req.mongoToken,
               'Platform-Token': cred.access_token
-            }
+            },
+            json: true
           }
-          const fullDetailOrderResponse = await rp(opt)
-          const fullDetailOrder = JSON.parse(fullDetailOrderResponse).result
+          const fullDetailOrder = await rp(opt)
+          
 
           // console.log(fullDetailOrder)
 
@@ -983,7 +974,7 @@ module.exports.fetchApiOrders = async (req, res) => {
 
     matchedStorage.save()
 
-    res.send("ok")
+    res.sendStatus(200)
   } catch (e) {
     console.log("Fetch failed: ", e.message)
     res.status(500).send(Error({ message: 'Có gì đó sai sai: , ' + e.message }))
@@ -1035,7 +1026,11 @@ module.exports.createSendoRefundOrder = async (req, res) => {
 //xac nhan con hang
 module.exports.confirmPlatformOrder = async (req, res) => {
   const { order } = req.body
+  let orderItemIds = []
   try {
+    order.lineItems.map( (item) =>{
+      orderItemIds.push(item.lazOrderId)
+    })
     if (order.source === 'sendo') {
       await rp({
         method: 'PUT',
@@ -1068,7 +1063,9 @@ module.exports.confirmPlatformOrder = async (req, res) => {
         method: 'PUT',
         url: `${process.env.API_URL}/api/lazada/orders/pack/`,
         body: {
-          orderStatus: 3,
+          shipping_provider : "LEX VN",
+          delivery_type: "dropship",
+          order_item_ids: orderItemIds
         },
         headers: {
           'Authorization': 'Bearer ' + req.mongoToken,
@@ -1076,7 +1073,6 @@ module.exports.confirmPlatformOrder = async (req, res) => {
         },
         json: true
       }).then( async () => {
-
         return res.sendStatus(200)
       }).catch((error)=>{
         

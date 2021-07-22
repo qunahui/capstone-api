@@ -16,7 +16,8 @@ router.post('/sync', controller.syncProducts)
 
 router.get('/:_id', controller.getProductById)
 
-//chưa có route delete sendoproduct
+router.delete('/:_id', controller.deleteProduct)
+
 //chưa có route update sendoproduct
 
 //router.post('/', controller.createProduct)
