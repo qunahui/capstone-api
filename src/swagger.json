@@ -1389,17 +1389,17 @@
         ]
       }
     },
-    "/orders/{orderId}": {
+    "/orders/{_id}": {
       "get": {
         "tags": [
           "orders"
         ],
-        "summary": "Get an existing order by id",
+        "summary": "Get an existing order by _id",
         "operationId": "getOrder",
         "parameters": [
           {
             "in": "path",
-            "name": "orderId",
+            "name": "_id",
             "required": true,
             "schema": {
               "type": "string",

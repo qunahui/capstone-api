@@ -46,7 +46,7 @@ router.delete('/products/:sellerSku', controller.deleteProduct)
 
 router.get('/orders/document', controller.getDocument)
 
-router.get('/orders', controller.searchOrder)
+router.get('/orders/search', controller.searchOrder)
 
 router.get('/orders/:id', controller.getOrderById)
 
