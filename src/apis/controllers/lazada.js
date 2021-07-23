@@ -468,10 +468,10 @@ module.exports.getSellerInfo = async (req, res) =>{
     const request = new LazadaRequest(apiPath, 'GET');
     try {
         const response = await client.execute(request, accessToken);
-        const  data  = response.data.data ? response.data.data : []
+        const  data  = response.data ? response.data : []
         res.status(200).send(data)
     } catch (e) {
-      res.status(500).send(Error(e));
+        res.status(500).send(Error(e));
     }
 }
 //Provide seller metrics data of the specific seller, like positive seller rating, ship on time rate and etc.

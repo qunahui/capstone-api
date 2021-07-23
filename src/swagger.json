@@ -29,6 +29,10 @@
   ],
   "tags": [
     {
+      "name": "variants",
+      "description": "Everything about your Variants "
+    },
+    {
       "name": "brands",
       "description": "Everything about your Brands",
       "externalDocs": {
@@ -134,6 +138,31 @@
     }
   ],
   "paths": {
+    "/variants": {
+      "get": {
+        "tags": [
+          "variants"
+        ],
+        "summary": "get list variants in database",
+        "security": [
+          {
+            "bearerAuth": [],
+            "ApiKeyAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful"
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        }
+      }
+    },
     "/reports": {
       "get": {
         "tags": [
