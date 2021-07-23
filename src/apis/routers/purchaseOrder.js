@@ -7,7 +7,7 @@ router.use(auth) //all requests to this router will first hit this middleware
 
 router.get("/", purchaseOrderController.getAllPurchaseOrder)
 
-router.get("/:id", purchaseOrderController.getPurchaseOrderById)
+router.get("/:_id", purchaseOrderController.getPurchaseOrderById)
 
 router.post("/", purchaseOrderController.createPurchaseOrder)
 
