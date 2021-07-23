@@ -304,7 +304,7 @@ module.exports.deleteProduct = async (req, res) => {
           }
         }
       })
-      //delete SendoVariant
+      //delete LazadaVariant
       await LazadaVariant.findOneAndDelete({ _id: platformVariant._id })
     })
     //delete lazadaProduct on platform

@@ -20,8 +20,27 @@ module.exports.pushUpdatedToApi = async (req, res) => {
 
   await Promise.all(linkedIds.map(async linkedId => {
     if(linkedId.platform === 'sendo') {
-      const sendoVariant =  await SendoVariant.findOne({ _id: linkedId.id })
-      const sendoProduct = await SendoProduct.findOne({ _id: sendoVariant.productId }).populate('variants').lean()
+      let sendoProduct = {}
+      let data =  await SendoVariant.findOne({ _id: linkedId.id })
+      if(data){
+        sendoProduct = await SendoProduct.findOne({ _id: data.productId }).populate('variants').lean()
+
+        sendoProduct.variants = sendoProduct.variants.map(matchedVariant => {
+          if(matchedVariant._id.toString() === linkedId.id) {
+            return matchedVariant = {
+              ...matchedVariant,
+              price: variant.retailPrice,
+              quantity: variant.inventories.available
+            }
+          }
+          return matchedVariant
+        })
+      }else{
+        sendoProduct = await SendoProduct.findOne({ _id: linkedId.id }).populate('variants').lean()
+        sendoProduct.price = variant.retailPrice
+        sendoProduct.stock_quantity = variant.inventories.available
+      }
+      
       const storage = await Storage.findOne({
         _id: req.user.currentStorage.storageId,
         sendoCredentials: {
@@ -30,17 +49,6 @@ module.exports.pushUpdatedToApi = async (req, res) => {
           }
         }
       }, { "sendoCredentials.$": 1 })
-
-      sendoProduct.variants = sendoProduct.variants.map(matchedVariant => {
-        if(matchedVariant._id.toString() === linkedId.id) {
-          return matchedVariant = {
-            ...matchedVariant,
-            price: variant.retailPrice,
-            quantity: variant.inventories.available
-          }
-        }
-        return matchedVariant
-      })
 
       try {
         await rp({
@@ -53,7 +61,7 @@ module.exports.pushUpdatedToApi = async (req, res) => {
             "Platform-Token": storage.sendoCredentials[0].access_token
           }
         })
-
+        res.sendStatus(200)
       } catch(e) {
         console.log("Push to api failed: ", e.message)
       }
@@ -85,11 +93,10 @@ module.exports.pushUpdatedToApi = async (req, res) => {
       try {
         await rp({
           method: 'PATCH',
-          url: `${process.env.API_URL}/api/lazada/products/price_quantity`,
+          url: `${process.env.API_URL}/api/lazada/products/`,
           json: true,
           body: {
-            lazadaProduct,
-            variantId: lazadaProduct.variants.find(matchedVariant => matchedVariant._id.toString() === linkedId.id).SkuId
+            lazadaProduct
           },
           headers: {
             'Authorization': 'Bearer ' + req.mongoToken,
@@ -171,25 +178,22 @@ module.exports.linkVariant = async (req, res) => {
   try {
     if(platformVariant.platform === 'sendo') {
       // link sendoP to P
-      if(platformVariant.productId) {
-        // variant
-        await SendoVariant.updateOne({
-          _id: platformVariant._id,
-        }, {
-          linkedId: variant._id
-        })
+      await SendoVariant.updateOne({
+        _id: platformVariant._id,
+      }, {
+        linkedId: variant._id
+      })
 
-        updatedPlatVariant = await SendoVariant.findOne({
-          _id: platformVariant._id
-        }).populate('linkedDetails').lean()
-      } else if(!platformVariant.productId) {
-        //console.log("link to sendo product instead", variant)
-        await SendoProduct.updateOne({
-          _id: platformVariant._id,
-        }, {
-          linkedId: variant._id
-        })
-
+      await SendoProduct.updateOne({
+        _id: platformVariant._id,
+      }, {
+        linkedId: variant._id
+      })
+      
+      updatedPlatVariant = await SendoVariant.findOne({
+        _id: platformVariant._id
+      }).populate('linkedDetails').lean()
+      if(!updatedPlatVariant){
         updatedPlatVariant = await SendoProduct.findOne({
           _id: platformVariant._id
         }).populate('linkedDetails').lean()
@@ -248,28 +252,27 @@ module.exports.unlinkVariant = async (req, res) => {
   try {
     if(platformVariant.platform === 'sendo') {
       // link sendoP to P
-      if(platformVariant.productId) {
-        // variant
-        await SendoVariant.updateOne({
-          _id: platformVariant._id,
-        }, {
-          linkedId: null
-        })
+      await SendoVariant.updateOne({
+        _id: platformVariant._id,
+      }, {
+        linkedId: null
+      })
 
-        updatedPlatVariant = await SendoVariant.findOne({
-          _id: platformVariant._id
-        }).populate('linkedDetails').lean()
-      } else if(!platformVariant.productId) {
-        await SendoProduct.updateOne({
-          _id: platformVariant._id,
-        }, {
-          linkedId: null
-        })
+      await SendoProduct.updateOne({
+        _id: platformVariant._id,
+      }, {
+        linkedId: null
+      })
 
+      updatedPlatVariant = await SendoVariant.findOne({
+        _id: platformVariant._id
+      }).populate('linkedDetails').lean()
+      if(!updatedPlatVariant){
         updatedPlatVariant = await SendoProduct.findOne({
           _id: platformVariant._id
         }).populate('linkedDetails').lean()
       }
+
       // link P to sendoP
       await Variant.updateOne({
         _id: variant._id,
@@ -288,6 +291,7 @@ module.exports.unlinkVariant = async (req, res) => {
       })
 
       return res.status(200).send(updatedPlatVariant)
+
     } else if(platformVariant.platform === 'lazada') {
       await LazadaVariant.updateOne({
         _id: platformVariant._id,
@@ -321,9 +325,15 @@ module.exports.unlinkVariant = async (req, res) => {
 }
 
 module.exports.getAllVariant = async (req, res) => {
+  const storageId = req.user.currentStorage.storageId
+  let data = []
   try {
-    const variants = await Variant.find()
-    res.status(200).send(variants)
+    const products = await Product.find({storageId})
+    await Promise.all(products.map(async(product)=>{
+      const variants = await Variant.find({productId: product._id})
+      data = [...data, ...variants]
+    }))
+    res.status(200).send(data)
   } catch (e) {
     res.status(500).send(Error(e));
   }
@@ -409,11 +419,29 @@ module.exports.deleteVariant = async (req, res) => {
   console.log(req.params)
   try {
     const variant = await Variant.findOneAndDelete({ _id: mongoose.Types.ObjectId(req.params._id) });
-
     if (!variant) {
       return res.statusStatus(404);
     }
-
+    await Promise.all(variant.linkedIds.map(async(item) =>{
+      if(item.platform === 'sendo'){
+        await SendoVariant.findOneAndUpdate({
+          _id: item.id
+        },{
+          linkedId: null
+        })
+        await SendoProduct.findOneAndUpdate({
+          _id: item.id
+        },{
+          linkedId: null
+        })
+      } else if( item.platform === 'lazada'){
+        await LazadaVariant.findOneAndUpdate({
+          _id: item.id
+        },{
+          linkedId: null
+        })
+      }
+    }))
     res.sendStatus(200);
   } catch (e) {
     res.status(500).send(Error(e));

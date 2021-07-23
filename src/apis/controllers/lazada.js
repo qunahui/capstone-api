@@ -468,7 +468,7 @@ module.exports.getSellerInfo = async (req, res) =>{
         const  data  = response.data.data ? response.data.data : []
         res.status(200).send(data)
     } catch (e) {
-      res.status(500).send(Error(e));
+        res.status(500).send(Error(e));
     }
 }
 //Provide seller metrics data of the specific seller, like positive seller rating, ship on time rate and etc.
