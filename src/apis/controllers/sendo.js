@@ -323,9 +323,9 @@ module.exports.searchOrder=  async (req, res) =>{
   //filter order, search by name, date_from, date_to
   //if nothing-> get all
   const apiPath ='/partner/salesorder/search'
-  const pageSize = req.query.page_size || 10
+  const pageSize = req.query.page_size || 100
   const orderStatus = req.query.order_status || null
-  const orderDateFrom = req.query.date_from || "2021-05-01"
+  const orderDateFrom = req.query.date_from || "2021-01-01"
   const orderDateTo = req.query.date_to || "2021-10-28"
   const orderStatusDateFrom = req.query.order_status_date_from || ""
   const orderStatusDateTo = req.query.order_status_date_to || ""

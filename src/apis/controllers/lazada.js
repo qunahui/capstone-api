@@ -600,9 +600,17 @@ module.exports.searchOrder = async (req, res) =>{
     }
 
     let query = {
-      created_after: '2021-01-01T09:00:00+08:00'
-      // created_after: new Date(parseInt(1617094327733)).toISOString().replace('Z', '+07:00'),
-      // updated_after: new Date(parseInt(1617094327733)).toISOString().replace('Z', '+07:00'),
+        sort_by: req.query.sort_by || 'updated_at',
+        sort_direction: req.query.sort_direction || 'DESC',
+        offset: req.query.offset || 0,
+        limit: req.query.limit || 100,
+        created_after: req.query.created_after || '2021-01-01T00:00:00+07:00',
+        updated_after: req.query.updated_after || '2021-01-01T00:00:00+07:00',
+        //created_before: req.query.created_before,
+        //update_before: req.query.update_before
+    }
+    if(req.query.status){
+        query.status = req.query.status
     }
     const sign = signRequest(appSecret, apiPath, {...commonRequestParams, ...query})
     try {
@@ -616,10 +624,10 @@ module.exports.searchOrder = async (req, res) =>{
         }
         console.log(options)
         await rp(options)
-        .then(response=> res.send(response.data))
-        .catch(error => res.status(414).send(error)) //414 url too long
+        .then(response=> res.send(response.data.orders))
+        .catch(error => res.status(500).send(error))
     } catch (e) {
-      res.status(500).send(Error(e));
+        res.status(500).send(Error(e));
     }
 }
 module.exports.getOrderById = async (req, res) =>{
