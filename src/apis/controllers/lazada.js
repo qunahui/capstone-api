@@ -65,7 +65,6 @@ module.exports.authorizeCredential = async (req, res) => {
             },
             json: true
         })
-        .then(res => res.data)
         .catch(e => e.message)
 
         console.log("Resulltttt: ", result)
@@ -468,7 +467,7 @@ module.exports.getSellerInfo = async (req, res) =>{
     const request = new LazadaRequest(apiPath, 'GET');
     try {
         const response = await client.execute(request, accessToken);
-        const  data  = response.data ? response.data : []
+        const  data  = response.data.data ? response.data.data : []
         res.status(200).send(data)
     } catch (e) {
         res.status(500).send(Error(e));
