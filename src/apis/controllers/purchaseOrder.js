@@ -4,38 +4,61 @@ const Inventory = require("../models/inventory")
 const Variant = require("../models/variant")
 const rp = require("request-promise")
 
+const step = [
+  {
+    name: 'Đặt hàng và duyệt',
+    isCreated: false
+  },
+  {
+    name: 'Nhập kho',
+    isCreated: false
+  },
+  {
+    name: 'Hoàn thành',
+    isCreated: false
+  },
+  {
+    name: 'Đã hoàn trả',
+    isCreated: false
+  },
+  {
+    name: 'Đã hủy',
+    isCreated: false
+  },
+]
+
 const checkComplete = async (_id) => {
   try {
     const purchaseOrder = await PurchaseOrder.findOne({ _id })
     const { paymentStatus, instockStatus } = purchaseOrder
-    if(paymentStatus === 'Đã thanh toán' && instockStatus === true) {
+    if (paymentStatus === 'Đã thanh toán' && instockStatus === true) {
       purchaseOrder.step[2] = {
         name: purchaseOrder.step[2].name,
         isCreated: true,
         createdAt: new Date()
       }
       purchaseOrder.orderStatus = 'Hoàn thành'
-  
+
       await purchaseOrder.save()
-    } 
-  } catch(e) {
+    }
+  } catch (e) {
     console.log(e.message)
   }
 }
 
 module.exports.checkComplete = checkComplete
 
-module.exports.createReceipt = async (req,res) => {
+module.exports.createReceipt = async (req, res) => {
   try {
     const { lineItems, init } = req.body
 
     const purchaseOrder = await PurchaseOrder.findOne({ _id: req.params._id })
-    
+
     await Promise.all(lineItems.map(async (item) => {
       const variantId = item._id
-      const mongoVariant = await Variant.findOne({ _id : variantId })
+      const mongoVariant = await Variant.findOne({ _id: variantId })
 
-      if(!init) {
+      if (!init) {
         mongoVariant.inventories.onHand += item.quantity
         mongoVariant.inventories.incoming -= item.quantity
       }
@@ -55,7 +78,7 @@ module.exports.createReceipt = async (req,res) => {
       })
 
       await inventory.save()
-      
+
     }))
 
     purchaseOrder.step[1] = {
@@ -70,47 +93,28 @@ module.exports.createReceipt = async (req,res) => {
     await checkComplete(req.params._id)
 
     return res.status(200).send(purchaseOrder)
-  } catch(e) {
+  } catch (e) {
     console.log("create receipt error: ", e.message)
-    return res.status(500).send(Error({ message: 'Create purchase order went wrong!'}))
+    return res.status(500).send(Error({ message: 'Create purchase order went wrong!' }))
   }
 }
 
-module.exports.createInitialPurchaseOrder = async (req,res) => {
+module.exports.createInitialPurchaseOrder = async (req, res) => {
   try {
-    const step = [
-    {
-      name: 'Đặt hàng và duyệt',
-      isCreated: true,
-      createdAt: Date.now()
-    },
-    {
-      name: 'Nhập kho',
-      isCreated: true,
-      createdAt: Date.now()
-    },
-    {
-      name: 'Hoàn thành',
-      isCreated: true,
-      createdAt: Date.now()
-    },
-    {
-      name: 'Đã hoàn trả',
-      isCreated: false,
-    },
-    {
-      name: 'Đã hủy',
-      isCreated: false,
-    },
-    ]
+    step[0].isCreated = true
+    step[0].createdAt = Date.now()
+    step[1].isCreated = true
+    step[1].createdAt = Date.now()
+    step[2].isCreated = true
+    step[2].createdAt = Date.now()
 
     const purchaseOrder = new PurchaseOrder({
-      ...req.body, 
+      ...req.body,
       step,
     })
 
     await purchaseOrder.save()
-    
+
     await rp({
       method: 'POST',
       url: `${process.env.API_URL}/purchase-orders/receipt/` + purchaseOrder._id,
@@ -123,61 +127,39 @@ module.exports.createInitialPurchaseOrder = async (req,res) => {
       }
     })
 
-    res.send(purchaseOrder)
-  } catch(e) {
+    res.status(200).send(purchaseOrder)
+  } catch (e) {
     console.log(e)
     res.status(500).send(Error('Create purchase order went wrong!'))
   }
 }
 
-module.exports.createPurchaseOrder = async (req,res) => {
+module.exports.createPurchaseOrder = async (req, res) => {
   try {
-    const step = [
-      {
-        name: 'Đặt hàng và duyệt',
-        isCreated: true,
-        createdAt: Date.now()
-      },
-      {
-        name: 'Nhập kho',
-        isCreated: false,
-      },
-      {
-        name: 'Hoàn thành',
-        isCreated: false,
-      },
-      {
-        name: 'Đã hoàn trả',
-        isCreated: false,
-      },
-      {
-        name: 'Đã hủy',
-        isCreated: false,
-      },
-    ]
-
+    step[0].isCreated = true
+    step[0].createdAt = Date.now()
     const { lineItems } = req.body
 
     await Promise.all(lineItems.map(async variant => {
-       const matchedVariant = await Variant.findOne({ _id: variant._id })
-       matchedVariant.inventories.incoming += variant.quantity
-       matchedVariant.save()
+      const matchedVariant = await Variant.findOne({ _id: variant._id })
+      matchedVariant.inventories.incoming += variant.quantity
+      matchedVariant.save()
     }))
 
-    const purchaseOrder = new PurchaseOrder({...req.body, step })
+    const purchaseOrder = new PurchaseOrder({ ...req.body, step })
     await purchaseOrder.save()
     res.send(purchaseOrder)
-  } catch(e) {
+  } catch (e) {
     console.log(e.message)
-    res.status(500).send(Error({ message: 'Create purchase order went wrong!'}))
+    res.status(500).send(Error({ message: 'Create purchase order went wrong!' }))
   }
 }
 
 module.exports.getAllPurchaseOrder = async (req, res) => {
   try {
-    
+
     const purchaseOrders = await PurchaseOrder.find({ userId: req.user._id })
-    
+
     res.send(purchaseOrders)
   } catch (e) {
     res.status(500).send(Error(e));
@@ -187,7 +169,7 @@ module.exports.getAllPurchaseOrder = async (req, res) => {
 
 module.exports.getPurchaseOrderById = async function (req, res) {
   try {
-    const purchaseOrderId = req.params.id;
+    const purchaseOrderId = req.params._id;
     const purchaseOrder = await PurchaseOrder.find({ _id: purchaseOrderId })
     res.send(purchaseOrder)
   } catch (e) {
@@ -200,10 +182,10 @@ module.exports.updatePurchasePayment = async (req, res) => {
     const purchaseOrder = await PurchaseOrder.findOne({ _id: req.params._id, userId: req.user._id })
 
     purchaseOrder.paidPrice += req.body.paidPrice
-    purchaseOrder.paidHistory.push({ title: `Xác nhận thanh toán ${req.body.formattedPaidPrice}`, date: Date.now()})
-    if(purchaseOrder.paidPrice === purchaseOrder.totalPrice) {
+    purchaseOrder.paidHistory.push({ title: `Xác nhận thanh toán ${req.body.formattedPaidPrice}`, date: Date.now() })
+    if (purchaseOrder.paidPrice === purchaseOrder.totalPrice) {
       purchaseOrder.paymentStatus = 'Đã thanh toán'
-    } else if(purchaseOrder.paidPrice >= 0 && purchaseOrder.paidPrice < purchaseOrder.totalPrice) {
+    } else if (purchaseOrder.paidPrice >= 0 && purchaseOrder.paidPrice < purchaseOrder.totalPrice) {
       purchaseOrder.paymentStatus = 'Thanh toán một phần'
     }
 
@@ -211,9 +193,9 @@ module.exports.updatePurchasePayment = async (req, res) => {
     await checkComplete(req.params._id)
 
     res.status(200).send(purchaseOrder)
-  } catch(e) {
+  } catch (e) {
     console.log(e.message)
-    res.status(400).send(Error({ message: 'update purchase payment went wrong !!!'}))
+    res.status(400).send(Error({ message: 'update purchase payment went wrong !!!' }))
   }
 }
 
@@ -223,22 +205,22 @@ module.exports.cancelPurchaseOrder = async (req, res) => {
     const { _id } = req.params
 
     const purchaseOrder = await PurchaseOrder.findOne({ _id })
-    
+
     purchaseOrder.orderStatus = 'Đã hủy'
-    
+
     purchaseOrder.step[4] = {
       name: purchaseOrder.step[4].name,
       isCreated: true,
       createdAt: new Date()
     }
 
-    
+
     await purchaseOrder.save()
 
     res.status(200).send(purchaseOrder)
 
-  } catch(e) {
-    res.status(400).send(Error({ message: 'Hủy đơn hàng thất bại!'}))
+  } catch (e) {
+    res.status(400).send(Error({ message: 'Hủy đơn hàng thất bại!' }))
   }
 }
 

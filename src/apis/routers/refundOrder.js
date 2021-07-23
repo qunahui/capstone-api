@@ -7,7 +7,7 @@ router.use(auth) //all requests to this router will first hit this middleware
 
 router.get("/", refundOrderController.getAllRefundOrder)
 
-router.get("/:id", refundOrderController.getRefundOrderById)
+router.get("/:_id", refundOrderController.getRefundOrderById)
 
 router.post("/", refundOrderController.createRefundOrder)
 
