@@ -672,10 +672,9 @@ module.exports.getAllOrder = async (req, res) => {
   const dateTo = new Date(parseFloat(filter.dateTo)).toISOString()
   let query = {}
   if(filter.orderStatus === 'Tất cả') {
-    //default query
     query = { 
       storageId: req.user.currentStorage.storageId,
-      updatedAt: { $gte: dateFrom, $lte: dateTo },
+      // updatedAt: { $gte: dateFrom, $lte: dateTo },
       source: 'web'
     }
   } else {
@@ -687,7 +686,8 @@ module.exports.getAllOrder = async (req, res) => {
     }
   }
   try {
-    const orders = await Order.find(query)
+    const orders = await Order.find()
+    console.log(orders)
     return res.status(200).send(orders)
   } catch (e) {
     res.status(500).send(Error(e));
@@ -699,7 +699,13 @@ module.exports.getAllMarketplaceOrder = async (req, res) => {
   const dateFrom = new Date(parseFloat(filter.dateFrom)).toISOString()
   const dateTo = new Date(parseFloat(filter.dateTo)).toISOString()
   let  query = {}
-  if(filter.orderStatus === 'Chờ xác nhận') {
+  if (filter.orderStatus === 'Tất cả') {
+    query = { 
+      storageId: req.user.currentStorage.storageId,
+      updatedAt: { $gte: dateFrom, $lte: dateTo },
+      source: { '$ne': 'web' }
+    }
+  } else if(filter.orderStatus === 'Chờ xác nhận') {
     //default query
     query = { 
       storageId: req.user.currentStorage.storageId,
@@ -773,7 +779,9 @@ module.exports.getAllMarketplaceOrder = async (req, res) => {
     }
   }
   try {
+    console.log(query)
     const orders = await Order.find(query)
+    console.log(orders)
     return res.status(200).send(orders)
   } catch (e) {
     console.log(e.message)

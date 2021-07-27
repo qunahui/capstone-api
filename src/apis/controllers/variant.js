@@ -321,6 +321,13 @@ module.exports.unlinkVariant = async (req, res) => {
 }
 
 module.exports.getAllVariant = async (req, res) => {
+  const { name, type } = req.query
+
+  const filter = { storageId: req.user.currentStorage.storageId }
+  if(type !== 'all') {
+    filter.sellable = type === 'active'
+  }
+  
   try {
     const variants = await Variant.find()
     res.status(200).send(variants)

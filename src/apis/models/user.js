@@ -17,6 +17,16 @@ const schema = new Schema({
       }
     },
   },
+  phone: {
+    type: String,
+    required: true,
+    trim: true
+  },
+  address: {
+    type: String,
+    required: true,
+    trim: true
+  },
   password: {
     type: String,
     minlength: 6,
@@ -122,14 +132,14 @@ schema.methods.generateJWT = async function () {
 schema.statics.findByCredentials = async (email, password) => {
   const user = await User.findOne({ email });
   if (!user) {
-    throw new Error("Unable to login!");
+    throw new Error("Tài khoản chưa được đăng ký!");
   }
 
   const isMatch = await bcrypt.compare(password, user.password);
 
 
   if (!isMatch) {
-    throw new Error("Unable to login");
+    throw new Error("Tài khoản hoặc mật khẩu không chính xác");
   }
 
   return user;

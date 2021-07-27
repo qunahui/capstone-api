@@ -3,7 +3,7 @@ const Customer = require('../models/customer')
 
 module.exports.checkCustomerExist = async(req, res) => {
   try {
-    const isCustomerExist = await Customer.findOne({ email: req.params.email, userId: req.user._id })
+    const isCustomerExist = await Customer.findOne({ email: req.params.email, storageId: req.user.currentStorage.storageId })
     if(isCustomerExist) {
       res.status(409).send(Error({ message: 'Khách hàng đã tồn tại !'}))
     } else {
@@ -16,11 +16,11 @@ module.exports.checkCustomerExist = async(req, res) => {
 
 module.exports.createCustomer = async (req, res) => {
   try { 
-    const isCustomerExist = await Customer.findOne({ email: req.body.email, userId: req.user._id })
+    const isCustomerExist = await Customer.findOne({ email: req.body.email, storageId: req.user.currentStorage.storageId })
     if(isCustomerExist) {
       return res.status(409).send(Error({ message: 'Khách hàng đã tồn tại !'}))
     } else {
-      const customer = new Customer({ ...req.body, userId: req.user._id })
+      const customer = new Customer({ ...req.body, storageId: req.user.currentStorage.storageId })
       await customer.save()
       return res.status(200).send(customer)
     }
@@ -43,7 +43,7 @@ module.exports.createCustomer = async (req, res) => {
 
 module.exports.getAllCustomer = async (req, res) => {
   try {
-    const customers = await Customer.find({ userId: req.user._id, isDeleted: false })
+    const customers = await Customer.find({ storageId: req.user.currentStorage.storageId, isDeleted: false })
     res.status(200).send(customers)
   } catch (e) {
     res.status(500).send(Error(e));
@@ -53,7 +53,7 @@ module.exports.getAllCustomer = async (req, res) => {
 
 module.exports.getCustomerById = async (req, res) => {
   try {
-    const customer = await Customer.findOne({ userId: req.user._id, _id: req.params._id })
+    const customer = await Customer.findOne({ storageId: req.user.currentStorage.storageId, _id: req.params._id })
     if(!customer){
       return res.sendStatus(404)
     }
@@ -68,7 +68,7 @@ module.exports.searchCustomer = async (req, res) => {
   try {
     const {name, group, email, phone, isDeleted} = req.query
     const customer = await Customer.find({
-      userId: req.user._id,
+      storageId: req.user.currentStorage.storageId,
       $or:[
         {phone: {$regex: `${phone}`,  $options : 'i'}},
         {name: {$regex: `${name}`,  $options : 'i'}},
@@ -89,7 +89,7 @@ module.exports.updateCustomer = async (req, res) => {
   console.log(updateField)
   try {
     if(updateField.email){
-      const isCustomerExist = await Customer.findOne({ email: updateField.email, userId: req.user._id, _id: {$ne: req.params._id}})
+      const isCustomerExist = await Customer.findOne({ email: updateField.email, storageId: req.user.currentStorage.storageId, _id: {$ne: req.params._id}})
 
       if(isCustomerExist) {
         return res.status(409).send(Error({ message: 'Email đã tồn tại ! Không thể trùng!'}))

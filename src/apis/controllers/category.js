@@ -44,7 +44,7 @@ module.exports.getListCategory = async (req,res) =>{
 module.exports.searchCategory = async (req,res) =>{
   const search = req.query.search
   try {
-    const categories = await Category.fuzzySearch({ query: search, minSize: 3 }).find({ leaf: true }).limit(10)
+    const categories = await Category.fuzzySearch({ query: search, minSize: 3 }).find({ leaf: true })
     console.log("Caaaa: ", categories)
     res.status(200).send(categories);
   } catch (e) {

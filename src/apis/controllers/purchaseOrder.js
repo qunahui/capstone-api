@@ -65,6 +65,7 @@ module.exports.createReceipt = async (req,res) => {
     }
 
     purchaseOrder.instockStatus = true
+    purchaseOrder.orderStatus = 'Nhập kho'
 
     await purchaseOrder.save()
     await checkComplete(req.params._id)
@@ -106,6 +107,7 @@ module.exports.createInitialPurchaseOrder = async (req,res) => {
 
     const purchaseOrder = new PurchaseOrder({
       ...req.body, 
+      orderStatus: 'Hoàn thành',
       step,
     })
 
@@ -164,7 +166,7 @@ module.exports.createPurchaseOrder = async (req,res) => {
        matchedVariant.save()
     }))
 
-    const purchaseOrder = new PurchaseOrder({...req.body, step })
+    const purchaseOrder = new PurchaseOrder({...req.body, orderStatus: 'Đặt hàng và duyệt', step })
     await purchaseOrder.save()
     res.send(purchaseOrder)
   } catch(e) {
@@ -175,8 +177,31 @@ module.exports.createPurchaseOrder = async (req,res) => {
 
 module.exports.getAllPurchaseOrder = async (req, res) => {
   try {
-    
-    const purchaseOrders = await PurchaseOrder.find({ userId: req.user._id })
+    const { orderStatus, dateFrom, dateTo, ...rest } = req.query
+    let searchFilter = {}
+    // create regex to find anything contain string
+    Object.keys(rest).some(i => {
+      if(req.query[i]) {
+        searchFilter[i] = new RegExp(req.query[i]?.trim(), "i");
+      }
+    })
+    // create matched order search
+    if(orderStatus !== 'Tất cả') {
+      searchFilter.orderStatus = orderStatus
+    }
+    // create matched datetime search
+    let date = new Date()
+    let filterDateFrom = dateFrom ? new Date(parseInt(dateFrom)) : new Date(date.setFullYear(date.getFullYear() - 1 ))
+    let filterDateTo = dateTo ? new Date(parseInt(dateTo)) : new Date()
+
+    const purchaseOrders = await PurchaseOrder.find({ 
+      userId: req.user._id, 
+      ...searchFilter,
+      createdAt: {
+        $gte: filterDateFrom,
+        $lt: filterDateTo
+      }
+    })
     
     res.send(purchaseOrders)
   } catch (e) {
@@ -231,8 +256,16 @@ module.exports.cancelPurchaseOrder = async (req, res) => {
       isCreated: true,
       createdAt: new Date()
     }
-
-    
+    // hủy các số lượng hàng đang về thuộc đơn nhập này nếu chưa nhập kho
+    if(!purchaseOrder.step[1].isCreated) {
+      await Promise.all(purchaseOrder?.lineItems?.map(async (item) => {
+        const variantId = item._id
+        const mongoVariant = await Variant.findOne({ _id : variantId })
+        mongoVariant.inventories.incoming -= item.quantity
+        await mongoVariant.save();
+      }))
+    }
+    //
     await purchaseOrder.save()
 
     res.status(200).send(purchaseOrder)

@@ -3,7 +3,7 @@ const Supplier = require('../models/supplier')
 
 module.exports.getAllSupplierGroup = async (req, res) => {
   try {
-    const groups = await Supplier.find({ userId: req.user._id, isDeleted: false}).distinct('group')
+    const groups = await Supplier.find({ storageId: req.user.currentStorage.storageId, isDeleted: false}).distinct('group')
     res.status(200).send(groups)
   } catch (e) {
     res.status(500).send(Error(e));
@@ -12,11 +12,11 @@ module.exports.getAllSupplierGroup = async (req, res) => {
 
 module.exports.createSupplier = async (req, res) => {
   try { 
-    const isSupplierExist = await Supplier.findOne({ email: req.body.email, userId: req.user._id })
+    const isSupplierExist = await Supplier.findOne({ email: req.body.email, storageId: req.user.currentStorage.storageId })
     if(isSupplierExist) {
       return res.status(409).send(Error({ message: 'Nhà cung cấp đã tồn tại !'}))
     } else {
-      const supplier = new Supplier({ ...req.body, userId: req.user._id }) 
+      const supplier = new Supplier({ ...req.body, storageId: req.user.currentStorage.storageId }) 
       supplier.save()
       res.status(200).send(supplier)
     }
@@ -40,7 +40,7 @@ module.exports.createSupplier = async (req, res) => {
 
 module.exports.checkSupplierExist = async(req, res) => {
   try {
-    const isSupplierExist = await Supplier.findOne({ email: req.params.email, userId: req.user._id })
+    const isSupplierExist = await Supplier.findOne({ email: req.params.email, storageId: req.user.currentStorage.storageId })
     if(isSupplierExist) {
       res.status(409).send(Error({ message: 'Nhà cung cấp đã tồn tại !'}))
     } else {
@@ -53,7 +53,16 @@ module.exports.checkSupplierExist = async(req, res) => {
 
 module.exports.getAllSupplier = async (req, res) => {
   try {
-    const suppliers = await Supplier.find({ userId: req.user._id, isDeleted: false})
+    const { search } = req.query
+    const suppliers = await Supplier.find({
+      storageId: req.user.currentStorage.storageId,
+      $or:[
+        {phone: {$regex: `${search}`,  $options : 'i'}},
+        {name: {$regex: `${search}`,  $options : 'i'}},
+        {group: {$regex: `${search}`,  $options : 'i'}},
+        {email: {$regex: `${search}`,  $options : 'i'}},
+      ]
+    })
     res.status(200).send(suppliers)
   } catch (e) {
     res.status(500).send(Error(e));
@@ -62,7 +71,7 @@ module.exports.getAllSupplier = async (req, res) => {
 
 module.exports.getSupplierById = async (req, res) => {
   try {
-    const supplier = await Supplier.findOne({ userId: req.user._id, _id: req.params._id })
+    const supplier = await Supplier.findOne({ storageID: req.user.currentStorage.storageId, _id: req.params._id })
     if(!supplier){
       return res.sendStatus(404)
     }
@@ -78,7 +87,7 @@ module.exports.searchSupplier = async (req, res) => {
   try {
     const {name, group, email, phone, isDeleted} = req.query
     const supplier = await Supplier.find({
-      userId: req.user._id,
+      storageId: req.user.currentStorage.storageId,
       $or:[
         {phone: {$regex: `${phone}`,  $options : 'i'}},
         {name: {$regex: `${name}`,  $options : 'i'}},
@@ -96,10 +105,9 @@ module.exports.searchSupplier = async (req, res) => {
 
 module.exports.updateSupplier = async (req, res) => {
   const updateField = req.body;
-  //console.log(updateField)
   try {
     if(req.body.email){
-      const isSupplierExist = await Supplier.findOne({ email: req.body.email, userId: req.user._id, _id: {$ne: req.params._id}})
+      const isSupplierExist = await Supplier.findOne({ email: req.body.email, storageId: req.user.currentStorage.storageId, _id: {$ne: req.params._id}})
 
       if(isSupplierExist) {
         return res.status(409).send(Error({ message: 'Email đã tồn tại ! Không thể trùng!'}))

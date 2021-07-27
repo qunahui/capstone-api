@@ -7,6 +7,7 @@ module.exports.searchBrands =  async (req, res) => {
     try { 
       //scoring sometimes wrong, so I make the exact result always the best match
         let brands = await Brand.fuzzySearch({ query: search, minSize: 5 }).limit(10)
+        console.log("result: ", brands)
         let exactIndex = brands.findIndex(i => i.name.toLowerCase().trim() === search.toLowerCase().trim())
         if(exactIndex === -1) {
             let exact = await Brand.findOne({ name: { $regex: new RegExp('^' + search.toLowerCase() + '$', "i") }})

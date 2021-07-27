@@ -88,10 +88,11 @@ module.exports.getCurrentUser = async (req, res) => {
 
 module.exports.signUp = async (req, res) => {
   try {
+    const { storageName, ...userInfo } = req.body
     const user = new User({
-      ...req.body,
+      ...userInfo,
     });
-    const storageName = 'STORAGE_' + user._id.toString().toUpperCase()
+
     const linkedStorage = new Storage({ displayName: storageName })
     await linkedStorage.save();
     user.storages = user.storages.concat({
@@ -146,6 +147,7 @@ module.exports.signIn = async (req, res) => {
     await activityLog.save()
     return res.send({ user, token });
   } catch (e) {
+    console.log("Error: ", e)
     res.status(401).send(Error(e));
   }
 };
@@ -228,7 +230,7 @@ module.exports.resetPassword = async (req, res) => {
     const email = req.query.email
     const user = await User.findOne({ email: email })
     if (!user) {
-      return res.status(404).send("user không tồn tại trong hệ thống!")
+      return res.status(404).send("User không tồn tại trong hệ thống!")
     }
     const passToken = jwt.sign({
       userId: user._id.toString(),

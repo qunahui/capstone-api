@@ -7,7 +7,7 @@ const schema = new Schema({
     type: String,
     required: true
   },
-  userId: {
+  storageId: {
     type: mongoose.Schema.Types.ObjectId,
   },
   email: {

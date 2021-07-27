@@ -9,7 +9,7 @@ router.post('/authorize', controller.authorizeCredential)
 
 router.post('/login', controller.getSendoToken)
 
-router.get('/attribute/:categoryId', controller.getAttribute)
+router.get('/attributes/:categoryId', controller.getAttribute)
 //product
 router.get('/products/search', controller.searchProduct) //filter product, if none-> get all
 

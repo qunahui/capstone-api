@@ -74,6 +74,7 @@ module.exports.createReceipt = async (req,res) => {
       }
   
       supplierRefundOrder.outstockStatus = true
+      supplierRefundOrder.orderStatus = 'Xuất kho'
   
       await supplierRefundOrder.save()
       await checkComplete(req.params._id)
@@ -110,7 +111,11 @@ module.exports.createSupplierRefundOrder = async (req,res) => {
     },
     ]
 
-    const supplierRefundOrder = new SupplierRefundOrder({...req.body, step })
+    const supplierRefundOrder = new SupplierRefundOrder({
+      ...req.body, 
+      orderStatus: 'Đặt hàng và duyệt',
+      step 
+    })
 
     const { lineItems } = req.body
     
@@ -129,8 +134,31 @@ module.exports.createSupplierRefundOrder = async (req,res) => {
 
 module.exports.getAllSupplierRefundOrder = async (req, res) => {
   try {
-    
-    const supplierRefundOrders = await SupplierRefundOrder.find({ userId: req.user._id })
+    const { orderStatus, dateFrom, dateTo, ...rest } = req.query
+    let searchFilter = {}
+    // create regex to find anything contain string
+    Object.keys(rest).some(i => {
+      if(req.query[i]) {
+        searchFilter[i] = new RegExp(req.query[i]?.trim(), "i");
+      }
+    })
+    // create matched order search
+    if(orderStatus !== 'Tất cả') {
+      searchFilter.orderStatus = orderStatus
+    }
+    // create matched datetime search
+    let date = new Date()
+    let filterDateFrom = dateFrom ? new Date(parseInt(dateFrom)) : new Date(date.setFullYear(date.getFullYear() - 1 ))
+    let filterDateTo = dateTo ? new Date(parseInt(dateTo)) : new Date()
+
+    const supplierRefundOrders = await SupplierRefundOrder.find({ 
+      userId: req.user._id,
+      ...searchFilter,
+      createdAt: {
+        $gte: filterDateFrom,
+        $lt: filterDateTo
+      }
+    })
     
     res.send(supplierRefundOrders)
   } catch (e) {
