@@ -241,6 +241,11 @@ const lazadaMappingStep = {
     step: 8,
     name: 'Đã hoàn trả'
   },
+  'shipped_back': {
+    index: 9,
+    step: 8,
+    name: 'Đã hoàn trả'
+  },
 }
 const sendoMappingStep = { 
   2: { index: 0, name: 'Đặt hàng' }, 
@@ -450,8 +455,7 @@ module.exports.createLazadaOrder = async (req, res) => {
     },
     json: true
   })
-
-  let completeStep = lazadaMappingStep[item.statuses[0]].step
+  let completeStep = lazadaMappingStep[item.statuses[0]].step || ''
   let configStep = step.map((st, index) => {
     if (index <= completeStep) {
       return {
@@ -495,12 +499,12 @@ module.exports.createLazadaOrder = async (req, res) => {
     totalAmount: item.price - platformFee,
     shippingVoucher: item.shipping_fee_discount_platform + item.shipping_fee_discount_seller,
     shippingFee: item.shipping_fee_original,
-    trackingNumber: listItem.data[0].tracking_code,
-    outstockStatus: !!listItem.data[0].tracking_code,
+    trackingNumber: listItem[0].tracking_code? listItem[0].tracking_code : '',
+    outstockStatus: !!listItem[0].tracking_code,
     // outstockStatus: lazada_order_status_index[item.statuses[0]].index >= 3,
     platformFee,
     //list item
-    lineItems: listItem.data.reduce((acc, i) => {
+    lineItems: listItem.reduce((acc, i) => {
       let index = acc.findIndex(j => j.sku === i.sku)
       if (index === -1) {
         return [
@@ -866,7 +870,7 @@ module.exports.fetchApiOrders = async (req, res) => {
   try {
     await Promise.all(allCreds.map(async (cred, index) => {
       if (cred.platform_name === 'lazada') {
-        let now = new Date()
+        //let now = new Date()
         const lazOrders = await rp({
           // url: `${process.env.API_URL}/api/lazada/orders?lastSync=${new Date(cred.lastSync).getTime()}`,
           url: `${process.env.API_URL}/api/lazada/orders/search`,
@@ -877,7 +881,7 @@ module.exports.fetchApiOrders = async (req, res) => {
           },
           json: true
         })
-        console.log("laz: ", lazOrders)
+        //console.log("laz: ", lazOrders)
 
         await Promise.all(lazOrders.map(async order => {
           const mongoMatchedOrder = await Order.findOne({ code: order.order_number.toString() })
@@ -914,21 +918,12 @@ module.exports.fetchApiOrders = async (req, res) => {
         let now = new Date()
         const senOrders = await rp({
           url: `${process.env.API_URL}/api/sendo/orders/search`,
-          method: 'POST',
+          method: 'GET',
           headers: {
             'Authorization': 'Bearer ' + req.mongoToken,
             'Platform-Token': cred.access_token
           },
           json: true,
-          body: {
-            page_size: 10,
-            // "order_status": 2,
-            order_date_from: cred.lastSync ? new Date(cred.lastSync).toISOString().split('T')[0] : new Date(now.setDate(now.getDate() - 364)).toISOString().split('T')[0],
-            order_date_to: new Date().toISOString().split('T')[0],
-            order_status_date_from: null,
-            order_status_date_to: null,
-            token: null
-          }
         })
         
         await Promise.all(senOrders.map(async order => {

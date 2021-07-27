@@ -2858,12 +2858,65 @@
         "parameters": [
           {
             "in": "query",
-            "name": "order_number",
-            "required": true,
+            "name": "page_size",
             "description": "",
             "schema": {
               "type": "integer",
-              "example": 142873645695
+              "example": 100
+            }
+          },
+          {
+            "in": "query",
+            "name": "order_status",
+            "description": "",
+            "schema": {
+              "type": "string",
+              "example": ""
+            }
+          },
+          {
+            "in": "query",
+            "name": "date_from",
+            "description": "",
+            "schema": {
+              "type": "string",
+              "example": ""
+            }
+          }, 
+          {
+            "in": "query",
+            "name": "date_to",
+            "description": "",
+            "schema": {
+              "type": "string",
+              "example": ""
+            }
+          },
+          {
+            "in": "query",
+            "name": "order_status_date_from",
+            "description": "",
+            "schema": {
+              "type": "string",
+              "example": ""
+            }
+          },
+          {
+            "in": "query",
+            "name": "order_status_date_to",
+            "description": "",
+            "schema": {
+              "type": "string",
+              "example": ""
+            }
+          },
+          {
+            "in": "query",
+            "name": "token",
+            "description": "",
+            "schema": {
+              "type": "string",
+              "example": ""
             }
           }
         ],
