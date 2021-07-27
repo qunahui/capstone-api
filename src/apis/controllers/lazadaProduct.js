@@ -42,7 +42,7 @@ const createLazadaProduct = async (item, additionalData) => {
 
     let query = { store_id: additionalData.store_id, id: item.item_id },
       update = {
-        avatar: variants.length > 0 && variants[0].Images[0],
+        avatar: item.images[0] ? item.images[0] : variants[0].Images[0],//variants.length > 0 && variants[0].Images[0],
         store_id: additionalData.store_id,
         id: item.item_id,
         primary_category: item.primary_category,
@@ -304,7 +304,7 @@ module.exports.deleteProduct = async (req, res) => {
           }
         }
       })
-      //delete SendoVariant
+      //delete LazadaVariant
       await LazadaVariant.findOneAndDelete({ _id: platformVariant._id })
     })
     //delete lazadaProduct on platform
