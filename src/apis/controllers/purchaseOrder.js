@@ -175,7 +175,7 @@ module.exports.getAllPurchaseOrder = async (req, res) => {
   try {
     const { orderStatus, dateFrom, dateTo, ...rest } = req.query;
     let searchFilter = {};
-    // create regex to find anything contain string
+    
     Object.keys(rest).some((i) => {
       if (req.query[i]) {
         searchFilter[i] = new RegExp(req.query[i]?.trim(), 'i');
@@ -185,19 +185,22 @@ module.exports.getAllPurchaseOrder = async (req, res) => {
     if (orderStatus !== 'Tất cả') {
       searchFilter.orderStatus = orderStatus;
     }
-    // create matched datetime search
-    let date = new Date();
-    let filterDateFrom = dateFrom
-      ? new Date(parseInt(dateFrom))
-      : new Date(date.setFullYear(date.getFullYear() - 1));
-    let filterDateTo = dateTo ? new Date(parseInt(dateTo)) : new Date();
+
+    console.log("Final filter: ", {
+      storageId: req.user.currentStorage.storageId,
+      ...searchFilter,
+      createdAt: {
+        $gte: dateFrom,
+        $lt: dateTo,
+      },
+    })
 
     const purchaseOrders = await PurchaseOrder.find({
       storageId: req.user.currentStorage.storageId,
       ...searchFilter,
       createdAt: {
-        $gte: filterDateFrom,
-        $lt: filterDateTo,
+        $gte: dateFrom,
+        $lt: dateTo,
       },
     });
 

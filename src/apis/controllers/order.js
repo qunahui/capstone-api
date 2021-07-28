@@ -344,6 +344,7 @@ module.exports.createReceipt = async (req, res) => {
     }
 
     order.outstockStatus = true
+    order.orderStatus = 'Xuất kho/Đang giao hàng'
 
     await order.save()
 
@@ -365,7 +366,7 @@ module.exports.createPackaging = async (req, res) => {
     }
 
     order.packStatus = true
-
+    order.orderStatus = 'Đóng gói'
     await order.save()
 
     res.status(200).send(order)
@@ -405,6 +406,7 @@ module.exports.confirmDelivery = async (req, res) => {
     }
 
     order.deliveryStatus = 'Đã giao hàng'
+    order.orderStatus = 'Đã giao hàng'
 
     await order.save()
     await checkComplete(req.params._id)
@@ -425,6 +427,7 @@ module.exports.createMMSOrder = async (req, res) => {
     const order = new Order({
       ...req.body,
       step,
+      orderStatus: 'Duyệt',
       store_id: storageId,
       storageId,
       store_name: storageName
@@ -673,28 +676,39 @@ module.exports.createSendoOrder = async (req, res) => {
 }
 
 module.exports.getAllOrder = async (req, res) => {
-  const filter = req.query
-  const dateFrom = new Date(parseFloat(filter.dateFrom)*1000).toISOString()
-  const dateTo = new Date(parseFloat(filter.dateTo)*1000).toISOString()
-  let query = {}
-  if(filter.orderStatus === 'Tất cả') {
-    query = { 
-      storageId: req.user.currentStorage.storageId,
-      // updatedAt: { $gte: dateFrom, $lte: dateTo },
-      source: 'web'
+  const { orderStatus, dateFrom, dateTo, ...rest } = req.query;
+  let searchFilter = {};
+
+  Object.keys(rest).some((i) => {
+    if (req.query[i]) {
+      searchFilter[i] = new RegExp(req.query[i]?.trim(), 'i');
     }
-  } else {
-    query = { 
-      storageId: req.user.currentStorage.storageId,
-      // updatedAt: { $gte: filter.dateFrom, $lte: filter.dateTo },
-      source: 'web',
-      orderStatus: filter.orderStatus
-    }
+  });
+
+  if (orderStatus !== 'Tất cả') {
+    searchFilter.orderStatus = orderStatus;
   }
-  console.log(query)
+
+  console.log("Final filter: ", {
+    storageId: req.user.currentStorage.storageId,
+    ...searchFilter,
+    source: 'web',
+    createdAt: {
+      $gte: dateFrom,
+      $lt: dateTo,
+    },
+  })
+
   try {
-    const orders = await Order.find(query)
-    console.log(orders)
+    const orders = await Order.find({
+      storageId: req.user.currentStorage.storageId,
+      ...searchFilter,
+      source: 'web',
+      createdAt: {
+        $gte: dateFrom,
+        $lt: dateTo,
+      },
+    })
     return res.status(200).send(orders)
   } catch (e) {
     res.status(500).send(Error(e));

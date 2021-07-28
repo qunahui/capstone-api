@@ -76,20 +76,20 @@ module.exports.createReceipt = async (req, res) => {
 
           await inventory.save();
 
-          const matchedPurchaseOrder = await PurchaseOrder.findOne({
-            _id: supplierRefundOrder.reference.id,
-          });
-          matchedPurchaseOrder.step[3] = {
-            name: matchedPurchaseOrder.step[3].name,
-            isCreated: true,
-            createdAt: new Date(),
-          };
-
-          matchedPurchaseOrder.orderStatus = 'Đã hoàn trả';
-
-          await matchedPurchaseOrder.save();
         })
-      );
+        );
+        const matchedPurchaseOrder = await PurchaseOrder.findOne({
+          _id: supplierRefundOrder.reference.id,
+        });
+        matchedPurchaseOrder.step[3] = {
+          name: matchedPurchaseOrder.step[3].name,
+          isCreated: true,
+          createdAt: new Date(),
+        };
+
+        matchedPurchaseOrder.orderStatus = 'Đã hoàn trả';
+
+        await matchedPurchaseOrder.save();
 
       supplierRefundOrder.step[1] = {
         name: supplierRefundOrder.step[1].name,
@@ -154,19 +154,22 @@ module.exports.getAllSupplierRefundOrder = async (req, res) => {
     if (orderStatus !== 'Tất cả') {
       searchFilter.orderStatus = orderStatus;
     }
-    // create matched datetime search
-    let date = new Date();
-    let filterDateFrom = dateFrom
-      ? new Date(parseInt(dateFrom))
-      : new Date(date.setFullYear(date.getFullYear() - 1));
-    let filterDateTo = dateTo ? new Date(parseInt(dateTo)) : new Date();
 
-    const supplierRefundOrders = await SupplierRefundOrder.find({
-      userId: req.user._id,
+    console.log("Final filter: ", {
+      storageId: req.user.currentStorage.storageId,
       ...searchFilter,
       createdAt: {
-        $gte: filterDateFrom,
-        $lt: filterDateTo,
+        $gte: dateFrom,
+        $lt: dateTo,
+      },
+    })
+
+    const supplierRefundOrders = await SupplierRefundOrder.find({
+      storageId: req.user.currentStorage.storageId,
+      ...searchFilter,
+      createdAt: {
+        $gte: dateFrom,
+        $lt: dateTo,
       },
     });
 

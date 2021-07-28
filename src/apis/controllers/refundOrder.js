@@ -75,18 +75,19 @@ module.exports.createReceipt = async (req, res) => {
 
         await inventory.save()
 
-        const matchedSalesOrder = await Order.findOne({ _id: refundOrder.reference.id })
-        const index = matchedSalesOrder.step.findIndex(i => i.name === 'Đã hoàn trả')
-        matchedSalesOrder.step[index] = {
-          name: matchedSalesOrder.step[index].name,
-          isCreated: true,
-          createdAt: new Date()
-        }
-
-        matchedSalesOrder.orderStatus = 'Đã hoàn trả'
-
-        await matchedSalesOrder.save()
       }))
+
+      const matchedSalesOrder = await Order.findOne({ _id: refundOrder.reference.id })
+      const index = matchedSalesOrder.step.findIndex(i => i.name === 'Đã hoàn trả')
+      matchedSalesOrder.step[index] = {
+        name: matchedSalesOrder.step[index].name,
+        isCreated: true,
+        createdAt: new Date()
+      }
+
+      matchedSalesOrder.orderStatus = 'Đã hoàn trả'
+
+      await matchedSalesOrder.save()
 
       refundOrder.step[1] = {
         name: refundOrder.step[1].name,
@@ -95,7 +96,7 @@ module.exports.createReceipt = async (req, res) => {
       }
 
       refundOrder.instockStatus = true
-
+      refundOrder.orderStatus = 'Đã nhập kho'
       await refundOrder.save()
       await checkComplete(req.params._id)
 
@@ -105,12 +106,20 @@ module.exports.createReceipt = async (req, res) => {
     }
   } catch (e) {
     console.log("create receipt error: ", e.message)
-    return res.status(500).send(Error({ message: 'Create refund order went wrong!' }))
+    return res.status(500).send(Error({ message: 'Xuất kho thất bại. Vui lòng thử lại sau!' }))
   }
 }
 
 module.exports.createRefundOrder = async (req, res) => {
   try {
+    const isOrderRefunded = await RefundOrder.findOne({
+      'reference.id': req.body.reference.id
+    })
+
+    if(isOrderRefunded && isOrderRefunded?.orderStatus !== 'Đã hủy') {
+      return res.status(409).send(Error({ message: 'Đơn hàng này đã có một đơn hoàn đang hoạt động !'}))
+    }
+
     step[0].isCreated = true
     step[0].createdAt = Date.now()
     const { lineItems } = req.body
@@ -123,21 +132,52 @@ module.exports.createRefundOrder = async (req, res) => {
 
     const refundOrder = new RefundOrder({
       ...req.body,
+      storageId: req.user?.currentStorage?.storageId,
       step,
     })
 
+    refundOrder.orderStatus = 'Đã duyệt'
     await refundOrder.save()
 
     res.status(200).send(refundOrder)
   } catch (e) {
     console.log(e)
-    res.status(500).send(Error({ message: 'Create refund order went wrong!' }))
+    res.status(500).send(Error({ message: 'Tạo đơn hoàn gặp lỗi. Vui lòng thử lại sau!' }))
   }
 }
 
 module.exports.getAllRefundOrder = async (req, res) => {
+  const { orderStatus, dateFrom, dateTo, ...rest } = req.query;
+  let searchFilter = {};
+  
+  Object.keys(rest).some((i) => {
+    if (req.query[i]) {
+      searchFilter[i] = new RegExp(req.query[i]?.trim(), 'i');
+    }
+  });
+
+  if (orderStatus !== 'Tất cả') {
+    searchFilter.orderStatus = orderStatus;
+  }
+
+  console.log("Final filter: ", {
+    storageId: req.user.currentStorage.storageId,
+    ...searchFilter,
+    createdAt: {
+      $gte: dateFrom,
+      $lt: dateTo,
+    },
+  })
+
   try {
-    const refundOrders = await RefundOrder.find({ userId: req.user._id })
+    const refundOrders = await RefundOrder.find({
+      storageId: req.user.currentStorage.storageId,
+      ...searchFilter,
+      createdAt: {
+        $gte: dateFrom,
+        $lt: dateTo,
+      },
+    })
 
     res.status(200).send(refundOrders)
   } catch (e) {
@@ -158,7 +198,9 @@ module.exports.getRefundOrderById = async function (req, res) {
 
 module.exports.updateRefundPayment = async (req, res) => {
   try {
-    const refundOrder = await RefundOrder.findOne({ _id: req.params._id, userId: req.user._id })
+    const refundOrder = await RefundOrder.findOne({ _id: req.params._id, storageId: req.user.currentStorage?.storageId })
+
+    console.log(refundOrder)
 
     if (refundOrder.paidPrice !== refundOrder.totalPrice) {
       refundOrder.paidPrice += req.body.paidPrice

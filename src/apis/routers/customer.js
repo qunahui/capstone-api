@@ -8,6 +8,8 @@ router.use(auth) //all requests to this router will first hit this middleware
 
 router.get("/check/:email", controller.checkCustomerExist)
 
+router.get("/group/", controller.getAllCustomerGroup)
+
 router.get("/:_id", controller.getCustomerById);
 
 router.get("/search/", controller.searchCustomer);

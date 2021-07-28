@@ -1,6 +1,15 @@
 const Error = require('../utils/error')
 const Customer = require('../models/customer')
 
+module.exports.getAllCustomerGroup = async (req, res) => {
+  try {
+    const groups = await Customer.find({ storageId: req.user.currentStorage.storageId, isDeleted: false}).distinct('group')
+    res.status(200).send(groups)
+  } catch (e) {
+    res.status(500).send(Error(e));
+  }
+}
+
 module.exports.checkCustomerExist = async(req, res) => {
   try {
     const isCustomerExist = await Customer.findOne({ email: req.params.email, storageId: req.user.currentStorage.storageId })
@@ -43,7 +52,17 @@ module.exports.createCustomer = async (req, res) => {
 
 module.exports.getAllCustomer = async (req, res) => {
   try {
-    const customers = await Customer.find({ storageId: req.user.currentStorage.storageId, isDeleted: false })
+    const { search } = req.query
+    const customers = await Customer.find({ 
+      storageId: req.user.currentStorage.storageId,
+      isDeleted: false,
+      $or:[
+        {phone: {$regex: `${search}`,  $options : 'i'}},
+        {name: {$regex: `${search}`,  $options : 'i'}},
+        {group: {$regex: `${search}`,  $options : 'i'}},
+        {email: {$regex: `${search}`,  $options : 'i'}},
+      ]
+    })
     res.status(200).send(customers)
   } catch (e) {
     res.status(500).send(Error(e));

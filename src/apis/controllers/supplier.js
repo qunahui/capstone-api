@@ -10,6 +10,19 @@ module.exports.getAllSupplierGroup = async (req, res) => {
   }
 }
 
+module.exports.checkSupplierExist = async(req, res) => {
+  try {
+    const isSupplierExist = await Supplier.findOne({ email: req.params.email, storageId: req.user.currentStorage.storageId })
+    if(isSupplierExist) {
+      res.status(409).send(Error({ message: 'Nhà cung cấp đã tồn tại !'}))
+    } else {
+      res.status(200).send({message: "Nhà cung cấp có thể được tạo !"})
+    }
+  } catch(e) {
+    res.status(400).send(Error({message: "Có gì đó sai sai!"}))
+  }
+}
+
 module.exports.createSupplier = async (req, res) => {
   try { 
     const isSupplierExist = await Supplier.findOne({ email: req.body.email, storageId: req.user.currentStorage.storageId })
@@ -17,7 +30,7 @@ module.exports.createSupplier = async (req, res) => {
       return res.status(409).send(Error({ message: 'Nhà cung cấp đã tồn tại !'}))
     } else {
       const supplier = new Supplier({ ...req.body, storageId: req.user.currentStorage.storageId }) 
-      supplier.save()
+      await supplier.save()
       res.status(200).send(supplier)
     }
   } catch(e) {
@@ -38,24 +51,12 @@ module.exports.createSupplier = async (req, res) => {
   }
 };
 
-module.exports.checkSupplierExist = async(req, res) => {
-  try {
-    const isSupplierExist = await Supplier.findOne({ email: req.params.email, storageId: req.user.currentStorage.storageId })
-    if(isSupplierExist) {
-      res.status(409).send(Error({ message: 'Nhà cung cấp đã tồn tại !'}))
-    } else {
-      res.status(200).send({message: "Nhà cung cấp có thể được tạo !"})
-    }
-  } catch(e) {
-    res.status(400).send(Error({message: "Có gì đó sai sai!"}))
-  }
-}
-
 module.exports.getAllSupplier = async (req, res) => {
   try {
     const { search } = req.query
     const suppliers = await Supplier.find({
       storageId: req.user.currentStorage.storageId,
+      isDeleted: false,
       $or:[
         {phone: {$regex: `${search}`,  $options : 'i'}},
         {name: {$regex: `${search}`,  $options : 'i'}},
