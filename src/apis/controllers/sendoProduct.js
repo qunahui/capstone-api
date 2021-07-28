@@ -174,7 +174,7 @@ module.exports.fetchProducts = async (req, res) => {
       body: {
         page_size: 100,
         product_name: "",
-        date_from: sendoFormatDate || "2021-01-01",
+        date_from: "2021-01-01",
         date_to: "9999-10-28",
         token: "",
         status: sendoFormatDate && -1,

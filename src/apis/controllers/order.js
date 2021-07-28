@@ -25,7 +25,7 @@ const payment_status = {
   "15": "Hoàn trả một phần"
 }
 const order_status = {
-  "2": "Chờ xác nhận",
+  "2": "Chờ xác nhận", 
   "3": "Đang xử lý",
   "6": "Đang giao hàng",
   "7": "Đã giao hàng",
@@ -84,20 +84,6 @@ const sendo_delivery_status = {
   '14': "Lấy hàng thành công",
   '15': "Bàn giao thành công LM",
   '16': "Mất hàng",
-}
-
-const lazada_order_status = {
-  'unpaid': 'Đang chờ xác nhận thanh toán', // khách chưa config delivery info
-  'pending': 'Đang xử lý / Chờ xác nhận',
-  // 'toship': 'Chờ giao hàng', 
-  'packed': 'Đang xử lý / Đã đóng gói',
-  'ready_to_ship': 'Đang xử lý / Sẵn sàng giao hàng',
-  'shipped': 'Đang giao hàng',
-  'delivered': 'Đã giao hàng',
-  'canceled': 'Đã hủy',
-  'returned': 'Đã hoàn trả',
-  'failed': 'Gặp sự cố',
-  'lost': 'Mất hàng'
 }
 
 const lazada_order_status_index = {
@@ -185,79 +171,95 @@ const step = [
     isCreated: false,
   },
 ]
+
+const lazada_order_status = {
+  'unpaid': 'Đang chờ xác nhận thanh toán', // khách chưa config delivery info
+  'pending': 'Đang xử lý / Chờ xác nhận',
+  // 'toship': 'Chờ giao hàng', 
+  'packed': 'Đang xử lý / Đã đóng gói',
+  'ready_to_ship': 'Đang xử lý / Sẵn sàng giao hàng',
+  'shipped': 'Đang giao hàng',
+  'delivered': 'Đã giao hàng',
+  'canceled': 'Đã hủy',
+  'returned': 'Đã hoàn trả',
+  'failed': 'Gặp sự cố',
+  'lost': 'Mất hàng',
+  'shipped_back': "Đã hoàn trả"
+}
+
 const lazadaMappingStep = {
   'unpaid': {
     index: 0,
     step: 0,
-    name: 'Đang chờ xác nhận thanh toán'
+    name: 'Đặt hàng'
   }, // khách chưa config delivery info
   'pending': {
     index: 1,
-    step: 1,
-    name: 'Đang xử lý'
+    step: 0,
+    name: 'Đặt hàng'
   },
   'packed': {
     index: 2,
-    step: 2,
-    name: 'Đã đóng gói'
+    step: 1,
+    name: 'Duyệt'
   },
   'repacked': {
-    index: 2,
-    step: 2,
-    name: 'Đã đóng gói lại'
+    index: 3,
+    step: 1,
+    name: 'Duyệt'
   },
   'ready_to_ship': {
-    index: 3,
-    step: 3,
-    name: 'Sẵn sàng giao hàng'
+    index: 4,
+    step: 2,
+    name: 'Đóng gói'
   },
   'shipped': {
-    index: 4,
+    index: 5,
     step: 3,
-    name: 'Đang giao hàng'
+    name: 'Xuất kho/Đang giao hàng'
   },
   'failed': {
-    index: 5,
-    step: 4,
-    name: 'Gặp sự cố'
+    index: 6,
+    step: 7,
+    name: 'Đã giao hàng'
   },
   'delivered': {
-    index: 6,
-    step: 5,
+    index: 7,
+    step: 4,
     name: 'Đã giao hàng'
   },
   'lost': {
-    index: 7,
+    index: 8,
     step: 6,
     name: 'Mất hàng'
   },
   'canceled': {
-    index: 8,
+    index: 9,
     step: 6,
     name: 'Đã hủy'
   },
   'returned': {
-    index: 9,
+    index: 10,
     step: 8,
     name: 'Đã hoàn trả'
   },
   'shipped_back': {
-    index: 9,
+    index: 12,
     step: 8,
     name: 'Đã hoàn trả'
   },
 }
 const sendoMappingStep = { 
-  2: { index: 0, name: 'Đặt hàng' }, 
-  3: { index: 1, name: 'Duyệt' }, 
-  4: { index: 2, name: 'Đóng gói' }, 
-  6: { index: 3, name: 'Xuất kho/Đang giao hàng' }, 
-  7: { index: 4, name: 'Đã giao hàng' }, 
-  8: { index: 5, name: 'Hoàn thành' }, 
-  10: { index: 6, name: 'Hoàn thành' }, 
-  13: { index: 7, name: 'Đã hủy' }, 
-  21: { index: 8, name: 'Đang hoàn trả' }, 
-  22: { index: 9, name: 'Đã hoàn trả' } 
+  2: { step: 0, name: 'Đặt hàng' }, 
+  3: { step: 1, name: 'Duyệt' }, 
+  // 4: { step: 2, name: 'Đóng gói' }, 
+  6: { step: 3, name: 'Xuất kho/Đang giao hàng' }, 
+  7: { step: 4, name: 'Đã giao hàng' }, 
+  8: { step: 5, name: 'Hoàn thành' }, 
+  10: { step: 6, name: 'Đã hủy' }, 
+  13: { step: 6, name: 'Đã hủy' }, 
+  21: { step: 7, name: 'Đang hoàn trả' }, 
+  22: { step: 8, name: 'Đã hoàn trả' } 
 }
 const checkComplete = async (_id) => {
   try {
@@ -455,7 +457,7 @@ module.exports.createLazadaOrder = async (req, res) => {
     },
     json: true
   })
-  let completeStep = lazadaMappingStep[item.statuses[0]].step || ''
+  let completeStep = lazadaMappingStep?.[item.statuses?.[0]]?.step || ''
   let configStep = step.map((st, index) => {
     if (index <= completeStep) {
       return {
@@ -549,10 +551,10 @@ module.exports.createSendoOrder = async (req, res) => {
   
   const completeStep = item.sales_order.order_status
   let configStep = step.map((st, index) => {
-    if (index <= sendoMappingStep[completeStep].index) {
+    if (index <= sendoMappingStep[completeStep].step) {
       return {
         name: st.name,
-        createdAt: index === 0 ? created_at : index === sendoMappingStep[completeStep].index ? updated_at : null,
+        createdAt: index === 0 ? created_at : index === sendoMappingStep[completeStep].step ? updated_at : null,
         isCreated: true
       }
     } else {
@@ -587,7 +589,7 @@ module.exports.createSendoOrder = async (req, res) => {
       storageId: req.user.currentStorage.storageId,
       store_name: cred.store_name,
       code: item.sales_order.order_number,
-      orderStatus: order_status[`${item.sales_order.order_status}`],
+      orderStatus: sendoMappingStep[`${item.sales_order.order_status}`]?.name,
       packStatus: item.sales_order.order_status >= 3,
       //order infomation
       paymentMethod: payment_method[`${item.sales_order.payment_method}`],
@@ -672,8 +674,8 @@ module.exports.createSendoOrder = async (req, res) => {
 
 module.exports.getAllOrder = async (req, res) => {
   const filter = req.query
-  const dateFrom = new Date(parseFloat(filter.dateFrom)).toISOString()
-  const dateTo = new Date(parseFloat(filter.dateTo)).toISOString()
+  const dateFrom = new Date(parseFloat(filter.dateFrom)*1000).toISOString()
+  const dateTo = new Date(parseFloat(filter.dateTo)*1000).toISOString()
   let query = {}
   if(filter.orderStatus === 'Tất cả') {
     query = { 
@@ -684,13 +686,14 @@ module.exports.getAllOrder = async (req, res) => {
   } else {
     query = { 
       storageId: req.user.currentStorage.storageId,
-      updatedAt: { $gte: dateFrom, $lte: dateTo },
+      // updatedAt: { $gte: filter.dateFrom, $lte: filter.dateTo },
       source: 'web',
       orderStatus: filter.orderStatus
     }
   }
+  console.log(query)
   try {
-    const orders = await Order.find()
+    const orders = await Order.find(query)
     console.log(orders)
     return res.status(200).send(orders)
   } catch (e) {
@@ -866,6 +869,7 @@ module.exports.fetchApiOrders = async (req, res) => {
   const matchedStorage = await Storage.findOne({ _id: storageId })
 
   let allCreds = [].concat(matchedStorage.sendoCredentials).concat(matchedStorage.lazadaCredentials)
+
 
   try {
     await Promise.all(allCreds.map(async (cred, index) => {

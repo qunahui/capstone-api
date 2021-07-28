@@ -10,8 +10,8 @@ module.exports.getSalesReport = async (req, res) => {
         const dateFrom = req.query.dateFrom
         const dateTo = req.query.dateTo
         let date1 =0, date2 =0, date3 =0, date4 = 0
-        let completeOrders1 = 0, revenue1 = 0, avgRevenue1 = 0, salesProductNumber1 = 0, totalOrders1 = 0 //so don hoan thanh, doanh thu, doanh thu trung binh tren 1 don, so san pham ban duoc
-        let completeOrders2 = 0, revenue2 = 0, avgRevenue2 = 0, salesProductNumber2 = 0, totalOrders2 = 0
+        let completeOrders1 = 0, cancelOrders1 = 0, revenue1 = 0, avgRevenue1 = 0, salesProductNumber1 = 0, totalOrders1 = 0 //so don hoan thanh, doanh thu, doanh thu trung binh tren 1 don, so san pham ban duoc
+        let completeOrders2 = 0, cancelOrders2 = 0, revenue2 = 0, avgRevenue2 = 0, salesProductNumber2 = 0, totalOrders2 = 0
         if(period == "last7days"){
             date1 = new Date().setHours(0,0,0,0) - 1000*60*60*24*7
             date2 = new Date().setHours(23,59,59,999) - 1000*60*60*24
@@ -42,22 +42,26 @@ module.exports.getSalesReport = async (req, res) => {
         const list1 = await Order.find(
             {
                 createdAt: {$gte: date1, $lte: date2},
-                store_id: store_id,
+                // store_id: store_id,
                 storageId: storageId
             },{ 
                 _id: 0,
                 totalAmount: 1, 
                 totalQuantity: 1,
                 orderStatus:1,
-                createdAt:1
+                createdAt:1,
+                source: 1,
             }
         )
+
         if(list1.length != 0){
             list1.forEach(order => {
-                if(order.orderStatus == "Đã hoàn tất"){
+                if(order.orderStatus === "Hoàn thành"){
                     completeOrders1++
                     salesProductNumber1+=order.totalQuantity
                     revenue1+=order.totalAmount
+                } else if(order.orderStatus === 'Đã hủy') {
+                    cancelOrders1++
                 }
             });
         }
@@ -77,10 +81,12 @@ module.exports.getSalesReport = async (req, res) => {
         ])
         if(list2.length != 0){
             list2.forEach(order => {
-                if(order.orderStatus == "Đã hoàn tất"){
+                if(order.orderStatus == "Hoàn thành"){
                     completeOrders2++
                     salesProductNumber2+=order.totalQuantity
                     revenue2+=order.totalAmount
+                } else if(order.orderStatus === 'Đã hủy') {
+                    cancelOrders2++
                 }
             });
         }
@@ -99,6 +105,11 @@ module.exports.getSalesReport = async (req, res) => {
                 value: completeOrders1,
                 percent: completeOrders1 == completeOrders2 ? 0 : completeOrders2 == 0 ? 100 : Math.abs((completeOrders1/completeOrders2)-1)*100,
                 status: (completeOrders1-completeOrders2) >0 ? "Greater" : (completeOrders1-completeOrders2) == 0 ? "Equal" : "Less"
+            },
+            cancelOrders:{
+                value: cancelOrders1,
+                percent: cancelOrders1 == cancelOrders2 ? 0 : cancelOrders2 == 0 ? 100 : Math.abs((cancelOrders1/cancelOrders2)-1)*100,
+                status: (cancelOrders1-cancelOrders2) >0 ? "Greater" : (cancelOrders1-cancelOrders2) == 0 ? "Equal" : "Less"
             },
             revenue:{
                 value: revenue1,

@@ -159,7 +159,7 @@ module.exports.createMMSProduct = async (req, res) => {
           url: `${process.env.API_URL}/purchase-orders/init`,
           json: true,
           body: {
-            code: `KHỞI_TẠO_${req.body.sku.toUpperCase()}_${new Date().toLocaleDateString()}`,
+            code: `NHAP_HANG_${req.body.sku.toUpperCase()}_${new Date().toLocaleDateString()}`,
             note: 'Khởi tạo ban đầu',
             supplierAddress: 'Chi nhánh mặc định',
             supplierName: req.user.displayName,

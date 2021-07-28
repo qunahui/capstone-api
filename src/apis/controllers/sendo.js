@@ -286,7 +286,7 @@ module.exports.searchProduct = async (req, res) =>{
   //filter product, search by name, date_from, date_to
   //if nothing-> get all
   const apiPath ='/partner/product/search'
-  const pageSize = req.query.page_size || 10
+  const pageSize = req.query.page_size || 100
   const productName = req.query.product_name || ""
   const dateFrom = req.query.date_from || "2020-05-01"
   const dateTo = req.query.date_to || "9999-10-28"

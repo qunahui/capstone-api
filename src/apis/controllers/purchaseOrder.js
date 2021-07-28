@@ -115,6 +115,7 @@ module.exports.createInitialPurchaseOrder = async (req, res) => {
     const purchaseOrder = new PurchaseOrder({
       ...req.body,
       orderStatus: 'Hoàn thành',
+      storageId: req.user.currentStorage.storageId,
       step,
     });
 
@@ -156,6 +157,7 @@ module.exports.createPurchaseOrder = async (req, res) => {
 
     const purchaseOrder = new PurchaseOrder({
       ...req.body,
+      storageId: req.user.currentStorage.storageId,
       orderStatus: 'Đặt hàng và duyệt',
       step,
     });
@@ -191,7 +193,7 @@ module.exports.getAllPurchaseOrder = async (req, res) => {
     let filterDateTo = dateTo ? new Date(parseInt(dateTo)) : new Date();
 
     const purchaseOrders = await PurchaseOrder.find({
-      userId: req.user._id,
+      storageId: req.user.currentStorage.storageId,
       ...searchFilter,
       createdAt: {
         $gte: filterDateFrom,
