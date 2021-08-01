@@ -48,6 +48,7 @@ module.exports.createMultiPlatform = async (req, res) => {
             return res.status(500).send(Error(error))
           })
         } else if(item.platform_name === 'sendo') {
+          console.log("Sendo item: ", item)
           const options = {
             method: 'POST',
             url: `${process.env.API_URL}/api/sendo/products`,
@@ -97,7 +98,7 @@ module.exports.createMultiPlatform = async (req, res) => {
       }
     })
   } catch(e) {
-    console.log("Error", e.message)
+    console.log("Lỗi: ", e.message)
     res.status(500).send(Error({ message: 'Có gì đó không ổn !'}))
   }
 };
