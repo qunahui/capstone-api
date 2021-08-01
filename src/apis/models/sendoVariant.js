@@ -6,7 +6,7 @@ const variantSchema = new Schema({
   // chung
   linkedId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Variant'
+    ref: 'Variant',
   },
   variant_attributes:{
     type: Array

@@ -394,8 +394,9 @@ module.exports.unlinkVariant = async (req, res) => {
 
 module.exports.getAllVariant = async (req, res) => {
   const { name, type } = req.query;
+  const { storageId } = req.user.currentStorage
 
-  const filter = { storageId: req.user.currentStorage.storageId };
+  const filter = { storageId };
   if (type !== 'all') {
     filter.sellable = type === 'active';
   }
