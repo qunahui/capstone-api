@@ -6,6 +6,7 @@ const nodemailer = require('nodemailer');
 const ActivityLog = require('../models/activityLog')
 const { response } = require("express");
 const sendMail = require('../../utils/ses_sendemail.js')
+const bcrypt = require('bcrypt');
 
 const sellerAccess = [
   'marketplaceProduct.create',
@@ -224,6 +225,26 @@ module.exports.changePassword = async (req, res) => {
     res.status(500).send(Error(e));
   }
 };
+
+module.exports.updatePassword = async (req, res) => {
+  try {
+    const { email, password, oldPassword } = req.body
+    const user = await User.findOne({ email })
+
+    const isMatch = await bcrypt.compare(oldPassword, user.password);
+
+    if (!isMatch) {
+      return res.status(400).send(Error({ message: 'Mật khẩu cũ không chính xác !' }))
+    }
+
+    user.password = password
+    await user.save()
+    
+    return res.sendStatus(200)
+
+  } catch(e) {
+  }
+}
 
 module.exports.resetPassword = async (req, res) => {
   try {

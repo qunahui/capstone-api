@@ -21,6 +21,8 @@ router.post("/sign-up", controller.signUp);
 
 router.patch("/change-password", controller.changePassword);
 
+router.post("/update-password", controller.updatePassword);
+
 router.get("/reset-password", controller.resetPassword);
 
 module.exports = router;

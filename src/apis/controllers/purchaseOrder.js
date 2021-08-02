@@ -64,6 +64,18 @@ module.exports.createReceipt = async (req, res) => {
           mongoVariant.inventories.incoming -= item.quantity;
         }
 
+        await rp({
+          method: 'POST',
+          url: `${process.env.API_URL}/variants/push-api`,
+          json: true,
+          body: {
+            mongoVariant,
+          },
+          headers: {
+            Authorization: 'Bearer ' + req.mongoToken,
+          },
+        });
+
         await mongoVariant.save();
 
         const inventory = new Inventory({

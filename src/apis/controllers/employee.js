@@ -21,6 +21,9 @@ module.exports.getAllEmployee = async (req, res) => {
                 return ({
                     userId: i._id,
                     displayName: i.displayName,
+                    phone: i.phone,
+                    address: i.address,
+                    email: i.email,
                     role: matchedStorage.role,
                     roleAccess: matchedStorage.roleAccess,
                     lastSeen: i.lastSeen

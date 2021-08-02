@@ -15,7 +15,7 @@ module.exports.pushUpdatedToApi = async (req, res) => {
   const { variant } = req.body;
   const { linkedIds } = variant;
   if (linkedIds.length === 0) {
-    return;
+    return res.sendStatus(200);
   }
 
   await Promise.all(
@@ -71,7 +71,7 @@ module.exports.pushUpdatedToApi = async (req, res) => {
               'Platform-Token': storage.sendoCredentials[0].access_token,
             },
           });
-          res.sendStatus(200);
+          return res.sendStatus(200);
         } catch (e) {
           console.log('Push to api failed: ', e.message);
         }
@@ -126,7 +126,7 @@ module.exports.pushUpdatedToApi = async (req, res) => {
             },
           });
 
-          res.sendStatus(200);
+          return res.sendStatus(200);
         } catch (e) {
           console.log('Push to api failed: ', e.message);
         }

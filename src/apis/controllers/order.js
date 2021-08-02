@@ -717,8 +717,8 @@ module.exports.getAllOrder = async (req, res) => {
 
 module.exports.getAllMarketplaceOrder = async (req, res) => {
   const filter = req.query
-  const dateFrom = new Date(parseFloat(filter.dateFrom)).toISOString()
-  const dateTo = new Date(parseFloat(filter.dateTo)).toISOString()
+  const { dateFrom, dateTo, code, customerName, customerPhone } = filter
+
   let  query = {}
   if (filter.orderStatus === 'Tất cả') {
     query = { 
@@ -796,12 +796,28 @@ module.exports.getAllMarketplaceOrder = async (req, res) => {
     query = { 
       storageId: req.user.currentStorage.storageId,
       orderStatus: filter.orderStatus,
-      updatedAt: { $gte: dateFrom, $lte: dateTo }
+      updatedAt: { $gte: dateFrom, $lte: dateTo },
     }
   }
+
+  if(customerName || customerPhone || code) {
+    delete query.updatedAt
+  }
+
+  console.log({
+    ...query,
+    code: new RegExp(code?.trim(), 'i'),
+    customerName: new RegExp(customerName?.trim(), 'i'),
+    customerPhone: new RegExp(customerPhone?.trim(), 'i'),
+  })
+
   try {
-    console.log(query)
-    const orders = await Order.find(query)
+    const orders = await Order.find({
+      ...query,
+      code: new RegExp(code?.trim(), 'i'),
+      customerName: new RegExp(customerName?.trim(), 'i'),
+      customerPhone: new RegExp(customerPhone?.trim(), 'i'),
+    })
     console.log(orders)
     return res.status(200).send(orders)
   } catch (e) {
