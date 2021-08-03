@@ -592,6 +592,8 @@ module.exports.createSendoOrder = async (req, res) => {
         createdAt: updated_at,
         isCreated: true
       }
+      item.sales_order.order_status = 21
+      
     } else if(item.sales_order.delivery_status === 10) {
         configStep[7] = {
           name: 'Đang hoàn trả',
@@ -602,6 +604,7 @@ module.exports.createSendoOrder = async (req, res) => {
           createdAt: updated_at,
           isCreated: true
         }
+        item.sales_order.order_status = 22
     }
   }
   // xu ly mapping hoan tra status
