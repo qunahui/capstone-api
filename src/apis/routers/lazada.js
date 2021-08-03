@@ -60,6 +60,9 @@ router.get('/orders/items/:id', controller.getOrderItems)
 
 router.get('/attributes/:categoryId', controller.getAttributes)
 
+router.get('/check-paid-status/:id', controller.checkPaidStatus)
+
+
 //router.patch('/products/price-quantity', controller.updatePriceQuantity)
 //router.get('/cancel-reason', controller.getCancelReason)
 //router.post('/upload-image', upload.single('image') , controller.uploadImage)

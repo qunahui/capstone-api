@@ -228,18 +228,23 @@ const lazadaMappingStep = {
     step: 4,
     name: 'Đã giao hàng'
   },
-  'lost': {
+  'completed': {
     index: 8,
+    step: 5,
+    name: 'Hoàn thành'
+  },
+  'lost': {
+    index: 9,
     step: 6,
     name: 'Mất hàng'
   },
   'canceled': {
-    index: 9,
+    index: 10,
     step: 6,
     name: 'Đã hủy'
   },
   'returned': {
-    index: 10,
+    index: 11,
     step: 8,
     name: 'Đã hoàn trả'
   },
@@ -460,6 +465,19 @@ module.exports.createLazadaOrder = async (req, res) => {
     },
     json: true
   })
+  const checkPaidStatus = await rp({
+    method: 'GET',
+    url: `${process.env.API_URL}/api/lazada/check-paid-status/` + item.order_number,
+    headers: {
+      Authorization: 'Bearer ' + req.mongoToken,
+      'Platform-Token': req.accessToken
+    },
+    json: true
+  })
+  if(checkPaidStatus.isPaid == true){
+    item.statuses[0] = "completed"
+  }
+  
   let completeStep = lazadaMappingStep?.[item.statuses?.[0]]?.step || ''
   let configStep = step.map((st, index) => {
     if (index <= completeStep) {
@@ -478,11 +496,12 @@ module.exports.createLazadaOrder = async (req, res) => {
     store_id: cred.store_id,
     storageId: req.user.currentStorage.storageId,
     store_name: cred.store_name,
-    orderStatus: lazada_order_status[item.statuses[0]] || item.statuses[0],
+    orderStatus: lazadaMappingStep[item.statuses[0]].name || item.statuses[0],
     code: item.order_number,
     totalQuantity: item.items_count,
     //order infomation
     paymentMethod: item.payment_method,
+    paymentStatus: checkPaidStatus.isPaid === true ? "Đã hoàn thành" : "Chưa thanh toán",
     note: item.note,
     //shipping infomation
     deliveryInfo: item.delivery_info,
@@ -542,6 +561,7 @@ module.exports.createLazadaOrder = async (req, res) => {
     res.status(500).send(Error(e));
   }
 }
+
 module.exports.createSendoOrder = async (req, res) => {
   const { item, cred } = req.body;
 

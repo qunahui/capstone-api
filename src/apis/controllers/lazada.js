@@ -799,3 +799,40 @@ module.exports.getAttributes = async (req, res) =>{
         res.status(500).send(Error(e));
     }
 }
+
+module.exports.checkPaidStatus = async (req, res) =>{
+    
+    const apiPath=  '/finance/transaction/details/get'
+    const accessToken = req.accessToken
+    const trade_order_id = req.params.id
+
+    const request = new LazadaRequest(apiPath, 'GET');
+    try {
+        request.addApiParam("trade_order_id", trade_order_id);
+        request.addApiParam("start_time", "2021-01-01")
+        request.addApiParam("end_time", "2022-01-05")
+        const response = await client.execute(request, accessToken);
+        const  data  = response.data.data ? response.data.data : []
+        let isPaid = false
+        let amount = 0
+        let transaction_date = ""
+        data.map(item=>{
+            if(item.paid_status === 'paid'){
+                item.amount = item.amount.replace(",", "")
+                amount += parseFloat(item.amount) 
+                if(item.transaction_type === "Orders-Sales"){
+                    isPaid = true
+                    transaction_date = item.transaction_date
+                }
+            }
+        })
+        res.status(200).send({
+            isPaid,
+            amount,
+            transaction_date,
+            data: data
+        })
+    } catch (e) {
+        res.status(500).send(Error(e));
+    }
+}
