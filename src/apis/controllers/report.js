@@ -55,7 +55,6 @@ module.exports.getSalesReport = async (req, res) => {
                 source: 1,
             }
         )
-
         if(list1.length != 0){
             list1.forEach(order => {
                 if(order.orderStatus === "Hoàn thành"){
@@ -92,8 +91,63 @@ module.exports.getSalesReport = async (req, res) => {
                 }
             });
         }
-        totalOrders1 = list1.length
-        totalOrders2 = list2.length
+        const list3 = await SupplierRefundOrder.find(
+            {
+                createdAt: {$gte: date1, $lte: date2},
+                // store_id: store_id,
+                storageId: storageId
+            },{ 
+                _id: 0,
+                totalQuantity: 1,
+                orderStatus:1,
+                createdAt:1,
+                source: 1,
+                subTotal: 1,
+                shippingFee: 1,
+                code:1
+            }
+        )
+        if(list3.length != 0){
+            list3.forEach(order => {
+                if(order.orderStatus === "Hoàn thành"){
+                    completeOrders1++
+                    salesProductNumber1+=order.totalQuantity
+                    revenue1+=order.subTotal + order.shippingFee
+                } else if(order.orderStatus === 'Đã hủy') {
+                    cancelOrders1++
+                }
+            });
+        }
+        const list4 = await SupplierRefundOrder.aggregate([{
+            $match:{
+                createdAt: {"$gte": date3, "$lte": date4},
+                store_id: store_id,
+                storageId: storageId
+            }},{ 
+            $project:{ 
+                _id: 0,
+                totalQuantity: 1,
+                orderStatus:1,
+                createdAt:1,
+                subTotal: 1,
+                shippingFee: 1,
+                code:1
+            }}
+        ])
+        if(list4.length != 0){
+            list4.forEach(order => {
+                if(order.orderStatus == "Hoàn thành"){
+                    completeOrders2++
+                    salesProductNumber2+=order.totalQuantity
+                    revenue2+=order.subTotal + order.shippingFee
+                } else if(order.orderStatus === 'Đã hủy') {
+                    cancelOrders2++
+                }
+            });
+        }
+        totalOrders1 = list1.length + list3.length
+        totalOrders2 = list2.length + list4.length
+
         avgRevenue1 = completeOrders1 == 0 ? 0 : revenue1/completeOrders1
         avgRevenue2 = completeOrders2 == 0 ? 0 : revenue2/completeOrders2
 
@@ -128,7 +182,10 @@ module.exports.getSalesReport = async (req, res) => {
                 percent: salesProductNumber1 == salesProductNumber2 ? 0 : salesProductNumber2 == 0 ? 100 : Math.abs((salesProductNumber1/salesProductNumber2)-1)*100,
                 status: (salesProductNumber1-salesProductNumber2) >0 ? "Greater" : (salesProductNumber1-salesProductNumber2) == 0 ? "Equal" : "Less"
             },
-            listOrder: list1
+            listOrder: {
+                order: list1,
+                supplierRefundOrder: list3
+            }
         })
     }catch(e){
         res.status(500).send(Error(e));
@@ -185,16 +242,16 @@ module.exports.getPurchaseReport = async (req, res) => {
                 createdAt:1,
                 source: 1,
                 subTotal: 1,
-                shippingFee: 1
+                shippingFee: 1,
+                code:1
             }
         )
-
         if(list1.length != 0){
             list1.forEach(order => {
                 if(order.orderStatus === "Hoàn thành"){
                     completeOrders1++
-                    importProductNumber1+=order.totalQuantity
-                    cost1+=order.subTotal + order.shippingFee
+                    importProductNumber1 += order.totalQuantity
+                    cost1 += order.subTotal + order.shippingFee
                 } else if(order.orderStatus === 'Đã hủy') {
                     cancelOrders1++
                 }
@@ -212,22 +269,77 @@ module.exports.getPurchaseReport = async (req, res) => {
                 orderStatus:1,
                 createdAt:1,
                 subTotal: 1,
-                shippingFee: 1
+                shippingFee: 1,
+                code:1
             }}
         ])
         if(list2.length != 0){
             list2.forEach(order => {
                 if(order.orderStatus == "Hoàn thành"){
                     completeOrders2++
-                    importProductNumber2+=order.totalQuantity
-                    cost2+=order.subTotal + order.shippingFee
+                    importProductNumber2 += order.totalQuantity
+                    cost2 += order.subTotal + order.shippingFee
                 } else if(order.orderStatus === 'Đã hủy') {
                     cancelOrders2++
                 }
             });
         }
-        totalOrders1 = list1.length
-        totalOrders2 = list2.length
+        const list3 = await RefundOrder.find(
+            {
+                createdAt: {$gte: date1, $lte: date2},
+                // store_id: store_id,
+                storageId: storageId
+            },{ 
+                _id: 0,
+                totalQuantity: 1,
+                orderStatus:1,
+                createdAt:1,
+                source: 1,
+                subTotal: 1,
+                shippingFee: 1,
+                code:1
+            }
+        )
+        if(list3.length != 0){
+            list3.forEach(order => {
+                if(order.orderStatus === "Hoàn thành"){
+                    completeOrders1++
+                    importProductNumber1 += order.totalQuantity
+                    cost1 += order.subTotal + order.shippingFee
+                } else if(order.orderStatus === 'Đã hủy') {
+                    cancelOrders1++
+                }
+            });
+        }
+        const list4 = await RefundOrder.aggregate([{
+            $match:{
+                createdAt: {"$gte": date3, "$lte": date4},
+                store_id: store_id,
+                storageId: storageId
+            }},{ 
+            $project:{ 
+                _id: 0,
+                totalQuantity: 1,
+                orderStatus:1,
+                createdAt:1,
+                subTotal: 1,
+                shippingFee: 1,
+                code:1
+            }}
+        ])
+        if(list4.length != 0){
+            list4.forEach(order => {
+                if(order.orderStatus == "Hoàn thành"){
+                    completeOrders2++
+                    importProductNumber2 += order.totalQuantity
+                    cost2 += order.subTotal + order.shippingFee
+                } else if(order.orderStatus === 'Đã hủy') {
+                    cancelOrders2++
+                }
+            });
+        }
+        totalOrders1 = list1.length + list3.length
+        totalOrders2 = list2.length + list4.length
         //avgRevenue1 = completeOrders1 == 0 ? 0 : revenue1/completeOrders1
         //avgRevenue2 = completeOrders2 == 0 ? 0 : revenue2/completeOrders2
 
@@ -262,7 +374,10 @@ module.exports.getPurchaseReport = async (req, res) => {
                 percent: importProductNumber1 == importProductNumber2 ? 0 : importProductNumber2 == 0 ? 100 : Math.abs((importProductNumber1/importProductNumber2)-1)*100,
                 status: (importProductNumber1-importProductNumber2) >0 ? "Greater" : (importProductNumber1-importProductNumber2) == 0 ? "Equal" : "Less"
             },
-            listOrder: list1
+            listOrder: {
+                purchaseOrder: list1,
+                refundOrder: list3
+            }
         })
     }catch(e){
         res.status(500).send(Error(e));
