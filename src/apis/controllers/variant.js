@@ -13,8 +13,8 @@ const { htmlToText } = require('html-to-text');
 
 module.exports.pushUpdatedToApi = async (req, res) => {
   const { variant } = req.body;
-  const { linkedIds } = variant;
-  if (linkedIds.length === 0) {
+  const linkedIds = variant?.linkedIds;
+  if (!linkedIds) {
     return res.sendStatus(200);
   }
 
@@ -34,18 +34,25 @@ module.exports.pushUpdatedToApi = async (req, res) => {
                 return (matchedVariant = {
                   ...matchedVariant,
                   price: variant.retailPrice,
-                  quantity: variant.inventories.available,
+                  quantity: variant.inventories.onHand,
                 });
               }
               return matchedVariant;
             }
           );
+
+          data.price = variant.retailPrice
+          data.quantity = variant.inventories.onHand
+
+          await data.save()
         } else {
           sendoProduct = await SendoProduct.findOne({ _id: linkedId.id })
             .populate('variants')
             .lean();
           sendoProduct.price = variant.retailPrice;
-          sendoProduct.stock_quantity = variant.inventories.available;
+          sendoProduct.stock_quantity = variant.inventories.onHand;
+
+          await SendoProduct.findOneAndUpdate({ _id: linkedId.id }, sendoProduct)
         }
 
         const storage = await Storage.findOne(
@@ -71,7 +78,7 @@ module.exports.pushUpdatedToApi = async (req, res) => {
               'Platform-Token': storage.sendoCredentials[0].access_token,
             },
           });
-          return res.sendStatus(200);
+          return;
         } catch (e) {
           console.log('Push to api failed: ', e.message);
         }
@@ -100,12 +107,16 @@ module.exports.pushUpdatedToApi = async (req, res) => {
               return (matchedVariant = {
                 ...matchedVariant,
                 price: variant.retailPrice,
-                quantity: variant.inventories.available,
+                quantity: variant.inventories.onHand,
               });
             }
             return matchedVariant;
           }
         );
+
+        lazadaVariant.price = variant.retailPrice
+        lazadaVariant.quantity = variant.inventories.onHand
+        await lazadaVariant.save()
 
         lazadaProduct.attributes.short_description = htmlToText(
           lazadaProduct.attributes.short_description,
@@ -117,22 +128,21 @@ module.exports.pushUpdatedToApi = async (req, res) => {
             method: 'PATCH',
             url: `${process.env.API_URL}/api/lazada/products/`,
             json: true,
-            body: {
-              lazadaProduct,
-            },
+            body: lazadaProduct,
             headers: {
               Authorization: 'Bearer ' + req.mongoToken,
               'Platform-Token': storage.lazadaCredentials[0].access_token,
             },
           });
 
-          return res.sendStatus(200);
         } catch (e) {
           console.log('Push to api failed: ', e.message);
         }
       }
     })
   );
+
+  return res.sendStatus(200);
 };
 
 module.exports.autoLinkVariant = async (req, res) => {
@@ -143,14 +153,14 @@ module.exports.autoLinkVariant = async (req, res) => {
   try {
     await Promise.all(
       variants.map(async (variant) => {
-        const matchSkuVariants = await Variant.find({ sku: variant.sku }); //  variants co cung sku
+        const matchSkuVariants = await Variant?.find({ sku: variant.sku }); //  variants co cung sku
         await Promise.all(
-          matchSkuVariants.map(async (matchSkuVariant) => {
+          matchSkuVariants?.map(async (matchSkuVariant) => {
             const product = await Product.findOne(
               { _id: matchSkuVariant.productId },
               { storageId: 1 }
             );
-            if (product.storageId.toString() == currentStorageId) {
+            if (product && product?.storageId?.toString() == currentStorageId) {
               // variants thuoc storage hien tai
               await rp({
                 method: 'POST',
@@ -167,13 +177,11 @@ module.exports.autoLinkVariant = async (req, res) => {
               })
                 .then((res) => {
                   if (res.statusCode == 200) {
-                    //console.log("sucsess: "+ success)
                     return success++;
                   }
                 })
                 .catch((error) => {
                   if (error.statusCode == 400) {
-                    //console.log("failure: "+ failure)
                     return failure++;
                   }
                 });
@@ -185,7 +193,7 @@ module.exports.autoLinkVariant = async (req, res) => {
 
     console.log('sucsess: ' + success);
     console.log('failure: ' + failure);
-    res.send({
+    return res.send({
       success: success,
       failure: failure,
       variants: variants,
@@ -198,10 +206,7 @@ module.exports.autoLinkVariant = async (req, res) => {
 
 module.exports.linkVariant = async (req, res) => {
   const { variant, platformVariant } = req.body;
-  //console.log("Variant: ", variant)
-  //console.log("PVariant: ", platformVariant)
   let updatedPlatVariant = {};
-  console.clear();
   try {
     if (platformVariant.platform === 'sendo') {
       // link sendoP to P
@@ -285,8 +290,8 @@ module.exports.linkVariant = async (req, res) => {
 
       return res.status(200).send(updatedPlatVariant);
     }
-
-    return res.status(400).send(Error({ message: 'Có gì đó sai sai !' }));
+    
+    return res.status(400).send(Error({ message: 'Không thể liên kết biến thể!' }));
   } catch (e) {
     console.log('Liên kết thất bại: ', e.message);
     res.status(400).send(Error({ message: 'Liên kết thất bại' }));

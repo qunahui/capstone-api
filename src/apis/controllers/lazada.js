@@ -308,7 +308,7 @@ module.exports.updateProduct = async (req, res) =>{
         }
 
         const payload = '<?xml version="1.0" encoding="UTF-8"?>' + convert.js2xml(updateFormatProduct,payloadOptions)
-        
+
         const sign = signRequest(appSecret, apiPath, {...commonRequestParams, payload})
         const encodePayload = encodeURIComponent(payload)
         let options = {
@@ -322,7 +322,9 @@ module.exports.updateProduct = async (req, res) =>{
         //res.send(options.url)
         //console.log(util.inspect(updateFormatProduct, {showHidden: false, depth: null}))
         await rp(options)
-        .then(response=> res.send(response))
+        .then(response=> {
+            return res.send(response)
+        })
         .catch(error => res.status(414).send(error)) //414 url too long
         
     } catch (e) {
@@ -622,7 +624,6 @@ module.exports.searchOrder = async (req, res) =>{
         for (const [key, value] of Object.entries(query)) {
             options.url += '&'+ key + '=' + encodeURIComponent(value)
         }
-        console.log(options)
         await rp(options)
         .then(response=> res.send(response.data.orders))
         .catch(error => res.status(500).send(error))

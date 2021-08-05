@@ -39,7 +39,6 @@ module.exports.createMultiPlatform = async (req, res) => {
             }
             await rp(options).then((response)=>{
               createLazadaProduct(response, item.store_id )
-              return res.sendStatus(200)
             }).catch((error)=>{
               return res.send(error.error)
             })
@@ -71,7 +70,6 @@ module.exports.createMultiPlatform = async (req, res) => {
             }
             await rp(options).then((response)=>{
               createSendoProduct(response, item.store_id )
-              return res.sendStatus(200)
             }).catch((error)=>{
               return res.send(error.error)
             })
@@ -83,20 +81,22 @@ module.exports.createMultiPlatform = async (req, res) => {
               body: {
                 ...item,
                 sellable: true,
+                isConfigInventory: true
               },
               json: true,
               headers: {
                 'Authorization': 'Bearer ' + req.mongoToken,
               }
             }
+
             await rp(options).then(()=>{
-              return res.sendStatus(200)
             }).catch((error)=>{
               return res.send(error.error)
             })
         }
       }
     })
+    return res.sendStatus(200)
   } catch(e) {
     console.log("Lỗi: ", e.message)
     res.status(500).send(Error({ message: 'Có gì đó không ổn !'}))
@@ -135,7 +135,6 @@ module.exports.getMMSProductById = async function (req, res) {
 
 module.exports.createMMSProduct = async (req, res) => {
   try {
-    //console.log(req.body)
     const product = new Product({
       ...req.body,
       storageId: req.user.currentStorage.storageId

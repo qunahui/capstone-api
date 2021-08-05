@@ -231,7 +231,7 @@ const lazadaMappingStep = {
   'completed': {
     index: 8,
     step: 5,
-    name: 'Hoàn thành'
+    name: 'Hoàn thành'
   },
   'lost': {
     index: 9,
@@ -496,7 +496,7 @@ module.exports.createLazadaOrder = async (req, res) => {
     store_id: cred.store_id,
     storageId: req.user.currentStorage.storageId,
     store_name: cred.store_name,
-    orderStatus: lazadaMappingStep[item.statuses[0]].name || item.statuses[0],
+    orderStatus: lazadaMappingStep[item.statuses[0]]?.name || item.statuses[0],
     code: item.order_number,
     totalQuantity: item.items_count,
     //order infomation
@@ -806,8 +806,8 @@ module.exports.getAllMarketplaceOrder = async (req, res) => {
       $or: [
         {
           source: 'sendo',
-          orderStatus: 'Đã hủy',
-          deliveryStatus: filter.orderStatus === 'Đang hoàn trả' ? "Trả hàng cho người bán" : "Người bán đã nhận lại hàng",
+          orderStatus: 'Đã hoàn trả',
+          // deliveryStatus: filter.orderStatus === 'Đang hoàn trả' ? "Trả hàng cho người bán" : "Người bán đã nhận lại hàng",
         }, 
         {
           source: 'lazada',
@@ -841,7 +841,6 @@ module.exports.getAllMarketplaceOrder = async (req, res) => {
       customerName: new RegExp(customerName?.trim(), 'i'),
       customerPhone: new RegExp(customerPhone?.trim(), 'i'),
     })
-    console.log(orders)
     return res.status(200).send(orders)
   } catch (e) {
     console.log(e.message)
@@ -1032,9 +1031,9 @@ module.exports.fetchApiOrders = async (req, res) => {
       }
     }))
 
-    matchedStorage.save()
+    await matchedStorage.save()
 
-    res.sendStatus(200)
+    return res.sendStatus(200)
   } catch (e) {
     console.log("Fetch failed: ", e.message)
     res.status(500).send(Error({ message: 'Có gì đó sai sai: , ' + e.message }))
