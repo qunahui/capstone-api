@@ -6,6 +6,6 @@ const controller = require("../controllers/report");
 router.use(auth) //all requests to this router will first hit this middleware
 
 router.get("/", controller.getSalesReport);
-
+router.get("/purchase", controller.getPurchaseReport);
 
 module.exports = router;
