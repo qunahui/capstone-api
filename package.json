@@ -4,9 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "set NODE_ENV=prod&& node src/app.js",
-    "dev": "set NODE_ENV=dev&& nodemon src/app.js",
-    "prod": "set NODE_ENV=prod&& node src/app.js"
+    "start": "set NODE_ENV=prod&& node src/app.js -max-http-header-size 15000",
+    "dev": "set NODE_ENV=dev&& nodemon src/app.js -max-http-header-size 15000",
+    "prod": "set NODE_ENV=prod&& node src/app.js -max-http-header-size 15000"
   },
   "keywords": [],
   "author": "",
