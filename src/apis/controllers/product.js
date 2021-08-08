@@ -9,10 +9,10 @@ const mongoose = require("mongoose")
 
 module.exports.createMultiPlatform = async (req, res) => {
   const products = req.body
+  let report = {}
   try {
-    products.map(async (item)=>{
+    await Promise.all(products.map(async (item)=>{
       if(item.post === true) {
-        console.log("Begin create to: ", item.store_name)
         if(item.platform_name === 'lazada') {
           const options = {
             method: 'POST',
@@ -28,6 +28,10 @@ module.exports.createMultiPlatform = async (req, res) => {
           }
           await rp(options)
           .then(async(response) =>{
+            report = {
+              ...report,
+              lazada: 'Thành công'
+            }
             const options = {
               method: 'GET',
               url: `${process.env.API_URL}/api/lazada/products/${response.item_id}`,
@@ -39,15 +43,15 @@ module.exports.createMultiPlatform = async (req, res) => {
             }
             await rp(options).then((response)=>{
               createLazadaProduct(response, item.store_id )
-            }).catch((error)=>{
-              return res.send(error.error)
             })
           })
           .catch((error)=>{
-            return res.status(500).send(Error(error))
+            report = {
+              ...report,
+              lazada: 'Thất bại'
+            }
           })
         } else if(item.platform_name === 'sendo') {
-          console.log("Sendo item: ", item)
           const options = {
             method: 'POST',
             url: `${process.env.API_URL}/api/sendo/products`,
@@ -59,6 +63,10 @@ module.exports.createMultiPlatform = async (req, res) => {
             }
           }
           await rp(options).then(async(response)=>{
+            report = {
+              ...report,
+              sendo: 'Thành công'
+            }
             const options ={
               method: 'GET',
               url: `${process.env.API_URL}/api/sendo/products/${response.result}`,
@@ -73,6 +81,11 @@ module.exports.createMultiPlatform = async (req, res) => {
             }).catch((error)=>{
               return res.send(error.error)
             })
+          }).catch((e) => {
+            report = {
+              ...report,
+              sendo: 'Thất bại'
+            }
           })
         } else if(item.platform_name === 'system') {
             const options = {
@@ -90,13 +103,20 @@ module.exports.createMultiPlatform = async (req, res) => {
             }
 
             await rp(options).then(()=>{
+              report = {
+                ...report,
+                system: 'Thành công'
+              }
             }).catch((error)=>{
-              return res.send(error.error)
+              report = {
+                ...report,
+                system: 'Thất bại'
+              }
             })
         }
       }
-    })
-    return res.sendStatus(200)
+    }))
+    return res.status(200).send(report)
   } catch(e) {
     console.log("Lỗi: ", e.message)
     res.status(500).send(Error({ message: 'Có gì đó không ổn !'}))
