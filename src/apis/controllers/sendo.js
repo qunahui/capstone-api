@@ -230,7 +230,7 @@ module.exports.createProduct = async (req, res) =>{
     json: true
   };
   try {    
-    //console.log(options)
+
     await rp(options).then(response=> res.status(200).send(response))
     //await axios(options).then(response=> res.status(200).send(response.data.result))
   } catch (e) {

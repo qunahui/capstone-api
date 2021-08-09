@@ -64,8 +64,6 @@ module.exports.createReceipt = async (req, res) => {
           mongoVariant.inventories.incoming -= item.quantity;
         }
 
-        console.log(mongoVariant)
-
         await rp({
           method: 'POST',
           url: `${process.env.API_URL}/variants/push-api`,
@@ -130,6 +128,7 @@ module.exports.createInitialPurchaseOrder = async (req, res) => {
       ...req.body,
       orderStatus: 'Hoàn thành',
       storageId: req.user.currentStorage.storageId,
+      userId: req.user._id,
       step,
     });
 
@@ -174,6 +173,7 @@ module.exports.createPurchaseOrder = async (req, res) => {
       storageId: req.user.currentStorage.storageId,
       orderStatus: 'Đặt hàng và duyệt',
       step,
+      userId: req.user._id,
     });
     await purchaseOrder.save();
     res.send(purchaseOrder);

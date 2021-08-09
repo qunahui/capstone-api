@@ -133,6 +133,7 @@ module.exports.createRefundOrder = async (req, res) => {
     const refundOrder = new RefundOrder({
       ...req.body,
       storageId: req.user?.currentStorage?.storageId,
+      userId: req.user._id,
       step,
     })
 

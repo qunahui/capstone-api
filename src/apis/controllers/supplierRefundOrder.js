@@ -121,7 +121,10 @@ module.exports.createSupplierRefundOrder = async (req, res) => {
   try {
     step[0].isCreated = true;
     step[0].createdAt = Date.now();
-    const supplierRefundOrder = new SupplierRefundOrder({ ...req.body, step });
+    const supplierRefundOrder = new SupplierRefundOrder({ ...req.body, step, 
+      userId: req.user._id,
+      storageId: req.user.currentStorage.storageId
+    });
 
     const { lineItems } = req.body;
 

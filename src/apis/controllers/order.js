@@ -431,6 +431,7 @@ module.exports.createMMSOrder = async (req, res) => {
     const { storageId, storageName } = req.user.currentStorage
     const order = new Order({
       ...req.body,
+      userId: req.user._id,
       step,
       orderStatus: 'Duyệt',
       store_id: storageId,
